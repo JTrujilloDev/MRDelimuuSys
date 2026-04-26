@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: delimuu-db
+    restart: always
+    environment:
+      POSTGRES_USER: deli-db
+      POSTGRES_PASSWORD: deli-db-pass2026
+      POSTGRES_DB: delimuu
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    image: jtrujillodev/delimuu-backend:latest
+    container_name: delimuu-backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://deli-db:deli-db-pass2026@db:5432/delimuu
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+  frontend:
+    image: jtrujillodev/delimuu-frontend:latest
+    container_name: delimuu-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:

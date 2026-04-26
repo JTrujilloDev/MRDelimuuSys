@@ -1,0 +1,19 @@
+# Dependencias
+node_modules
+**/node_modules
+
+# pnpm
+.pnpm
+.pnpm-store
+
+# builds
+dist
+build
+**/dist
+
+# git
+.git
+.gitignore
+
+# env
+.env

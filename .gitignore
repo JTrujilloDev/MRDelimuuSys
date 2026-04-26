@@ -1,0 +1,10 @@
+node_modules
+**/node_modules
+.pnpm
+.pnpm-store
+dist
+build
+.env
+.env.*
+.DS_Store
+docker-compose.override.ymlgit add .

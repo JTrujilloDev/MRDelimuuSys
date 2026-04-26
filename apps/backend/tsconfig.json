@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "CommonJS",
+    "target": "ES2020",
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*", "lib/prisma.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

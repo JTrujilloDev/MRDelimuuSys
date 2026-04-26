@@ -1,0 +1,249 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  variants ProductVariant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductVariant {
+  id             Int     @id @default(autoincrement())
+  name           String
+  retailPrice    Float @default(0)
+  wholesalePrice Float? @default(0)
+  stock          Int     @default(0)
+  minStock       Int     @default(0)
+  isActive       Boolean @default(true)
+  requirePreparation Boolean @default(false)
+  productCost    Float @default(0)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  accountItems          AccountItem[]
+  InventoryTransactions InventoryTransaction[]
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  password String
+  role     Role    @default(CASHIER)
+  isActive Boolean @default(true)
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  Accounts      Account[]
+  CashRegisters CashRegister[]
+}
+
+enum Role {
+  ADMIN
+  CASHIER
+  KITCHEN
+  WAITER
+  BAKERY
+}
+
+model Account {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+  name        String
+  terminalId  Int
+  terminal    Terminal      @relation(fields: [terminalId], references: [id])
+  tableNumber Int[]
+  status      AccountStatus @default(OPEN)
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  accountItems AccountItem[]
+
+  total               Float        @default(0)
+  discount            Float        @default(0)
+  discountObservation String?
+  closedAt            DateTime?
+  paymentMethod       PaymentMethod?
+  customerId          Int?
+  customer            Customer?      @relation(fields: [customerId], references: [id])
+
+  financialTransactions FinancialTransaction[] @relation("AccountFinancialTransactions")
+
+  financialTransactionId Int?
+}
+
+enum AccountStatus {
+  OPEN
+  CLOSED
+  CANCELLED
+  CREDIT_PENDING
+  CREDIT_PAID
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  QR
+  CREDIT
+}
+
+model AccountItem {
+  id               Int            @id @default(autoincrement())
+  accountId        Int
+  account          Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  productVariantId Int
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  productName      String
+  quantity         Int            @default(1)
+  price            Float
+  subtotal         Float
+
+  createdAt DateTime @default(now())
+  @@unique([accountId, productVariantId])
+}
+
+model InventoryTransaction {
+  id               Int                      @id @default(autoincrement())
+  productVariantId Int
+  relatedAccountId Int?
+  productVariant   ProductVariant           @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  quantity         Int
+  type             InventoryTransactionType
+  observation      String?
+
+  createdAt DateTime @default(now())
+}
+
+enum InventoryTransactionType {
+  SALE
+  PURCHASE
+  PRODUCTION
+  ADJUSTMENT
+  WASTE
+  RETURN
+}
+
+model FinancialTransaction {
+  id                      Int                      @id @default(autoincrement())
+  amount                  Float
+  type                    FinancialTransactionType
+  description             String?
+  createdAt               DateTime                 @default(now())
+  relatedCashRegisterId   Int?
+  relatedAccountId        Int?
+  cashRegister            CashRegister?            @relation(fields: [relatedCashRegisterId], references: [id], onDelete: Cascade)
+  account                 Account?                 @relation(fields: [relatedAccountId], references: [id], onDelete: Cascade, name: "AccountFinancialTransactions")
+  paymentMethod           PaymentMethod?
+  adjustmentJustification String?
+}
+
+enum FinancialTransactionType {
+  SALE
+  REFUND
+  EXPENSE
+  PURCHASE
+  CASH_IN
+  CASH_OUT
+  ADJUSTMENT
+  OPENING
+}
+
+model Customer {
+  id    Int     @id @default(autoincrement())
+  name  String
+  phone String?
+  email String?
+
+  type CustomerType @default(RETAIL)
+
+  createdAt DateTime @default(now())
+
+  accounts Account[]
+}
+
+enum CustomerType {
+  RETAIL
+  WHOLESALE
+}
+
+model CashRegister {
+  id Int @id @default(autoincrement())
+
+  userId     Int
+  terminalId Int
+  terminal   Terminal  @relation(fields: [terminalId], references: [id], onDelete: Cascade)
+  openedAt   DateTime
+  closedAt   DateTime?
+
+  openingAmount Float
+  closingAmount Float?
+  difference    Float?
+
+  status CashRegisterStatus @default(OPEN)
+
+  // Accumulated totals
+  totalSales     Float @default(0)
+  totalDiscounts Float @default(0)
+  totalExpenses  Float @default(0)
+  cashAmount     Float @default(0)
+  cardAmount     Float @default(0)
+  qrAmount       Float @default(0)
+  creditAmount   Float @default(0)
+
+  transactions FinancialTransaction[]
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum CashRegisterStatus {
+  OPEN
+  CLOSED
+}
+
+model Store {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+
+  terminals Terminal[]
+}
+
+model Terminal {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  storeId Int
+  store   Store @relation(fields: [storeId], references: [id])
+
+  registers CashRegister[]
+  accounts  Account[]
+}
