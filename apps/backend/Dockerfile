@@ -56,4 +56,4 @@ RUN pnpm install --prod
 
 EXPOSE 3000
 
-CMD ["node", "dist/src/server.js"]
+CMD ["sh", "-c", "pnpm run db:deploy && dist/src/server.js"]

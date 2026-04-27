@@ -37,7 +37,7 @@ const Index = () => {
   const { mutate: deleteAccount } = useDeleteAccount();
   const { mutate: closeAccount } = useCloseAccount();
   const { data: categories } = useGetAllProductCategories();
-  const { data: openCashRegisterData } = useGetOpenCashRegister(2);
+  const { data: openCashRegisterData } = useGetOpenCashRegister(1);
   const { data: accounts } = useGetAllAccounts(1);
   const [activeCategory, setActiveCategory] = useState(
     categories?.data.length ? categories.data[0].name : null,
