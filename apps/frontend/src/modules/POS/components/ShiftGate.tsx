@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { DollarSign, Clock, LogOut } from "lucide-react";
+import { DollarSign, Clock, LogOut, History } from "lucide-react";
 import { Button, Input, Label } from "@heroui/react";
 import dayjs from "dayjs";
-import { printTest } from "../../../shared/services/qz.service";
 
 export interface Shift {
   id: number;
@@ -99,10 +98,12 @@ export const ShiftBanner = ({
   shift,
   onClose,
   onExpenses,
+  onSalesHistory,
 }: {
   shift: Shift;
   onClose: () => void;
   onExpenses?: () => void;
+  onSalesHistory: () => void;
 }) => (
   <div className="mx-6 mt-4 flex items-center justify-between rounded-[20px] border border-primary/20 bg-pos-surface px-4 py-3 shadow-sm">
     <div className="flex items-center gap-3 text-sm">
@@ -115,6 +116,15 @@ export const ShiftBanner = ({
       </span>
     </div>
     <div className="flex items-center gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={ onSalesHistory }
+        className="text-muted-foreground hover:text-foreground gap-1.5"
+      >
+        <History  className="h-3.5 w-3.5" />
+        Ventas del turno
+      </Button>
       {onExpenses && (
         <Button
           variant="ghost"
@@ -135,13 +145,6 @@ export const ShiftBanner = ({
         <LogOut className="h-3.5 w-3.5" />
         Cerrar Turno
       </Button>
-      <button
-        onClick={() => {
-          printTest("XP-58");
-        }}
-      >
-        PRINT
-      </button>
     </div>
   </div>
 );

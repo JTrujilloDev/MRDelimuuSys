@@ -1,5 +1,6 @@
 import qz from "qz-tray";
 import { buildTicket } from "./ticketGenerator";
+import type { OrderInfo } from "../../modules/POS/components/CheckoutView";
 
 let isConnecting = false;
 
@@ -12,6 +13,12 @@ export const connectQZ = async () => {
     isConnecting = true;
     await qz.websocket.connect();
     console.log("QZ conectado");
+    
+    const printerList = await qz.printers.find();
+    console.log("Impresoras encontradas:", printerList);
+    
+    // 2. Return the array of printer names
+    return printerList;
   } catch (err) {
     console.error("Error conectando QZ", err);
     throw err;
@@ -20,16 +27,7 @@ export const connectQZ = async () => {
   }
 };
 
-export const getPrinters = async () => {
-  await connectQZ();
-  return await qz.printers.find("XP-58").then((printers) => {
-    console.log("Impresoras encontradas:", printers);
-
-    return printers;
-  });
-};
-
-export const printTest = async (printerName: string) => {
+export const printTicketService = async (printerName: string, order: OrderInfo) => {
   try {
     // await connectQZ
 
@@ -39,21 +37,7 @@ export const printTest = async (printerName: string) => {
       colorType: "blackwhite",
     });
 
-    const order = {
-      client: "Julian Trujillo",
-      nit: "79062341",
-      date: "20/04/26",
-      total: 15000,
-      items: [
-        { name: "Hamburguesa doble", qty: 2, price: 10000 },
-        { name: "Papas fritas", qty: 1, price: 5000 },
-      ],
-    };
-
     const data = buildTicket(order);
-
-
-
 
     await qz.print(config, data);
 

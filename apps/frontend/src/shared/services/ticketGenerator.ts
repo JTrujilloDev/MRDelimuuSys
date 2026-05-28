@@ -1,3 +1,5 @@
+import type { OrderInfo } from "../../modules/POS/components/CheckoutView";
+import type { OrderItem } from "../../modules/POS/components/OrderPanel";
 
 const LINE_WIDTH = 32;
 
@@ -42,10 +44,16 @@ const formatItem = (name: string, qty: number, price: number) => {
       lines.push(
         padRight(line, COLS.name) +
           padLeft(qty.toString(), COLS.qty) +
-          padLeft(price.toLocaleString(), COLS.price),
+          padLeft(price.toLocaleString(), COLS.price) +
+          "\n",
       );
     } else {
-      lines.push(line);
+      lines.push(
+        padRight(line, COLS.name) +
+          padLeft("", COLS.qty) +
+          padLeft("", COLS.price) +
+          "\n",
+      );
     }
   });
 
@@ -65,7 +73,7 @@ export const getBase64Logo = async () => {
   });
 };
 
-export const buildTicket = (order: any) => {
+export const buildTicket = (order: OrderInfo) => {
   const lines: any[] = [];
 
   // INIT
@@ -88,31 +96,39 @@ export const buildTicket = (order: any) => {
   lines.push("\x1B\x45\x01"); // bold
   lines.push("Julian Trujillo Roa\n");
   lines.push("\x1B\x45\x00");
-  lines.push("NIT: 79062341-1\n\n");
+  lines.push("NIT: 79062341-1\n");
+  lines.push("WHATSAPP: 312 333 6283\n\n");
 
-  // 📍 DIRECCIÓN
   lines.push("\x1B\x61\x00"); // left
 
   // 👤 CLIENTE
   lines.push("\x1B\x45\x01");
   lines.push("Cliente:\n");
   lines.push("\x1B\x45\x00");
-
-  lines.push(`${order.client}\n`);
-  lines.push(`NIT: ${order.nit}\n`);
-  lines.push(`Fecha: ${order.date}\n\n`);
+  if (order.idNumber) {
+    lines.push(`${order.clientName}\n`);
+    lines.push(`${order.idType}\n`);
+    lines.push(`${order.idNumber}\n`);
+    lines.push(`${order.email}\n`);
+    lines.push(`${order.date}\n\n`);
+  } else {
+    lines.push(`Consumidor final\n`);
+    lines.push(`${order.date}\n\n`);
+  }
 
   // 🧮 TABLA HEADER
+  lines.push("\x1B\x45\x01"); // bold
   lines.push(
     padRight("Producto", COLS.name) +
       padLeft("Cant", COLS.qty) +
       padLeft("Total", COLS.price) +
-      "\n"
+      "\n",
   );
+  lines.push("\x1B\x45\x00");
 
   // ITEMS
-  order.items.forEach((item: any) => {
-    lines.push(...formatItem(item.name, item.qty, item.price));
+  order.items.forEach((item: OrderItem) => {
+    lines.push(...formatItem(item.productName, item.quantity, item.price));
   });
 
   lines.push("\n"); // más aire después del logo
@@ -125,7 +141,7 @@ export const buildTicket = (order: any) => {
   lines.push(
     padRight("TOTAL", COLS.name + COLS.qty) +
       padLeft(order.total.toLocaleString(), COLS.price) +
-      "\n"
+      "\n",
   );
 
   lines.push("\x1B\x21\x00"); // normal
@@ -134,8 +150,7 @@ export const buildTicket = (order: any) => {
   lines.push("\n");
   lines.push("\x1B\x61\x01"); // center
 
-
- lines.push({
+  lines.push({
     type: "raw",
     format: "image",
     flavor: "file",

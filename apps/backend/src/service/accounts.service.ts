@@ -492,6 +492,7 @@ export const closeAccountService = async ({
         paymentMethod,
         total,
         financialTransactionId: financialTransaction.id,
+        cashRegisterId,
       },
       include: {
         accountItems: true,
@@ -502,6 +503,4 @@ export const closeAccountService = async ({
   });
 };
 
-// export const getAllAccountsService = ()=>{
 
-// }

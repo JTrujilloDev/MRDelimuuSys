@@ -5,11 +5,25 @@ import { FiFileText, FiTag } from "react-icons/fi";
 import { BiCreditCard } from "react-icons/bi";
 import type { OrderItem } from "./OrderPanel";
 import numeral from "numeral";
+import { Printer } from "lucide-react";
+import dayjs from "dayjs";
 
-interface CloseAccountParams {
+export interface OrderInfo {
+  clientName: string;
+  idType: string;
+  idNumber: string;
+  email: string;
+  phone: string;
+  date: string;
+  items: OrderItem[];
+  total: number;
+}
+export interface CloseAccountParams {
   accountId: number;
   paymentMethod: string;
   cashRegisterId: number;
+  order: OrderInfo;
+  printTicket: boolean;
 }
 interface CheckoutViewProps {
   items: OrderItem[];
@@ -34,6 +48,7 @@ const CheckoutView = ({
   const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [cashReceived, setCashReceived] = useState("");
   const [qrGenerated, setQrGenerated] = useState(false);
+  const [printTicket, setPrintTicket] = useState(false);
 
   const subtotal = useMemo(
     () => items.reduce((s, i) => s + i.price * i.quantity, 0),
@@ -323,6 +338,17 @@ const CheckoutView = ({
           {/* Confirm button pinned at bottom */}
           <div className="mt-auto pt-6">
             <Button
+              onClick={() => setPrintTicket(() => !printTicket)}
+              className={`w-full py-6 text-base font-bold ${printTicket ? "text-green-500 bg-green-500/10" : "text-muted-foreground"}`}
+              size="lg"
+              variant={printTicket ? "secondary" : "outline"}
+            >
+              <Printer className="h-5 w-5" />
+              Imprimir recibo al confirmar
+            </Button>
+          </div>
+          <div className=" pt-6">
+            <Button
               onClick={() => setConfirmOpen(true)}
               isDisabled={!canConfirm}
               className="w-full py-6 text-base font-bold"
@@ -383,6 +409,17 @@ const CheckoutView = ({
                     accountId: accountInfo.accountId,
                     paymentMethod,
                     cashRegisterId: accountInfo.cashRegisterId,
+                    order: {
+                      clientName: "",
+                      idType: "",
+                      idNumber: "",
+                      email: "",
+                      phone: "",
+                      date: dayjs().format("DD/MM/YYYY HH:mm"),
+                      items,
+                      total,
+                    },
+                    printTicket,
                   });
                 }}
               >

@@ -31,6 +31,7 @@ export type AccountAvgAggregateOutputType = {
   userId: number | null
   terminalId: number | null
   tableNumber: number | null
+  cashRegisterId: number | null
   total: number | null
   discount: number | null
   customerId: number | null
@@ -42,6 +43,7 @@ export type AccountSumAggregateOutputType = {
   userId: number | null
   terminalId: number | null
   tableNumber: number[]
+  cashRegisterId: number | null
   total: number | null
   discount: number | null
   customerId: number | null
@@ -54,6 +56,7 @@ export type AccountMinAggregateOutputType = {
   name: string | null
   terminalId: number | null
   status: $Enums.AccountStatus | null
+  cashRegisterId: number | null
   createdAt: Date | null
   updatedAt: Date | null
   total: number | null
@@ -71,6 +74,7 @@ export type AccountMaxAggregateOutputType = {
   name: string | null
   terminalId: number | null
   status: $Enums.AccountStatus | null
+  cashRegisterId: number | null
   createdAt: Date | null
   updatedAt: Date | null
   total: number | null
@@ -89,6 +93,7 @@ export type AccountCountAggregateOutputType = {
   terminalId: number
   tableNumber: number
   status: number
+  cashRegisterId: number
   createdAt: number
   updatedAt: number
   total: number
@@ -107,6 +112,7 @@ export type AccountAvgAggregateInputType = {
   userId?: true
   terminalId?: true
   tableNumber?: true
+  cashRegisterId?: true
   total?: true
   discount?: true
   customerId?: true
@@ -118,6 +124,7 @@ export type AccountSumAggregateInputType = {
   userId?: true
   terminalId?: true
   tableNumber?: true
+  cashRegisterId?: true
   total?: true
   discount?: true
   customerId?: true
@@ -130,6 +137,7 @@ export type AccountMinAggregateInputType = {
   name?: true
   terminalId?: true
   status?: true
+  cashRegisterId?: true
   createdAt?: true
   updatedAt?: true
   total?: true
@@ -147,6 +155,7 @@ export type AccountMaxAggregateInputType = {
   name?: true
   terminalId?: true
   status?: true
+  cashRegisterId?: true
   createdAt?: true
   updatedAt?: true
   total?: true
@@ -165,6 +174,7 @@ export type AccountCountAggregateInputType = {
   terminalId?: true
   tableNumber?: true
   status?: true
+  cashRegisterId?: true
   createdAt?: true
   updatedAt?: true
   total?: true
@@ -270,6 +280,7 @@ export type AccountGroupByOutputType = {
   terminalId: number
   tableNumber: number[]
   status: $Enums.AccountStatus
+  cashRegisterId: number | null
   createdAt: Date
   updatedAt: Date
   total: number
@@ -311,6 +322,7 @@ export type AccountWhereInput = {
   terminalId?: Prisma.IntFilter<"Account"> | number
   tableNumber?: Prisma.IntNullableListFilter<"Account">
   status?: Prisma.EnumAccountStatusFilter<"Account"> | $Enums.AccountStatus
+  cashRegisterId?: Prisma.IntNullableFilter<"Account"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   total?: Prisma.FloatFilter<"Account"> | number
@@ -322,6 +334,7 @@ export type AccountWhereInput = {
   financialTransactionId?: Prisma.IntNullableFilter<"Account"> | number | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   terminal?: Prisma.XOR<Prisma.TerminalScalarRelationFilter, Prisma.TerminalWhereInput>
+  cashRegister?: Prisma.XOR<Prisma.CashRegisterNullableScalarRelationFilter, Prisma.CashRegisterWhereInput> | null
   accountItems?: Prisma.AccountItemListRelationFilter
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   financialTransactions?: Prisma.FinancialTransactionListRelationFilter
@@ -334,6 +347,7 @@ export type AccountOrderByWithRelationInput = {
   terminalId?: Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  cashRegisterId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   total?: Prisma.SortOrder
@@ -345,6 +359,7 @@ export type AccountOrderByWithRelationInput = {
   financialTransactionId?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   terminal?: Prisma.TerminalOrderByWithRelationInput
+  cashRegister?: Prisma.CashRegisterOrderByWithRelationInput
   accountItems?: Prisma.AccountItemOrderByRelationAggregateInput
   customer?: Prisma.CustomerOrderByWithRelationInput
   financialTransactions?: Prisma.FinancialTransactionOrderByRelationAggregateInput
@@ -360,6 +375,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   terminalId?: Prisma.IntFilter<"Account"> | number
   tableNumber?: Prisma.IntNullableListFilter<"Account">
   status?: Prisma.EnumAccountStatusFilter<"Account"> | $Enums.AccountStatus
+  cashRegisterId?: Prisma.IntNullableFilter<"Account"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   total?: Prisma.FloatFilter<"Account"> | number
@@ -371,6 +387,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   financialTransactionId?: Prisma.IntNullableFilter<"Account"> | number | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   terminal?: Prisma.XOR<Prisma.TerminalScalarRelationFilter, Prisma.TerminalWhereInput>
+  cashRegister?: Prisma.XOR<Prisma.CashRegisterNullableScalarRelationFilter, Prisma.CashRegisterWhereInput> | null
   accountItems?: Prisma.AccountItemListRelationFilter
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   financialTransactions?: Prisma.FinancialTransactionListRelationFilter
@@ -383,6 +400,7 @@ export type AccountOrderByWithAggregationInput = {
   terminalId?: Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  cashRegisterId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   total?: Prisma.SortOrder
@@ -409,6 +427,7 @@ export type AccountScalarWhereWithAggregatesInput = {
   terminalId?: Prisma.IntWithAggregatesFilter<"Account"> | number
   tableNumber?: Prisma.IntNullableListFilter<"Account">
   status?: Prisma.EnumAccountStatusWithAggregatesFilter<"Account"> | $Enums.AccountStatus
+  cashRegisterId?: Prisma.IntNullableWithAggregatesFilter<"Account"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Account"> | Date | string
   total?: Prisma.FloatWithAggregatesFilter<"Account"> | number
@@ -434,6 +453,7 @@ export type AccountCreateInput = {
   financialTransactionId?: number | null
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   terminal: Prisma.TerminalCreateNestedOneWithoutAccountsInput
+  cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutAccountsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutAccountInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
@@ -446,6 +466,7 @@ export type AccountUncheckedCreateInput = {
   terminalId: number
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -473,6 +494,7 @@ export type AccountUpdateInput = {
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   terminal?: Prisma.TerminalUpdateOneRequiredWithoutAccountsNestedInput
+  cashRegister?: Prisma.CashRegisterUpdateOneWithoutAccountsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutAccountNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
@@ -485,6 +507,7 @@ export type AccountUncheckedUpdateInput = {
   terminalId?: Prisma.IntFieldUpdateOperationsInput | number
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -505,6 +528,7 @@ export type AccountCreateManyInput = {
   terminalId: number
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -537,6 +561,7 @@ export type AccountUncheckedUpdateManyInput = {
   terminalId?: Prisma.IntFieldUpdateOperationsInput | number
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -573,6 +598,7 @@ export type AccountCountOrderByAggregateInput = {
   terminalId?: Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  cashRegisterId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   total?: Prisma.SortOrder
@@ -589,6 +615,7 @@ export type AccountAvgOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   terminalId?: Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
+  cashRegisterId?: Prisma.SortOrder
   total?: Prisma.SortOrder
   discount?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
@@ -601,6 +628,7 @@ export type AccountMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   terminalId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  cashRegisterId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   total?: Prisma.SortOrder
@@ -618,6 +646,7 @@ export type AccountMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   terminalId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  cashRegisterId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   total?: Prisma.SortOrder
@@ -634,6 +663,7 @@ export type AccountSumOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   terminalId?: Prisma.SortOrder
   tableNumber?: Prisma.SortOrder
+  cashRegisterId?: Prisma.SortOrder
   total?: Prisma.SortOrder
   discount?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
@@ -793,6 +823,48 @@ export type AccountUncheckedUpdateManyWithoutCustomerNestedInput = {
   deleteMany?: Prisma.AccountScalarWhereInput | Prisma.AccountScalarWhereInput[]
 }
 
+export type AccountCreateNestedManyWithoutCashRegisterInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutCashRegisterInput, Prisma.AccountUncheckedCreateWithoutCashRegisterInput> | Prisma.AccountCreateWithoutCashRegisterInput[] | Prisma.AccountUncheckedCreateWithoutCashRegisterInput[]
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutCashRegisterInput | Prisma.AccountCreateOrConnectWithoutCashRegisterInput[]
+  createMany?: Prisma.AccountCreateManyCashRegisterInputEnvelope
+  connect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+}
+
+export type AccountUncheckedCreateNestedManyWithoutCashRegisterInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutCashRegisterInput, Prisma.AccountUncheckedCreateWithoutCashRegisterInput> | Prisma.AccountCreateWithoutCashRegisterInput[] | Prisma.AccountUncheckedCreateWithoutCashRegisterInput[]
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutCashRegisterInput | Prisma.AccountCreateOrConnectWithoutCashRegisterInput[]
+  createMany?: Prisma.AccountCreateManyCashRegisterInputEnvelope
+  connect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+}
+
+export type AccountUpdateManyWithoutCashRegisterNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutCashRegisterInput, Prisma.AccountUncheckedCreateWithoutCashRegisterInput> | Prisma.AccountCreateWithoutCashRegisterInput[] | Prisma.AccountUncheckedCreateWithoutCashRegisterInput[]
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutCashRegisterInput | Prisma.AccountCreateOrConnectWithoutCashRegisterInput[]
+  upsert?: Prisma.AccountUpsertWithWhereUniqueWithoutCashRegisterInput | Prisma.AccountUpsertWithWhereUniqueWithoutCashRegisterInput[]
+  createMany?: Prisma.AccountCreateManyCashRegisterInputEnvelope
+  set?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  disconnect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  delete?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  connect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  update?: Prisma.AccountUpdateWithWhereUniqueWithoutCashRegisterInput | Prisma.AccountUpdateWithWhereUniqueWithoutCashRegisterInput[]
+  updateMany?: Prisma.AccountUpdateManyWithWhereWithoutCashRegisterInput | Prisma.AccountUpdateManyWithWhereWithoutCashRegisterInput[]
+  deleteMany?: Prisma.AccountScalarWhereInput | Prisma.AccountScalarWhereInput[]
+}
+
+export type AccountUncheckedUpdateManyWithoutCashRegisterNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutCashRegisterInput, Prisma.AccountUncheckedCreateWithoutCashRegisterInput> | Prisma.AccountCreateWithoutCashRegisterInput[] | Prisma.AccountUncheckedCreateWithoutCashRegisterInput[]
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutCashRegisterInput | Prisma.AccountCreateOrConnectWithoutCashRegisterInput[]
+  upsert?: Prisma.AccountUpsertWithWhereUniqueWithoutCashRegisterInput | Prisma.AccountUpsertWithWhereUniqueWithoutCashRegisterInput[]
+  createMany?: Prisma.AccountCreateManyCashRegisterInputEnvelope
+  set?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  disconnect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  delete?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  connect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  update?: Prisma.AccountUpdateWithWhereUniqueWithoutCashRegisterInput | Prisma.AccountUpdateWithWhereUniqueWithoutCashRegisterInput[]
+  updateMany?: Prisma.AccountUpdateManyWithWhereWithoutCashRegisterInput | Prisma.AccountUpdateManyWithWhereWithoutCashRegisterInput[]
+  deleteMany?: Prisma.AccountScalarWhereInput | Prisma.AccountScalarWhereInput[]
+}
+
 export type AccountCreateNestedManyWithoutTerminalInput = {
   create?: Prisma.XOR<Prisma.AccountCreateWithoutTerminalInput, Prisma.AccountUncheckedCreateWithoutTerminalInput> | Prisma.AccountCreateWithoutTerminalInput[] | Prisma.AccountUncheckedCreateWithoutTerminalInput[]
   connectOrCreate?: Prisma.AccountCreateOrConnectWithoutTerminalInput | Prisma.AccountCreateOrConnectWithoutTerminalInput[]
@@ -848,6 +920,7 @@ export type AccountCreateWithoutUserInput = {
   paymentMethod?: $Enums.PaymentMethod | null
   financialTransactionId?: number | null
   terminal: Prisma.TerminalCreateNestedOneWithoutAccountsInput
+  cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutAccountsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutAccountInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
@@ -859,6 +932,7 @@ export type AccountUncheckedCreateWithoutUserInput = {
   terminalId: number
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -908,6 +982,7 @@ export type AccountScalarWhereInput = {
   terminalId?: Prisma.IntFilter<"Account"> | number
   tableNumber?: Prisma.IntNullableListFilter<"Account">
   status?: Prisma.EnumAccountStatusFilter<"Account"> | $Enums.AccountStatus
+  cashRegisterId?: Prisma.IntNullableFilter<"Account"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   total?: Prisma.FloatFilter<"Account"> | number
@@ -933,6 +1008,7 @@ export type AccountCreateWithoutAccountItemsInput = {
   financialTransactionId?: number | null
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   terminal: Prisma.TerminalCreateNestedOneWithoutAccountsInput
+  cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutAccountsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
 }
@@ -944,6 +1020,7 @@ export type AccountUncheckedCreateWithoutAccountItemsInput = {
   terminalId: number
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -986,6 +1063,7 @@ export type AccountUpdateWithoutAccountItemsInput = {
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   terminal?: Prisma.TerminalUpdateOneRequiredWithoutAccountsNestedInput
+  cashRegister?: Prisma.CashRegisterUpdateOneWithoutAccountsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
 }
@@ -997,6 +1075,7 @@ export type AccountUncheckedUpdateWithoutAccountItemsInput = {
   terminalId?: Prisma.IntFieldUpdateOperationsInput | number
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1023,6 +1102,7 @@ export type AccountCreateWithoutFinancialTransactionsInput = {
   financialTransactionId?: number | null
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   terminal: Prisma.TerminalCreateNestedOneWithoutAccountsInput
+  cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutAccountsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutAccountInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
 }
@@ -1034,6 +1114,7 @@ export type AccountUncheckedCreateWithoutFinancialTransactionsInput = {
   terminalId: number
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -1076,6 +1157,7 @@ export type AccountUpdateWithoutFinancialTransactionsInput = {
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   terminal?: Prisma.TerminalUpdateOneRequiredWithoutAccountsNestedInput
+  cashRegister?: Prisma.CashRegisterUpdateOneWithoutAccountsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutAccountNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
 }
@@ -1087,6 +1169,7 @@ export type AccountUncheckedUpdateWithoutFinancialTransactionsInput = {
   terminalId?: Prisma.IntFieldUpdateOperationsInput | number
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1113,6 +1196,7 @@ export type AccountCreateWithoutCustomerInput = {
   financialTransactionId?: number | null
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
   terminal: Prisma.TerminalCreateNestedOneWithoutAccountsInput
+  cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutAccountsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
 }
@@ -1124,6 +1208,7 @@ export type AccountUncheckedCreateWithoutCustomerInput = {
   terminalId: number
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -1162,6 +1247,71 @@ export type AccountUpdateManyWithWhereWithoutCustomerInput = {
   data: Prisma.XOR<Prisma.AccountUpdateManyMutationInput, Prisma.AccountUncheckedUpdateManyWithoutCustomerInput>
 }
 
+export type AccountCreateWithoutCashRegisterInput = {
+  name: string
+  tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
+  status?: $Enums.AccountStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  total?: number
+  discount?: number
+  discountObservation?: string | null
+  closedAt?: Date | string | null
+  paymentMethod?: $Enums.PaymentMethod | null
+  financialTransactionId?: number | null
+  user: Prisma.UserCreateNestedOneWithoutAccountsInput
+  terminal: Prisma.TerminalCreateNestedOneWithoutAccountsInput
+  accountItems?: Prisma.AccountItemCreateNestedManyWithoutAccountInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
+  financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+}
+
+export type AccountUncheckedCreateWithoutCashRegisterInput = {
+  id?: number
+  userId: number
+  name: string
+  terminalId: number
+  tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
+  status?: $Enums.AccountStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  total?: number
+  discount?: number
+  discountObservation?: string | null
+  closedAt?: Date | string | null
+  paymentMethod?: $Enums.PaymentMethod | null
+  customerId?: number | null
+  financialTransactionId?: number | null
+  accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
+  financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+}
+
+export type AccountCreateOrConnectWithoutCashRegisterInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutCashRegisterInput, Prisma.AccountUncheckedCreateWithoutCashRegisterInput>
+}
+
+export type AccountCreateManyCashRegisterInputEnvelope = {
+  data: Prisma.AccountCreateManyCashRegisterInput | Prisma.AccountCreateManyCashRegisterInput[]
+  skipDuplicates?: boolean
+}
+
+export type AccountUpsertWithWhereUniqueWithoutCashRegisterInput = {
+  where: Prisma.AccountWhereUniqueInput
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutCashRegisterInput, Prisma.AccountUncheckedUpdateWithoutCashRegisterInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutCashRegisterInput, Prisma.AccountUncheckedCreateWithoutCashRegisterInput>
+}
+
+export type AccountUpdateWithWhereUniqueWithoutCashRegisterInput = {
+  where: Prisma.AccountWhereUniqueInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutCashRegisterInput, Prisma.AccountUncheckedUpdateWithoutCashRegisterInput>
+}
+
+export type AccountUpdateManyWithWhereWithoutCashRegisterInput = {
+  where: Prisma.AccountScalarWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateManyMutationInput, Prisma.AccountUncheckedUpdateManyWithoutCashRegisterInput>
+}
+
 export type AccountCreateWithoutTerminalInput = {
   name: string
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
@@ -1175,6 +1325,7 @@ export type AccountCreateWithoutTerminalInput = {
   paymentMethod?: $Enums.PaymentMethod | null
   financialTransactionId?: number | null
   user: Prisma.UserCreateNestedOneWithoutAccountsInput
+  cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutAccountsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutAccountInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
@@ -1186,6 +1337,7 @@ export type AccountUncheckedCreateWithoutTerminalInput = {
   name: string
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -1231,6 +1383,7 @@ export type AccountCreateManyUserInput = {
   terminalId: number
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -1255,6 +1408,7 @@ export type AccountUpdateWithoutUserInput = {
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   terminal?: Prisma.TerminalUpdateOneRequiredWithoutAccountsNestedInput
+  cashRegister?: Prisma.CashRegisterUpdateOneWithoutAccountsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutAccountNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
@@ -1266,6 +1420,7 @@ export type AccountUncheckedUpdateWithoutUserInput = {
   terminalId?: Prisma.IntFieldUpdateOperationsInput | number
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1285,6 +1440,7 @@ export type AccountUncheckedUpdateManyWithoutUserInput = {
   terminalId?: Prisma.IntFieldUpdateOperationsInput | number
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1303,6 +1459,7 @@ export type AccountCreateManyCustomerInput = {
   terminalId: number
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -1327,6 +1484,7 @@ export type AccountUpdateWithoutCustomerInput = {
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
   terminal?: Prisma.TerminalUpdateOneRequiredWithoutAccountsNestedInput
+  cashRegister?: Prisma.CashRegisterUpdateOneWithoutAccountsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
 }
@@ -1338,6 +1496,7 @@ export type AccountUncheckedUpdateWithoutCustomerInput = {
   terminalId?: Prisma.IntFieldUpdateOperationsInput | number
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1357,6 +1516,7 @@ export type AccountUncheckedUpdateManyWithoutCustomerInput = {
   terminalId?: Prisma.IntFieldUpdateOperationsInput | number
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1367,12 +1527,88 @@ export type AccountUncheckedUpdateManyWithoutCustomerInput = {
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
+export type AccountCreateManyCashRegisterInput = {
+  id?: number
+  userId: number
+  name: string
+  terminalId: number
+  tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
+  status?: $Enums.AccountStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  total?: number
+  discount?: number
+  discountObservation?: string | null
+  closedAt?: Date | string | null
+  paymentMethod?: $Enums.PaymentMethod | null
+  customerId?: number | null
+  financialTransactionId?: number | null
+}
+
+export type AccountUpdateWithoutCashRegisterInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
+  status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  discountObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
+  terminal?: Prisma.TerminalUpdateOneRequiredWithoutAccountsNestedInput
+  accountItems?: Prisma.AccountItemUpdateManyWithoutAccountNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
+  financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutCashRegisterInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  terminalId?: Prisma.IntFieldUpdateOperationsInput | number
+  tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
+  status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  discountObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
+  financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountUncheckedUpdateManyWithoutCashRegisterInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  terminalId?: Prisma.IntFieldUpdateOperationsInput | number
+  tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
+  status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  discountObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
 export type AccountCreateManyTerminalInput = {
   id?: number
   userId: number
   name: string
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
   status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   total?: number
@@ -1397,6 +1633,7 @@ export type AccountUpdateWithoutTerminalInput = {
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
+  cashRegister?: Prisma.CashRegisterUpdateOneWithoutAccountsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutAccountNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
@@ -1408,6 +1645,7 @@ export type AccountUncheckedUpdateWithoutTerminalInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1427,6 +1665,7 @@ export type AccountUncheckedUpdateManyWithoutTerminalInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   total?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1485,6 +1724,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   terminalId?: boolean
   tableNumber?: boolean
   status?: boolean
+  cashRegisterId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   total?: boolean
@@ -1496,6 +1736,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   financialTransactionId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   terminal?: boolean | Prisma.TerminalDefaultArgs<ExtArgs>
+  cashRegister?: boolean | Prisma.Account$cashRegisterArgs<ExtArgs>
   accountItems?: boolean | Prisma.Account$accountItemsArgs<ExtArgs>
   customer?: boolean | Prisma.Account$customerArgs<ExtArgs>
   financialTransactions?: boolean | Prisma.Account$financialTransactionsArgs<ExtArgs>
@@ -1509,6 +1750,7 @@ export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   terminalId?: boolean
   tableNumber?: boolean
   status?: boolean
+  cashRegisterId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   total?: boolean
@@ -1520,6 +1762,7 @@ export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   financialTransactionId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   terminal?: boolean | Prisma.TerminalDefaultArgs<ExtArgs>
+  cashRegister?: boolean | Prisma.Account$cashRegisterArgs<ExtArgs>
   customer?: boolean | Prisma.Account$customerArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -1530,6 +1773,7 @@ export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   terminalId?: boolean
   tableNumber?: boolean
   status?: boolean
+  cashRegisterId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   total?: boolean
@@ -1541,6 +1785,7 @@ export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   financialTransactionId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   terminal?: boolean | Prisma.TerminalDefaultArgs<ExtArgs>
+  cashRegister?: boolean | Prisma.Account$cashRegisterArgs<ExtArgs>
   customer?: boolean | Prisma.Account$customerArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -1551,6 +1796,7 @@ export type AccountSelectScalar = {
   terminalId?: boolean
   tableNumber?: boolean
   status?: boolean
+  cashRegisterId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   total?: boolean
@@ -1562,10 +1808,11 @@ export type AccountSelectScalar = {
   financialTransactionId?: boolean
 }
 
-export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "terminalId" | "tableNumber" | "status" | "createdAt" | "updatedAt" | "total" | "discount" | "discountObservation" | "closedAt" | "paymentMethod" | "customerId" | "financialTransactionId", ExtArgs["result"]["account"]>
+export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "terminalId" | "tableNumber" | "status" | "cashRegisterId" | "createdAt" | "updatedAt" | "total" | "discount" | "discountObservation" | "closedAt" | "paymentMethod" | "customerId" | "financialTransactionId", ExtArgs["result"]["account"]>
 export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   terminal?: boolean | Prisma.TerminalDefaultArgs<ExtArgs>
+  cashRegister?: boolean | Prisma.Account$cashRegisterArgs<ExtArgs>
   accountItems?: boolean | Prisma.Account$accountItemsArgs<ExtArgs>
   customer?: boolean | Prisma.Account$customerArgs<ExtArgs>
   financialTransactions?: boolean | Prisma.Account$financialTransactionsArgs<ExtArgs>
@@ -1574,11 +1821,13 @@ export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type AccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   terminal?: boolean | Prisma.TerminalDefaultArgs<ExtArgs>
+  cashRegister?: boolean | Prisma.Account$cashRegisterArgs<ExtArgs>
   customer?: boolean | Prisma.Account$customerArgs<ExtArgs>
 }
 export type AccountIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   terminal?: boolean | Prisma.TerminalDefaultArgs<ExtArgs>
+  cashRegister?: boolean | Prisma.Account$cashRegisterArgs<ExtArgs>
   customer?: boolean | Prisma.Account$customerArgs<ExtArgs>
 }
 
@@ -1587,6 +1836,7 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     terminal: Prisma.$TerminalPayload<ExtArgs>
+    cashRegister: Prisma.$CashRegisterPayload<ExtArgs> | null
     accountItems: Prisma.$AccountItemPayload<ExtArgs>[]
     customer: Prisma.$CustomerPayload<ExtArgs> | null
     financialTransactions: Prisma.$FinancialTransactionPayload<ExtArgs>[]
@@ -1598,6 +1848,7 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     terminalId: number
     tableNumber: number[]
     status: $Enums.AccountStatus
+    cashRegisterId: number | null
     createdAt: Date
     updatedAt: Date
     total: number
@@ -2003,6 +2254,7 @@ export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   terminal<T extends Prisma.TerminalDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TerminalDefaultArgs<ExtArgs>>): Prisma.Prisma__TerminalClient<runtime.Types.Result.GetResult<Prisma.$TerminalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  cashRegister<T extends Prisma.Account$cashRegisterArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$cashRegisterArgs<ExtArgs>>): Prisma.Prisma__CashRegisterClient<runtime.Types.Result.GetResult<Prisma.$CashRegisterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   accountItems<T extends Prisma.Account$accountItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$accountItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customer<T extends Prisma.Account$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$customerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   financialTransactions<T extends Prisma.Account$financialTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$financialTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FinancialTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2041,6 +2293,7 @@ export interface AccountFieldRefs {
   readonly terminalId: Prisma.FieldRef<"Account", 'Int'>
   readonly tableNumber: Prisma.FieldRef<"Account", 'Int[]'>
   readonly status: Prisma.FieldRef<"Account", 'AccountStatus'>
+  readonly cashRegisterId: Prisma.FieldRef<"Account", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Account", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Account", 'DateTime'>
   readonly total: Prisma.FieldRef<"Account", 'Float'>
@@ -2448,6 +2701,25 @@ export type AccountDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Accounts to delete.
    */
   limit?: number
+}
+
+/**
+ * Account.cashRegister
+ */
+export type Account$cashRegisterArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CashRegister
+   */
+  select?: Prisma.CashRegisterSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CashRegister
+   */
+  omit?: Prisma.CashRegisterOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CashRegisterInclude<ExtArgs> | null
+  where?: Prisma.CashRegisterWhereInput
 }
 
 /**

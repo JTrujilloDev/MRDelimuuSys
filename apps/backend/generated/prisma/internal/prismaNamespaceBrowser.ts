@@ -142,6 +142,7 @@ export const AccountScalarFieldEnum = {
   terminalId: 'terminalId',
   tableNumber: 'tableNumber',
   status: 'status',
+  cashRegisterId: 'cashRegisterId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   total: 'total',

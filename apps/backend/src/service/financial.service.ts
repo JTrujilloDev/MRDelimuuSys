@@ -1,12 +1,12 @@
 import { FinancialTransaction } from "../../generated/prisma/client";
 import { PaymentMethod } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
+import { updateCashRegisterTotalsTx } from "./cashRegister.service";
 
 export const createFinancialTransactionService = async (
   data: FinancialTransaction,
 ) => {
   return await prisma.$transaction(async (tx) => {
-
     // 1. Validar monto
     if (!data.amount || data.amount <= 0) {
       throw new Error("Invalid amount");
@@ -50,6 +50,13 @@ export const createFinancialTransactionService = async (
       }
     }
 
+    if (data.relatedCashRegisterId && data.type === "EXPENSE") {
+      await updateCashRegisterTotalsTx(tx, {
+        cashRegisterId: data.relatedCashRegisterId,
+        expenseAmount: data.amount,
+      });
+    }
+
     // 4. Crear transacción
     const transaction = await tx.financialTransaction.create({
       data: {
@@ -81,7 +88,7 @@ interface FinancialTransactionFilters {
   limit?: number;
 }
 export const getFinancialTransactionsService = async (
-  filters: FinancialTransactionFilters = {}
+  filters: FinancialTransactionFilters,
 ) => {
   const {
     type,
@@ -97,13 +104,27 @@ export const getFinancialTransactionsService = async (
     limit = 20,
   } = filters;
 
+  console.log(
+    type,
+    paymentMethod,
+    cashRegisterId,
+    accountId,
+    minAmount,
+    maxAmount,
+    from,
+    to,
+    search,
+    page,
+    limit,
+  );
+
   const where: any = {};
 
   // 1. Filtros directos
   if (type) where.type = type;
   if (paymentMethod) where.paymentMethod = paymentMethod;
-  if (cashRegisterId) where.relatedCashRegisterId = cashRegisterId;
-  if (accountId) where.relatedAccountId = accountId;
+  if (cashRegisterId) where.relatedCashRegisterId = Number(cashRegisterId); // TODO: cashRegisterId;
+  if (accountId) where.relatedAccountId = Number(accountId);
 
   // 2. Rango de montos
   if (minAmount !== undefined || maxAmount !== undefined) {

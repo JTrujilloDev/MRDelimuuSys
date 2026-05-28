@@ -182,6 +182,13 @@ export const getOpenCashRegisterService = async (terminalId: number) => {
       terminalId,
       status: "OPEN",
     },
+    include:{
+      accounts: {
+        include: {
+          accountItems: true,
+        }
+      } 
+    }
   });
   return cashRegister;
 };

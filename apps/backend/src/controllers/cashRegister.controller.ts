@@ -78,3 +78,5 @@ export const getOpenCashRegister = async (req: Request, res: Response) => {
 };
 
 
+
+

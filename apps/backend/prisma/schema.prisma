@@ -83,6 +83,9 @@ model Account {
   terminal    Terminal      @relation(fields: [terminalId], references: [id])
   tableNumber Int[]
   status      AccountStatus @default(OPEN)
+  cashRegisterId Int?
+  cashRegister   CashRegister? @relation(fields: [cashRegisterId], references: [id])
+
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -207,6 +210,7 @@ model CashRegister {
   openingAmount Float
   closingAmount Float?
   difference    Float?
+  
 
   status CashRegisterStatus @default(OPEN)
 
@@ -220,6 +224,7 @@ model CashRegister {
   creditAmount   Float @default(0)
 
   transactions FinancialTransaction[]
+  accounts     Account[]
 
   user User @relation(fields: [userId], references: [id])
 }

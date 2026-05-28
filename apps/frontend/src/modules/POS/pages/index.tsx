@@ -7,7 +7,7 @@ import ShiftGate, { ShiftBanner } from "../components/ShiftGate";
 import CloseShiftView from "../components/CloseShiftView";
 import ExpensesView from "../components/ExpensesView";
 import TableGrid from "../components/TableGrid";
-import CheckoutView from "../components/CheckoutView";
+import CheckoutView, { type CloseAccountParams } from "../components/CheckoutView";
 import CategoryTabs from "../components/CategoryTabs";
 import ProductCard from "../components/ProductCards";
 import OrderPanel from "../components/OrderPanel";
@@ -26,7 +26,8 @@ import useDeleteAccountItem from "../hooks/accounts/useDeleteAccountItem";
 import { useAdjustAccountItemQuantity } from "../hooks/accounts/useAdjustAccountItemQuantity";
 import { useDeleteAccount } from "../hooks/accounts/useDeleteAccount";
 import { useCloseAccount } from "../hooks/accounts/useCloseAccount";
-import { printTest } from "../../../shared/services/qz.service";
+import {printTicketService} from "../../../shared/services/qz.service";
+import SalesHistory from "../components/SalesHistory";
 
 const Index = () => {
   const { mutate: openCashRegister } = useOpenCashRegister();
@@ -52,6 +53,7 @@ const Index = () => {
   const [showCloseShift, setShowCloseShift] = useState(false);
   const [showExpenses, setShowExpenses] = useState(false);
   const [shiftExpenses, setShiftExpenses] = useState<ExpenseFull[]>([]);
+  const [showSalesHistory, setShowSalesHistory] = useState(false);
 
   const handleOpenShift = useCallback((initialAmount: number) => {
     openCashRegister(
@@ -195,11 +197,10 @@ const Index = () => {
     accountId,
     paymentMethod,
     cashRegisterId,
-  }: {
-    accountId: number;
-    paymentMethod: string;
-    cashRegisterId: number;
-  }) => {
+    order,
+    printTicket
+     
+  }: CloseAccountParams) => {
     closeAccount(
       {
         accountId: accountId,
@@ -207,11 +208,16 @@ const Index = () => {
         cashRegisterId: cashRegisterId,
       },
       {
-        onSuccess: () => {
+        onSuccess:async () => {
           toast("Cuenta cerrada exitosamente", { variant: "success" });
+
+          if (printTicket) {
+            await printTicketService("XP-58", order);
+          }
           setShowCheckout(false);
           setActiveTableId(null);
         },
+
         onError: (data) => {
           toast("Error al cerrar la cuenta", {
             variant: "danger",
@@ -271,20 +277,25 @@ const Index = () => {
   if (showExpenses) {
     return (
       <ExpensesView
-        expenses={shiftExpenses}
-        onAddExpense={handleAddExpense}
-        onRemoveExpense={handleRemoveExpense}
+        cashRegisterId={openCashRegisterData.data.id}
         onBack={() => setShowExpenses(false)}
       />
     );
   }
 
+  // ── Sales history view ──
+  if (showSalesHistory) {
+    return (
+      <SalesHistory onBack={() => setShowSalesHistory(false)} sales={openCashRegisterData?.data?.accounts || []} />
+    );
+  }
   // ── Tables view ──
   if (!activeTableId) {
     return (
       <div className="flex h-full flex-col">
         <ShiftBanner
           shift={openCashRegisterData?.data}
+          onSalesHistory={() => setShowSalesHistory(true)}
           onClose={() => setShowCloseShift(true)}
           onExpenses={() => setShowExpenses(true)}
         />
