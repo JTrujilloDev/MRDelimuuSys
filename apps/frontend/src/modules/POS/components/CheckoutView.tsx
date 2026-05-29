@@ -18,11 +18,18 @@ export interface OrderInfo {
   items: OrderItem[];
   total: number;
 }
+
+export interface PrinterCommand {
+  type: string;
+  format: string;
+  flavor: string;
+  data: string;
+}
 export interface CloseAccountParams {
   accountId: number;
   paymentMethod: string;
   cashRegisterId: number;
-  order: OrderInfo;
+  order: OrderInfo | PrinterCommand;
   printTicket: boolean;
 }
 interface CheckoutViewProps {

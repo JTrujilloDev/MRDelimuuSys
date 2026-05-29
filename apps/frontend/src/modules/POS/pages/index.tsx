@@ -7,7 +7,9 @@ import ShiftGate, { ShiftBanner } from "../components/ShiftGate";
 import CloseShiftView from "../components/CloseShiftView";
 import ExpensesView from "../components/ExpensesView";
 import TableGrid from "../components/TableGrid";
-import CheckoutView, { type CloseAccountParams } from "../components/CheckoutView";
+import CheckoutView, {
+  type CloseAccountParams,
+} from "../components/CheckoutView";
 import CategoryTabs from "../components/CategoryTabs";
 import ProductCard from "../components/ProductCards";
 import OrderPanel from "../components/OrderPanel";
@@ -26,7 +28,7 @@ import useDeleteAccountItem from "../hooks/accounts/useDeleteAccountItem";
 import { useAdjustAccountItemQuantity } from "../hooks/accounts/useAdjustAccountItemQuantity";
 import { useDeleteAccount } from "../hooks/accounts/useDeleteAccount";
 import { useCloseAccount } from "../hooks/accounts/useCloseAccount";
-import {printTicketService} from "../../../shared/services/qz.service";
+import { printTicketService } from "../../../shared/services/qz.service";
 import SalesHistory from "../components/SalesHistory";
 
 const Index = () => {
@@ -55,22 +57,25 @@ const Index = () => {
   const [shiftExpenses, setShiftExpenses] = useState<ExpenseFull[]>([]);
   const [showSalesHistory, setShowSalesHistory] = useState(false);
 
-  const handleOpenShift = useCallback((initialAmount: number) => {
-    openCashRegister(
-      { userId: 1, terminalId: 1, openingAmount: initialAmount },
-      {
-        onSuccess: () => {
-          toast("Turno abierto exitosamente", { variant: "success" });
+  const handleOpenShift = useCallback(
+    (initialAmount: number) => {
+      openCashRegister(
+        { userId: 1, terminalId: 1, openingAmount: initialAmount },
+        {
+          onSuccess: () => {
+            toast("Turno abierto exitosamente", { variant: "success" });
+          },
+          onError: (data) => {
+            toast("Error al abrir el turno", {
+              variant: "danger",
+              description: data.message,
+            });
+          },
         },
-        onError: (data) => {
-          toast("Error al abrir el turno", {
-            variant: "danger",
-            description: data.message,
-          });
-        },
-      },
-    );
-  }, [ openCashRegister ]);
+      );
+    },
+    [openCashRegister],
+  );
 
   const handleCloseShift = useCallback(() => {
     setActiveTableId(null);
@@ -81,10 +86,10 @@ const Index = () => {
     ? accounts.data?.find((acc: { id: number }) => acc.id === activeTableId)
     : null;
 
- const orderItems = useMemo(
-  () => activeTable?.accountItems ?? [],
-  [activeTable?.accountItems]
-);
+  const orderItems = useMemo(
+    () => activeTable?.accountItems ?? [],
+    [activeTable?.accountItems],
+  );
 
   const addAccount = (name: string) => {
     createAccount(
@@ -198,8 +203,7 @@ const Index = () => {
     paymentMethod,
     cashRegisterId,
     order,
-    printTicket
-     
+    printTicket,
   }: CloseAccountParams) => {
     closeAccount(
       {
@@ -208,12 +212,18 @@ const Index = () => {
         cashRegisterId: cashRegisterId,
       },
       {
-        onSuccess:async () => {
+        onSuccess: async () => {
           toast("Cuenta cerrada exitosamente", { variant: "success" });
 
           if (printTicket) {
             await printTicketService("XP-58", order);
           }
+          await printTicketService("XP-58", {
+            type: "raw",
+            format: "command",
+            flavor: "plain",
+            data: "\x1B\x70\x00\x19\xFA",
+          });
           setShowCheckout(false);
           setActiveTableId(null);
         },
@@ -227,26 +237,6 @@ const Index = () => {
       },
     );
   };
-
-  const handleAddExpense = useCallback(
-    (description: string, amount: number, observations: string) => {
-      setShiftExpenses((prev) => [
-        ...prev,
-        {
-          id: `exp-${Date.now()}`,
-          description,
-          amount,
-          observations,
-          timestamp: new Date(),
-        },
-      ]);
-    },
-    [],
-  );
-
-  const handleRemoveExpense = useCallback((id: string) => {
-    setShiftExpenses((prev) => prev.filter((e) => e.id !== id));
-  }, []);
 
   // ── Shift gate ──
   if (!openCashRegisterData?.data) {
@@ -266,7 +256,7 @@ const Index = () => {
     return (
       <CloseShiftView
         shift={openCashRegisterData?.data}
-        expenses={shiftExpenses}
+        cashRegisterId={openCashRegisterData?.data?.id}
         onConfirmClose={handleCloseShift}
         onBack={() => setShowCloseShift(false)}
       />
@@ -286,7 +276,10 @@ const Index = () => {
   // ── Sales history view ──
   if (showSalesHistory) {
     return (
-      <SalesHistory onBack={() => setShowSalesHistory(false)} sales={openCashRegisterData?.data?.accounts || []} />
+      <SalesHistory
+        onBack={() => setShowSalesHistory(false)}
+        sales={openCashRegisterData?.data?.accounts || []}
+      />
     );
   }
   // ── Tables view ──
@@ -307,7 +300,6 @@ const Index = () => {
             onRemove={removeTable}
             onRename={() => {}}
           />
-           
         </div>
       </div>
     );
@@ -350,8 +342,6 @@ const Index = () => {
               <p className="text-xs text-muted-foreground sm:text-sm">
                 Gestión rápida de pedidos y cobro
               </p>
-             
-
             </div>
           </div>
           <div className="w-full sm:w-auto">
@@ -380,7 +370,7 @@ const Index = () => {
         {/* Product grid */}
         <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           <div className="grid grid-cols-2 gap-4 pb-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-            {products?.data?.map((product:  ProductWithVariants) => (
+            {products?.data?.map((product: ProductWithVariants) => (
               <ProductCard
                 key={product.id}
                 name={product.name}
@@ -394,7 +384,6 @@ const Index = () => {
                 onAdd={() => handleProductClick(product)}
               />
             ))}
-            
           </div>
         </div>
       </div>

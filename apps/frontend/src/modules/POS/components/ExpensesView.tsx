@@ -24,10 +24,7 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
 
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-
-  console.log(expenses);
-  console.log(meta);
-
+  
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
 
   const handleSubmit = () => {

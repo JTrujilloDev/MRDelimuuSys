@@ -7,7 +7,10 @@ export const useCreateExpense = () => {
     mutationFn: registerExpense,
     onSuccess: () => {
       queryClient.invalidateQueries({
-    queryKey: ["expenses", "cashRegisterId"],
+    queryKey: ["openCashRegister"],
+  });
+  queryClient.refetchQueries({
+    queryKey: ["expenses"],
   });
     },
   });

@@ -15,7 +15,7 @@ export const connectQZ = async () => {
     console.log("QZ conectado");
     
     const printerList = await qz.printers.find();
-    console.log("Impresoras encontradas:", printerList);
+    // console.log("Impresoras encontradas:", printerList);
     
     // 2. Return the array of printer names
     return printerList;
@@ -27,7 +27,7 @@ export const connectQZ = async () => {
   }
 };
 
-export const printTicketService = async (printerName: string, order: OrderInfo) => {
+export const printTicketService = async (printerName: string, order: OrderInfo | PrinterCommand) => {
   try {
     // await connectQZ
 

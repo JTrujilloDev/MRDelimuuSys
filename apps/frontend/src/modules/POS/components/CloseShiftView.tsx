@@ -12,10 +12,12 @@ import {
 } from "lucide-react";
 
 import { Button, Input } from "@heroui/react";
+import DenominationCounter, { BILL_DENOMINATIONS, COIN_DENOMINATIONS } from "./DenominationCounter";
 import type { Shift } from "./ShiftGate";
 import dayjs from "dayjs";
 import numeral from "numeral";
 import { useCloseCashRegister } from "../hooks/cashRegister/useCloseCashRegister";
+import { useGetExpenses } from "../hooks/financialTransaction/useGetExpenses";
 
 export interface CompletedSale {
   id: string;
@@ -35,22 +37,25 @@ export interface Expense {
 
 interface CloseShiftViewProps {
   shift: Shift;
-  expenses: Expense[];
+  cashRegisterId: number;
   onConfirmClose: () => void;
   onBack: () => void;
 }
 
-const BILL_DENOMINATIONS = [100000, 50000, 20000, 10000, 5000, 2000];
-const COIN_DENOMINATIONS = [1000, 500, 200, 100, 50];
+// Denominations imported from DenominationCounter
 
 const CloseShiftView = ({
   shift,
-  expenses,
+  cashRegisterId,
   onConfirmClose,
   onBack,
 }: CloseShiftViewProps) => {
   const { mutate: closeCashRegister } = useCloseCashRegister();
+  const { data: { data: { data: expenses = [], meta } = {} } = {} } =
+    useGetExpenses(cashRegisterId);
   const [billCounts, setBillCounts] = useState<Record<number, string>>({});
+
+  console.log(expenses);
 
   // Sales breakdown
   const totalSales = shift.totalSales;
@@ -65,13 +70,10 @@ const CloseShiftView = ({
 
   // Counted cash from bills/coins
   const countedCash = useMemo(() => {
-    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce(
-      (sum, denom) => {
-        const count = parseInt(billCounts[denom] || "0") || 0;
-        return sum + denom * count;
-      },
-      0,
-    );
+    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce((sum, denom) => {
+      const count = parseInt(billCounts[denom] || "0") || 0;
+      return sum + denom * count;
+    }, 0);
   }, [billCounts]);
 
   const difference = countedCash - expectedCash;
@@ -176,7 +178,7 @@ const CloseShiftView = ({
                     )}
                   </div>
                   <span className="text-sm font-medium text-destructive">
-                    -${exp.amount.toFixed(2)}
+                    {numeral(exp.amount).format("$ 0,0")}
                   </span>
                 </div>
               ))}
@@ -243,67 +245,7 @@ const CloseShiftView = ({
             Conteo de caja
           </h2>
 
-          <div className="space-y-1.5 mb-4">
-            <p className="text-xs text-muted-foreground">Billetes</p>
-            {BILL_DENOMINATIONS.map((denom) => (
-              <div key={denom} className="flex items-center gap-3">
-                <span className="w-16 text-sm font-medium text-foreground text-right">
-                  {numeral(denom).format("0,0")}
-                </span>
-                <span className="text-muted-foreground text-sm">×</span>
-                <Input
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                  value={billCounts[denom] || ""}
-                  onChange={(e) =>
-                    setBillCounts((prev) => ({
-                      ...prev,
-                      [denom]: e.target.value,
-                    }))
-                  }
-                  className="w-20 text-center h-8 text-sm"
-                />
-                <span className="text-sm text-muted-foreground w-20 text-right">
-                  = $
-                  {numeral(
-                    (parseInt(billCounts[denom] || "0") || 0) * denom,
-                  ).format("0,0")}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-1.5 mb-6">
-            <p className="text-xs text-muted-foreground">Monedas</p>
-            {COIN_DENOMINATIONS.map((denom) => (
-              <div key={denom} className="flex items-center gap-3">
-                <span className="w-16 text-sm font-medium text-foreground text-right">
-                  ${numeral(denom).format("0,0")}
-                </span>
-                <span className="text-muted-foreground text-sm">×</span>
-                <Input
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                  value={billCounts[denom] || ""}
-                  onChange={(e) =>
-                    setBillCounts((prev) => ({
-                      ...prev,
-                      [denom]: e.target.value,
-                    }))
-                  }
-                  className="w-20 text-center h-8 text-sm"
-                />
-                <span className="text-sm text-muted-foreground w-20 text-right">
-                  = $
-                  {numeral(
-                    (parseInt(billCounts[denom] || "0") || 0) * denom,
-                  ).format("0,0")}
-                </span>
-              </div>
-            ))}
-          </div>
+          <DenominationCounter billCounts={billCounts} setBillCounts={setBillCounts} />
 
           <div className="rounded-xl bg-secondary/50 p-4 text-center mb-6">
             <p className="text-xs text-muted-foreground mb-1">Total contado</p>
@@ -315,15 +257,19 @@ const CloseShiftView = ({
 
           <div className="mt-auto">
             <Button
-              onClick={()=>{
-                closeCashRegister({
-                  cashRegisterId: shift.id,
-                  closingAmount: countedCash,
-                },{
-                  onSuccess: () => {                    onConfirmClose();
-                  onConfirmClose();
-                  }
-                })
+              onClick={() => {
+                closeCashRegister(
+                  {
+                    cashRegisterId: shift.id,
+                    closingAmount: countedCash,
+                  },
+                  {
+                    onSuccess: () => {
+                      onConfirmClose();
+                      onConfirmClose();
+                    },
+                  },
+                );
               }}
               className="w-full py-6 text-base font-bold"
               size="lg"
@@ -333,7 +279,6 @@ const CloseShiftView = ({
           </div>
         </div>
       </div>
-
     </div>
   );
 };

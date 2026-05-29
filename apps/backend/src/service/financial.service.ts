@@ -104,20 +104,6 @@ export const getFinancialTransactionsService = async (
     limit = 20,
   } = filters;
 
-  console.log(
-    type,
-    paymentMethod,
-    cashRegisterId,
-    accountId,
-    minAmount,
-    maxAmount,
-    from,
-    to,
-    search,
-    page,
-    limit,
-  );
-
   const where: any = {};
 
   // 1. Filtros directos

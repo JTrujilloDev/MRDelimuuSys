@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { DollarSign, Clock, LogOut, History } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Clock, LogOut, History, DollarSign } from "lucide-react";
 import { Button, Input, Label } from "@heroui/react";
+import DenominationCounter, { BILL_DENOMINATIONS, COIN_DENOMINATIONS } from "./DenominationCounter";
 import dayjs from "dayjs";
 
 export interface Shift {
@@ -30,17 +31,24 @@ interface ShiftGateProps {
 }
 
 const ShiftGate = ({ activeShift, onOpenShift, children }: ShiftGateProps) => {
-  const [amount, setAmount] = useState("");
+  const [billCounts, setBillCounts] = useState<Record<number, string>>({});
+
+  const countedCash = useMemo(() => {
+    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce((sum, denom) => {
+      const count = parseInt(billCounts[denom] || "0") || 0;
+      return sum + denom * count;
+    }, 0);
+  }, [billCounts]);
 
   if (activeShift) {
     return <>{children}</>;
   }
 
   const handleOpen = () => {
-    const parsed = parseFloat(amount);
-    if (isNaN(parsed) || parsed < 0) return;
-    onOpenShift(parsed);
-    setAmount("");
+    // Use the counted cash as the opening amount
+    const opening = countedCash || 0;
+    onOpenShift(opening);
+    setBillCounts({});
   };
 
   return (
@@ -60,29 +68,15 @@ const ShiftGate = ({ activeShift, onOpenShift, children }: ShiftGateProps) => {
 
         <div className="space-y-4">
           <div className="space-y-2 flex flex-col">
-            <Label htmlFor="initial-amount">Monto inicial de caja</Label>
-            <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="initial-amount"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleOpen()}
-                className=" w-full pl-9 text-lg font-medium tracking-wide text-foreground"
-              />
-            </div>
+            <Label htmlFor="initial-amount">Conteo inicial de caja</Label>
+            <DenominationCounter billCounts={billCounts} setBillCounts={setBillCounts} />
           </div>
 
           <Button
             onClick={handleOpen}
             className="w-full"
             size="lg"
-            isDisabled={
-              !amount.trim() ||
-              isNaN(parseFloat(amount)) ||
-              parseFloat(amount) < 0
-            }
+            isDisabled={countedCash < 0}
           >
             Abrir Turno
           </Button>
