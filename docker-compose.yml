@@ -21,6 +21,9 @@ services:
       start_period: 10s
 
   backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
     image: jtrujillodev/delimuu-backend:latest
     container_name: delimuu-backend
     restart: always
@@ -32,13 +35,20 @@ services:
       NODE_ENV: production
     ports:
       - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   frontend:
     image: jtrujillodev/delimuu-frontend:latest
     container_name: delimuu-frontend
     restart: always
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "8080:80"
 
