@@ -7,6 +7,8 @@ import storeRoutes from "./store.routes";
 import terminalRoutes from "./terminal.routes";
 import usersRoutes from "./users.routes";
 import financialTransactionRoutes from "./financialTransaction.routes";
+import POSInventoryRoutes from "./POSInventory.routes";
+import reportGenerationRoutes from "./reportGeneration.routes";
 
 const router = Router();
 
@@ -18,5 +20,7 @@ router.use("/store", storeRoutes);
 router.use("/terminal", terminalRoutes);
 router.use("/users", usersRoutes);
 router.use("/financial-transactions", financialTransactionRoutes);
+router.use("/pos-inventory", POSInventoryRoutes);
+router.use("/reports", reportGenerationRoutes);
 
 export default router;

@@ -1,4 +1,7 @@
-import { InventoryTransaction, InventoryTransactionType } from "../../generated/prisma/client";
+import {
+  InventoryTransaction,
+  InventoryTransactionType,
+} from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 export const createPOSInventoryTransactionService = async (
@@ -35,7 +38,7 @@ export const createPOSInventoryTransactionService = async (
         break;
 
       case "RETURN":
-        quantity = -Math.abs(quantity);
+        quantity = Math.abs(quantity);
         break;
 
       case "WASTE":
@@ -44,6 +47,18 @@ export const createPOSInventoryTransactionService = async (
 
       case "PRODUCTION":
         quantity = Math.abs(quantity);
+        break;
+
+      case "INITIAL":
+        quantity = Math.abs(quantity);
+        break;
+
+      case "WHOLESALE":
+        quantity = -Math.abs(quantity);
+        break;
+
+      case "INTERNAL_CONSUMPTION":
+        quantity = -Math.abs(quantity);
         break;
 
       default:
@@ -57,6 +72,15 @@ export const createPOSInventoryTransactionService = async (
       if (newStock < 0) {
         throw new Error("Insufficient stock");
       }
+    }
+
+    if (
+      ["WASTE", "ADJUSTMENT", "INTERNAL_CONSUMPTION"].includes(data.type) &&
+      !data.observation
+    ) {
+      throw new Error(
+        "Observation is required for waste, adjustment, and internal consumption transactions",
+      );
     }
 
     // 4. Crear movimiento
@@ -91,16 +115,21 @@ export const getPOSInventoryTransactionsService = async (filters?: {
   return await prisma.inventoryTransaction.findMany({
     where: {
       productVariantId: filters?.productVariantId,
-      type: filters?.type as InventoryTransactionType,  
-      createdAt: filters?.from && filters?.to
-        ? {
-            gte: filters.from,
-            lte: filters.to,
-          }
-        : undefined,
+      type: filters?.type as InventoryTransactionType,
+      createdAt:
+        filters?.from && filters?.to
+          ? {
+              gte: filters.from,
+              lte: filters.to,
+            }
+          : undefined,
     },
     include: {
-      productVariant: true,
+      productVariant: {
+        include: {
+          product: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",

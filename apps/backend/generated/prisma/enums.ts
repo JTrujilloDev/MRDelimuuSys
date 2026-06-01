@@ -47,7 +47,10 @@ export const InventoryTransactionType = {
   PRODUCTION: 'PRODUCTION',
   ADJUSTMENT: 'ADJUSTMENT',
   WASTE: 'WASTE',
-  RETURN: 'RETURN'
+  RETURN: 'RETURN',
+  INITIAL: 'INITIAL',
+  WHOLESALE: 'WHOLESALE',
+  INTERNAL_CONSUMPTION: 'INTERNAL_CONSUMPTION'
 } as const
 
 export type InventoryTransactionType = (typeof InventoryTransactionType)[keyof typeof InventoryTransactionType]

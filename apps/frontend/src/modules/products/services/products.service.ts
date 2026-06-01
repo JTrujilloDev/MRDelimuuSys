@@ -15,7 +15,7 @@ export const createProduct = async (product: {
   name: string;
   categoryId: number;
   description: string;
-  variants: Variant[];
+  variants: Array<Variant & { requirePreparation?: boolean }>;
 }) => {
   const { data } = await api.post("/products", product);
   return data;
@@ -26,7 +26,7 @@ export const updateProduct = async (product: {
   name: string;
   categoryId: number;
   description: string;
-  variants: Variant[];
+  variants: Array<Variant & { requirePreparation?: boolean }>;
 }) => {
   const { data } = await api.put(`/products/${product.id}`, product);
   return data;

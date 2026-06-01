@@ -49,6 +49,7 @@ const SalesHistory = ({
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
 
   dayjs.extend(relativeTime);
+  dayjs.locale("es");
   const filtered = useMemo(
     () =>
       sales.filter((s) => {

@@ -12,6 +12,7 @@ import {
   Switch,
   Modal,
   toast,
+  Chip,
 } from "@heroui/react";
 import { useGetAllProducts } from "../hooks/useGetAllProducts";
 import numeral from "numeral";
@@ -28,7 +29,7 @@ interface ProductVariant {
   minStock: string;
   productCost: string;
   isActive: boolean;
-  requiresPreparation: boolean;
+  requirePreparation: boolean;
 }
 
 interface Product {
@@ -55,7 +56,7 @@ const emptyVariant = (): ProductVariant => ({
   minStock: "",
   productCost: "",
   isActive: true,
-  requiresPreparation: false,
+  requirePreparation: false,
 });
 
 const Products = () => {
@@ -83,8 +84,6 @@ const Products = () => {
       variants: [emptyVariant()],
     },
   });
-
-  console.log(errors);
 
   const { fields: variants, append } = useFieldArray({
     control,
@@ -125,7 +124,13 @@ const Products = () => {
       name: product.name,
       categoryId: product.categoryId,
       description: product.description,
-      variants: product.variants.map((v) => ({ ...v })),
+      variants: product.variants.map((v) => ({
+        ...v,
+        requirePreparation:
+          (v as any).requirePreparation ??
+          (v as any).requiresPreparation ??
+          false,
+      })),
     });
     setDialogOpen(true);
   };
@@ -145,7 +150,7 @@ const Products = () => {
         minStock: Number(v.minStock),
         productCost: Number(v.productCost),
         isActive: v.isActive,
-        requiresPreparation: v.requiresPreparation,
+        requirePreparation: v.requirePreparation,
       })),
     };
 
@@ -153,17 +158,17 @@ const Products = () => {
       updateProduct(parsedData, {
         onSuccess: () => {
           toast("Producto actualizado exitosamente", { variant: "success" });
+          closeDialog();
+        },
+      });
+    } else {
+      createProduct(parsedData, {
+        onSuccess: () => {
+          toast("Producto creado exitosamente", { variant: "success" });
+          closeDialog();
         },
       });
     }
-
-    createProduct(parsedData, {
-      onSuccess: () => {
-        toast("Producto creado exitosamente", { variant: "success" });
-      },
-    });
-
-    setDialogOpen(false);
   };
 
   const closeDialog = () => {
@@ -255,30 +260,30 @@ const Products = () => {
                           className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2 text-sm"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-foreground">
+                            <span className="font-medium text-foreground mr-5">
                               {v.name}
                             </span>
                             {!v?.isActive && (
-                              <Badge variant="secondary" className="text-xs">
+                             <Chip  size="sm" className="bg-[#ef4444]/20 text-[#ef4444]">
                                 Inactivo
-                              </Badge>
+                              </Chip>
                             )}
-                            {v?.requiresPreparation && (
-                              <Badge variant="secondary" className="text-xs">
-                                Preparación
-                              </Badge>
+                            {v?.requirePreparation && (
+                              <Chip  size="sm" className="bg-[#10b981]/20 text-[#10b981]">
+                                Requiere Preparación
+                              </Chip>
                             )}
                           </div>
                           <div className="flex gap-4 text-muted-foreground">
                             <span>
-                              Público: {numeral(v?.retailPrice).format("0,0")}
+                              Público: {numeral(v?.retailPrice).format("$0,0")}
                             </span>
                             <span>
                               Mayorista:{" "}
-                              {numeral(v?.wholesalePrice).format("0,0")}
+                              {numeral(v?.wholesalePrice).format("$0,0")}
                             </span>
                             <span>
-                              Costo: {numeral(v?.productCost).format("0,0")}
+                              Costo: {numeral(v?.productCost).format("$0,0")}
                             </span>
                           </div>
                         </div>
@@ -321,14 +326,15 @@ const Products = () => {
                 <Modal.Body className="overflow-y-auto flex-1 min-h-0">
                   <div className="space-y-6 pr-2">
                     {/* General Product Info */}
-                    <div className="space-y-4">
+                    <div className="space-y-4 p-4">
                       <h3 className="text-sm font-semibold text-foreground">
                         Información General
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
+                        <div className="space-y-2 flex flex-col">
                           <Label>Nombre</Label>
                           <Input
+                            className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                             {...register("name", {
                               required: "El nombre es requerido",
                             })}
@@ -354,7 +360,7 @@ const Products = () => {
                                 >
                                   <Label>Categoría</Label>
 
-                                  <Select.Trigger>
+                                  <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
                                     <Select.Value />
                                     <Select.Indicator />
                                   </Select.Trigger>
@@ -386,9 +392,10 @@ const Products = () => {
                           />
                         </div>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-2 flex flex-col">
                         <Label>Descripción</Label>
                         <TextArea
+                          className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                           {...register("description")}
                           placeholder="Descripción del producto"
                           rows={2}
@@ -441,6 +448,7 @@ const Products = () => {
                               <div className="space-y-1">
                                 <Label className="text-xs">Nombre</Label>
                                 <Input
+                                  className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                                   {...register(`variants.${idx}.name`, {
                                     required: "El nombre es requerido",
                                   })}
@@ -455,6 +463,7 @@ const Products = () => {
                               <div className="space-y-1">
                                 <Label className="text-xs">Descripción</Label>
                                 <Input
+                                  className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                                   {...register(`variants.${idx}.description`)}
                                   placeholder="Descripción"
                                 />
@@ -468,6 +477,7 @@ const Products = () => {
                                   Precio Público
                                 </Label>
                                 <Input
+                                  className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                                   type="number"
                                   step="0.01"
                                   {...register(`variants.${idx}.retailPrice`, {
@@ -484,6 +494,7 @@ const Products = () => {
                               <div className="space-y-1">
                                 <Label className="text-xs">Mayorista</Label>
                                 <Input
+                                  className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                                   type="text"
                                   inputMode="decimal"
                                   pattern="^\d+(\.\d{1,2})?$"
@@ -510,6 +521,7 @@ const Products = () => {
                               <div className="space-y-1">
                                 <Label className="text-xs">Costo</Label>
                                 <Input
+                                  className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                                   type="text"
                                   inputMode="decimal"
                                   pattern="^\d+(\.\d{1,2})?$"
@@ -532,6 +544,7 @@ const Products = () => {
                               <div className="space-y-1">
                                 <Label className="text-xs">Stock Mínimo</Label>
                                 <Input
+                                  className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
                                   type="text"
                                   inputMode="numeric"
                                   pattern="^\d+$"
@@ -559,26 +572,24 @@ const Products = () => {
                                   name={`variants.${idx}.isActive`}
                                   control={control}
                                   render={({ field }) => (
-                                    <>
-                                      <Switch
-                                        isSelected={field.value}
-                                        onChange={field.onChange}
-                                        size="sm"
-                                      >
-                                        <Switch.Control>
-                                          <Switch.Thumb />
-                                        </Switch.Control>
-                                        <Switch.Content>
-                                          <Label>Activo</Label>
-                                        </Switch.Content>
-                                      </Switch>
-                                    </>
+                                    <Switch
+                                      isSelected={field.value}
+                                      onChange={field.onChange}
+                                      size="sm"
+                                    >
+                                      <Switch.Control>
+                                        <Switch.Thumb />
+                                      </Switch.Control>
+                                      <Switch.Content>
+                                        <Label>Activo</Label>
+                                      </Switch.Content>
+                                    </Switch>
                                   )}
                                 />
                               </div>
                               <div className="flex items-center gap-2">
                                 <Controller
-                                  name={`variants.${idx}.requiresPreparation`}
+                                  name={`variants.${idx}.requirePreparation`}
                                   control={control}
                                   render={({ field }) => (
                                     <>

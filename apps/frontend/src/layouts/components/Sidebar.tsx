@@ -2,7 +2,7 @@ import Logo from "/DeliLogo.png";
 import { NavLink, useNavigate } from "react-router";
 import { Tooltip } from "@heroui/react";
 import { BiUser } from "react-icons/bi";
-import { Moon, Package, ShoppingCart, Sun, Tag } from "lucide-react";
+import { Cake, Moon, Package, ShoppingCart, Sun, Tag } from "lucide-react";
 import { LuLogOut } from "react-icons/lu";
 import { useTheme } from "../../app/providers";
 
@@ -13,7 +13,8 @@ const Sidebar = () => {
   const items = [
     { title: "Punto de Venta", url: "pos", icon: ShoppingCart },
     { title: "Categorías", url: "product-categories", icon: Tag },
-    { title: "Productos", url: "products", icon: Package },
+    { title: "Productos", url: "products", icon: Cake },
+    {title: "Inventario" , url: "inventory", icon: Package},
   ];
   return (
     <div className="flex h-full w-24 flex-col items-center gap-4 rounded-tr-[24px] rounded-br-[24px] border-r border-border/70 bg-pos-surface/95 py-4 shadow-[0_18px_40px_-30px_rgba(84,56,32,0.45)]">

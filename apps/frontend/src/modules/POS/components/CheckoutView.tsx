@@ -179,7 +179,7 @@ const CheckoutView = ({
           </div>
 
           {/* Discount fields */}
-          <div className="space-y-4 bg-secondary/60 p-5">
+          {/* <div className="space-y-4 bg-secondary/60 p-5">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
               <FiTag className="h-4 w-4 text-primary" />
               Descuento
@@ -215,7 +215,7 @@ const CheckoutView = ({
                 />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Right — Payment method */}

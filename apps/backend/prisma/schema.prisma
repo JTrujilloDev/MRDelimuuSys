@@ -137,7 +137,7 @@ model AccountItem {
 model InventoryTransaction {
   id               Int                      @id @default(autoincrement())
   productVariantId Int
-  relatedAccountId Int?
+  relatedAccountId Int?  
   productVariant   ProductVariant           @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
   quantity         Int
   type             InventoryTransactionType
@@ -153,6 +153,9 @@ enum InventoryTransactionType {
   ADJUSTMENT
   WASTE
   RETURN
+  INITIAL
+  WHOLESALE
+  INTERNAL_CONSUMPTION
 }
 
 model FinancialTransaction {

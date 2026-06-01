@@ -34,6 +34,7 @@ export const createProductService = async (productData: CreateProductData) => {
     throw new Error(`Product with name "${productData.name}" already exists`);
   }
 
+  console.log("Creating product with data:", productData);
   const newProduct = await prisma.product.create({
     data: {
       name: productData.name,
@@ -141,6 +142,9 @@ export const updateProductService = async (id: number, productData: any) => {
             ...(v.requirePreparation !== undefined && {
               requirePreparation: v.requirePreparation,
             }),
+            ...(v.requiresPreparation !== undefined && {
+              requirePreparation: v.requiresPreparation,
+            }),
           })),
 
           update: variantsToUpdate.map((v: any) => ({
@@ -164,6 +168,9 @@ export const updateProductService = async (id: number, productData: any) => {
               }),
               ...(v.requirePreparation !== undefined && {
                 requirePreparation: v.requirePreparation,
+              }),
+              ...(v.requiresPreparation !== undefined && {
+                requirePreparation: v.requiresPreparation,
               }),
             },
           })),

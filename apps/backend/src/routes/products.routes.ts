@@ -4,11 +4,14 @@ import { createProduct, deleteProduct, getAllActiveProducts, getAllProducts, get
 const router = Router();
 
 router.get("/", getAllProducts);
-router.get("/:id", getProductById);
+
 router.get("/active", getAllActiveProducts);
+router.get("/by-category/:id", getProductsByCategory);
+
+router.get("/:id", getProductById);
+
 router.post("/", createProduct);
-router.delete("/:id", deleteProduct);
 router.put("/:id", updateProduct);
-router.get("/by-category/:id",getProductsByCategory)
+router.delete("/:id", deleteProduct);
 
 export default router;
