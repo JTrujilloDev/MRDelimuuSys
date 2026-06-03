@@ -1,10 +1,12 @@
 import {
   Button,
+  CloseIcon,
   FieldError,
   Form,
   Input,
   Label,
   Modal,
+  Switch,
   Table,
   TextArea,
   TextField,
@@ -18,6 +20,7 @@ import { useState } from "react";
 import { useCreateProductCategory } from "../hooks/useCreateProductCategory";
 import { useDeleteProductCategory } from "../hooks/useDeleteProductCategory";
 import { useUpdateProductCategory } from "../hooks/useUpdateProductCategory";
+import { CheckIcon, SquareCheck, SquareX } from "lucide-react";
 
 const Index = () => {
   const { data: productCategories } = useGetAllProductCategories();
@@ -28,10 +31,12 @@ const Index = () => {
   const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data: Record<string, string> = {};
+    const data: Record<any, any> = {};
     formData.forEach((value, key) => {
       data[key] = value.toString();
     });
+
+    
 
     if (selectedCategory?.id) {
       updateProductCategory(
@@ -39,6 +44,7 @@ const Index = () => {
           id: selectedCategory.id,
           name: data.name,
           description: data.description,
+          posVisible: data.posVisible === "on" ? true : false,
         },
         {
           onSuccess: () => {
@@ -59,12 +65,13 @@ const Index = () => {
       e.currentTarget.reset();
       return;
     }
-    createProductCategory(data, {
+    createProductCategory({...data, posVisible: data.posVisible === "on" ? true : false}, {
       onSuccess: () => {
         toast("Categoria creada exitosamente", {
           variant: "success",
         });
         setCreateCategoryModal(false);
+        setSelectedCategory(null);
       },
       onError: () => {
         toast("Error al crear la categoria", {
@@ -96,16 +103,32 @@ const Index = () => {
   const [createCategoryModal, setCreateCategoryModal] = useState(false);
   const [deleteCategoryConfirmationModal, setDeleteCategoryConfirmationModal] =
     useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<{ id: number; name: string; description: string; createdAt: string; updatedAt: string } | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<{
+    id: number;
+    name: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+    posVisible: boolean;
+  } | null>(null);
   return (
     <>
       <div className="flex h-full w-full flex-col items-center justify-start gap-4 p-10">
         <div className="w-full rounded-[24px] bg-pos-order-bg px-6 py-5 text-white shadow-[0_18px_40px_-30px_rgba(84,56,32,0.45)]">
-          <h1 className="text-4xl font-bold text-white">Categorias de productos</h1>
-          <p className="mt-1 text-sm text-white/70">Administra y organiza las categorías del catálogo.</p>
+          <h1 className="text-4xl font-bold text-white">
+            Categorias de productos
+          </h1>
+          <p className="mt-1 text-sm text-white/70">
+            Administra y organiza las categorías del catálogo.
+          </p>
         </div>
         <div className="flex w-full justify-end">
-          <Button onClick={() => setCreateCategoryModal(true)}>
+          <Button
+            onClick={() => {
+              setSelectedCategory(null);
+              setCreateCategoryModal(true);
+            }}
+          >
             + Agregar categoría
           </Button>
         </div>
@@ -113,50 +136,80 @@ const Index = () => {
           <Table.ScrollContainer>
             <Table.Content aria-label="Categorias de productos">
               <Table.Header>
-                <Table.Column className="bg-pos-order-bg text-white" isRowHeader>ID</Table.Column>
-                <Table.Column className="bg-pos-order-bg text-white">Nombre</Table.Column>
-                <Table.Column className="bg-pos-order-bg text-white">Descripción</Table.Column>
-                <Table.Column className="bg-pos-order-bg text-white">Fecha de creación</Table.Column>
-                <Table.Column className="bg-pos-order-bg text-white">Última actualización</Table.Column>
-                <Table.Column className="bg-pos-order-bg text-white">Editar</Table.Column>
-                <Table.Column className="bg-pos-order-bg text-white">Eliminar</Table.Column>
+                <Table.Column
+                  className="bg-pos-order-bg text-white"
+                  isRowHeader
+                >
+                  ID
+                </Table.Column>
+                <Table.Column className="bg-pos-order-bg text-white">
+                  Nombre
+                </Table.Column>
+                <Table.Column className="bg-pos-order-bg text-white">
+                  Descripción
+                </Table.Column>
+                <Table.Column className="bg-pos-order-bg text-white">
+                  Visible en POS
+                </Table.Column>
+                <Table.Column className="bg-pos-order-bg text-white">
+                  Fecha de creación
+                </Table.Column>
+                <Table.Column className="bg-pos-order-bg text-white">
+                  Última actualización
+                </Table.Column>
+                <Table.Column className="bg-pos-order-bg text-white">
+                  Editar
+                </Table.Column>
+                <Table.Column className="bg-pos-order-bg text-white">
+                  Eliminar
+                </Table.Column>
               </Table.Header>
               <Table.Body>
-                {productCategories?.data?.map((category : { id: number; name: string; description: string; createdAt: string; updatedAt: string }) => (
-                  <Table.Row key={category.id}>
-                    <Table.Cell>{category.id}</Table.Cell>
-                    <Table.Cell>{category.name}</Table.Cell>
-                    <Table.Cell>{category.description}</Table.Cell>
-                    <Table.Cell>
-                      {dayjs(category.createdAt).format("DD/MM/YYYY")}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {dayjs(category.updatedAt).format("DD/MM/YYYY")}{" "}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Button
-                        className="cursor-pointer"
-                        onPress={() => {
-                          setSelectedCategory(category);
-                          setCreateCategoryModal(true);
-                        }}
-                      >
-                        <BiEdit size={20} />
-                      </Button>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Button
-                        className="cursor-pointer"
-                        onPress={() => {
-                          setSelectedCategory(category);
-                          setDeleteCategoryConfirmationModal(true);
-                        }}
-                      >
-                        <RiDeleteBin3Line size={20} />
-                      </Button>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
+                {productCategories?.data?.map(
+                  (category: {
+                    id: number;
+                    name: string;
+                    description: string;
+                    createdAt: string;
+                    updatedAt: string;
+                    posVisible: boolean;
+                  }) => (
+                    <Table.Row key={category.id}>
+                      <Table.Cell>{category.id}</Table.Cell>
+                      <Table.Cell>{category.name}</Table.Cell>
+                      <Table.Cell>{category.description}</Table.Cell>
+                      <Table.Cell>{category.posVisible ? <SquareCheck color="#10b981" /> : <SquareX color="#ef4444" />}</Table.Cell>
+                      <Table.Cell>
+                        {dayjs(category.createdAt).format("DD/MM/YYYY")}
+                      </Table.Cell>
+                      <Table.Cell>
+                        {dayjs(category.updatedAt).format("DD/MM/YYYY")}{" "}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Button
+                          className="cursor-pointer"
+                          onPress={() => {
+                            setSelectedCategory(category);
+                            setCreateCategoryModal(true);
+                          }}
+                        >
+                          <BiEdit size={20} />
+                        </Button>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Button
+                          className="cursor-pointer"
+                          onPress={() => {
+                            setSelectedCategory(category);
+                            setDeleteCategoryConfirmationModal(true);
+                          }}
+                        >
+                          <RiDeleteBin3Line size={20} />
+                        </Button>
+                      </Table.Cell>
+                    </Table.Row>
+                  ),
+                )}
               </Table.Body>
             </Table.Content>
           </Table.ScrollContainer>
@@ -166,7 +219,7 @@ const Index = () => {
       <Modal>
         <Modal.Backdrop isOpen={createCategoryModal}>
           <Modal.Container>
-            <Modal.Dialog>
+            <Modal.Dialog className="rounded-lg">
               <Modal.CloseTrigger
                 onClick={() => setCreateCategoryModal(false)}
               />
@@ -182,24 +235,40 @@ const Index = () => {
                   className="flex flex-col gap-4 w-full"
                   onSubmit={handleCreateSubmit}
                 >
-                  <TextField
-                    className="w-full"
-                    name="name"
-                    isRequired
-                    defaultValue={selectedCategory?.name}
-                    validate={(value) => {
-                      if (value.length < 3) {
-                        return "El nombre de la categoria debe tener al menos 3 caracteres";
-                      }
-                    }}
-                  >
-                    <Label className="text-white">Nombre</Label>
-                    <Input className="w-full mt-2" />
-                    <FieldError />
-                  </TextField>
+                  <div className="flex gap-1 w-full items-center gap-4">
+                    <TextField
+                      className="w-full"
+                      name="name"
+                      isRequired
+                      defaultValue={selectedCategory?.name}
+                      validate={(value) => {
+                        if (value.length < 3) {
+                          return "El nombre de la categoria debe tener al menos 3 caracteres";
+                        }
+                      }}
+                    >
+                      <Label className="text-white">Nombre</Label>
+                      <Input className="w-full mt-2" />
+                      <FieldError />
+                    </TextField>
+
+                    <Switch
+                      name="posVisible"
+                      defaultSelected={selectedCategory?.posVisible}
+                      className="mt-6"
+                      
+                    >
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                      <Switch.Content>
+                        <Label className="text-sm">Visible en POS</Label>
+                      </Switch.Content>
+                    </Switch>
+                  </div>
 
                   <div className="flex flex-col gap-1 w-full">
-                    <Label className= "text-white">Descripción</Label>
+                    <Label className="text-white">Descripción</Label>
                     <TextArea
                       className="resize-none mt-2"
                       name="description"

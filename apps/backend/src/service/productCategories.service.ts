@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 interface CreateCategoryDTO {
   name: string;
   description?: string;
+  posVisible: boolean;
 }
 
 export const createCategoryService = async (data: CreateCategoryDTO) => {
@@ -22,6 +23,7 @@ export const createCategoryService = async (data: CreateCategoryDTO) => {
     data: {
       name: data.name,
       description: data.description,
+      posVisible: data.posVisible,
     },
   });
 

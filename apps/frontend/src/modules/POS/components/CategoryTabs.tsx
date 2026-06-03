@@ -7,7 +7,7 @@ interface CategoryTabsProps {
 const CategoryTabs = ({ categories, active, onSelect }: CategoryTabsProps) => {
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-      {categories.map((cat ) => (
+      {categories.filter((cat) => cat?.posVisible).map((cat ) => (
         <button
           key={cat.name}
           onClick={() => onSelect(cat)}

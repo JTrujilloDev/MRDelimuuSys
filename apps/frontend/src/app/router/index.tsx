@@ -6,6 +6,7 @@ import POS from "../../pages/POS";
 import ProductCategories from "../../modules/categories/pages";
 import Products from "../../modules/products/pages";
 import Inventory from "../../modules/POSInventory/pages";
+import FundationTags from "../../modules/fundationTags/pages";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
       { path: "product-categories", element: <ProductCategories /> },
       { path: "products", element: <Products /> },
       { path: "inventory", element: <Inventory /> },
+      { path: "fundation-tags", element: <FundationTags /> }
     ],
   },
 ]);

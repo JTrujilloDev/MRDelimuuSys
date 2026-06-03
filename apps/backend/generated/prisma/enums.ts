@@ -9,6 +9,17 @@
 * 🟢 You can import this file directly.
 */
 
+export const ProductType = {
+  INGREDIENT: 'INGREDIENT',
+  PACKAGING: 'PACKAGING',
+  PREPARED_BASE: 'PREPARED_BASE',
+  FINISHED_PRODUCT: 'FINISHED_PRODUCT',
+  RECIPE_PRODUCT: 'RECIPE_PRODUCT'
+} as const
+
+export type ProductType = (typeof ProductType)[keyof typeof ProductType]
+
+
 export const Role = {
   ADMIN: 'ADMIN',
   CASHIER: 'CASHIER',

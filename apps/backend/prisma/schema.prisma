@@ -11,6 +11,7 @@ model Category {
   id          Int     @id @default(autoincrement())
   name        String
   description String?
+  posVisible  Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -19,9 +20,10 @@ model Category {
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   description String?
+  productType ProductType @default(FINISHED_PRODUCT)
 
   categoryId Int
   category   Category @relation(fields: [categoryId], references: [id])
@@ -32,24 +34,72 @@ model Product {
   updatedAt DateTime @updatedAt
 }
 
-model ProductVariant {
-  id             Int     @id @default(autoincrement())
-  name           String
-  retailPrice    Float @default(0)
-  wholesalePrice Float? @default(0)
-  stock          Int     @default(0)
-  minStock       Int     @default(0)
-  isActive       Boolean @default(true)
-  requirePreparation Boolean @default(false)
-  productCost    Float @default(0)
+enum ProductType {
+  INGREDIENT
+  PACKAGING
+  PREPARED_BASE
+  FINISHED_PRODUCT
+  RECIPE_PRODUCT
+}
 
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+model ProductVariant {
+  id                 Int     @id @default(autoincrement())
+  name               String
+  retailPrice        Float   @default(0)
+  wholesalePrice     Float?  @default(0)
+  stock              Int     @default(0)
+  minStock           Int     @default(0)
+  isActive           Boolean @default(true)
+  requirePreparation Boolean @default(false)
+  productCost        Float   @default(0)
+  productId          Int
+  unit               Unit    @default(UNIT)
+  product            Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  saleRecipe SaleRecipe? @relation(name: "SaleRecipeToVariant")
 
   createdAt DateTime @default(now())
 
   accountItems          AccountItem[]
   InventoryTransactions InventoryTransaction[]
+  recipeItems           RecipeItem[]
+}
+
+enum Unit {
+  UNIT
+  GRAM
+  KILOGRAM
+  LITER
+  MILLILITER
+  PIECE
+  BOX
+  PACK
+}
+
+model SaleRecipe {
+  id               Int            @id @default(autoincrement())
+  name             String
+  description      String?
+  productVariantId Int            @unique
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, name: "SaleRecipeToVariant")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipeItems RecipeItem[]
+}
+
+model RecipeItem {
+  id               Int @id @default(autoincrement())
+  saleRecipeId     Int
+  productVariantId Int
+  quantity         Int
+
+
+  saleRecipe     SaleRecipe     @relation(fields: [saleRecipeId], references: [id], onDelete: Cascade)
+  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
 model User {
@@ -75,24 +125,23 @@ enum Role {
 }
 
 model Account {
-  id          Int           @id @default(autoincrement())
-  userId      Int
-  user        User          @relation(fields: [userId], references: [id])
-  name        String
-  terminalId  Int
-  terminal    Terminal      @relation(fields: [terminalId], references: [id])
-  tableNumber Int[]
-  status      AccountStatus @default(OPEN)
+  id             Int           @id @default(autoincrement())
+  userId         Int
+  user           User          @relation(fields: [userId], references: [id])
+  name           String
+  terminalId     Int
+  terminal       Terminal      @relation(fields: [terminalId], references: [id])
+  tableNumber    Int[]
+  status         AccountStatus @default(OPEN)
   cashRegisterId Int?
   cashRegister   CashRegister? @relation(fields: [cashRegisterId], references: [id])
-
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   accountItems AccountItem[]
 
-  total               Float        @default(0)
-  discount            Float        @default(0)
+  total               Float          @default(0)
+  discount            Float          @default(0)
   discountObservation String?
   closedAt            DateTime?
   paymentMethod       PaymentMethod?
@@ -131,13 +180,14 @@ model AccountItem {
   subtotal         Float
 
   createdAt DateTime @default(now())
+
   @@unique([accountId, productVariantId])
 }
 
 model InventoryTransaction {
   id               Int                      @id @default(autoincrement())
   productVariantId Int
-  relatedAccountId Int?  
+  relatedAccountId Int?
   productVariant   ProductVariant           @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
   quantity         Int
   type             InventoryTransactionType
@@ -213,7 +263,6 @@ model CashRegister {
   openingAmount Float
   closingAmount Float?
   difference    Float?
-  
 
   status CashRegisterStatus @default(OPEN)
 

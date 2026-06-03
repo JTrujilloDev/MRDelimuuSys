@@ -25,6 +25,7 @@ export const updateProduct = async (product: {
   id: number;
   name: string;
   categoryId: number;
+  productType: string;
   description: string;
   variants: Array<Variant & { requirePreparation?: boolean }>;
 }) => {

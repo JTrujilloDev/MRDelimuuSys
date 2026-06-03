@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Plus, Pencil, ChevronDown, ChevronRight, Search } from "lucide-react";
 import {
-  Badge,
+  Plus,
+  Pencil,
+  ChevronDown,
+  ChevronRight,
+  Search,
+  Trash,
+} from "lucide-react";
+import {
   Button,
   Input,
   Label,
@@ -19,6 +25,8 @@ import numeral from "numeral";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
 import { useCreateProduct } from "../hooks/userCreateProduct";
 import { useUpdateProduct } from "../hooks/useUpdateProduct";
+import { productTypes } from "../../../shared/constants/productTypes";
+import { productUnits } from "../../../shared/constants/productUnits";
 
 interface ProductVariant {
   id?: number;
@@ -30,6 +38,7 @@ interface ProductVariant {
   productCost: string;
   isActive: boolean;
   requirePreparation: boolean;
+  unit?: string | null;
 }
 
 interface Product {
@@ -40,12 +49,19 @@ interface Product {
   variants: ProductVariant[];
 }
 
+interface RecipeItem {
+  productId?: number | null;
+  quantity: number;
+}
+
 interface ProductFormData {
   id?: string;
   name: string;
   categoryId: number | null;
+  productType: string;
   description: string;
   variants: ProductVariant[];
+  recipeItems?: RecipeItem[];
 }
 
 const emptyVariant = (): ProductVariant => ({
@@ -57,6 +73,7 @@ const emptyVariant = (): ProductVariant => ({
   productCost: "",
   isActive: true,
   requirePreparation: false,
+  unit: null,
 });
 
 const Products = () => {
@@ -76,12 +93,15 @@ const Products = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<ProductFormData>({
     defaultValues: {
       name: "",
       categoryId: null,
+      productType: "",
       description: "",
       variants: [emptyVariant()],
+      recipeItems: [{ productId: null, quantity: 1 }],
     },
   });
 
@@ -89,6 +109,17 @@ const Products = () => {
     control,
     name: "variants",
   });
+
+  const {
+    fields: recipeItems,
+    append: appendRecipeItem,
+    remove: removeRecipeItem,
+  } = useFieldArray({
+    control,
+    name: "recipeItems",
+  });
+
+  const selectedProductType = watch("productType");
 
   const filteredProducts = (products?.data ?? []).filter(
     (product: Product & { category: { name: string } }) => {
@@ -111,8 +142,10 @@ const Products = () => {
     reset({
       name: "",
       categoryId: null,
+      productType: "",
       description: "",
       variants: [emptyVariant()],
+      recipeItems: [{ productId: null, quantity: 1 }],
     });
     setDialogOpen(true);
   };
@@ -123,9 +156,11 @@ const Products = () => {
       id: product.id,
       name: product.name,
       categoryId: product.categoryId,
+      productType: (product as any).productType ?? "",
       description: product.description,
       variants: product.variants.map((v) => ({
         ...v,
+        unit: (v as any).unit ?? null,
         requirePreparation:
           (v as any).requirePreparation ??
           (v as any).requiresPreparation ??
@@ -140,6 +175,7 @@ const Products = () => {
       id: data.id,
       name: data.name,
       categoryId: Number(data.categoryId),
+      productType: data.productType,
       description: data.description,
       variants: data.variants.map((v) => ({
         id: v?.id,
@@ -151,18 +187,23 @@ const Products = () => {
         productCost: Number(v.productCost),
         isActive: v.isActive,
         requirePreparation: v.requirePreparation,
+        unit: v.unit,
+      })),
+      recipeItems: data.recipeItems?.map((ri) => ({
+        productVariantId: ri.productId ? Number(ri.productId) : null,
+        quantity: Number(ri.quantity),
       })),
     };
 
     if (data?.id) {
-      updateProduct(parsedData, {
+      updateProduct(parsedData as any, {
         onSuccess: () => {
           toast("Producto actualizado exitosamente", { variant: "success" });
           closeDialog();
         },
       });
     } else {
-      createProduct(parsedData, {
+      createProduct(parsedData as any, {
         onSuccess: () => {
           toast("Producto creado exitosamente", { variant: "success" });
           closeDialog();
@@ -264,12 +305,18 @@ const Products = () => {
                               {v.name}
                             </span>
                             {!v?.isActive && (
-                             <Chip  size="sm" className="bg-[#ef4444]/20 text-[#ef4444]">
+                              <Chip
+                                size="sm"
+                                className="bg-[#ef4444]/20 text-[#ef4444]"
+                              >
                                 Inactivo
                               </Chip>
                             )}
                             {v?.requirePreparation && (
-                              <Chip  size="sm" className="bg-[#10b981]/20 text-[#10b981]">
+                              <Chip
+                                size="sm"
+                                className="bg-[#10b981]/20 text-[#10b981]"
+                              >
                                 Requiere Preparación
                               </Chip>
                             )}
@@ -346,35 +393,41 @@ const Products = () => {
                             </p>
                           )}
                         </div>
+
                         <div className="space-y-2">
                           <Controller
-                            name="categoryId"
+                            name="productType"
                             control={control}
-                            rules={{ required: "Selecciona una categoría" }}
+                            rules={{
+                              required: "Selecciona un tipo de producto",
+                            }}
                             render={({ field }) => (
                               <>
                                 <Select
                                   className="w-full"
-                                  placeholder="Selecciona una categoría"
+                                  placeholder="Selecciona un tipo de producto"
                                   {...field}
                                 >
-                                  <Label>Categoría</Label>
+                                  <Label>Tipo de Producto</Label>
 
                                   <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
                                     <Select.Value />
                                     <Select.Indicator />
                                   </Select.Trigger>
 
-                                  <Select.Popover>
+                                  <Select.Popover className="rounded-md">
                                     <ListBox>
-                                      {categories?.data?.map(
-                                        (cat: { id: string; name: string }) => (
+                                      {productTypes?.map(
+                                        (type: {
+                                          label: string;
+                                          value: string;
+                                        }) => (
                                           <ListBox.Item
-                                            id={cat.id} // 👈 IMPORTANTE string
-                                            textValue={cat.name}
-                                            key={cat.id}
+                                            id={type.value} // 👈 IMPORTANTE string
+                                            textValue={type.label}
+                                            key={type.value}
                                           >
-                                            {cat.name}
+                                            {type.label}
                                           </ListBox.Item>
                                         ),
                                       )}
@@ -392,7 +445,77 @@ const Products = () => {
                           />
                         </div>
                       </div>
-                      <div className="space-y-2 flex flex-col">
+                      <div className="space-y-2">
+                        <Controller
+                          name="categoryId"
+                          control={control}
+                          rules={{ required: "Selecciona una categoría" }}
+                          render={({ field }) => (
+                            <>
+                              <Select
+                                className="w-full"
+                                placeholder="Selecciona una categoría"
+                                {...field}
+                              >
+                                <Label>Categoría</Label>
+
+                                <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
+                                  <Select.Value />
+                                  <Select.Indicator />
+                                </Select.Trigger>
+
+                                <Select.Popover className="rounded-md">
+                                  <ListBox>
+                                    {selectedProductType &&
+                                      categories?.data
+                                        ?.filter((cat: any) => {
+                                          if (
+                                            selectedProductType ===
+                                              "INGREDIENT" ||
+                                            selectedProductType ===
+                                              "PREPARED_BASE"
+                                          ) {
+                                            return !cat?.posVisible;
+                                          }
+                                          if (
+                                            selectedProductType ===
+                                              "FINISHED_PRODUCT" ||
+                                            selectedProductType ===
+                                              "RECIPE_PRODUCT"
+                                          ) {
+                                            return !!cat?.posVisible;
+                                          }
+                                          // default: show POS visible
+                                          return !!cat?.posVisible;
+                                        })
+                                        .map(
+                                          (cat: {
+                                            id: string;
+                                            name: string;
+                                          }) => (
+                                            <ListBox.Item
+                                              id={cat.id} // 👈 IMPORTANTE string
+                                              textValue={cat.name}
+                                              key={cat.id}
+                                            >
+                                              {cat.name}
+                                            </ListBox.Item>
+                                          ),
+                                        )}
+                                  </ListBox>
+                                </Select.Popover>
+                              </Select>
+
+                              {errors.categoryId && (
+                                <p className="text-xs text-destructive">
+                                  {errors.categoryId.message}
+                                </p>
+                              )}
+                            </>
+                          )}
+                        />
+                      </div>
+                      {/* <div className="space-y-2 flex flex-col">
                         <Label>Descripción</Label>
                         <TextArea
                           className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
@@ -400,7 +523,7 @@ const Products = () => {
                           placeholder="Descripción del producto"
                           rows={2}
                         />
-                      </div>
+                      </div> */}
                     </div>
 
                     {/* Variants Section */}
@@ -423,7 +546,7 @@ const Products = () => {
                         {variants.map((variant, idx) => (
                           <div
                             key={variant.id}
-                            className="rounded-lg border border-border bg-muted/30 p-4 space-y-4"
+                            className="rounded-lg border border-border bg-muted/40 p-4 space-y-4"
                           >
                             {/* Variant Header */}
                             <div className="flex items-center justify-between gap-2">
@@ -445,7 +568,7 @@ const Products = () => {
 
                             {/* Basic Info */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <div className="space-y-1">
+                              <div className="space-y-1  flex flex-col">
                                 <Label className="text-xs">Nombre</Label>
                                 <Input
                                   className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
@@ -460,7 +583,7 @@ const Products = () => {
                                   </p>
                                 )}
                               </div>
-                              <div className="space-y-1">
+                              <div className="space-y-1 flex flex-col">
                                 <Label className="text-xs">Descripción</Label>
                                 <Input
                                   className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
@@ -468,6 +591,38 @@ const Products = () => {
                                   placeholder="Descripción"
                                 />
                               </div>
+                              {selectedProductType === "INGREDIENT" && (
+                                <div className="space-y-1">
+                                  <Label className="text-xs">Unidad</Label>
+                                  <Controller
+                                    name={`variants.${idx}.unit`}
+                                    control={control}
+                                    render={({ field }) => (
+                                      <Select className="w-full" {...field} placeholder="Selecciona una unidad">
+                                        <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
+                                          <Select.Value />
+                                          <Select.Indicator />
+                                        </Select.Trigger>
+                                        <Select.Popover className="rounded-md">
+                                          <ListBox>
+                                            {productUnits?.map(
+                                              (unit: { label: string; value: string }) => (
+                                                <ListBox.Item
+                                                  id={unit.value}
+                                                  textValue={unit.label}
+                                                  key={unit.value}
+                                                >
+                                                  {unit.label}
+                                                </ListBox.Item>
+                                              ),
+                                            )}
+                                          </ListBox>
+                                        </Select.Popover>
+                                      </Select>
+                                    )}
+                                  />
+                                </div>
+                              )}
                             </div>
 
                             {/* Prices Grid */}
@@ -564,6 +719,102 @@ const Products = () => {
                                 )}
                               </div>
                             </div>
+                            {selectedProductType === "RECIPE_PRODUCT" && (
+                              <div className="border-t border-border pt-3 flex flex-col gap-4">
+                                <Label className="text-md">Receta</Label>
+
+                                {recipeItems.map((item, idx) => (
+                                  <div
+                                    key={item.id ?? idx}
+                                    className="grid grid-cols-12 gap-2 items-center"
+                                  >
+                                    <div className="col-span-6">
+                                      <Controller
+                                        name={`recipeItems.${idx}.productId`}
+                                        control={control}
+                                        render={({ field }) => (
+                                          <Select
+                                            {...field}
+                                            aria-label="ingredient-select"
+                                            placeholder="Selecciona un ingrediente"
+                                          >
+                                            <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
+                                              <Select.Value />
+                                              <Select.Indicator />
+                                            </Select.Trigger>
+                                            <Select.Popover className="rounded-md">
+                                              <ListBox>
+                                                {products?.data?.flatMap(
+                                                  (product: any) =>
+                                                    (product.variants ?? [])
+                                                      .filter(
+                                                        (v: any) =>
+                                                          v.productType ===
+                                                          "INGREDIENT",
+                                                      )
+                                                      .map(
+                                                        (
+                                                          variant: ProductVariant,
+                                                        ) => (
+                                                          <ListBox.Item
+                                                            key={`${product.id}-${variant.id}`}
+                                                            id={`${product.id}-${variant.id}`}
+                                                            textValue={`${product.name} - ${variant.name}`}
+                                                          >
+                                                            {product.name} -{" "}
+                                                            {variant.name}
+                                                          </ListBox.Item>
+                                                        ),
+                                                      ),
+                                                )}
+                                              </ListBox>
+                                            </Select.Popover>
+                                          </Select>
+                                        )}
+                                      />
+                                    </div>
+
+                                    <div className="col-span-2">
+                                      <Input
+                                        className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none h-10 px-3"
+                                        {...register(
+                                          `recipeItems.${idx}.quantity`,
+                                          {
+                                            valueAsNumber: true,
+                                            required: true,
+                                          },
+                                        )}
+                                        placeholder="Cantidad"
+                                      />
+                                    </div>
+
+                                    <div className="col-span-4 sm:col-span-2 flex justify-end">
+                                      <Button
+                                        variant="outline"
+                                        onClick={() => removeRecipeItem(idx)}
+                                        className="h-10"
+                                      >
+                                        <Trash className="h-4 w-4 text-destructive" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ))}
+
+                                <div>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() =>
+                                      appendRecipeItem({
+                                        productId: null,
+                                        quantity: 0,
+                                      })
+                                    }
+                                  >
+                                    + Agregar ingrediente
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
 
                             {/* Toggles */}
                             <div className="border-t border-border pt-3 flex flex-col sm:flex-row gap-4">
@@ -602,7 +853,7 @@ const Products = () => {
                                           <Switch.Thumb />
                                         </Switch.Control>
                                         <Switch.Content>
-                                          <Label>Requiere Preparación</Label>
+                                          <Label>Requiere comanda</Label>
                                         </Switch.Content>
                                       </Switch>
                                     </>

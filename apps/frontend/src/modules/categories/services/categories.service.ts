@@ -5,13 +5,25 @@ export const getAllProductCategories = async () => {
   return data;
 };
 
-export const createProductCategory = async (category: { name: string; description: string }) => {
+export const createProductCategory = async (category: {
+  name: string;
+  description: string;
+  posVisible: boolean;
+}) => {
   const { data } = await api.post("/product-categories", category);
   return data;
 };
 
-export const updateProductCategory = async (category: { id: number; name: string; description: string }) => {
-  const { data } = await api.put(`/product-categories/${category.id}`, category);
+export const updateProductCategory = async (category: {
+  id: number;
+  name: string;
+  description: string;
+  posVisible: boolean;
+}) => {
+  const { data } = await api.put(
+    `/product-categories/${category.id}`,
+    category,
+  );
   return data;
 };
 
