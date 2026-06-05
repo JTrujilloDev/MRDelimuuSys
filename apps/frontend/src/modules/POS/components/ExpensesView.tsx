@@ -128,7 +128,7 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
             </div>
           ) : (
             <div className="space-y-3">
-              {expenses?.map((exp) => (
+              {expenses?.sort((a, b) => b.createdAt - a.createdAt).map((exp) => (
                 <div
                   key={exp.id}
                   className="rounded-xl border border-border bg-secondary/30 p-4 flex items-start justify-between gap-4"

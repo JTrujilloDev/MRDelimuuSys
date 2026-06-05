@@ -131,7 +131,7 @@ const SalesHistory = ({
           </div>
         ) : (
           <div className="space-y-2">
-            {filtered.map((s) => {
+            {filtered.sort((a, b) => dayjs(b.closedAt).unix() - dayjs(a.closedAt).unix()).map((s) => {
               const Meta = methodMeta[s.paymentMethod];
 
               const Icon = Meta.icon;

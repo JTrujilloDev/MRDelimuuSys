@@ -381,6 +381,7 @@ const Index = () => {
                 }
                 image={temporalImg}
                 variantsInfo={product.variants}
+                productType={product.productType}
                 onAdd={() => handleProductClick(product)}
               />
             ))}

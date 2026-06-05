@@ -12,7 +12,7 @@ import {
   toast,
 } from "@heroui/react";
 import { FileText, Filter, PackagePlus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGetPOSInventoryTransactions } from "../hooks/useGetPOSInventoryTransactions";
 import dayjs from "dayjs";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
@@ -20,57 +20,17 @@ import { useGetProductsByCategory } from "../../products/hooks/useGetProductsByC
 import { useCreatePOSInventoryTransaction } from "../hooks/useCreatePOSInventoryTransaction";
 import { useGetAllActiveProducts } from "../../products/hooks/useGetAllActiveProducts";
 import { getReportPDF } from "../services/report.service";
-const transactionTypes = [
-  {
-    value: "PURCHASE",
-    label: "Compra",
-    className: "bg-[#3b82f6]/20 text-[#3b82f6]",
-  },
-  {
-    value: "ADJUSTMENT",
-    label: "Ajuste",
-    className: "bg-[#facc15]/20 text-[#ca8a04]",
-  },
-  {
-    value: "RETURN",
-    label: "Devolución",
-    className: "bg-[#8E51FF]/20 text-[#8E51FF]",
-  },
-  {
-    value: "WASTE",
-    label: "Merma",
-    className: "bg-[#ef4444]/20 text-[#ef4444]",
-  },
-  {
-    value: "PRODUCTION",
-    label: "Producción",
-    className: "bg-[#06b6d4]/20 text-[#0891b2]",
-  },
-  {
-    value: "INITIAL",
-    label: "Inventario inicial",
-    className: "bg-[#FF7B1E]/20 text-[#FF7B1E]",
-  },
-  {
-    value: "WHOLESALE",
-    label: "Venta al por mayor",
-    className: "bg-[#10b981]/20 text-[#10b981]",
-  },
-  {
-    value: "SALE",
-    label: "Venta POS",
-    className: "bg-[#10b981]/20 text-[#10b981]",
-  },
-  {
-    value: "INTERNAL_CONSUMPTION",
-    label: "Consumo interno",
-    className: "bg-[#ef4410]/20 text-[#ef4410]",
-  }
-];
+import {
+  inventoryTransactionsByProductType,
+  transactionTypes,
+} from "../../../shared/constants/inventoryTransactionsByProductType";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { Unit } from "../../../../../backend/generated/prisma/enums";
+import { productUnits } from "../../../shared/constants/productUnits";
 
 const getTransactionChipProps = (type: string) => {
   return (
-    transactionTypes.find((item) => item.value === type) ?? {
+    Object.values(transactionTypes).find((item) => item.value === type) ?? {
       value: type,
       label: type,
       className: "bg-border text-foreground",
@@ -80,6 +40,9 @@ const getTransactionChipProps = (type: string) => {
 
 interface TransactionFormData {
   productVariantId: number | null;
+  productType: string;
+  categoryId: number | null;
+  productId: number | null;
   type: string;
   quantity: number;
   observation: string;
@@ -92,28 +55,89 @@ const Inventory = () => {
     useGetAllActiveProducts();
   const { mutate: createTransaction } = useCreatePOSInventoryTransaction();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
-  const [availableVariants, setAvailableVariants] = useState<any[]>([]);
-  const [transactionData, setTransactionData] = useState<TransactionFormData>({
-    productVariantId: null,
-    type: "",
-    quantity: 0,
-    observation: "",
-  });
+
   const [selectedFilter, setSelectedFilter] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterCategory, setFilterCategory] = useState<string>("");
 
-  useEffect(() => {
-    if (selectedCategory) {
-      setAvailableVariants(
-        products?.data?.find((p) => p.id === selectedProduct)?.variants || [],
-      );
-    }
-  }, [selectedProduct]);
+  const { control, handleSubmit, reset, setValue } =
+    useForm<TransactionFormData>({
+      defaultValues: {
+        categoryId: null,
+        productId: null,
+        productVariantId: null,
+        productType: "",
+        type: "",
+        quantity: 0,
+        observation: "",
+      },
+    });
 
+  const selectedCategory = useWatch({
+    control,
+    name: "categoryId",
+  });
   const { data: products } = useGetProductsByCategory(selectedCategory);
+
+  const selectedProduct = useWatch({
+    control,
+    name: "productId",
+  });
+
+  const availableVariants =
+    products?.data?.find((p) => p.id === selectedProduct)?.variants ?? [];
+
+  const productType =
+    products?.data?.find((p) => p.id === selectedProduct)?.productType ?? "";
+  const productVariantId = useWatch({
+    control,
+    name: "productVariantId",
+  });
+  const productVariantIsNew = availableVariants.find(
+    (p) => p.id === productVariantId,
+  )?.isNew;
+
+  const availableTransactions = productVariantIsNew
+    ? inventoryTransactionsByProductType.NEW_VARIANT
+    : inventoryTransactionsByProductType[
+        productType as keyof typeof inventoryTransactionsByProductType
+      ];
+
+  const onSubmit = (
+    data: TransactionFormData & {
+      categoryId: number | null;
+      productId: number | null;
+    },
+  ) => {
+    createTransaction(
+      {
+        productVariantId: data.productVariantId,
+        type: data.type,
+        quantity: data.quantity,
+        observation: data.observation,
+      },
+      {
+        onSuccess: () => {
+          reset();
+          setDialogOpen(false);
+
+          toast("Movimiento registrado exitosamente", {
+            variant: "success",
+          });
+        },
+        onError: (error) => {
+          toast(
+            error instanceof Error
+              ? error.message
+              : "Error al registrar el movimiento",
+            {
+              variant: "danger",
+            },
+          );
+        },
+      },
+    );
+  };
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
@@ -185,7 +209,7 @@ const Inventory = () => {
             >
               Todas
             </Button>
-            {transactionTypes.map((item) => (
+            {Object.values(transactionTypes).map((item) => (
               <Button
                 key={item.value}
                 size="sm"
@@ -221,6 +245,9 @@ const Inventory = () => {
                   </Table.Column>
                   <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
                     Cantidad
+                  </Table.Column>
+                  <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
+                    Unidad
                   </Table.Column>
 
                   <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
@@ -260,6 +287,12 @@ const Inventory = () => {
 
                         <Table.Cell className="text-foreground font-medium text-center">
                           {tx.quantity}
+                        </Table.Cell>
+                        <Table.Cell className="text-foreground font-medium text-center">
+                          {
+                            productUnits.find((unit) => unit.value === tx.unit)
+                              ?.label
+                          }
                         </Table.Cell>
 
                         <Table.Cell className="text-foreground max-w-[150px] truncate">
@@ -301,7 +334,7 @@ const Inventory = () => {
                   <Select.Value />
                   <Select.Indicator />
                 </Select.Trigger>
-                <Select.Popover className="rounded-xl">
+                <Select.Popover className="rounded-md">
                   <ListBox>
                     <ListBox.Item
                       id={"all"}
@@ -344,7 +377,7 @@ const Inventory = () => {
             <div className="rounded-xl border border-border bg-card p-4">
               <p className="text-xs text-muted-foreground mb-1">Variantes</p>
               <p className="text-2xl font-bold text-foreground">
-                {activeProducts.reduce(
+              {activeProducts.filter((p) => p.productType !== "RECIPE_PRODUCT").reduce(
                   (sum, product) => sum + product.variants.length,
                   0,
                 )}
@@ -356,7 +389,7 @@ const Inventory = () => {
                 {activeProducts.reduce((sum, product) => {
                   const lowStockVariants = product.variants.filter(
                     (variant) =>
-                      variant.stock > 0 && variant.stock <= variant.minStock,
+                      variant.stock > 0 && variant.stock <= variant.minStock && product.productType !== "RECIPE_PRODUCT",
                   );
                   return sum + lowStockVariants.length;
                 }, 0)}
@@ -367,7 +400,7 @@ const Inventory = () => {
               <p className="text-2xl font-bold text-destructive">
                 {activeProducts.reduce((sum, product) => {
                   const outOfStockVariants = product.variants.filter(
-                    (variant) => variant.stock === 0,
+                    (variant) => variant.stock === 0 && product.productType !== "RECIPE_PRODUCT",
                   );
                   return sum + outOfStockVariants.length;
                 }, 0)}
@@ -396,6 +429,9 @@ const Inventory = () => {
                       Stock actual
                     </Table.Column>
                     <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
+                      Unidad
+                    </Table.Column>
+                    <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
                       Estado
                     </Table.Column>
                   </Table.Header>
@@ -412,14 +448,16 @@ const Inventory = () => {
                           const matchesProduct = product.name
                             .toLowerCase()
                             .includes(searchTerm);
-                          const matchesVariant = product.variants.some(
-                            (v) =>
-                              v.name.toLowerCase().includes(searchTerm),
+                          const matchesVariant = product.variants.some((v) =>
+                            v.name.toLowerCase().includes(searchTerm),
                           );
                           return matchesProduct || matchesVariant;
                         }
                         return true;
                       })
+                      .filter(
+                        (product) => product.productType !== "RECIPE_PRODUCT",
+                      )
                       .flatMap((product) => {
                         const matchesProduct = product.name
                           .toLowerCase()
@@ -442,6 +480,8 @@ const Inventory = () => {
                               <Table.Cell>{product.name}</Table.Cell>
                               <Table.Cell>{variant.name}</Table.Cell>
                               <Table.Cell>{variant.stock}</Table.Cell>
+                              <Table.Cell>{productUnits.find((u) => u.value === variant.unit)?.label }</Table.Cell>
+
                               <Table.Cell>
                                 {variant.stock > variant.minStock ? (
                                   <Chip className="bg-[#10b981]/20 text-[#10b981]">
@@ -483,217 +523,195 @@ const Inventory = () => {
               </Modal.Header>
               <Modal.Body className="flex flex-col gap-4 p-4">
                 <div className="flex gap-4 flex-col mb-4">
-                  <Select
-                    onChange={(value) => setSelectedCategory(Number(value))}
-                    value={selectedCategory?.toString() || ""}
-                    defaultValue=""
-                    placeholder="Seleccione una categoria"
-                    aria-label="Categoria"
-                  >
-                    <Label className="text-sm font-medium">Categoria</Label>
-                    <Select.Trigger>
-                      <Select.Value />
-                      <Select.Indicator />
-                    </Select.Trigger>
-                    <Select.Popover className="rounded-xl">
-                      <ListBox>
-                        {categories?.data?.map((cat) => (
-                          <ListBox.Item
-                            id={cat.id.toString()}
-                            textValue={cat.name}
-                            key={cat.id}
-                          >
-                            {cat.name}
-                            <ListBox.ItemIndicator />
-                          </ListBox.Item>
-                        ))}
-                      </ListBox>
-                    </Select.Popover>
-                  </Select>
-                  <Select
-                    onChange={(value) => {
-                      setTransactionData((prev) => ({
-                        ...prev,
-                        productVariantId: null,
-                      }));
-                      setAvailableVariants([]);
-                      setSelectedProduct(Number(value));
-                    }}
-                    value={selectedProduct?.toString() || ""}
-                    defaultValue=""
-                    placeholder="Seleccione un producto"
-                  >
-                    <Label className="text-sm font-medium ">Producto</Label>
-                    <Select.Trigger>
-                      <Select.Value />
-                      <Select.Indicator />
-                    </Select.Trigger>
-                    <Select.Popover className="rounded-xl">
-                      <ListBox>
-                        {products?.data?.map((prod) => (
-                          <ListBox.Item
-                            id={prod.id.toString()}
-                            textValue={prod.name}
-                            key={prod.id}
-                          >
-                            {prod.name}
-                            <ListBox.ItemIndicator />
-                          </ListBox.Item>
-                        ))}
-                      </ListBox>
-                    </Select.Popover>
-                  </Select>
-                  <Select
-                    onChange={(value) =>
-                      setTransactionData((prev) => ({
-                        ...prev,
-                        productVariantId: Number(value) || null,
-                      }))
-                    }
-                    value={transactionData.productVariantId?.toString() || ""}
-                    defaultValue=""
-                    placeholder="Seleccione una variante"
-                  >
-                    <Label className="text-sm font-medium ">Variante</Label>
-                    <Select.Trigger>
-                      <Select.Value />
-                      <Select.Indicator />
-                    </Select.Trigger>
-                    <Select.Popover className="rounded-xl">
-                      <ListBox>
-                        {availableVariants.map((variant) => (
-                          <ListBox.Item
-                            id={variant.id.toString()}
-                            textValue={variant.name}
-                            key={variant.id}
-                          >
-                            {variant.name}
-                            <ListBox.ItemIndicator />
-                          </ListBox.Item>
-                        ))}
-                      </ListBox>
-                    </Select.Popover>
-                  </Select>
+                  <Controller
+                    control={control}
+                    name="categoryId"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value?.toString() ?? ""}
+                        placeholder="Seleccione una categoría"
+                        onChange={(value) => {
+                          field.onChange(Number(value));
+
+                          setValue("productId", null);
+                          setValue("productVariantId", null);
+                        }}
+                      >
+                        <Label>Categoria</Label>
+
+                        <Select.Trigger>
+                          <Select.Value />
+                          <Select.Indicator />
+                        </Select.Trigger>
+
+                        <Select.Popover className="rounded-md">
+                          <ListBox>
+                            {categories?.data?.map((cat) => (
+                              <ListBox.Item
+                                key={cat.id}
+                                id={cat.id.toString()}
+                                textValue={cat.name}
+                              >
+                                {cat.name}
+                              </ListBox.Item>
+                            ))}
+                          </ListBox>
+                        </Select.Popover>
+                      </Select>
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="productId"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value?.toString() ?? ""}
+                        placeholder="Seleccione un producto"
+                        onChange={(value) => {
+                          field.onChange(Number(value));
+
+                          setValue("productVariantId", null);
+                        }}
+                      >
+                        <Label>Producto</Label>
+
+                        <Select.Trigger>
+                          <Select.Value />
+                          <Select.Indicator />
+                        </Select.Trigger>
+
+                        <Select.Popover className="rounded-md">
+                          <ListBox>
+                            {products?.data
+                              ?.filter(
+                                (prod) => prod.productType !== "RECIPE_PRODUCT",
+                              )
+                              .map((prod) => (
+                                <ListBox.Item
+                                  key={prod.id}
+                                  id={prod.id.toString()}
+                                  textValue={prod.name}
+                                >
+                                  {prod.name}
+                                </ListBox.Item>
+                              ))}
+                          </ListBox>
+                        </Select.Popover>
+                      </Select>
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="productVariantId"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value?.toString() ?? ""}
+                        placeholder="Seleccione una variante"
+                        onChange={(value) => field.onChange(Number(value))}
+                      >
+                        <Label>Variante</Label>
+
+                        <Select.Trigger>
+                          <Select.Value />
+                          <Select.Indicator />
+                        </Select.Trigger>
+
+                        <Select.Popover className="rounded-md">
+                          <ListBox>
+                            {availableVariants.map((variant) => (
+                              <ListBox.Item
+                                key={variant.id}
+                                id={variant.id.toString()}
+                                textValue={variant.name}
+                              >
+                                {variant.name}
+                              </ListBox.Item>
+                            ))}
+                          </ListBox>
+                        </Select.Popover>
+                      </Select>
+                    )}
+                  />
                 </div>
 
-                <Select
-                  onChange={(value) =>
-                    setTransactionData((prev) => ({
-                      ...prev,
-                      type: value?.toString() || "",
-                    }))
-                  }
-                  value={transactionData.type || ""}
-                  defaultValue=""
-                  placeholder="Seleccione el tipo de transacción"
-                >
-                  <Label className="text-sm font-medium ">
-                    Tipo de transacción
-                  </Label>
-                  <Select.Trigger>
-                    <Select.Value />
-                    <Select.Indicator />
-                  </Select.Trigger>
-                  <Select.Popover className="rounded-xl ">
-                    <ListBox>
-                      {transactionTypes
-                        .filter((type) => type.value !== "SALE")
-                        .map((type) => (
-                          <ListBox.Item id={type.value} textValue={type.label}>
-                            <Chip
-                              key={type.value}
-                              className={type.className}
-                              size="sm"
-                            >
-                              {type.label}
-                            </Chip>
-                            <ListBox.ItemIndicator />
-                          </ListBox.Item>
-                        ))}
-                    </ListBox>
-                  </Select.Popover>
-                </Select>
-                <Input
-                  placeholder="Cantidad"
-                  onChange={(e) =>
-                    setTransactionData((prev) => ({
-                      ...prev,
-                      quantity: Number(e.target.value),
-                    }))
-                  }
+                <Controller
+                  control={control}
+                  name="type"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value}
+                      placeholder="Seleccione el tipo de transacción"
+                      onChange={(value) => field.onChange(value)}
+                    >
+                      <Label>Tipo de transacción</Label>
+
+                      <Select.Trigger>
+                        <Select.Value />
+                        <Select.Indicator />
+                      </Select.Trigger>
+
+                      <Select.Popover className="rounded-md">
+                        <ListBox>
+                          {availableTransactions?.length &&
+                            availableTransactions.map((type) => (
+                              <ListBox.Item
+                                key={type.value}
+                                id={type.value}
+                                textValue={type.label}
+                              >
+                                <Chip className={type.className}>
+                                  {type.label}
+                                </Chip>
+                              </ListBox.Item>
+                            ))}
+                        </ListBox>
+                      </Select.Popover>
+                    </Select>
+                  )}
                 />
-                <TextArea
-                  placeholder="Observaciones"
-                  onChange={(e) =>
-                    setTransactionData((prev) => ({
-                      ...prev,
-                      observation: e.target.value,
-                    }))
-                  }
-                  rows={3}
+                <Controller
+                  control={control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-2">
+                      <Label>Cantidad</Label>
+                      <Input
+                        placeholder="Cantidad"
+                        value={field.value?.toString() ?? ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+
+                          if (value === "") {
+                            field.onChange(0);
+                            return;
+                          }
+
+                          if (!isNaN(Number(value))) {
+                            field.onChange(Number(value));
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="observation"
+                  render={({ field }) => (
+                    <TextArea {...field} rows={3} placeholder="Observaciones" />
+                  )}
                 />
               </Modal.Body>
               <Modal.Footer>
                 <Button
-                  variant="outline"
                   onClick={() => {
-                    setSelectedCategory(null);
-                    setSelectedProduct(null);
-                    setTransactionData({
-                      productVariantId: null,
-                      type: "",
-                      quantity: 0,
-                      observation: "",
-                    });
-                    setAvailableVariants([]);
                     setDialogOpen(false);
+                    reset();
                   }}
                 >
                   Cancelar
                 </Button>
-                <Button
-                  onClick={() => {
-                    if (
-                      transactionData.productVariantId === null ||
-                      !transactionData.type ||
-                      transactionData.quantity === 0
-                    ) {
-                      toast("Por favor complete todos los campos requeridos", {
-                        variant: "danger",
-                      });
-                      return;
-                    }
-                    createTransaction(transactionData, {
-                      onSuccess: () => {
-                        setSelectedCategory(null);
-                        setSelectedProduct(null);
-                        setTransactionData({
-                          productVariantId: null,
-                          type: "",
-                          quantity: 0,
-                          observation: "",
-                        });
-                        setAvailableVariants([]);
-                        setDialogOpen(false);
-                        toast("Movimiento registrado exitosamente", {
-                          variant: "success",
-                        });
-                      },
-                      onError: (error) => {
-                        toast(
-                          error instanceof Error
-                            ? error.message
-                            : "Error al registrar el movimiento",
-                          {
-                            variant: "danger",
-                          },
-                        );
-                      },
-                    });
-                  }}
-                >
-                  Registrar
-                </Button>
+                <Button onClick={handleSubmit(onSubmit)}>Registrar</Button>
               </Modal.Footer>
             </Modal.Dialog>
           </Modal.Container>

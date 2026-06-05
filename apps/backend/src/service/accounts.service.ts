@@ -1,7 +1,10 @@
 import { Account, AccountItem } from "../../generated/prisma/client";
 import { AccountStatus, PaymentMethod } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
-import { UpdateCashRegisterTotalsInput, updateCashRegisterTotalsTx } from "./cashRegister.service";
+import {
+  UpdateCashRegisterTotalsInput,
+  updateCashRegisterTotalsTx,
+} from "./cashRegister.service";
 
 interface CreateAccountItem {
   productVariantId: number;
@@ -384,7 +387,15 @@ export const closeAccountService = async ({
     // 1. Obtener cuenta
     const account = await tx.account.findUnique({
       where: { id: accountId },
-      include: { accountItems: true },
+      include: {
+        accountItems: {
+          include: {
+            productVariant: {
+              include: { product: { include: { category: true } } },
+            },
+          },
+        },
+      },
     });
 
     if (!account) {
@@ -402,49 +413,173 @@ export const closeAccountService = async ({
     // 2. Calcular total
     const total = account.accountItems.reduce(
       (sum, item) => sum + item.subtotal,
-      0
+      0,
     );
 
-    // 3. Validar stock
-    const productIds = account.accountItems.map(
-      (i) => i.productVariantId
-    );
+    // 3.1 Validar stock de FINISHED_PRODUCT y THIRD_PARTY_PRODUCT
+    const finishedProductIds = account.accountItems
+      .filter(
+        (i) => i.productVariant.product.productType === "FINISHED_PRODUCT" || i.productVariant.product.productType === "THIRD_PARTY_PRODUCT",
+      )
+      .map((i) => i.productVariantId);
 
     const products = await tx.productVariant.findMany({
-      where: { id: { in: productIds } },
+      where: {
+        id: { in: finishedProductIds },
+      },
     });
 
-    const productMap = new Map(products.map((p) => [p.id, p]));
+    const finishedProductMap = new Map(products.map((p) => [p.id, p]));
 
     for (const item of account.accountItems) {
-      const product = productMap.get(item.productVariantId);
+      if (item.productVariant.product.productType !== "FINISHED_PRODUCT" && item.productVariant.product.productType !== "THIRD_PARTY_PRODUCT") {
+        continue;
+      }
 
-      if (!product) throw new Error("Product not found");
+      const product = finishedProductMap.get(item.productVariantId);
+
+      if (!product) {
+        throw new Error("Product not found");
+      }
 
       if (product.stock < item.quantity) {
         throw new Error(`Insufficient stock for ${product.name}`);
       }
     }
 
+    // 3.2 Validar stock de RECIPE_PRODUCT
+
+    const recipeProductIds = account.accountItems
+      .filter((i) => i.productVariant.product.productType === "RECIPE_PRODUCT")
+      .map((i) => i.productVariantId);
+
+    const recipeProducts = await tx.productVariant.findMany({
+      where: {
+        id: {
+          in: recipeProductIds,
+        },
+      },
+      include: {
+        recipeItems: {
+          include: {
+            ingredientVariant: true,
+          },
+        },
+      },
+    });
+
+    const recipeProductMap = new Map(recipeProducts.map((p) => [p.id, p]));
+
+    // Acumular consumo total de ingredientes
+    const ingredientConsumption = new Map<number, number>();
+
+    for (const item of account.accountItems) {
+      if (item.productVariant.product.productType !== "RECIPE_PRODUCT") {
+        continue;
+      }
+
+      const recipeProduct = recipeProductMap.get(item.productVariantId);
+
+      if (!recipeProduct) {
+        throw new Error("Recipe product not found");
+      }
+
+      for (const recipeItem of recipeProduct.recipeItems) {
+        const requiredQuantity = recipeItem.quantity * item.quantity;
+
+        const current =
+          ingredientConsumption.get(recipeItem.ingredientVariantId) ?? 0;
+
+        ingredientConsumption.set(
+          recipeItem.ingredientVariantId,
+          current + requiredQuantity,
+        );
+      }
+    }
+
+    const ingredientIds = [...ingredientConsumption.keys()];
+
+    const ingredients = await tx.productVariant.findMany({
+      where: {
+        id: {
+          in: ingredientIds,
+        },
+      },
+    });
+
+    const ingredientMap = new Map(ingredients.map((i) => [i.id, i]));
+
+    for (const [ingredientId, requiredQuantity] of ingredientConsumption) {
+      const ingredient = ingredientMap.get(ingredientId);
+
+      if (!ingredient) {
+        throw new Error("Ingredient not found");
+      }
+
+      if (ingredient.stock < requiredQuantity) {
+        throw new Error(`Insufficient stock for ${ingredient.name}`);
+      }
+    }
+
     // 4. Inventario
     for (const item of account.accountItems) {
-      const product = productMap.get(item.productVariantId)!;
+      const productType = item.productVariant.product.productType;
 
-      await tx.inventoryTransaction.create({
-        data: {
-          productVariantId: product.id,
-          relatedAccountId: accountId,
-          quantity: -item.quantity,
-          type: "SALE",
-        },
-      });
+      if (productType === "FINISHED_PRODUCT" || productType === "THIRD_PARTY_PRODUCT") {
+        const product = finishedProductMap.get(item.productVariantId)!;
 
-      await tx.productVariant.update({
-        where: { id: product.id },
-        data: {
-          stock: product.stock - item.quantity,
-        },
-      });
+        await tx.inventoryTransaction.create({
+          data: {
+            productVariantId: product.id,
+            relatedAccountId: accountId,
+            quantity: -item.quantity,
+            type: "SALE",
+          },
+        });
+
+        await tx.productVariant.update({
+          where: { id: product.id },
+          data: {
+            stock: {
+              decrement: item.quantity,
+            },
+          },
+        });
+
+        continue;
+      }
+
+      if (productType === "RECIPE_PRODUCT") {
+        const recipeProduct = recipeProductMap.get(item.productVariantId);
+
+        if (!recipeProduct) {
+          throw new Error("Recipe product not found");
+        }
+
+        for (const recipeItem of recipeProduct.recipeItems) {
+          const consumedQuantity = recipeItem.quantity * item.quantity;
+
+          await tx.inventoryTransaction.create({
+            data: {
+              productVariantId: recipeItem.ingredientVariantId,
+              relatedAccountId: accountId,
+              quantity: -consumedQuantity,
+              type: "SALE",
+            },
+          });
+
+          await tx.productVariant.update({
+            where: {
+              id: recipeItem.ingredientVariantId,
+            },
+            data: {
+              stock: {
+                decrement: consumedQuantity,
+              },
+            },
+          });
+        }
+      }
     }
 
     // 5. Transacción financiera
@@ -502,5 +637,3 @@ export const closeAccountService = async ({
     return updatedAccount;
   });
 };
-
-

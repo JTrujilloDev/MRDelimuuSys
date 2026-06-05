@@ -1,5 +1,6 @@
 import { Chip, Modal } from "@heroui/react";
 import numeral from "numeral";
+import { useMemo } from "react";
 
 export interface Variant {
   createdAt: string;
@@ -12,6 +13,13 @@ export interface Variant {
   retailPrice: number;
   stock: number;
   wholesalePrice: number;
+  recipeItems?: RecipeItem[];
+}
+
+interface RecipeItem {
+  name: string;
+  quantity: number;
+  ingredientVariant: Variant;
 }
 
 export interface ProductWithVariants {
@@ -20,6 +28,7 @@ export interface ProductWithVariants {
   price: number | null;
   category: string;
   image: string;
+  productType: string;
   variants?: Variant[];
 }
 
@@ -38,6 +47,34 @@ const VariantModal = ({
 }: VariantModalProps) => {
   if (!open || !product || !product.variants) return null;
 
+ const stockInfo = useMemo(() => {
+  if (product.productType !== "RECIPE_PRODUCT" || !product?.variants) return [];
+
+  return product?.variants.map(
+    (variant) =>
+      variant.recipeItems?.map((recipeItem) => {
+        const maxUnits =
+          recipeItem.quantity > 0
+            ? recipeItem.ingredientVariant.stock / recipeItem.quantity
+            : 0;
+
+        const availableUnits = Math.floor(maxUnits);
+
+        return {
+          name: recipeItem.ingredientVariant.product.name,
+          maxUnits: availableUnits,
+          chipColor:
+            availableUnits === 0
+              ? "bg-[#ef4444]/20 text-[#ef4444]"
+              : availableUnits <= variant.minStock
+                ? "bg-[#facc15]/20 text-[#ca8a04]"
+                : "bg-[#10b981]/20 text-[#10b981]",
+        };
+      }) ?? [],
+  );
+}, [product]);
+
+
   return (
     <Modal>
       <Modal.Backdrop isOpen={open}>
@@ -49,7 +86,7 @@ const VariantModal = ({
             </Modal.Header>
             <Modal.Body className="grid grid-cols-1 gap-3 p-6 sm:grid-cols-2">
               {product.variants.map(
-                (variant) =>
+                (variant, index) =>
                   variant.isActive && (
                     <button
                       key={variant.id}
@@ -65,9 +102,25 @@ const VariantModal = ({
                       <span className="mt-1 text-base font-bold text-primary sm:text-lg">
                         {numeral(variant?.retailPrice).format("$ 0,0")}
                       </span>
-                      <Chip className={`mt-2 ${variant?.stock > variant.minStock ? "bg-success-soft-hover text-success" : "bg-danger-soft-hover text-danger"}`}>
+                      {
+                        product.productType !== "RECIPE_PRODUCT" ? (
+                          <Chip
+                        className={`mt-2 ${variant?.stock > variant.minStock ? "bg-success-soft-hover text-success" : "bg-danger-soft-hover text-danger"}`}
+                      >
                         {`${variant?.stock} en stock`}
                       </Chip>
+                        ) : (
+                          stockInfo[index]?.map((item, index) => (
+                            <Chip
+                              key={index}
+                              className={`mt-2 ${item.chipColor}`}
+                            >
+                              {`${item.name}: ${item.maxUnits}`}
+                            </Chip>
+                          ))
+                        )
+                      }
+                      
                     </button>
                   ),
               )}

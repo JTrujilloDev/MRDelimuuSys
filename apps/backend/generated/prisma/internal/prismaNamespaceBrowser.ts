@@ -54,7 +54,6 @@ export const ModelName = {
   Category: 'Category',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
-  SaleRecipe: 'SaleRecipe',
   RecipeItem: 'RecipeItem',
   User: 'User',
   Account: 'Account',
@@ -119,28 +118,18 @@ export const ProductVariantScalarFieldEnum = {
   requirePreparation: 'requirePreparation',
   productCost: 'productCost',
   productId: 'productId',
+  unit: 'unit',
+  isNew: 'isNew',
   createdAt: 'createdAt'
 } as const
 
 export type ProductVariantScalarFieldEnum = (typeof ProductVariantScalarFieldEnum)[keyof typeof ProductVariantScalarFieldEnum]
 
 
-export const SaleRecipeScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  productVariantId: 'productVariantId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type SaleRecipeScalarFieldEnum = (typeof SaleRecipeScalarFieldEnum)[keyof typeof SaleRecipeScalarFieldEnum]
-
-
 export const RecipeItemScalarFieldEnum = {
   id: 'id',
-  saleRecipeId: 'saleRecipeId',
-  productVariantId: 'productVariantId',
+  recipeVariantId: 'recipeVariantId',
+  ingredientVariantId: 'ingredientVariantId',
   quantity: 'quantity',
   createdAt: 'createdAt'
 } as const
@@ -203,6 +192,7 @@ export const InventoryTransactionScalarFieldEnum = {
   productVariantId: 'productVariantId',
   relatedAccountId: 'relatedAccountId',
   quantity: 'quantity',
+  unit: 'unit',
   type: 'type',
   observation: 'observation',
   createdAt: 'createdAt'

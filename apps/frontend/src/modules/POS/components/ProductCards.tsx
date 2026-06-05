@@ -7,7 +7,14 @@ interface ProductCardProps {
   price: number | null;
   image: string;
   variantsInfo?: VariantInfo[];
+  productType: string;
   onAdd: () => void;
+}
+
+interface RecipeItem {
+  name: string;
+  quantity: number;
+  ingredientVariant: VariantInfo;
 }
 
 interface VariantInfo {
@@ -16,6 +23,7 @@ interface VariantInfo {
   quantity: number;
   stock: number;
   minStock: number;
+  recipeItems?: RecipeItem[];
 }
 
 const ProductCard = ({
@@ -23,8 +31,39 @@ const ProductCard = ({
   price,
   image,
   variantsInfo,
+  productType,
   onAdd,
 }: ProductCardProps) => {
+  const ingredientsStock = () => {
+    if (productType !== "RECIPE_PRODUCT") return [];
+
+    return (
+      variantsInfo?.flatMap(
+        (variant) =>
+          variant.recipeItems?.map((recipeItem) => {
+            const maxUnits =
+              recipeItem.quantity > 0
+                ? recipeItem.ingredientVariant.stock / recipeItem.quantity
+                : 0;
+
+            return {
+              name: recipeItem.ingredientVariant.product.name,
+              maxUnits: Math.floor(maxUnits),
+              chipColor:
+                Math.floor(maxUnits) === 0
+                  ? "bg-[#ef4444]/20 text-[#ef4444]"
+                  : maxUnits <= variant.minStock
+                    ? "bg-[#facc15]/20 text-[#ca8a04]"
+                    : "bg-[#10b981]/20 text-[#10b981]",
+            };
+          }) ?? [],
+      ) ?? []
+    );
+  };
+
+  const stockInfo = ingredientsStock();
+
+  console.log(stockInfo);
   return (
     <button
       onClick={onAdd}
@@ -50,12 +89,19 @@ const ProductCard = ({
               ? `${variantsInfo.length} variantes`
               : numeral(price).format("$0,0")}
           </p>
-          {variantsInfo?.length === 1 && (
+          {variantsInfo?.length === 1 && productType !== "RECIPE_PRODUCT" ? (
             <Chip
               className={`mt-2 ${variantsInfo[0].stock > variantsInfo[0]?.minStock ? "bg-success-soft-hover text-success" : "bg-danger-soft-hover text-danger"}`}
             >
               {`${variantsInfo[0].stock} en stock`}
             </Chip>
+          ) : (
+            variantsInfo?.length === 1 &&
+            stockInfo.map((i) => (
+              <Chip className={`mt-2 ${i.chipColor}`}>
+                {`${i.name}: ${i.maxUnits}`}
+              </Chip>
+            ))
           )}
         </div>
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground opacity-80 transition-opacity group-hover:opacity-100">

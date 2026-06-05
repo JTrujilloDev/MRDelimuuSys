@@ -40,6 +40,7 @@ enum ProductType {
   PREPARED_BASE
   FINISHED_PRODUCT
   RECIPE_PRODUCT
+  THIRD_PARTY_PRODUCT
 }
 
 model ProductVariant {
@@ -55,14 +56,14 @@ model ProductVariant {
   productId          Int
   unit               Unit    @default(UNIT)
   product            Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  saleRecipe SaleRecipe? @relation(name: "SaleRecipeToVariant")
+  isNew              Boolean @default(true)
 
   createdAt DateTime @default(now())
 
   accountItems          AccountItem[]
   InventoryTransactions InventoryTransaction[]
-  recipeItems           RecipeItem[]
+  recipeItems           RecipeItem[]           @relation("RecipeOwner")
+  ingredientInRecipes   RecipeItem[]           @relation("RecipeIngredient")
 }
 
 enum Unit {
@@ -76,28 +77,18 @@ enum Unit {
   PACK
 }
 
-model SaleRecipe {
-  id               Int            @id @default(autoincrement())
-  name             String
-  description      String?
-  productVariantId Int            @unique
-  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, name: "SaleRecipeToVariant")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  recipeItems RecipeItem[]
-}
-
 model RecipeItem {
-  id               Int @id @default(autoincrement())
-  saleRecipeId     Int
-  productVariantId Int
-  quantity         Int
+  id Int @id @default(autoincrement())
 
+  // Variante que contiene la receta
+  recipeVariantId Int
+  recipeVariant   ProductVariant @relation("RecipeOwner", fields: [recipeVariantId], references: [id], onDelete: Cascade)
 
-  saleRecipe     SaleRecipe     @relation(fields: [saleRecipeId], references: [id], onDelete: Cascade)
-  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  // Ingrediente utilizado
+  ingredientVariantId Int
+  ingredientVariant   ProductVariant @relation("RecipeIngredient", fields: [ingredientVariantId], references: [id])
+
+  quantity Int
 
   createdAt DateTime @default(now())
 }
@@ -190,6 +181,7 @@ model InventoryTransaction {
   relatedAccountId Int?
   productVariant   ProductVariant           @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
   quantity         Int
+  unit             Unit                     @default(UNIT)
   type             InventoryTransactionType
   observation      String?
 
@@ -206,6 +198,7 @@ enum InventoryTransactionType {
   INITIAL
   WHOLESALE
   INTERNAL_CONSUMPTION
+  DONATION
 }
 
 model FinancialTransaction {

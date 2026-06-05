@@ -57,6 +57,8 @@ export type ProductVariantMinAggregateOutputType = {
   requirePreparation: boolean | null
   productCost: number | null
   productId: number | null
+  unit: $Enums.Unit | null
+  isNew: boolean | null
   createdAt: Date | null
 }
 
@@ -71,6 +73,8 @@ export type ProductVariantMaxAggregateOutputType = {
   requirePreparation: boolean | null
   productCost: number | null
   productId: number | null
+  unit: $Enums.Unit | null
+  isNew: boolean | null
   createdAt: Date | null
 }
 
@@ -85,6 +89,8 @@ export type ProductVariantCountAggregateOutputType = {
   requirePreparation: number
   productCost: number
   productId: number
+  unit: number
+  isNew: number
   createdAt: number
   _all: number
 }
@@ -121,6 +127,8 @@ export type ProductVariantMinAggregateInputType = {
   requirePreparation?: true
   productCost?: true
   productId?: true
+  unit?: true
+  isNew?: true
   createdAt?: true
 }
 
@@ -135,6 +143,8 @@ export type ProductVariantMaxAggregateInputType = {
   requirePreparation?: true
   productCost?: true
   productId?: true
+  unit?: true
+  isNew?: true
   createdAt?: true
 }
 
@@ -149,6 +159,8 @@ export type ProductVariantCountAggregateInputType = {
   requirePreparation?: true
   productCost?: true
   productId?: true
+  unit?: true
+  isNew?: true
   createdAt?: true
   _all?: true
 }
@@ -250,6 +262,8 @@ export type ProductVariantGroupByOutputType = {
   requirePreparation: boolean
   productCost: number
   productId: number
+  unit: $Enums.Unit
+  isNew: boolean
   createdAt: Date
   _count: ProductVariantCountAggregateOutputType | null
   _avg: ProductVariantAvgAggregateOutputType | null
@@ -287,12 +301,14 @@ export type ProductVariantWhereInput = {
   requirePreparation?: Prisma.BoolFilter<"ProductVariant"> | boolean
   productCost?: Prisma.FloatFilter<"ProductVariant"> | number
   productId?: Prisma.IntFilter<"ProductVariant"> | number
+  unit?: Prisma.EnumUnitFilter<"ProductVariant"> | $Enums.Unit
+  isNew?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-  saleRecipe?: Prisma.XOR<Prisma.SaleRecipeNullableScalarRelationFilter, Prisma.SaleRecipeWhereInput> | null
   accountItems?: Prisma.AccountItemListRelationFilter
   InventoryTransactions?: Prisma.InventoryTransactionListRelationFilter
   recipeItems?: Prisma.RecipeItemListRelationFilter
+  ingredientInRecipes?: Prisma.RecipeItemListRelationFilter
 }
 
 export type ProductVariantOrderByWithRelationInput = {
@@ -306,12 +322,14 @@ export type ProductVariantOrderByWithRelationInput = {
   requirePreparation?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
-  saleRecipe?: Prisma.SaleRecipeOrderByWithRelationInput
   accountItems?: Prisma.AccountItemOrderByRelationAggregateInput
   InventoryTransactions?: Prisma.InventoryTransactionOrderByRelationAggregateInput
   recipeItems?: Prisma.RecipeItemOrderByRelationAggregateInput
+  ingredientInRecipes?: Prisma.RecipeItemOrderByRelationAggregateInput
 }
 
 export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
@@ -328,12 +346,14 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   requirePreparation?: Prisma.BoolFilter<"ProductVariant"> | boolean
   productCost?: Prisma.FloatFilter<"ProductVariant"> | number
   productId?: Prisma.IntFilter<"ProductVariant"> | number
+  unit?: Prisma.EnumUnitFilter<"ProductVariant"> | $Enums.Unit
+  isNew?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-  saleRecipe?: Prisma.XOR<Prisma.SaleRecipeNullableScalarRelationFilter, Prisma.SaleRecipeWhereInput> | null
   accountItems?: Prisma.AccountItemListRelationFilter
   InventoryTransactions?: Prisma.InventoryTransactionListRelationFilter
   recipeItems?: Prisma.RecipeItemListRelationFilter
+  ingredientInRecipes?: Prisma.RecipeItemListRelationFilter
 }, "id">
 
 export type ProductVariantOrderByWithAggregationInput = {
@@ -347,6 +367,8 @@ export type ProductVariantOrderByWithAggregationInput = {
   requirePreparation?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ProductVariantCountOrderByAggregateInput
   _avg?: Prisma.ProductVariantAvgOrderByAggregateInput
@@ -369,6 +391,8 @@ export type ProductVariantScalarWhereWithAggregatesInput = {
   requirePreparation?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
   productCost?: Prisma.FloatWithAggregatesFilter<"ProductVariant"> | number
   productId?: Prisma.IntWithAggregatesFilter<"ProductVariant"> | number
+  unit?: Prisma.EnumUnitWithAggregatesFilter<"ProductVariant"> | $Enums.Unit
+  isNew?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
 }
 
@@ -381,12 +405,14 @@ export type ProductVariantCreateInput = {
   isActive?: boolean
   requirePreparation?: boolean
   productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
-  saleRecipe?: Prisma.SaleRecipeCreateNestedOneWithoutProductVariantInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantUncheckedCreateInput = {
@@ -400,11 +426,13 @@ export type ProductVariantUncheckedCreateInput = {
   requirePreparation?: boolean
   productCost?: number
   productId: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedCreateNestedOneWithoutProductVariantInput
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantUpdateInput = {
@@ -416,12 +444,14 @@ export type ProductVariantUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
-  saleRecipe?: Prisma.SaleRecipeUpdateOneWithoutProductVariantNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateInput = {
@@ -435,11 +465,13 @@ export type ProductVariantUncheckedUpdateInput = {
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedUpdateOneWithoutProductVariantNestedInput
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantCreateManyInput = {
@@ -453,6 +485,8 @@ export type ProductVariantCreateManyInput = {
   requirePreparation?: boolean
   productCost?: number
   productId: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
 }
 
@@ -465,6 +499,8 @@ export type ProductVariantUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -479,6 +515,8 @@ export type ProductVariantUncheckedUpdateManyInput = {
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -503,6 +541,8 @@ export type ProductVariantCountOrderByAggregateInput = {
   requirePreparation?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -527,6 +567,8 @@ export type ProductVariantMaxOrderByAggregateInput = {
   requirePreparation?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -541,6 +583,8 @@ export type ProductVariantMinOrderByAggregateInput = {
   requirePreparation?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -617,23 +661,19 @@ export type NullableFloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type ProductVariantCreateNestedOneWithoutSaleRecipeInput = {
-  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutSaleRecipeInput, Prisma.ProductVariantUncheckedCreateWithoutSaleRecipeInput>
-  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutSaleRecipeInput
-  connect?: Prisma.ProductVariantWhereUniqueInput
-}
-
-export type ProductVariantUpdateOneRequiredWithoutSaleRecipeNestedInput = {
-  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutSaleRecipeInput, Prisma.ProductVariantUncheckedCreateWithoutSaleRecipeInput>
-  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutSaleRecipeInput
-  upsert?: Prisma.ProductVariantUpsertWithoutSaleRecipeInput
-  connect?: Prisma.ProductVariantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutSaleRecipeInput, Prisma.ProductVariantUpdateWithoutSaleRecipeInput>, Prisma.ProductVariantUncheckedUpdateWithoutSaleRecipeInput>
+export type EnumUnitFieldUpdateOperationsInput = {
+  set?: $Enums.Unit
 }
 
 export type ProductVariantCreateNestedOneWithoutRecipeItemsInput = {
   create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutRecipeItemsInput, Prisma.ProductVariantUncheckedCreateWithoutRecipeItemsInput>
   connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutRecipeItemsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantCreateNestedOneWithoutIngredientInRecipesInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutIngredientInRecipesInput, Prisma.ProductVariantUncheckedCreateWithoutIngredientInRecipesInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutIngredientInRecipesInput
   connect?: Prisma.ProductVariantWhereUniqueInput
 }
 
@@ -643,6 +683,14 @@ export type ProductVariantUpdateOneRequiredWithoutRecipeItemsNestedInput = {
   upsert?: Prisma.ProductVariantUpsertWithoutRecipeItemsInput
   connect?: Prisma.ProductVariantWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutRecipeItemsInput, Prisma.ProductVariantUpdateWithoutRecipeItemsInput>, Prisma.ProductVariantUncheckedUpdateWithoutRecipeItemsInput>
+}
+
+export type ProductVariantUpdateOneRequiredWithoutIngredientInRecipesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutIngredientInRecipesInput, Prisma.ProductVariantUncheckedCreateWithoutIngredientInRecipesInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutIngredientInRecipesInput
+  upsert?: Prisma.ProductVariantUpsertWithoutIngredientInRecipesInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutIngredientInRecipesInput, Prisma.ProductVariantUpdateWithoutIngredientInRecipesInput>, Prisma.ProductVariantUncheckedUpdateWithoutIngredientInRecipesInput>
 }
 
 export type ProductVariantCreateNestedOneWithoutAccountItemsInput = {
@@ -682,11 +730,13 @@ export type ProductVariantCreateWithoutProductInput = {
   isActive?: boolean
   requirePreparation?: boolean
   productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
-  saleRecipe?: Prisma.SaleRecipeCreateNestedOneWithoutProductVariantInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutProductInput = {
@@ -699,11 +749,13 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   isActive?: boolean
   requirePreparation?: boolean
   productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedCreateNestedOneWithoutProductVariantInput
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutProductInput = {
@@ -746,89 +798,9 @@ export type ProductVariantScalarWhereInput = {
   requirePreparation?: Prisma.BoolFilter<"ProductVariant"> | boolean
   productCost?: Prisma.FloatFilter<"ProductVariant"> | number
   productId?: Prisma.IntFilter<"ProductVariant"> | number
+  unit?: Prisma.EnumUnitFilter<"ProductVariant"> | $Enums.Unit
+  isNew?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
-}
-
-export type ProductVariantCreateWithoutSaleRecipeInput = {
-  name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
-  isActive?: boolean
-  requirePreparation?: boolean
-  productCost?: number
-  createdAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
-  accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
-  InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutProductVariantInput
-}
-
-export type ProductVariantUncheckedCreateWithoutSaleRecipeInput = {
-  id?: number
-  name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
-  isActive?: boolean
-  requirePreparation?: boolean
-  productCost?: number
-  productId: number
-  createdAt?: Date | string
-  accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
-  InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutProductVariantInput
-}
-
-export type ProductVariantCreateOrConnectWithoutSaleRecipeInput = {
-  where: Prisma.ProductVariantWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutSaleRecipeInput, Prisma.ProductVariantUncheckedCreateWithoutSaleRecipeInput>
-}
-
-export type ProductVariantUpsertWithoutSaleRecipeInput = {
-  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutSaleRecipeInput, Prisma.ProductVariantUncheckedUpdateWithoutSaleRecipeInput>
-  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutSaleRecipeInput, Prisma.ProductVariantUncheckedCreateWithoutSaleRecipeInput>
-  where?: Prisma.ProductVariantWhereInput
-}
-
-export type ProductVariantUpdateToOneWithWhereWithoutSaleRecipeInput = {
-  where?: Prisma.ProductVariantWhereInput
-  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutSaleRecipeInput, Prisma.ProductVariantUncheckedUpdateWithoutSaleRecipeInput>
-}
-
-export type ProductVariantUpdateWithoutSaleRecipeInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  productCost?: Prisma.FloatFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
-  accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
-  InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUpdateManyWithoutProductVariantNestedInput
-}
-
-export type ProductVariantUncheckedUpdateWithoutSaleRecipeInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  productCost?: Prisma.FloatFieldUpdateOperationsInput | number
-  productId?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
-  InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutRecipeItemsInput = {
@@ -840,11 +812,13 @@ export type ProductVariantCreateWithoutRecipeItemsInput = {
   isActive?: boolean
   requirePreparation?: boolean
   productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
-  saleRecipe?: Prisma.SaleRecipeCreateNestedOneWithoutProductVariantInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutRecipeItemsInput = {
@@ -858,15 +832,59 @@ export type ProductVariantUncheckedCreateWithoutRecipeItemsInput = {
   requirePreparation?: boolean
   productCost?: number
   productId: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedCreateNestedOneWithoutProductVariantInput
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutRecipeItemsInput = {
   where: Prisma.ProductVariantWhereUniqueInput
   create: Prisma.XOR<Prisma.ProductVariantCreateWithoutRecipeItemsInput, Prisma.ProductVariantUncheckedCreateWithoutRecipeItemsInput>
+}
+
+export type ProductVariantCreateWithoutIngredientInRecipesInput = {
+  name: string
+  retailPrice?: number
+  wholesalePrice?: number | null
+  stock?: number
+  minStock?: number
+  isActive?: boolean
+  requirePreparation?: boolean
+  productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
+  createdAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
+  InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutIngredientInRecipesInput = {
+  id?: number
+  name: string
+  retailPrice?: number
+  wholesalePrice?: number | null
+  stock?: number
+  minStock?: number
+  isActive?: boolean
+  requirePreparation?: boolean
+  productCost?: number
+  productId: number
+  unit?: $Enums.Unit
+  isNew?: boolean
+  createdAt?: Date | string
+  accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
+  InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutIngredientInRecipesInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutIngredientInRecipesInput, Prisma.ProductVariantUncheckedCreateWithoutIngredientInRecipesInput>
 }
 
 export type ProductVariantUpsertWithoutRecipeItemsInput = {
@@ -889,11 +907,13 @@ export type ProductVariantUpdateWithoutRecipeItemsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
-  saleRecipe?: Prisma.SaleRecipeUpdateOneWithoutProductVariantNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutRecipeItemsInput = {
@@ -907,10 +927,60 @@ export type ProductVariantUncheckedUpdateWithoutRecipeItemsInput = {
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedUpdateOneWithoutProductVariantNestedInput
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
+}
+
+export type ProductVariantUpsertWithoutIngredientInRecipesInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutIngredientInRecipesInput, Prisma.ProductVariantUncheckedUpdateWithoutIngredientInRecipesInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutIngredientInRecipesInput, Prisma.ProductVariantUncheckedCreateWithoutIngredientInRecipesInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutIngredientInRecipesInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutIngredientInRecipesInput, Prisma.ProductVariantUncheckedUpdateWithoutIngredientInRecipesInput>
+}
+
+export type ProductVariantUpdateWithoutIngredientInRecipesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  minStock?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
+  InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutIngredientInRecipesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  minStock?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  productId?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutAccountItemsInput = {
@@ -922,11 +992,13 @@ export type ProductVariantCreateWithoutAccountItemsInput = {
   isActive?: boolean
   requirePreparation?: boolean
   productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
-  saleRecipe?: Prisma.SaleRecipeCreateNestedOneWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutAccountItemsInput = {
@@ -940,10 +1012,12 @@ export type ProductVariantUncheckedCreateWithoutAccountItemsInput = {
   requirePreparation?: boolean
   productCost?: number
   productId: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedCreateNestedOneWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutAccountItemsInput = {
@@ -971,11 +1045,13 @@ export type ProductVariantUpdateWithoutAccountItemsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
-  saleRecipe?: Prisma.SaleRecipeUpdateOneWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutAccountItemsInput = {
@@ -989,10 +1065,12 @@ export type ProductVariantUncheckedUpdateWithoutAccountItemsInput = {
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedUpdateOneWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutInventoryTransactionsInput = {
@@ -1004,11 +1082,13 @@ export type ProductVariantCreateWithoutInventoryTransactionsInput = {
   isActive?: boolean
   requirePreparation?: boolean
   productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
-  saleRecipe?: Prisma.SaleRecipeCreateNestedOneWithoutProductVariantInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutInventoryTransactionsInput = {
@@ -1022,10 +1102,12 @@ export type ProductVariantUncheckedCreateWithoutInventoryTransactionsInput = {
   requirePreparation?: boolean
   productCost?: number
   productId: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedCreateNestedOneWithoutProductVariantInput
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
-  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutInventoryTransactionsInput = {
@@ -1053,11 +1135,13 @@ export type ProductVariantUpdateWithoutInventoryTransactionsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
-  saleRecipe?: Prisma.SaleRecipeUpdateOneWithoutProductVariantNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutInventoryTransactionsInput = {
@@ -1071,10 +1155,12 @@ export type ProductVariantUncheckedUpdateWithoutInventoryTransactionsInput = {
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedUpdateOneWithoutProductVariantNestedInput
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantCreateManyProductInput = {
@@ -1087,6 +1173,8 @@ export type ProductVariantCreateManyProductInput = {
   isActive?: boolean
   requirePreparation?: boolean
   productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
   createdAt?: Date | string
 }
 
@@ -1099,11 +1187,13 @@ export type ProductVariantUpdateWithoutProductInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  saleRecipe?: Prisma.SaleRecipeUpdateOneWithoutProductVariantNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutProductInput = {
@@ -1116,11 +1206,13 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  saleRecipe?: Prisma.SaleRecipeUncheckedUpdateOneWithoutProductVariantNestedInput
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
-  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
@@ -1133,6 +1225,8 @@ export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1145,12 +1239,14 @@ export type ProductVariantCountOutputType = {
   accountItems: number
   InventoryTransactions: number
   recipeItems: number
+  ingredientInRecipes: number
 }
 
 export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accountItems?: boolean | ProductVariantCountOutputTypeCountAccountItemsArgs
   InventoryTransactions?: boolean | ProductVariantCountOutputTypeCountInventoryTransactionsArgs
   recipeItems?: boolean | ProductVariantCountOutputTypeCountRecipeItemsArgs
+  ingredientInRecipes?: boolean | ProductVariantCountOutputTypeCountIngredientInRecipesArgs
 }
 
 /**
@@ -1184,6 +1280,13 @@ export type ProductVariantCountOutputTypeCountRecipeItemsArgs<ExtArgs extends ru
   where?: Prisma.RecipeItemWhereInput
 }
 
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountIngredientInRecipesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RecipeItemWhereInput
+}
+
 
 export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1196,12 +1299,14 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   requirePreparation?: boolean
   productCost?: boolean
   productId?: boolean
+  unit?: boolean
+  isNew?: boolean
   createdAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  saleRecipe?: boolean | Prisma.ProductVariant$saleRecipeArgs<ExtArgs>
   accountItems?: boolean | Prisma.ProductVariant$accountItemsArgs<ExtArgs>
   InventoryTransactions?: boolean | Prisma.ProductVariant$InventoryTransactionsArgs<ExtArgs>
   recipeItems?: boolean | Prisma.ProductVariant$recipeItemsArgs<ExtArgs>
+  ingredientInRecipes?: boolean | Prisma.ProductVariant$ingredientInRecipesArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
 
@@ -1216,6 +1321,8 @@ export type ProductVariantSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   requirePreparation?: boolean
   productCost?: boolean
   productId?: boolean
+  unit?: boolean
+  isNew?: boolean
   createdAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
@@ -1231,6 +1338,8 @@ export type ProductVariantSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   requirePreparation?: boolean
   productCost?: boolean
   productId?: boolean
+  unit?: boolean
+  isNew?: boolean
   createdAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
@@ -1246,16 +1355,18 @@ export type ProductVariantSelectScalar = {
   requirePreparation?: boolean
   productCost?: boolean
   productId?: boolean
+  unit?: boolean
+  isNew?: boolean
   createdAt?: boolean
 }
 
-export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "retailPrice" | "wholesalePrice" | "stock" | "minStock" | "isActive" | "requirePreparation" | "productCost" | "productId" | "createdAt", ExtArgs["result"]["productVariant"]>
+export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "retailPrice" | "wholesalePrice" | "stock" | "minStock" | "isActive" | "requirePreparation" | "productCost" | "productId" | "unit" | "isNew" | "createdAt", ExtArgs["result"]["productVariant"]>
 export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  saleRecipe?: boolean | Prisma.ProductVariant$saleRecipeArgs<ExtArgs>
   accountItems?: boolean | Prisma.ProductVariant$accountItemsArgs<ExtArgs>
   InventoryTransactions?: boolean | Prisma.ProductVariant$InventoryTransactionsArgs<ExtArgs>
   recipeItems?: boolean | Prisma.ProductVariant$recipeItemsArgs<ExtArgs>
+  ingredientInRecipes?: boolean | Prisma.ProductVariant$ingredientInRecipesArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductVariantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1269,10 +1380,10 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
   name: "ProductVariant"
   objects: {
     product: Prisma.$ProductPayload<ExtArgs>
-    saleRecipe: Prisma.$SaleRecipePayload<ExtArgs> | null
     accountItems: Prisma.$AccountItemPayload<ExtArgs>[]
     InventoryTransactions: Prisma.$InventoryTransactionPayload<ExtArgs>[]
     recipeItems: Prisma.$RecipeItemPayload<ExtArgs>[]
+    ingredientInRecipes: Prisma.$RecipeItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1285,6 +1396,8 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     requirePreparation: boolean
     productCost: number
     productId: number
+    unit: $Enums.Unit
+    isNew: boolean
     createdAt: Date
   }, ExtArgs["result"]["productVariant"]>
   composites: {}
@@ -1681,10 +1794,10 @@ readonly fields: ProductVariantFieldRefs;
 export interface Prisma__ProductVariantClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  saleRecipe<T extends Prisma.ProductVariant$saleRecipeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$saleRecipeArgs<ExtArgs>>): Prisma.Prisma__SaleRecipeClient<runtime.Types.Result.GetResult<Prisma.$SaleRecipePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   accountItems<T extends Prisma.ProductVariant$accountItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$accountItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   InventoryTransactions<T extends Prisma.ProductVariant$InventoryTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$InventoryTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recipeItems<T extends Prisma.ProductVariant$recipeItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$recipeItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecipeItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ingredientInRecipes<T extends Prisma.ProductVariant$ingredientInRecipesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$ingredientInRecipesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecipeItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1724,6 +1837,8 @@ export interface ProductVariantFieldRefs {
   readonly requirePreparation: Prisma.FieldRef<"ProductVariant", 'Boolean'>
   readonly productCost: Prisma.FieldRef<"ProductVariant", 'Float'>
   readonly productId: Prisma.FieldRef<"ProductVariant", 'Int'>
+  readonly unit: Prisma.FieldRef<"ProductVariant", 'Unit'>
+  readonly isNew: Prisma.FieldRef<"ProductVariant", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ProductVariant", 'DateTime'>
 }
     
@@ -2126,25 +2241,6 @@ export type ProductVariantDeleteManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
- * ProductVariant.saleRecipe
- */
-export type ProductVariant$saleRecipeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the SaleRecipe
-   */
-  select?: Prisma.SaleRecipeSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the SaleRecipe
-   */
-  omit?: Prisma.SaleRecipeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SaleRecipeInclude<ExtArgs> | null
-  where?: Prisma.SaleRecipeWhereInput
-}
-
-/**
  * ProductVariant.accountItems
  */
 export type ProductVariant$accountItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2196,6 +2292,30 @@ export type ProductVariant$InventoryTransactionsArgs<ExtArgs extends runtime.Typ
  * ProductVariant.recipeItems
  */
 export type ProductVariant$recipeItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RecipeItem
+   */
+  select?: Prisma.RecipeItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RecipeItem
+   */
+  omit?: Prisma.RecipeItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecipeItemInclude<ExtArgs> | null
+  where?: Prisma.RecipeItemWhereInput
+  orderBy?: Prisma.RecipeItemOrderByWithRelationInput | Prisma.RecipeItemOrderByWithRelationInput[]
+  cursor?: Prisma.RecipeItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RecipeItemScalarFieldEnum | Prisma.RecipeItemScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.ingredientInRecipes
+ */
+export type ProductVariant$ingredientInRecipesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the RecipeItem
    */

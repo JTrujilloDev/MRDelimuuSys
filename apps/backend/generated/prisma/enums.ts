@@ -14,10 +14,25 @@ export const ProductType = {
   PACKAGING: 'PACKAGING',
   PREPARED_BASE: 'PREPARED_BASE',
   FINISHED_PRODUCT: 'FINISHED_PRODUCT',
-  RECIPE_PRODUCT: 'RECIPE_PRODUCT'
+  RECIPE_PRODUCT: 'RECIPE_PRODUCT',
+  THIRD_PARTY_PRODUCT: 'THIRD_PARTY_PRODUCT'
 } as const
 
 export type ProductType = (typeof ProductType)[keyof typeof ProductType]
+
+
+export const Unit = {
+  UNIT: 'UNIT',
+  GRAM: 'GRAM',
+  KILOGRAM: 'KILOGRAM',
+  LITER: 'LITER',
+  MILLILITER: 'MILLILITER',
+  PIECE: 'PIECE',
+  BOX: 'BOX',
+  PACK: 'PACK'
+} as const
+
+export type Unit = (typeof Unit)[keyof typeof Unit]
 
 
 export const Role = {
@@ -61,7 +76,8 @@ export const InventoryTransactionType = {
   RETURN: 'RETURN',
   INITIAL: 'INITIAL',
   WHOLESALE: 'WHOLESALE',
-  INTERNAL_CONSUMPTION: 'INTERNAL_CONSUMPTION'
+  INTERNAL_CONSUMPTION: 'INTERNAL_CONSUMPTION',
+  DONATION: 'DONATION'
 } as const
 
 export type InventoryTransactionType = (typeof InventoryTransactionType)[keyof typeof InventoryTransactionType]

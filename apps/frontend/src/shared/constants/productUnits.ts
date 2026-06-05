@@ -1,14 +1,14 @@
 export const productUnits = [
   {
-    label: "Unidad",
+    label: "Unidades",
     value: "UNIT",
   },
   {
-    label: "Gramo",
+    label: "Gramos",
     value: "GRAM",
   },
   {
-    label: "Litro",
+    label: "Litros",
     value: "LITER",
   },
 ];

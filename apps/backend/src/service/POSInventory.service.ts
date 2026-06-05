@@ -89,6 +89,7 @@ export const createPOSInventoryTransactionService = async (
         productVariantId: product.id,
         relatedAccountId: data.relatedAccountId,
         quantity,
+        unit: product.unit,
         type: data.type,
         observation: data.observation,
       },
@@ -102,6 +103,14 @@ export const createPOSInventoryTransactionService = async (
       },
     });
 
+    if (data.type === "INITIAL") {
+      await tx.productVariant.update({
+        where: { id: product.id },
+        data: {
+          isNew: false,
+        },
+      });
+    }
     return transaction;
   });
 };

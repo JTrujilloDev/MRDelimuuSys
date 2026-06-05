@@ -28,38 +28,38 @@ export type AggregateRecipeItem = {
 
 export type RecipeItemAvgAggregateOutputType = {
   id: number | null
-  saleRecipeId: number | null
-  productVariantId: number | null
+  recipeVariantId: number | null
+  ingredientVariantId: number | null
   quantity: number | null
 }
 
 export type RecipeItemSumAggregateOutputType = {
   id: number | null
-  saleRecipeId: number | null
-  productVariantId: number | null
+  recipeVariantId: number | null
+  ingredientVariantId: number | null
   quantity: number | null
 }
 
 export type RecipeItemMinAggregateOutputType = {
   id: number | null
-  saleRecipeId: number | null
-  productVariantId: number | null
+  recipeVariantId: number | null
+  ingredientVariantId: number | null
   quantity: number | null
   createdAt: Date | null
 }
 
 export type RecipeItemMaxAggregateOutputType = {
   id: number | null
-  saleRecipeId: number | null
-  productVariantId: number | null
+  recipeVariantId: number | null
+  ingredientVariantId: number | null
   quantity: number | null
   createdAt: Date | null
 }
 
 export type RecipeItemCountAggregateOutputType = {
   id: number
-  saleRecipeId: number
-  productVariantId: number
+  recipeVariantId: number
+  ingredientVariantId: number
   quantity: number
   createdAt: number
   _all: number
@@ -68,38 +68,38 @@ export type RecipeItemCountAggregateOutputType = {
 
 export type RecipeItemAvgAggregateInputType = {
   id?: true
-  saleRecipeId?: true
-  productVariantId?: true
+  recipeVariantId?: true
+  ingredientVariantId?: true
   quantity?: true
 }
 
 export type RecipeItemSumAggregateInputType = {
   id?: true
-  saleRecipeId?: true
-  productVariantId?: true
+  recipeVariantId?: true
+  ingredientVariantId?: true
   quantity?: true
 }
 
 export type RecipeItemMinAggregateInputType = {
   id?: true
-  saleRecipeId?: true
-  productVariantId?: true
+  recipeVariantId?: true
+  ingredientVariantId?: true
   quantity?: true
   createdAt?: true
 }
 
 export type RecipeItemMaxAggregateInputType = {
   id?: true
-  saleRecipeId?: true
-  productVariantId?: true
+  recipeVariantId?: true
+  ingredientVariantId?: true
   quantity?: true
   createdAt?: true
 }
 
 export type RecipeItemCountAggregateInputType = {
   id?: true
-  saleRecipeId?: true
-  productVariantId?: true
+  recipeVariantId?: true
+  ingredientVariantId?: true
   quantity?: true
   createdAt?: true
   _all?: true
@@ -193,8 +193,8 @@ export type RecipeItemGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type RecipeItemGroupByOutputType = {
   id: number
-  saleRecipeId: number
-  productVariantId: number
+  recipeVariantId: number
+  ingredientVariantId: number
   quantity: number
   createdAt: Date
   _count: RecipeItemCountAggregateOutputType | null
@@ -224,22 +224,22 @@ export type RecipeItemWhereInput = {
   OR?: Prisma.RecipeItemWhereInput[]
   NOT?: Prisma.RecipeItemWhereInput | Prisma.RecipeItemWhereInput[]
   id?: Prisma.IntFilter<"RecipeItem"> | number
-  saleRecipeId?: Prisma.IntFilter<"RecipeItem"> | number
-  productVariantId?: Prisma.IntFilter<"RecipeItem"> | number
+  recipeVariantId?: Prisma.IntFilter<"RecipeItem"> | number
+  ingredientVariantId?: Prisma.IntFilter<"RecipeItem"> | number
   quantity?: Prisma.IntFilter<"RecipeItem"> | number
   createdAt?: Prisma.DateTimeFilter<"RecipeItem"> | Date | string
-  saleRecipe?: Prisma.XOR<Prisma.SaleRecipeScalarRelationFilter, Prisma.SaleRecipeWhereInput>
-  productVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
+  recipeVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
+  ingredientVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
 }
 
 export type RecipeItemOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  saleRecipeId?: Prisma.SortOrder
-  productVariantId?: Prisma.SortOrder
+  recipeVariantId?: Prisma.SortOrder
+  ingredientVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  saleRecipe?: Prisma.SaleRecipeOrderByWithRelationInput
-  productVariant?: Prisma.ProductVariantOrderByWithRelationInput
+  recipeVariant?: Prisma.ProductVariantOrderByWithRelationInput
+  ingredientVariant?: Prisma.ProductVariantOrderByWithRelationInput
 }
 
 export type RecipeItemWhereUniqueInput = Prisma.AtLeast<{
@@ -247,18 +247,18 @@ export type RecipeItemWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.RecipeItemWhereInput | Prisma.RecipeItemWhereInput[]
   OR?: Prisma.RecipeItemWhereInput[]
   NOT?: Prisma.RecipeItemWhereInput | Prisma.RecipeItemWhereInput[]
-  saleRecipeId?: Prisma.IntFilter<"RecipeItem"> | number
-  productVariantId?: Prisma.IntFilter<"RecipeItem"> | number
+  recipeVariantId?: Prisma.IntFilter<"RecipeItem"> | number
+  ingredientVariantId?: Prisma.IntFilter<"RecipeItem"> | number
   quantity?: Prisma.IntFilter<"RecipeItem"> | number
   createdAt?: Prisma.DateTimeFilter<"RecipeItem"> | Date | string
-  saleRecipe?: Prisma.XOR<Prisma.SaleRecipeScalarRelationFilter, Prisma.SaleRecipeWhereInput>
-  productVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
+  recipeVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
+  ingredientVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
 }, "id">
 
 export type RecipeItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  saleRecipeId?: Prisma.SortOrder
-  productVariantId?: Prisma.SortOrder
+  recipeVariantId?: Prisma.SortOrder
+  ingredientVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.RecipeItemCountOrderByAggregateInput
@@ -273,8 +273,8 @@ export type RecipeItemScalarWhereWithAggregatesInput = {
   OR?: Prisma.RecipeItemScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RecipeItemScalarWhereWithAggregatesInput | Prisma.RecipeItemScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"RecipeItem"> | number
-  saleRecipeId?: Prisma.IntWithAggregatesFilter<"RecipeItem"> | number
-  productVariantId?: Prisma.IntWithAggregatesFilter<"RecipeItem"> | number
+  recipeVariantId?: Prisma.IntWithAggregatesFilter<"RecipeItem"> | number
+  ingredientVariantId?: Prisma.IntWithAggregatesFilter<"RecipeItem"> | number
   quantity?: Prisma.IntWithAggregatesFilter<"RecipeItem"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RecipeItem"> | Date | string
 }
@@ -282,14 +282,14 @@ export type RecipeItemScalarWhereWithAggregatesInput = {
 export type RecipeItemCreateInput = {
   quantity: number
   createdAt?: Date | string
-  saleRecipe: Prisma.SaleRecipeCreateNestedOneWithoutRecipeItemsInput
-  productVariant: Prisma.ProductVariantCreateNestedOneWithoutRecipeItemsInput
+  recipeVariant: Prisma.ProductVariantCreateNestedOneWithoutRecipeItemsInput
+  ingredientVariant: Prisma.ProductVariantCreateNestedOneWithoutIngredientInRecipesInput
 }
 
 export type RecipeItemUncheckedCreateInput = {
   id?: number
-  saleRecipeId: number
-  productVariantId: number
+  recipeVariantId: number
+  ingredientVariantId: number
   quantity: number
   createdAt?: Date | string
 }
@@ -297,22 +297,22 @@ export type RecipeItemUncheckedCreateInput = {
 export type RecipeItemUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  saleRecipe?: Prisma.SaleRecipeUpdateOneRequiredWithoutRecipeItemsNestedInput
-  productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutRecipeItemsNestedInput
+  recipeVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutRecipeItemsNestedInput
+  ingredientVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutIngredientInRecipesNestedInput
 }
 
 export type RecipeItemUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  saleRecipeId?: Prisma.IntFieldUpdateOperationsInput | number
-  productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  recipeVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  ingredientVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type RecipeItemCreateManyInput = {
   id?: number
-  saleRecipeId: number
-  productVariantId: number
+  recipeVariantId: number
+  ingredientVariantId: number
   quantity: number
   createdAt?: Date | string
 }
@@ -324,8 +324,8 @@ export type RecipeItemUpdateManyMutationInput = {
 
 export type RecipeItemUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  saleRecipeId?: Prisma.IntFieldUpdateOperationsInput | number
-  productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  recipeVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  ingredientVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -342,163 +342,186 @@ export type RecipeItemOrderByRelationAggregateInput = {
 
 export type RecipeItemCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  saleRecipeId?: Prisma.SortOrder
-  productVariantId?: Prisma.SortOrder
+  recipeVariantId?: Prisma.SortOrder
+  ingredientVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type RecipeItemAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  saleRecipeId?: Prisma.SortOrder
-  productVariantId?: Prisma.SortOrder
+  recipeVariantId?: Prisma.SortOrder
+  ingredientVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
 }
 
 export type RecipeItemMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  saleRecipeId?: Prisma.SortOrder
-  productVariantId?: Prisma.SortOrder
+  recipeVariantId?: Prisma.SortOrder
+  ingredientVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type RecipeItemMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  saleRecipeId?: Prisma.SortOrder
-  productVariantId?: Prisma.SortOrder
+  recipeVariantId?: Prisma.SortOrder
+  ingredientVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type RecipeItemSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  saleRecipeId?: Prisma.SortOrder
-  productVariantId?: Prisma.SortOrder
+  recipeVariantId?: Prisma.SortOrder
+  ingredientVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
 }
 
-export type RecipeItemCreateNestedManyWithoutProductVariantInput = {
-  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutProductVariantInput, Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput> | Prisma.RecipeItemCreateWithoutProductVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput[]
-  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutProductVariantInput | Prisma.RecipeItemCreateOrConnectWithoutProductVariantInput[]
-  createMany?: Prisma.RecipeItemCreateManyProductVariantInputEnvelope
+export type RecipeItemCreateNestedManyWithoutRecipeVariantInput = {
+  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutRecipeVariantInput, Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput> | Prisma.RecipeItemCreateWithoutRecipeVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput[]
+  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutRecipeVariantInput | Prisma.RecipeItemCreateOrConnectWithoutRecipeVariantInput[]
+  createMany?: Prisma.RecipeItemCreateManyRecipeVariantInputEnvelope
   connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
 }
 
-export type RecipeItemUncheckedCreateNestedManyWithoutProductVariantInput = {
-  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutProductVariantInput, Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput> | Prisma.RecipeItemCreateWithoutProductVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput[]
-  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutProductVariantInput | Prisma.RecipeItemCreateOrConnectWithoutProductVariantInput[]
-  createMany?: Prisma.RecipeItemCreateManyProductVariantInputEnvelope
+export type RecipeItemCreateNestedManyWithoutIngredientVariantInput = {
+  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutIngredientVariantInput, Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput> | Prisma.RecipeItemCreateWithoutIngredientVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput[]
+  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutIngredientVariantInput | Prisma.RecipeItemCreateOrConnectWithoutIngredientVariantInput[]
+  createMany?: Prisma.RecipeItemCreateManyIngredientVariantInputEnvelope
   connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
 }
 
-export type RecipeItemUpdateManyWithoutProductVariantNestedInput = {
-  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutProductVariantInput, Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput> | Prisma.RecipeItemCreateWithoutProductVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput[]
-  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutProductVariantInput | Prisma.RecipeItemCreateOrConnectWithoutProductVariantInput[]
-  upsert?: Prisma.RecipeItemUpsertWithWhereUniqueWithoutProductVariantInput | Prisma.RecipeItemUpsertWithWhereUniqueWithoutProductVariantInput[]
-  createMany?: Prisma.RecipeItemCreateManyProductVariantInputEnvelope
+export type RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput = {
+  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutRecipeVariantInput, Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput> | Prisma.RecipeItemCreateWithoutRecipeVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput[]
+  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutRecipeVariantInput | Prisma.RecipeItemCreateOrConnectWithoutRecipeVariantInput[]
+  createMany?: Prisma.RecipeItemCreateManyRecipeVariantInputEnvelope
+  connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
+}
+
+export type RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput = {
+  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutIngredientVariantInput, Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput> | Prisma.RecipeItemCreateWithoutIngredientVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput[]
+  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutIngredientVariantInput | Prisma.RecipeItemCreateOrConnectWithoutIngredientVariantInput[]
+  createMany?: Prisma.RecipeItemCreateManyIngredientVariantInputEnvelope
+  connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
+}
+
+export type RecipeItemUpdateManyWithoutRecipeVariantNestedInput = {
+  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutRecipeVariantInput, Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput> | Prisma.RecipeItemCreateWithoutRecipeVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput[]
+  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutRecipeVariantInput | Prisma.RecipeItemCreateOrConnectWithoutRecipeVariantInput[]
+  upsert?: Prisma.RecipeItemUpsertWithWhereUniqueWithoutRecipeVariantInput | Prisma.RecipeItemUpsertWithWhereUniqueWithoutRecipeVariantInput[]
+  createMany?: Prisma.RecipeItemCreateManyRecipeVariantInputEnvelope
   set?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   disconnect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   delete?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
-  update?: Prisma.RecipeItemUpdateWithWhereUniqueWithoutProductVariantInput | Prisma.RecipeItemUpdateWithWhereUniqueWithoutProductVariantInput[]
-  updateMany?: Prisma.RecipeItemUpdateManyWithWhereWithoutProductVariantInput | Prisma.RecipeItemUpdateManyWithWhereWithoutProductVariantInput[]
+  update?: Prisma.RecipeItemUpdateWithWhereUniqueWithoutRecipeVariantInput | Prisma.RecipeItemUpdateWithWhereUniqueWithoutRecipeVariantInput[]
+  updateMany?: Prisma.RecipeItemUpdateManyWithWhereWithoutRecipeVariantInput | Prisma.RecipeItemUpdateManyWithWhereWithoutRecipeVariantInput[]
   deleteMany?: Prisma.RecipeItemScalarWhereInput | Prisma.RecipeItemScalarWhereInput[]
 }
 
-export type RecipeItemUncheckedUpdateManyWithoutProductVariantNestedInput = {
-  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutProductVariantInput, Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput> | Prisma.RecipeItemCreateWithoutProductVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput[]
-  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutProductVariantInput | Prisma.RecipeItemCreateOrConnectWithoutProductVariantInput[]
-  upsert?: Prisma.RecipeItemUpsertWithWhereUniqueWithoutProductVariantInput | Prisma.RecipeItemUpsertWithWhereUniqueWithoutProductVariantInput[]
-  createMany?: Prisma.RecipeItemCreateManyProductVariantInputEnvelope
+export type RecipeItemUpdateManyWithoutIngredientVariantNestedInput = {
+  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutIngredientVariantInput, Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput> | Prisma.RecipeItemCreateWithoutIngredientVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput[]
+  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutIngredientVariantInput | Prisma.RecipeItemCreateOrConnectWithoutIngredientVariantInput[]
+  upsert?: Prisma.RecipeItemUpsertWithWhereUniqueWithoutIngredientVariantInput | Prisma.RecipeItemUpsertWithWhereUniqueWithoutIngredientVariantInput[]
+  createMany?: Prisma.RecipeItemCreateManyIngredientVariantInputEnvelope
   set?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   disconnect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   delete?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
-  update?: Prisma.RecipeItemUpdateWithWhereUniqueWithoutProductVariantInput | Prisma.RecipeItemUpdateWithWhereUniqueWithoutProductVariantInput[]
-  updateMany?: Prisma.RecipeItemUpdateManyWithWhereWithoutProductVariantInput | Prisma.RecipeItemUpdateManyWithWhereWithoutProductVariantInput[]
+  update?: Prisma.RecipeItemUpdateWithWhereUniqueWithoutIngredientVariantInput | Prisma.RecipeItemUpdateWithWhereUniqueWithoutIngredientVariantInput[]
+  updateMany?: Prisma.RecipeItemUpdateManyWithWhereWithoutIngredientVariantInput | Prisma.RecipeItemUpdateManyWithWhereWithoutIngredientVariantInput[]
   deleteMany?: Prisma.RecipeItemScalarWhereInput | Prisma.RecipeItemScalarWhereInput[]
 }
 
-export type RecipeItemCreateNestedManyWithoutSaleRecipeInput = {
-  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutSaleRecipeInput, Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput> | Prisma.RecipeItemCreateWithoutSaleRecipeInput[] | Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput[]
-  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutSaleRecipeInput | Prisma.RecipeItemCreateOrConnectWithoutSaleRecipeInput[]
-  createMany?: Prisma.RecipeItemCreateManySaleRecipeInputEnvelope
-  connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
-}
-
-export type RecipeItemUncheckedCreateNestedManyWithoutSaleRecipeInput = {
-  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutSaleRecipeInput, Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput> | Prisma.RecipeItemCreateWithoutSaleRecipeInput[] | Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput[]
-  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutSaleRecipeInput | Prisma.RecipeItemCreateOrConnectWithoutSaleRecipeInput[]
-  createMany?: Prisma.RecipeItemCreateManySaleRecipeInputEnvelope
-  connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
-}
-
-export type RecipeItemUpdateManyWithoutSaleRecipeNestedInput = {
-  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutSaleRecipeInput, Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput> | Prisma.RecipeItemCreateWithoutSaleRecipeInput[] | Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput[]
-  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutSaleRecipeInput | Prisma.RecipeItemCreateOrConnectWithoutSaleRecipeInput[]
-  upsert?: Prisma.RecipeItemUpsertWithWhereUniqueWithoutSaleRecipeInput | Prisma.RecipeItemUpsertWithWhereUniqueWithoutSaleRecipeInput[]
-  createMany?: Prisma.RecipeItemCreateManySaleRecipeInputEnvelope
+export type RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput = {
+  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutRecipeVariantInput, Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput> | Prisma.RecipeItemCreateWithoutRecipeVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput[]
+  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutRecipeVariantInput | Prisma.RecipeItemCreateOrConnectWithoutRecipeVariantInput[]
+  upsert?: Prisma.RecipeItemUpsertWithWhereUniqueWithoutRecipeVariantInput | Prisma.RecipeItemUpsertWithWhereUniqueWithoutRecipeVariantInput[]
+  createMany?: Prisma.RecipeItemCreateManyRecipeVariantInputEnvelope
   set?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   disconnect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   delete?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
-  update?: Prisma.RecipeItemUpdateWithWhereUniqueWithoutSaleRecipeInput | Prisma.RecipeItemUpdateWithWhereUniqueWithoutSaleRecipeInput[]
-  updateMany?: Prisma.RecipeItemUpdateManyWithWhereWithoutSaleRecipeInput | Prisma.RecipeItemUpdateManyWithWhereWithoutSaleRecipeInput[]
+  update?: Prisma.RecipeItemUpdateWithWhereUniqueWithoutRecipeVariantInput | Prisma.RecipeItemUpdateWithWhereUniqueWithoutRecipeVariantInput[]
+  updateMany?: Prisma.RecipeItemUpdateManyWithWhereWithoutRecipeVariantInput | Prisma.RecipeItemUpdateManyWithWhereWithoutRecipeVariantInput[]
   deleteMany?: Prisma.RecipeItemScalarWhereInput | Prisma.RecipeItemScalarWhereInput[]
 }
 
-export type RecipeItemUncheckedUpdateManyWithoutSaleRecipeNestedInput = {
-  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutSaleRecipeInput, Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput> | Prisma.RecipeItemCreateWithoutSaleRecipeInput[] | Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput[]
-  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutSaleRecipeInput | Prisma.RecipeItemCreateOrConnectWithoutSaleRecipeInput[]
-  upsert?: Prisma.RecipeItemUpsertWithWhereUniqueWithoutSaleRecipeInput | Prisma.RecipeItemUpsertWithWhereUniqueWithoutSaleRecipeInput[]
-  createMany?: Prisma.RecipeItemCreateManySaleRecipeInputEnvelope
+export type RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput = {
+  create?: Prisma.XOR<Prisma.RecipeItemCreateWithoutIngredientVariantInput, Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput> | Prisma.RecipeItemCreateWithoutIngredientVariantInput[] | Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput[]
+  connectOrCreate?: Prisma.RecipeItemCreateOrConnectWithoutIngredientVariantInput | Prisma.RecipeItemCreateOrConnectWithoutIngredientVariantInput[]
+  upsert?: Prisma.RecipeItemUpsertWithWhereUniqueWithoutIngredientVariantInput | Prisma.RecipeItemUpsertWithWhereUniqueWithoutIngredientVariantInput[]
+  createMany?: Prisma.RecipeItemCreateManyIngredientVariantInputEnvelope
   set?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   disconnect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   delete?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
   connect?: Prisma.RecipeItemWhereUniqueInput | Prisma.RecipeItemWhereUniqueInput[]
-  update?: Prisma.RecipeItemUpdateWithWhereUniqueWithoutSaleRecipeInput | Prisma.RecipeItemUpdateWithWhereUniqueWithoutSaleRecipeInput[]
-  updateMany?: Prisma.RecipeItemUpdateManyWithWhereWithoutSaleRecipeInput | Prisma.RecipeItemUpdateManyWithWhereWithoutSaleRecipeInput[]
+  update?: Prisma.RecipeItemUpdateWithWhereUniqueWithoutIngredientVariantInput | Prisma.RecipeItemUpdateWithWhereUniqueWithoutIngredientVariantInput[]
+  updateMany?: Prisma.RecipeItemUpdateManyWithWhereWithoutIngredientVariantInput | Prisma.RecipeItemUpdateManyWithWhereWithoutIngredientVariantInput[]
   deleteMany?: Prisma.RecipeItemScalarWhereInput | Prisma.RecipeItemScalarWhereInput[]
 }
 
-export type RecipeItemCreateWithoutProductVariantInput = {
+export type RecipeItemCreateWithoutRecipeVariantInput = {
   quantity: number
   createdAt?: Date | string
-  saleRecipe: Prisma.SaleRecipeCreateNestedOneWithoutRecipeItemsInput
+  ingredientVariant: Prisma.ProductVariantCreateNestedOneWithoutIngredientInRecipesInput
 }
 
-export type RecipeItemUncheckedCreateWithoutProductVariantInput = {
+export type RecipeItemUncheckedCreateWithoutRecipeVariantInput = {
   id?: number
-  saleRecipeId: number
+  ingredientVariantId: number
   quantity: number
   createdAt?: Date | string
 }
 
-export type RecipeItemCreateOrConnectWithoutProductVariantInput = {
+export type RecipeItemCreateOrConnectWithoutRecipeVariantInput = {
   where: Prisma.RecipeItemWhereUniqueInput
-  create: Prisma.XOR<Prisma.RecipeItemCreateWithoutProductVariantInput, Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput>
+  create: Prisma.XOR<Prisma.RecipeItemCreateWithoutRecipeVariantInput, Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput>
 }
 
-export type RecipeItemCreateManyProductVariantInputEnvelope = {
-  data: Prisma.RecipeItemCreateManyProductVariantInput | Prisma.RecipeItemCreateManyProductVariantInput[]
+export type RecipeItemCreateManyRecipeVariantInputEnvelope = {
+  data: Prisma.RecipeItemCreateManyRecipeVariantInput | Prisma.RecipeItemCreateManyRecipeVariantInput[]
   skipDuplicates?: boolean
 }
 
-export type RecipeItemUpsertWithWhereUniqueWithoutProductVariantInput = {
-  where: Prisma.RecipeItemWhereUniqueInput
-  update: Prisma.XOR<Prisma.RecipeItemUpdateWithoutProductVariantInput, Prisma.RecipeItemUncheckedUpdateWithoutProductVariantInput>
-  create: Prisma.XOR<Prisma.RecipeItemCreateWithoutProductVariantInput, Prisma.RecipeItemUncheckedCreateWithoutProductVariantInput>
+export type RecipeItemCreateWithoutIngredientVariantInput = {
+  quantity: number
+  createdAt?: Date | string
+  recipeVariant: Prisma.ProductVariantCreateNestedOneWithoutRecipeItemsInput
 }
 
-export type RecipeItemUpdateWithWhereUniqueWithoutProductVariantInput = {
-  where: Prisma.RecipeItemWhereUniqueInput
-  data: Prisma.XOR<Prisma.RecipeItemUpdateWithoutProductVariantInput, Prisma.RecipeItemUncheckedUpdateWithoutProductVariantInput>
+export type RecipeItemUncheckedCreateWithoutIngredientVariantInput = {
+  id?: number
+  recipeVariantId: number
+  quantity: number
+  createdAt?: Date | string
 }
 
-export type RecipeItemUpdateManyWithWhereWithoutProductVariantInput = {
+export type RecipeItemCreateOrConnectWithoutIngredientVariantInput = {
+  where: Prisma.RecipeItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.RecipeItemCreateWithoutIngredientVariantInput, Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput>
+}
+
+export type RecipeItemCreateManyIngredientVariantInputEnvelope = {
+  data: Prisma.RecipeItemCreateManyIngredientVariantInput | Prisma.RecipeItemCreateManyIngredientVariantInput[]
+  skipDuplicates?: boolean
+}
+
+export type RecipeItemUpsertWithWhereUniqueWithoutRecipeVariantInput = {
+  where: Prisma.RecipeItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.RecipeItemUpdateWithoutRecipeVariantInput, Prisma.RecipeItemUncheckedUpdateWithoutRecipeVariantInput>
+  create: Prisma.XOR<Prisma.RecipeItemCreateWithoutRecipeVariantInput, Prisma.RecipeItemUncheckedCreateWithoutRecipeVariantInput>
+}
+
+export type RecipeItemUpdateWithWhereUniqueWithoutRecipeVariantInput = {
+  where: Prisma.RecipeItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.RecipeItemUpdateWithoutRecipeVariantInput, Prisma.RecipeItemUncheckedUpdateWithoutRecipeVariantInput>
+}
+
+export type RecipeItemUpdateManyWithWhereWithoutRecipeVariantInput = {
   where: Prisma.RecipeItemScalarWhereInput
-  data: Prisma.XOR<Prisma.RecipeItemUpdateManyMutationInput, Prisma.RecipeItemUncheckedUpdateManyWithoutProductVariantInput>
+  data: Prisma.XOR<Prisma.RecipeItemUpdateManyMutationInput, Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantInput>
 }
 
 export type RecipeItemScalarWhereInput = {
@@ -506,101 +529,78 @@ export type RecipeItemScalarWhereInput = {
   OR?: Prisma.RecipeItemScalarWhereInput[]
   NOT?: Prisma.RecipeItemScalarWhereInput | Prisma.RecipeItemScalarWhereInput[]
   id?: Prisma.IntFilter<"RecipeItem"> | number
-  saleRecipeId?: Prisma.IntFilter<"RecipeItem"> | number
-  productVariantId?: Prisma.IntFilter<"RecipeItem"> | number
+  recipeVariantId?: Prisma.IntFilter<"RecipeItem"> | number
+  ingredientVariantId?: Prisma.IntFilter<"RecipeItem"> | number
   quantity?: Prisma.IntFilter<"RecipeItem"> | number
   createdAt?: Prisma.DateTimeFilter<"RecipeItem"> | Date | string
 }
 
-export type RecipeItemCreateWithoutSaleRecipeInput = {
-  quantity: number
-  createdAt?: Date | string
-  productVariant: Prisma.ProductVariantCreateNestedOneWithoutRecipeItemsInput
-}
-
-export type RecipeItemUncheckedCreateWithoutSaleRecipeInput = {
-  id?: number
-  productVariantId: number
-  quantity: number
-  createdAt?: Date | string
-}
-
-export type RecipeItemCreateOrConnectWithoutSaleRecipeInput = {
+export type RecipeItemUpsertWithWhereUniqueWithoutIngredientVariantInput = {
   where: Prisma.RecipeItemWhereUniqueInput
-  create: Prisma.XOR<Prisma.RecipeItemCreateWithoutSaleRecipeInput, Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput>
+  update: Prisma.XOR<Prisma.RecipeItemUpdateWithoutIngredientVariantInput, Prisma.RecipeItemUncheckedUpdateWithoutIngredientVariantInput>
+  create: Prisma.XOR<Prisma.RecipeItemCreateWithoutIngredientVariantInput, Prisma.RecipeItemUncheckedCreateWithoutIngredientVariantInput>
 }
 
-export type RecipeItemCreateManySaleRecipeInputEnvelope = {
-  data: Prisma.RecipeItemCreateManySaleRecipeInput | Prisma.RecipeItemCreateManySaleRecipeInput[]
-  skipDuplicates?: boolean
-}
-
-export type RecipeItemUpsertWithWhereUniqueWithoutSaleRecipeInput = {
+export type RecipeItemUpdateWithWhereUniqueWithoutIngredientVariantInput = {
   where: Prisma.RecipeItemWhereUniqueInput
-  update: Prisma.XOR<Prisma.RecipeItemUpdateWithoutSaleRecipeInput, Prisma.RecipeItemUncheckedUpdateWithoutSaleRecipeInput>
-  create: Prisma.XOR<Prisma.RecipeItemCreateWithoutSaleRecipeInput, Prisma.RecipeItemUncheckedCreateWithoutSaleRecipeInput>
+  data: Prisma.XOR<Prisma.RecipeItemUpdateWithoutIngredientVariantInput, Prisma.RecipeItemUncheckedUpdateWithoutIngredientVariantInput>
 }
 
-export type RecipeItemUpdateWithWhereUniqueWithoutSaleRecipeInput = {
-  where: Prisma.RecipeItemWhereUniqueInput
-  data: Prisma.XOR<Prisma.RecipeItemUpdateWithoutSaleRecipeInput, Prisma.RecipeItemUncheckedUpdateWithoutSaleRecipeInput>
-}
-
-export type RecipeItemUpdateManyWithWhereWithoutSaleRecipeInput = {
+export type RecipeItemUpdateManyWithWhereWithoutIngredientVariantInput = {
   where: Prisma.RecipeItemScalarWhereInput
-  data: Prisma.XOR<Prisma.RecipeItemUpdateManyMutationInput, Prisma.RecipeItemUncheckedUpdateManyWithoutSaleRecipeInput>
+  data: Prisma.XOR<Prisma.RecipeItemUpdateManyMutationInput, Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantInput>
 }
 
-export type RecipeItemCreateManyProductVariantInput = {
+export type RecipeItemCreateManyRecipeVariantInput = {
   id?: number
-  saleRecipeId: number
+  ingredientVariantId: number
   quantity: number
   createdAt?: Date | string
 }
 
-export type RecipeItemUpdateWithoutProductVariantInput = {
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  saleRecipe?: Prisma.SaleRecipeUpdateOneRequiredWithoutRecipeItemsNestedInput
-}
-
-export type RecipeItemUncheckedUpdateWithoutProductVariantInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  saleRecipeId?: Prisma.IntFieldUpdateOperationsInput | number
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type RecipeItemUncheckedUpdateManyWithoutProductVariantInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  saleRecipeId?: Prisma.IntFieldUpdateOperationsInput | number
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type RecipeItemCreateManySaleRecipeInput = {
+export type RecipeItemCreateManyIngredientVariantInput = {
   id?: number
-  productVariantId: number
+  recipeVariantId: number
   quantity: number
   createdAt?: Date | string
 }
 
-export type RecipeItemUpdateWithoutSaleRecipeInput = {
+export type RecipeItemUpdateWithoutRecipeVariantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutRecipeItemsNestedInput
+  ingredientVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutIngredientInRecipesNestedInput
 }
 
-export type RecipeItemUncheckedUpdateWithoutSaleRecipeInput = {
+export type RecipeItemUncheckedUpdateWithoutRecipeVariantInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  ingredientVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type RecipeItemUncheckedUpdateManyWithoutSaleRecipeInput = {
+export type RecipeItemUncheckedUpdateManyWithoutRecipeVariantInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  ingredientVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RecipeItemUpdateWithoutIngredientVariantInput = {
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recipeVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutRecipeItemsNestedInput
+}
+
+export type RecipeItemUncheckedUpdateWithoutIngredientVariantInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  recipeVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RecipeItemUncheckedUpdateManyWithoutIngredientVariantInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  recipeVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -609,66 +609,66 @@ export type RecipeItemUncheckedUpdateManyWithoutSaleRecipeInput = {
 
 export type RecipeItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  saleRecipeId?: boolean
-  productVariantId?: boolean
+  recipeVariantId?: boolean
+  ingredientVariantId?: boolean
   quantity?: boolean
   createdAt?: boolean
-  saleRecipe?: boolean | Prisma.SaleRecipeDefaultArgs<ExtArgs>
-  productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  recipeVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  ingredientVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recipeItem"]>
 
 export type RecipeItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  saleRecipeId?: boolean
-  productVariantId?: boolean
+  recipeVariantId?: boolean
+  ingredientVariantId?: boolean
   quantity?: boolean
   createdAt?: boolean
-  saleRecipe?: boolean | Prisma.SaleRecipeDefaultArgs<ExtArgs>
-  productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  recipeVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  ingredientVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recipeItem"]>
 
 export type RecipeItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  saleRecipeId?: boolean
-  productVariantId?: boolean
+  recipeVariantId?: boolean
+  ingredientVariantId?: boolean
   quantity?: boolean
   createdAt?: boolean
-  saleRecipe?: boolean | Prisma.SaleRecipeDefaultArgs<ExtArgs>
-  productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  recipeVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  ingredientVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recipeItem"]>
 
 export type RecipeItemSelectScalar = {
   id?: boolean
-  saleRecipeId?: boolean
-  productVariantId?: boolean
+  recipeVariantId?: boolean
+  ingredientVariantId?: boolean
   quantity?: boolean
   createdAt?: boolean
 }
 
-export type RecipeItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "saleRecipeId" | "productVariantId" | "quantity" | "createdAt", ExtArgs["result"]["recipeItem"]>
+export type RecipeItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "recipeVariantId" | "ingredientVariantId" | "quantity" | "createdAt", ExtArgs["result"]["recipeItem"]>
 export type RecipeItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  saleRecipe?: boolean | Prisma.SaleRecipeDefaultArgs<ExtArgs>
-  productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  recipeVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  ingredientVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
 }
 export type RecipeItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  saleRecipe?: boolean | Prisma.SaleRecipeDefaultArgs<ExtArgs>
-  productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  recipeVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  ingredientVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
 }
 export type RecipeItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  saleRecipe?: boolean | Prisma.SaleRecipeDefaultArgs<ExtArgs>
-  productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  recipeVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  ingredientVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
 }
 
 export type $RecipeItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RecipeItem"
   objects: {
-    saleRecipe: Prisma.$SaleRecipePayload<ExtArgs>
-    productVariant: Prisma.$ProductVariantPayload<ExtArgs>
+    recipeVariant: Prisma.$ProductVariantPayload<ExtArgs>
+    ingredientVariant: Prisma.$ProductVariantPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    saleRecipeId: number
-    productVariantId: number
+    recipeVariantId: number
+    ingredientVariantId: number
     quantity: number
     createdAt: Date
   }, ExtArgs["result"]["recipeItem"]>
@@ -1065,8 +1065,8 @@ readonly fields: RecipeItemFieldRefs;
  */
 export interface Prisma__RecipeItemClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  saleRecipe<T extends Prisma.SaleRecipeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SaleRecipeDefaultArgs<ExtArgs>>): Prisma.Prisma__SaleRecipeClient<runtime.Types.Result.GetResult<Prisma.$SaleRecipePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  productVariant<T extends Prisma.ProductVariantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariantDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductVariantClient<runtime.Types.Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  recipeVariant<T extends Prisma.ProductVariantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariantDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductVariantClient<runtime.Types.Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  ingredientVariant<T extends Prisma.ProductVariantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariantDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductVariantClient<runtime.Types.Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1097,8 +1097,8 @@ export interface Prisma__RecipeItemClient<T, Null = never, ExtArgs extends runti
  */
 export interface RecipeItemFieldRefs {
   readonly id: Prisma.FieldRef<"RecipeItem", 'Int'>
-  readonly saleRecipeId: Prisma.FieldRef<"RecipeItem", 'Int'>
-  readonly productVariantId: Prisma.FieldRef<"RecipeItem", 'Int'>
+  readonly recipeVariantId: Prisma.FieldRef<"RecipeItem", 'Int'>
+  readonly ingredientVariantId: Prisma.FieldRef<"RecipeItem", 'Int'>
   readonly quantity: Prisma.FieldRef<"RecipeItem", 'Int'>
   readonly createdAt: Prisma.FieldRef<"RecipeItem", 'DateTime'>
 }

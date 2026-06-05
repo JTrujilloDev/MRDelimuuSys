@@ -6,7 +6,7 @@ export const getPOSInventoryTransactions = async () => {
 };
 
 export const createPOSInventoryTransaction = async (data: {
-  productVariantId: number;
+  productVariantId: number | null;
   relatedAccountId?: number;
   quantity: number;
   type: string;

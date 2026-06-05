@@ -33,11 +33,6 @@ export type Product = Prisma.ProductModel
  */
 export type ProductVariant = Prisma.ProductVariantModel
 /**
- * Model SaleRecipe
- * 
- */
-export type SaleRecipe = Prisma.SaleRecipeModel
-/**
  * Model RecipeItem
  * 
  */
