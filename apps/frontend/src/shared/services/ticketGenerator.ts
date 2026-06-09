@@ -128,7 +128,7 @@ export const buildTicket = (order: OrderInfo) => {
 
   // ITEMS
   order.items.forEach((item: OrderItem) => {
-    lines.push(...formatItem(item.productName, item.quantity, item.price));
+    lines.push(...formatItem(item.productName, item.quantity, item.price * item.quantity));
   });
 
   lines.push("\n"); // más aire después del logo

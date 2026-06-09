@@ -12,7 +12,10 @@ import {
 } from "lucide-react";
 
 import { Button, Input } from "@heroui/react";
-import DenominationCounter, { BILL_DENOMINATIONS, COIN_DENOMINATIONS } from "./DenominationCounter";
+import DenominationCounter, {
+  BILL_DENOMINATIONS,
+  COIN_DENOMINATIONS,
+} from "./DenominationCounter";
 import type { Shift } from "./ShiftGate";
 import dayjs from "dayjs";
 import numeral from "numeral";
@@ -70,10 +73,13 @@ const CloseShiftView = ({
 
   // Counted cash from bills/coins
   const countedCash = useMemo(() => {
-    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce((sum, denom) => {
-      const count = parseInt(billCounts[denom] || "0") || 0;
-      return sum + denom * count;
-    }, 0);
+    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce(
+      (sum, denom) => {
+        const count = parseInt(billCounts[denom] || "0") || 0;
+        return sum + denom * count;
+      },
+      0,
+    );
   }, [billCounts]);
 
   const difference = countedCash - expectedCash;
@@ -245,15 +251,10 @@ const CloseShiftView = ({
             Conteo de caja
           </h2>
 
-          <DenominationCounter billCounts={billCounts} setBillCounts={setBillCounts} />
-
-          <div className="rounded-xl bg-secondary/50 p-4 text-center mb-6">
-            <p className="text-xs text-muted-foreground mb-1">Total contado</p>
-            <p className="text-2xl font-bold text-foreground">
-              {" "}
-              ${numeral(countedCash).format("0,0")}
-            </p>
-          </div>
+          <DenominationCounter
+            billCounts={billCounts}
+            setBillCounts={setBillCounts}
+          />
 
           <div className="mt-auto">
             <Button
