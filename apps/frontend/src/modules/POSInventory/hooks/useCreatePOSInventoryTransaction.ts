@@ -7,6 +7,7 @@ export const useCreatePOSInventoryTransaction = () => {
         mutationFn: createPOSInventoryTransaction,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["POSInventoryTransactions"] });
+            queryClient.invalidateQueries({ queryKey: ["getAllActiveProducts"] });
         },
     });
 };
