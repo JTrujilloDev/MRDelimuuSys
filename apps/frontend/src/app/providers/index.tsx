@@ -1,10 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { SocketProvider } from "../../shared/socket/SocketProvider";
 
 type ThemeMode = "light" | "dark";
 
@@ -46,12 +41,17 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     () => ({
       theme,
       setTheme,
-      toggleTheme: () => setTheme((current) => (current === "dark" ? "light" : "dark")),
+      toggleTheme: () =>
+        setTheme((current) => (current === "dark" ? "light" : "dark")),
     }),
     [theme],
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      <SocketProvider>{children}</SocketProvider>
+    </ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {
