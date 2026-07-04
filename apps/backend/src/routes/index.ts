@@ -9,6 +9,7 @@ import usersRoutes from "./users.routes";
 import financialTransactionRoutes from "./financialTransaction.routes";
 import POSInventoryRoutes from "./POSInventory.routes";
 import reportGenerationRoutes from "./reportGeneration.routes";
+import qzRoutes from "./qz.routes";
 
 const router = Router();
 
@@ -22,5 +23,7 @@ router.use("/users", usersRoutes);
 router.use("/financial-transactions", financialTransactionRoutes);
 router.use("/pos-inventory", POSInventoryRoutes);
 router.use("/reports", reportGenerationRoutes);
+router.use("/qz", qzRoutes);
+
 
 export default router;

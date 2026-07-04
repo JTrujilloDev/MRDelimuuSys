@@ -4,8 +4,16 @@ import { Outlet } from "react-router";
 import { connectQZ } from "../shared/services/qz.service";
 
 export function MainLayout() {
-   useEffect(() => {
-    connectQZ();
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await connectQZ();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    initialize();
   }, []);
   return (
     <div className="flex h-screen w-full flex-row overflow-hidden">
