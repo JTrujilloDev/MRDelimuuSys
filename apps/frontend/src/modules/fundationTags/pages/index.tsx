@@ -1,106 +1,105 @@
-import qz from "qz-tray";
+import dayjs from "dayjs";
+import { printLabelService } from "../../../shared/services/qz.service";
+import isoWeek from "dayjs/plugin/isoWeek";
+import { foundationMenu } from "../../../shared/constants/fundationMenu";
+import { Button } from "@heroui/react";
 
-const Index = () => {
-  const html = `
-  <html>
-    <head>
-      <style>
-        @page {
-        size: 50mm 33mm;
-        margin: 0;
-        }
+const index = () => {
+  dayjs.extend(isoWeek);
+  const CYCLE_START = dayjs("2026-07-01"); // Lunes de la Semana 1
+  const CYCLE_WEEKS = 3;
 
-        body {
-            width: 50mm;
-            height: 33mm;
-            margin: 0;
-            padding: 0;
-        }
+  const dayNames = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ] as const;
 
-        .label {
-            height: 30mm;
-            overflow: hidden;
-            font-size: 8pt;
-        }
+  function getProductionDay(date: Dayjs = dayjs()) {
+    // Producción del día siguiente
+    const productionDate = date.add(1, "day");
 
-        .title {
-          text-align: center;
-          font-weight: bold;
-          font-size: 10pt;
-          margin-bottom: 2px;
-          font-family: Arial, sans-serif;
-        }
+    const weeksPassed = productionDate.diff(CYCLE_START, "week");
 
-        .product {
-          font-weight: bold;
-          font-size: 9pt;
-          margin-bottom: 2px;
-        }
+    return {
+      week: (weeksPassed % CYCLE_WEEKS) + 1,
+      day: dayNames[productionDate.isoWeekday() - 1],
+      dayNumber: productionDate.isoWeekday(),
+      productionDate,
+    };
+  }
 
-        .row {
-          margin-bottom: 1px;
-        }
+  const preparationDay = dayjs().format("DD/MM/YYYY");
+  const expirationDay = dayjs().add(5, "day").format("DD/MM/YYYY");
+  const lotBase = dayjs().format("YYYYMMDD");
 
-        .footer {
-          margin-top: 2px;
-          text-align: center;
-          font-size: 7pt;
-        }
-      </style>
-    </head>
-    <body>
-    <div class="label">
-      <div class="title">DELIMUU</div>
+  const createLabel = (product) => {
+  const { name, content, lotRef, labelAmount } = product;
 
-      <div class="product">Pan blando</div>
+  return [
+    `SIZE 50 mm,30 mm`,
+    `GAP 2 mm,0`,
+    `CLS`,
+    `TEXT 2,20,"2",0,2,1,"${name}"`,
+    `TEXT 2,55,"2",0,1,1,"${content}"`,
+    `TEXT 25,95,"2",0,1,1,"Elab. ${preparationDay}"`,
+    `TEXT 25,120,"2",0,1,1,"Venc. ${expirationDay}"`,
+    `TEXT 25,145,"2",0,1,1,"Lote: ${lotBase}${lotRef}01"`,
+    `TEXT 5,180,"2",0,1,1,"Fabricado por Delimuu"`,
+    `TEXT 5,205,"2",0,1,1,"NIT 79.062.341-1"`,
+    `PRINT ${labelAmount}`,
+  ].join("\r\n");
+};
+ const handlePrint = async (meals) => {
+  try {
+    const tspl = Object.values(meals)
+      .filter(Boolean)
+      .map(createLabel)
+      .join("\r\n");
 
-      <div class="row">
-        <strong>Ing:</strong> Harina, agua, levadura, sal, azúcar
-      </div>
-
-      <div class="row">
-        <strong>Cont. Neto:</strong> 50 panes de 50g
-      </div>
-
-      <div class="row">
-        <strong>Vence:</strong>  03/12/2024
-      </div>
-
-      <div class="row">
-        <strong>Lote:</strong> PB-20241203-001
-      </div>
-
-      <div class="footer">
-        Consérvese en un lugar fresco y seco
-      </div>
-    </div>
-    </body>
-  </html>
-  `;
-
-  const config = qz.configs.create("XP-58");
-  const data = [
-    {
-      type: "pixel",
-      format: "html",
-      flavor: "plain", // or 'plain' if the data is raw HTML
-      data: html,
-    },
-  ];
-
-  const print = () => {
-    qz.print(config, data).catch(function (e) {
-      console.error(e);
-    });
-  };
+    await printLabelService("TSCE210", tspl);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
-    <div>
-      <button type="button" onClick={print}>
-        Generar
-      </button>
+    <div className="flex flex-col items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center  rounded-lg shadow-md p-8 w-full h-1/2 ">
+        <div>
+          {foundationMenu.map((week) => (
+            <div key={week.week} className="mb-8">
+              <h2 className="text-2xl font-bold mb-4">Semana {week.week}</h2>
+              <div className="grid grid-cols-7 gap-4">
+                {Object.entries(week.days).map(([dayKey, day], index) => (
+                  <div key={dayKey} className={`p-4 border rounded-lg `}>
+                    <h3 className="text-lg font-semibold mb-2">{day.name}</h3>
+                    <div>
+                      {Object.entries(day.meals).map(([mealKey, product]) => (
+                        <div key={mealKey} className="mb-2">
+                          {product?.name || "-"}
+                        </div>
+                      ))}
+                    </div>
+                    <Button
+                      className="mt-4"
+                      onClick={() => handlePrint(day.meals)}
+                    >
+                      Imprimir etiquetas
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Index;
+export default index;

@@ -1,0 +1,92 @@
+export const foundationProducts = {
+  pan_blando: {
+    name: "Pan blando",
+    content: "1,500 g (25 und. X 60g)",
+    lotRef: "PB",
+    labelAmount: 6,
+  },
+  mogolla_blanca: {
+    name: "Mogolla blanca",
+    content: "1,500 g (50 und. X 30g)",
+    lotRef: "MO",
+    labelAmount: 3,
+  },
+  calao: {
+    name: "Calao",
+    content: "1,350 g (50 und. X 30g)",
+    lotRef: "CA",
+    labelAmount: 6,
+  },
+  pan_maiz: {
+    name: "Pan de maíz",
+    content: "1,500 g (25 und. X 60g)",
+    lotRef: "PM",
+    labelAmount: 6,
+  },
+  mogolla_integral: {
+    name: "Mogolla integral",
+    content: "1,500 g (25 und. X 60g)",
+    lotRef: "MI",
+    labelAmount: 6,
+  },
+  mantecada: {
+    name: "Mantecada",
+    content: "750 g (25 und. X 30g)",
+    lotRef: "MA",
+    labelAmount: 1,
+  },
+  pan_rollo: {
+    name: "Pan de rollo",
+    content: "1,500 g (25 und. X 60g)",
+    lotRef: "PR",
+    labelAmount: 6,
+  },
+  croissant: {
+    name: "Croissant",
+    content: "1,500 g (25 und. X 60g)",
+    lotRef: "CR",
+    labelAmount: 6,
+  },
+  galleta_avena: {
+    name: "Galleta de avena",
+    content: "2000 g (100 und. X 20g)",
+    lotRef: "GA",
+    labelAmount: 3,
+  },
+  pan_pera: {
+    name: "Pan de pera",
+    content: "1,200 g (40 und. X 30g)",
+    lotRef: "PP",
+    labelAmount: 3,
+  },
+  torta_queso: {
+    name: "Torta queso",
+    content: "1,250 g (25 und. X 50g)",
+    lotRef: "TQ",
+    labelAmount: 6,
+  },
+  torta_quinua: {
+    name: "Torta quinua",
+    content: "1,250 g (25 und. X 50g)",
+    lotRef: "TQ",
+    labelAmount: 6,
+  },
+  pan_hojaldrado: {
+    name: "Pan hojaldrado",
+    content: "1,500 g (25 und. X 60g)",
+    lotRef: "PH",
+    labelAmount: 6,
+  },
+  torta_negra: {
+    name: "Torta negra",
+    content: "1,250 g (25 und. X 50g)",
+    lotRef: "TN",
+    labelAmount: 6,
+  },
+  torta_tradicional: {
+    name: "Torta tradicional",
+    content: "1,250 g (25 und. X 50g)",
+    lotRef: "TT",
+    labelAmount: 6,
+  },
+};
