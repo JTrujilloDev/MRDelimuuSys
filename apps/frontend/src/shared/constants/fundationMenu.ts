@@ -108,7 +108,7 @@ export const foundationMenu = [
       saturday: {
         name: "Sábado",
         meals: {
-          breakfast: foundationProducts.calao,
+          breakfast: null,
           morningSnack: foundationProducts.pan_rollo,
           afternoonSnack: foundationProducts.mantecada,
         },

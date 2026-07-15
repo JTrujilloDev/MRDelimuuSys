@@ -52,18 +52,22 @@ model ProductVariant {
   minStock           Int     @default(0)
   isActive           Boolean @default(true)
   requirePreparation Boolean @default(false)
+  preparationArea    PreparationArea  
   productCost        Float   @default(0)
   productId          Int
   unit               Unit    @default(UNIT)
   product            Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   isNew              Boolean @default(true)
-
   createdAt DateTime @default(now())
 
   accountItems          AccountItem[]
   InventoryTransactions InventoryTransaction[]
   recipeItems           RecipeItem[]           @relation("RecipeOwner")
   ingredientInRecipes   RecipeItem[]           @relation("RecipeIngredient")
+}
+
+enum PreparationArea {
+  KITCHEN
 }
 
 enum Unit {
@@ -142,6 +146,7 @@ model Account {
   financialTransactions FinancialTransaction[] @relation("AccountFinancialTransactions")
 
   financialTransactionId Int?
+
 }
 
 enum AccountStatus {
@@ -296,4 +301,44 @@ model Terminal {
 
   registers CashRegister[]
   accounts  Account[]
+}
+
+model KitchenTicket {
+  id Int @id @default(autoincrement())
+
+  accountId Int
+  account   Account @relation(fields:[accountId], references:[id])
+
+  status KitchenTicketStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+
+  items KitchenTicketItem[]
+}
+
+model KitchenTicketItem {
+  id Int @id @default(autoincrement())
+
+  kitchenTicketId Int
+  accountItemId Int
+
+  kitchenTicket KitchenTicket @relation(fields:[kitchenTicketId], references:[id])
+
+  accountItem AccountItem @relation(fields:[accountItemId], references:[id])
+}
+
+enum KitchenTicketStatus {
+  PENDING
+  PREPARING
+  READY
+  DELIVERED
+}
+
+enum KitchenStatus {
+  PENDING
+  SENT
+  IN_PROGRESS
+  READY
+  DELIVERED
+  CANCELLED
 }

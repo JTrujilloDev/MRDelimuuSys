@@ -30,6 +30,7 @@ import { useDeleteAccount } from "../hooks/accounts/useDeleteAccount";
 import { useCloseAccount } from "../hooks/accounts/useCloseAccount";
 import { printTicketService } from "../../../shared/services/qz.service";
 import SalesHistory from "../components/SalesHistory";
+import { useSocket } from "../../../shared/socket/useSocket";
 
 const Index = () => {
   const { mutate: openCashRegister } = useOpenCashRegister();
@@ -56,6 +57,8 @@ const Index = () => {
   const [showExpenses, setShowExpenses] = useState(false);
   const [shiftExpenses, setShiftExpenses] = useState<ExpenseFull[]>([]);
   const [showSalesHistory, setShowSalesHistory] = useState(false);
+
+  const socket = useSocket();
 
   const handleOpenShift = useCallback(
     (initialAmount: number) => {
@@ -312,7 +315,11 @@ const Index = () => {
         items={orderItems}
         tableLabel={activeTable.label}
         onConfirm={handleConfirmPayment}
-        onBack={() => setShowCheckout(false)}
+        onBack={() => {
+          setShowCheckout(false);
+          socket.emit("clear-view");
+
+        }}
         accountInfo={{
           accountId: activeTable.id,
           cashRegisterId: openCashRegisterData.data.id,

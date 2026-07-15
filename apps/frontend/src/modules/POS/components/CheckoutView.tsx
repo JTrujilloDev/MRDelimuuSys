@@ -1,12 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button, Input, Label } from "@heroui/react";
 import { BsArrowLeft, BsBank, BsQrCode } from "react-icons/bs";
-import { FiFileText, FiTag } from "react-icons/fi";
 import { BiCreditCard } from "react-icons/bi";
 import type { OrderItem } from "./OrderPanel";
 import numeral from "numeral";
 import { Printer } from "lucide-react";
 import dayjs from "dayjs";
+import { useSocket } from "../../../shared/socket/useSocket";
 
 export interface OrderInfo {
   clientName: string;
@@ -56,7 +56,7 @@ const CheckoutView = ({
   const [cashReceived, setCashReceived] = useState("");
   const [qrGenerated, setQrGenerated] = useState(false);
   const [printTicket, setPrintTicket] = useState(false);
-
+  const socket = useSocket();
   const subtotal = useMemo(
     () => items.reduce((s, i) => s + i.price * i.quantity, 0),
     [items],
@@ -123,6 +123,15 @@ const CheckoutView = ({
       (paymentMethod === "CASH" && cashValue >= total) ||
       (paymentMethod === "QR" && qrGenerated));
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  useEffect(() => {
+    if (!accountInfo?.accountId) return;
+
+    socket.emit("show-account", {
+      accountId: accountInfo.accountId,
+    });
+  }, [accountInfo?.accountId]);
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-background">
       {/* Header */}
@@ -330,7 +339,10 @@ const CheckoutView = ({
                 </div>
               ) : (
                 <Button
-                  onClick={() => setQrGenerated(true)}
+                  onClick={() => {
+                    socket.emit("generate-qr", { total });
+                    console.log("QR generado");
+                    setQrGenerated(true)}}
                   variant="outline"
                   size="lg"
                   className="gap-2 px-6 py-4"

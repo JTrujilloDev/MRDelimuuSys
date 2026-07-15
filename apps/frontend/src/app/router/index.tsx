@@ -7,6 +7,8 @@ import ProductCategories from "../../modules/categories/pages";
 import Products from "../../modules/products/pages";
 import Inventory from "../../modules/POSInventory/pages";
 import FundationTags from "../../modules/fundationTags/pages";
+import ClientView from "../../modules/clientView/pages";
+import KitchenView from "../../modules/kitchenView/pages";
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +25,13 @@ export const router = createBrowserRouter([
       { path: "product-categories", element: <ProductCategories /> },
       { path: "products", element: <Products /> },
       { path: "inventory", element: <Inventory /> },
-      { path: "fundation-tags", element: <FundationTags /> }
+      { path: "fundation-tags", element: <FundationTags /> },
+      { path: "kitchen", element: <KitchenView /> },
+
     ],
+  },
+  {
+    path: "client-view/:terminalId",
+    element: <ClientView />,
   },
 ]);
