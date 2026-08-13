@@ -38,34 +38,35 @@ const index = () => {
   const lotBase = dayjs().format("YYYYMMDD");
 
   const createLabel = (product) => {
-  const { name, content, lotRef, labelAmount } = product;
+    const { name, content, lotRef, labelAmount } = product;
 
-  return [
-    `SIZE 50 mm,30 mm`,
-    `GAP 2 mm,0`,
-    `CLS`,
-    `TEXT 2,20,"2",0,2,1,"${name}"`,
-    `TEXT 2,55,"2",0,1,1,"${content}"`,
-    `TEXT 25,95,"2",0,1,1,"Elab. ${preparationDay}"`,
-    `TEXT 25,120,"2",0,1,1,"Venc. ${expirationDay}"`,
-    `TEXT 25,145,"2",0,1,1,"Lote: ${lotBase}${lotRef}01"`,
-    `TEXT 5,180,"2",0,1,1,"Fabricado por Delimuu"`,
-    `TEXT 5,205,"2",0,1,1,"NIT 79.062.341-1"`,
-    `PRINT ${labelAmount}`,
-  ].join("\r\n");
-};
- const handlePrint = async (meals) => {
-  try {
-    const tspl = Object.values(meals)
-      .filter(Boolean)
-      .map(createLabel)
-      .join("\r\n");
+    return [
+      `SIZE 50 mm,30 mm`,
+      `GAP 2 mm,0`,
+      `HOME`,
+      `CLS`,
+      `TEXT 2,20,"2",0,2,1,"${name}"`,
+      `TEXT 2,55,"2",0,1,1,"${content}"`,
+      `TEXT 25,90,"2",0,1,1,"Elab. ${preparationDay}"`,
+      `TEXT 25,115,"2",0,1,1,"Venc. ${expirationDay}"`,
+      `TEXT 25,145,"2",0,1,1,"Lote: ${lotBase}${lotRef}01"`,
+      `TEXT 5,170,"2",0,1,1,"Fabricado por Delimuu"`,
+      `TEXT 5,195,"2",0,1,1,"NIT 79.062.341-1"`,
+      `PRINT ${labelAmount}`,
+    ].join("\r\n");
+  };
+  const handlePrint = async (meals) => {
+    try {
+      const tspl = Object.values(meals)
+        .filter(Boolean)
+        .map(createLabel)
+        .join("\r\n");
 
-    await printLabelService("TSCE210", tspl);
-  } catch (error) {
-    console.error(error);
-  }
-};
+      await printLabelService("TSCE210", tspl);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">
