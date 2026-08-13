@@ -64,6 +64,9 @@ model ProductVariant {
   InventoryTransactions InventoryTransaction[]
   recipeItems           RecipeItem[]           @relation("RecipeOwner")
   ingredientInRecipes   RecipeItem[]           @relation("RecipeIngredient")
+
+  relatedTicketItems KitchenTicketItem[]
+  
 }
 
 enum PreparationArea {
@@ -147,6 +150,8 @@ model Account {
 
   financialTransactionId Int?
 
+  kitchenTickets KitchenTicket[]
+
 }
 
 enum AccountStatus {
@@ -174,6 +179,7 @@ model AccountItem {
   quantity         Int            @default(1)
   price            Float
   subtotal         Float
+  quantityPrepared Int            @default(0)
 
   createdAt DateTime @default(now())
 
@@ -319,26 +325,29 @@ model KitchenTicket {
 model KitchenTicketItem {
   id Int @id @default(autoincrement())
 
+
   kitchenTicketId Int
-  accountItemId Int
-
   kitchenTicket KitchenTicket @relation(fields:[kitchenTicketId], references:[id])
+  productVariantId Int
+  productVariant ProductVariant @relation(fields:[productVariantId], references:[id])
+  productName String
+  quantity Int
+  observation String?
+  status KitchenItemStatus @default(PENDING)
 
-  accountItem AccountItem @relation(fields:[accountItemId], references:[id])
 }
 
 enum KitchenTicketStatus {
   PENDING
-  PREPARING
-  READY
-  DELIVERED
-}
-
-enum KitchenStatus {
-  PENDING
-  SENT
   IN_PROGRESS
   READY
   DELIVERED
+  CANCELLED
+}
+
+enum KitchenItemStatus {
+  PENDING
+  IN_PROGRESS
+  READY
   CANCELLED
 }
