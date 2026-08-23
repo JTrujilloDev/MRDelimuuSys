@@ -1,142 +1,136 @@
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { useParams } from "react-router";
 import logo from "/LogoTexto.png";
 import numeral from "numeral";
-import { QrCode } from "lucide-react";
+import { QrCode, ReceiptText, ShoppingBag } from "lucide-react";
+import { useSocket } from "../../../shared/socket/useSocket";
+
 interface OrderSummaryItem {
-  name: string;
+  id: number;
+  productName: string;
   quantity: number;
   price: number;
 }
 
-const index = () => {
-  //   const socket = useSocket();
+interface ClientAccount {
+  id: number;
+  name: string;
+  terminalId: number;
+  accountItems: OrderSummaryItem[];
+  discount: number;
+  total: number;
+}
 
-  const socket = io("http://100.88.114.91:3000");
+type DisplayState = "idle" | "summary" | "qr";
 
-  const [accountInfo, setAccountInfo] = useState(null);
-  const [displayState, setDisplayState] = useState("idle");
+const ClientView = () => {
+  const { terminalId: terminalIdParam } = useParams();
+  const terminalId = Number(terminalIdParam);
+  const socket = useSocket();
+  const [accountInfo, setAccountInfo] = useState<ClientAccount | null>(null);
+  const [displayState, setDisplayState] = useState<DisplayState>("idle");
+  const [qrTotal, setQrTotal] = useState(0);
 
   useEffect(() => {
-    socket.on("account-updated", (account) => {
+    if (!Number.isInteger(terminalId)) return;
+
+    const joinDisplay = () => socket.emit("client-display:join", { terminalId });
+    const handleAccountUpdated = (account: ClientAccount | null) => {
       setAccountInfo(account);
       setDisplayState(account ? "summary" : "idle");
-      console.log("Cuenta recibida:", account);
-    });
-
-    socket.on("show-qr", () => {
+      if (!account) setQrTotal(0);
+    };
+    const handleQr = ({ total }: { total: number }) => {
+      setQrTotal(total);
       setDisplayState("qr");
-    });
+    };
+
+    socket.on("account-updated", handleAccountUpdated);
+    socket.on("show-qr", handleQr);
+    socket.on("connect", joinDisplay);
+    joinDisplay();
 
     return () => {
-      socket.off("account-updated");
+      socket.off("account-updated", handleAccountUpdated);
+      socket.off("show-qr", handleQr);
+      socket.off("connect", joinDisplay);
     };
-  }, [socket]);
-
-  console.log("Display state:", displayState);
+  }, [socket, terminalId]);
 
   return (
-    <div className=" w-screen h-screen  bg-orange-50 flex flex-col">
-      {/* Display area */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        {displayState === "idle" && <IdleView />}
-        
-        {displayState === "summary" && (
-          <SummaryView
-            items={accountInfo?.accountItems || []}
-            discount={accountInfo?.discount || 0}
-            total={accountInfo?.total}
-          />
-        )}
-        {displayState === "qr" && <QrView total={accountInfo?.total} />}
-      </div>
-    </div>
+    <main className="flex h-screen w-screen overflow-hidden bg-[#fff8ed] text-[#2f211b]">
+      {displayState === "idle" && <IdleView />}
+      {displayState === "summary" && accountInfo && <SummaryView account={accountInfo} />}
+      {displayState === "qr" && <QrView total={qrTotal || accountInfo?.total || 0} />}
+    </main>
   );
 };
 
-/* ---------- Idle: logo ---------- */
+const Brand = ({ compact = false }: { compact?: boolean }) => (
+  <img
+    src={logo}
+    alt="Delimuu"
+    className={compact ? "h-20 w-64 object-contain object-left" : "w-full max-w-lg object-contain"}
+  />
+);
+
 const IdleView = () => (
-  <div className="flex flex-col items-center gap-6 animate-fade-in w-full h-full">
-    <div className=" rounded-3xl  flex items-center justify-center w-3/5">
-      <img src={logo} alt="Logo" className="h-full w-full" />
-    </div>
-    <div className="text-center">
-      <p className="text-3xl font-bold text-black mt-2">¡Bienvenido!</p>
+  <div className="flex h-full w-full flex-col items-center justify-center gap-7 p-10 text-center">
+    <Brand />
+    <div>
+      <p className="text-4xl font-black tracking-tight">¡Bienvenido!</p>
+      <p className="mt-2 text-xl text-[#72594c]">Tu pedido aparecerá aquí</p>
     </div>
   </div>
 );
 
-/* ---------- Summary ---------- */
-const SummaryView = ({
-  items,
-  discount,
-  total,
-}: {
-  items: OrderSummaryItem[];
-  subtotal: number;
-  tax: number;
-  discount: number;
-  total: number;
-}) => (
-  <div className="flex flex-col items-center gap-6 animate-fade-in">
-    <div className=" rounded-3xl  flex items-center justify-center w-3/5">
-      <img src={logo} alt="Logo" />
-    </div>
-    <div className="flex h-full w-full flex-col rounded-[28px] border p-3 border-white/10 bg-pos-order-bg text-pos-order-fg shadow-[0_24px_60px_-36px_rgba(15,10,8,0.8)] align-center ">
-      <h2 className="text-2xl font-bold text-orange-50 text-center mb-6 mt-5">
-        Resumen de Cuenta
-      </h2>
-
-      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-        {/* Items */}
-        <div className="space-y-3">
-          {items.map((item, i) => (
-            <div key={i} className="flex justify-between text-sm">
-              <span className=" text-orange-50">
-                {item.quantity}x {item.productName}
-              </span>
-              <span className="font-medium text-foreground">
-                {numeral(item.price * item.quantity).format("$0,0")}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Totals */}
-        <div className="border-t border-border pt-4 space-y-2">
-          {discount > 0 && (
-            <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
-              <span>Descuento</span>
-              <span>-{numeral(discount).format("$0,0")}</span>
-            </div>
-          )}
-          <div className="flex justify-between text-xl font-bold text-foreground pt-3 border-t border-border">
-            <span>Total</span>
-            <span>{numeral(total).format("$0,0")}</span>
-          </div>
-        </div>
+const SummaryView = ({ account }: { account: ClientAccount }) => (
+  <div className="grid h-full w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-4 p-6 lg:p-8">
+    <header className="flex items-center justify-between gap-6">
+      <Brand compact />
+      <div className="text-right">
+        <h1 className="text-3xl font-black">Tu pedido</h1>
       </div>
-    </div>
+    </header>
+
+    <section className="min-h-0 overflow-hidden rounded-[28px] bg-[#30231e] text-white shadow-xl">
+      <div className="flex items-center gap-3 border-b border-white/10 px-7 py-4">
+        <ReceiptText className="h-6 w-6 text-[#f0a35b]" />
+        <h2 className="text-xl font-black">Resumen del pedido</h2>
+        <span className="ml-auto rounded-full bg-white/10 px-3 py-1.5 text-base font-bold">
+          {account.accountItems.reduce((sum, item) => sum + item.quantity, 0)} productos
+        </span>
+      </div>
+      <div className="h-[calc(100%_-_66px)] overflow-y-auto px-7 py-2">
+        {account.accountItems.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center text-white/55">
+            <ShoppingBag className="mb-3 h-12 w-12" />
+            <p className="text-xl">Agregando productos…</p>
+          </div>
+        ) : account.accountItems.map((item) => (
+          <div key={item.id} className="flex items-center gap-4 border-b border-white/10 py-4 last:border-none">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#f0a35b] text-xl font-black text-[#30231e]">{item.quantity}</span>
+            <p className="min-w-0 flex-1 text-xl font-bold leading-tight">{item.productName}</p>
+            <p className="shrink-0 text-xl font-black">{numeral(item.price * item.quantity).format("$ 0,0")}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <footer className="rounded-[24px] border border-[#ead7c4] bg-white px-7 py-4 shadow-md">
+      {account.discount > 0 && <div className="mb-2 flex justify-between text-xl font-semibold text-emerald-700"><span>Descuento</span><span>-{numeral(account.discount).format("$ 0,0")}</span></div>}
+      <div className="flex items-baseline justify-between"><span className="text-2xl font-black">Total</span><span className="text-4xl font-black text-[#c76f2d]">{numeral(account.total).format("$ 0,0")}</span></div>
+    </footer>
   </div>
 );
 
-/* ---------- QR ---------- */
 const QrView = ({ total }: { total: number }) => (
-  <div className="flex flex-col items-center gap-6 animate-fade-in">
-    <div className=" rounded-3xl  flex items-center justify-center w-3/5">
-      <img src={logo} alt="Logo" />
-    </div>
-    <h2 className="text-2xl font-bold text-black">Escanea para pagar</h2>
-    <div className="h-56 w-56 rounded-3xl bg-card border-2 border-border flex items-center justify-center">
-      <QrCode className="h-28 w-28 text-black" />
-    </div>
-    <p className="text-3xl font-bold text-black">
-      {numeral(total).format("$ 0,0")}
-    </p>
-    <p className="text-sm text-gray-500">
-      Apunta tu cámara al código QR
-    </p>
+  <div className="flex h-full w-full flex-col items-center justify-center gap-7 p-10 text-center">
+    <Brand compact />
+    <div><h2 className="text-3xl font-black">Escanea para pagar</h2><p className="mt-2 text-lg text-[#72594c]">Apunta la cámara al código QR</p></div>
+    <div className="flex h-60 w-60 items-center justify-center rounded-[30px] border-4 border-[#30231e] bg-white shadow-lg"><QrCode className="h-36 w-36 text-[#30231e]" /></div>
+    <p className="text-4xl font-black text-[#c76f2d]">{numeral(total).format("$ 0,0")}</p>
   </div>
 );
 
-export default index;
+export default ClientView;

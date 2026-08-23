@@ -396,7 +396,9 @@ export const ModelName = {
   Customer: 'Customer',
   CashRegister: 'CashRegister',
   Store: 'Store',
-  Terminal: 'Terminal'
+  Terminal: 'Terminal',
+  KitchenTicket: 'KitchenTicket',
+  KitchenTicketItem: 'KitchenTicketItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -412,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "store" | "terminal"
+    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "store" | "terminal" | "kitchenTicket" | "kitchenTicketItem"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1378,6 +1380,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    KitchenTicket: {
+      payload: Prisma.$KitchenTicketPayload<ExtArgs>
+      fields: Prisma.KitchenTicketFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KitchenTicketFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KitchenTicketFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>
+        }
+        findFirst: {
+          args: Prisma.KitchenTicketFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KitchenTicketFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>
+        }
+        findMany: {
+          args: Prisma.KitchenTicketFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>[]
+        }
+        create: {
+          args: Prisma.KitchenTicketCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>
+        }
+        createMany: {
+          args: Prisma.KitchenTicketCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KitchenTicketCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>[]
+        }
+        delete: {
+          args: Prisma.KitchenTicketDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>
+        }
+        update: {
+          args: Prisma.KitchenTicketUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>
+        }
+        deleteMany: {
+          args: Prisma.KitchenTicketDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KitchenTicketUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KitchenTicketUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>[]
+        }
+        upsert: {
+          args: Prisma.KitchenTicketUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketPayload>
+        }
+        aggregate: {
+          args: Prisma.KitchenTicketAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKitchenTicket>
+        }
+        groupBy: {
+          args: Prisma.KitchenTicketGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KitchenTicketGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KitchenTicketCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KitchenTicketCountAggregateOutputType> | number
+        }
+      }
+    }
+    KitchenTicketItem: {
+      payload: Prisma.$KitchenTicketItemPayload<ExtArgs>
+      fields: Prisma.KitchenTicketItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KitchenTicketItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KitchenTicketItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>
+        }
+        findFirst: {
+          args: Prisma.KitchenTicketItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KitchenTicketItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>
+        }
+        findMany: {
+          args: Prisma.KitchenTicketItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>[]
+        }
+        create: {
+          args: Prisma.KitchenTicketItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>
+        }
+        createMany: {
+          args: Prisma.KitchenTicketItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KitchenTicketItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>[]
+        }
+        delete: {
+          args: Prisma.KitchenTicketItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>
+        }
+        update: {
+          args: Prisma.KitchenTicketItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.KitchenTicketItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KitchenTicketItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KitchenTicketItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.KitchenTicketItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketItemPayload>
+        }
+        aggregate: {
+          args: Prisma.KitchenTicketItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKitchenTicketItem>
+        }
+        groupBy: {
+          args: Prisma.KitchenTicketItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KitchenTicketItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KitchenTicketItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KitchenTicketItemCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1451,6 +1601,7 @@ export const ProductVariantScalarFieldEnum = {
   minStock: 'minStock',
   isActive: 'isActive',
   requirePreparation: 'requirePreparation',
+  preparationArea: 'preparationArea',
   productCost: 'productCost',
   productId: 'productId',
   unit: 'unit',
@@ -1603,6 +1754,28 @@ export const TerminalScalarFieldEnum = {
 export type TerminalScalarFieldEnum = (typeof TerminalScalarFieldEnum)[keyof typeof TerminalScalarFieldEnum]
 
 
+export const KitchenTicketScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type KitchenTicketScalarFieldEnum = (typeof KitchenTicketScalarFieldEnum)[keyof typeof KitchenTicketScalarFieldEnum]
+
+
+export const KitchenTicketItemScalarFieldEnum = {
+  id: 'id',
+  kitchenTicketId: 'kitchenTicketId',
+  accountItemId: 'accountItemId',
+  productName: 'productName',
+  quantity: 'quantity'
+} as const
+
+export type KitchenTicketItemScalarFieldEnum = (typeof KitchenTicketItemScalarFieldEnum)[keyof typeof KitchenTicketItemScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1707,6 +1880,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PreparationArea'
+ */
+export type EnumPreparationAreaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PreparationArea'>
+    
+
+
+/**
+ * Reference to a field of type 'PreparationArea[]'
+ */
+export type ListEnumPreparationAreaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PreparationArea[]'>
     
 
 
@@ -1819,6 +2006,20 @@ export type EnumCashRegisterStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'CashRegisterStatus[]'
  */
 export type ListEnumCashRegisterStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CashRegisterStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'KitchenTicketStatus'
+ */
+export type EnumKitchenTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenTicketStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'KitchenTicketStatus[]'
+ */
+export type ListEnumKitchenTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenTicketStatus[]'>
     
 
 /**
@@ -1944,6 +2145,8 @@ export type GlobalOmitConfig = {
   cashRegister?: Prisma.CashRegisterOmit
   store?: Prisma.StoreOmit
   terminal?: Prisma.TerminalOmit
+  kitchenTicket?: Prisma.KitchenTicketOmit
+  kitchenTicketItem?: Prisma.KitchenTicketItemOmit
 }
 
 /* Types for Logging */

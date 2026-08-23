@@ -176,6 +176,79 @@ export const getAllCashRegistersService = async () => {
   return cashRegisters;
 };
 
+export const getCashRegisterHistoryService = async (
+  from: Date,
+  to: Date,
+) => {
+  const cashRegisters = await prisma.cashRegister.findMany({
+    where: {
+      OR: [
+        { closedAt: { gte: from, lte: to } },
+        {
+          closedAt: null,
+          openedAt: { gte: from, lte: to },
+        },
+      ],
+    },
+    orderBy: [{ closedAt: "desc" }, { openedAt: "desc" }],
+    include: {
+      user: { select: { id: true, name: true } },
+      terminal: { select: { id: true, name: true } },
+      accounts: {
+        where: { status: "CLOSED" },
+        orderBy: { closedAt: "desc" },
+        include: {
+          accountItems: {
+            include: {
+              productVariant: {
+                select: {
+                  id: true,
+                  name: true,
+                  product: { select: { name: true } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return cashRegisters.map((cashRegister) => {
+    const variants = new Map<
+      number,
+      { productVariantId: number; productName: string; variantName: string; quantity: number }
+    >();
+
+    for (const account of cashRegister.accounts) {
+      for (const item of account.accountItems) {
+        const current = variants.get(item.productVariantId);
+        if (current) {
+          current.quantity += item.quantity;
+        } else {
+          variants.set(item.productVariantId, {
+            productVariantId: item.productVariantId,
+            productName: item.productVariant.product.name,
+            variantName: item.productVariant.name,
+            quantity: item.quantity,
+          });
+        }
+      }
+    }
+
+    return {
+      ...cashRegister,
+      soldVariants: Array.from(variants.values()).sort(
+        (a, b) => b.quantity - a.quantity,
+      ),
+      soldVariantUnits: Array.from(variants.values()).reduce(
+        (total, variant) => total + variant.quantity,
+        0,
+      ),
+    };
+  });
+};
+
 export const getOpenCashRegisterService = async (terminalId: number) => {
   const cashRegister = await prisma.cashRegister.findFirst({
     where: {

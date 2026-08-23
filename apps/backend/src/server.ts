@@ -16,6 +16,9 @@ const io = new Server(httpServer, {
 
 setIO(io);
 
+const activeDisplayAccounts = new Map<number, number>();
+const terminalRoom = (terminalId: number) => `client-display:${terminalId}`;
+
 io.on("connection", (socket) => {
   console.log("Cliente conectado:", socket.id);
 
@@ -23,19 +26,39 @@ io.on("connection", (socket) => {
     console.log("Cliente desconectado:", socket.id);
   });
 
-  socket.on("show-account", async ({ accountId }) => {
-    const account = await getAccountByIdService(accountId);
+  socket.on("client-display:join", async ({ terminalId }) => {
+    const parsedTerminalId = Number(terminalId);
+    if (!Number.isInteger(parsedTerminalId)) return;
+    socket.join(terminalRoom(parsedTerminalId));
 
-    io.emit("account-updated", account);
+    const accountId = activeDisplayAccounts.get(parsedTerminalId);
+    const account = accountId ? await getAccountByIdService(accountId) : null;
+    socket.emit("account-updated", account);
   });
 
-  socket.on("clear-view", () => {
-    io.emit("account-updated", null);
+  socket.on("show-account", async ({ accountId, terminalId }) => {
+    try {
+      const account = await getAccountByIdService(Number(accountId));
+      if (!account) return;
+      const targetTerminalId = Number(terminalId ?? account.terminalId);
+      activeDisplayAccounts.set(targetTerminalId, account.id);
+      io.to(terminalRoom(targetTerminalId)).emit("account-updated", account);
+    } catch (error) {
+      console.error("Unable to update client display", error);
+    }
   });
 
-  socket.on("generate-qr", () => {
-    console.log("Mostrando QR");
-    io.emit("show-qr");
+  socket.on("clear-view", ({ terminalId } = {}) => {
+    const parsedTerminalId = Number(terminalId);
+    if (!Number.isInteger(parsedTerminalId)) return;
+    activeDisplayAccounts.delete(parsedTerminalId);
+    io.to(terminalRoom(parsedTerminalId)).emit("account-updated", null);
+  });
+
+  socket.on("generate-qr", ({ terminalId, total }) => {
+    const parsedTerminalId = Number(terminalId);
+    if (!Number.isInteger(parsedTerminalId)) return;
+    io.to(terminalRoom(parsedTerminalId)).emit("show-qr", { total: Number(total) || 0 });
   });
 });
 

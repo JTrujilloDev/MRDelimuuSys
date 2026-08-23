@@ -52,7 +52,7 @@ model ProductVariant {
   minStock           Int     @default(0)
   isActive           Boolean @default(true)
   requirePreparation Boolean @default(false)
-  preparationArea    PreparationArea  
+  preparationArea    PreparationArea @default(KITCHEN)
   productCost        Float   @default(0)
   productId          Int
   unit               Unit    @default(UNIT)
@@ -134,6 +134,7 @@ model Account {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   accountItems AccountItem[]
+  kitchenTickets KitchenTicket[]
 
   total               Float          @default(0)
   discount            Float          @default(0)
@@ -176,6 +177,7 @@ model AccountItem {
   subtotal         Float
 
   createdAt DateTime @default(now())
+  kitchenTicketItems KitchenTicketItem[]
 
   @@unique([accountId, productVariantId])
 }
@@ -307,13 +309,16 @@ model KitchenTicket {
   id Int @id @default(autoincrement())
 
   accountId Int
-  account   Account @relation(fields:[accountId], references:[id])
+  account   Account @relation(fields:[accountId], references:[id], onDelete: Cascade)
 
   status KitchenTicketStatus @default(PENDING)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   items KitchenTicketItem[]
+
+  @@index([accountId, status])
 }
 
 model KitchenTicketItem {
@@ -321,10 +326,14 @@ model KitchenTicketItem {
 
   kitchenTicketId Int
   accountItemId Int
+  productName String
+  quantity Int
 
-  kitchenTicket KitchenTicket @relation(fields:[kitchenTicketId], references:[id])
+  kitchenTicket KitchenTicket @relation(fields:[kitchenTicketId], references:[id], onDelete: Cascade)
 
-  accountItem AccountItem @relation(fields:[accountItemId], references:[id])
+  accountItem AccountItem @relation(fields:[accountItemId], references:[id], onDelete: Restrict)
+
+  @@index([kitchenTicketId])
 }
 
 enum KitchenTicketStatus {

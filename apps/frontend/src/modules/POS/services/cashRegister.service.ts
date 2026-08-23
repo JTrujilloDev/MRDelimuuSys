@@ -10,6 +10,13 @@ export const getOpenCashRegister = async (terminalId: number) => {
   return data;
 };
 
+export const getCashRegisterHistory = async (from: string, to: string) => {
+  const { data } = await api.get("cash-register/history", {
+    params: { from, to },
+  });
+  return data;
+};
+
 export const closeCashRegister = async ({
   cashRegisterId,
   closingAmount,

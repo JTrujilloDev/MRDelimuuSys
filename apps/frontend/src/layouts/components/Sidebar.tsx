@@ -2,7 +2,7 @@ import Logo from "/DeliLogo.png";
 import { NavLink, useNavigate } from "react-router";
 import { Tooltip } from "@heroui/react";
 import { BiUser } from "react-icons/bi";
-import { Cake, ChefHat, Moon, Package, ShoppingCart, Sun, Tag } from "lucide-react";
+import { BookOpen, ChefHat, History, Moon, Package, ShoppingCart, Sun, Tag } from "lucide-react";
 import { LuLogOut } from "react-icons/lu";
 import { useTheme } from "../../app/providers";
 
@@ -12,8 +12,8 @@ const Sidebar = () => {
 
   const items = [
     { title: "Punto de Venta", url: "pos", icon: ShoppingCart },
-    { title: "Categorías", url: "product-categories", icon: Tag },
-    { title: "Productos", url: "products", icon: Cake },
+    { title: "Historial de cajas", url: "cash-register-history", icon: History },
+    { title: "Catálogo", url: "catalog", icon: BookOpen },
     {title: "Inventario" , url: "inventory", icon: Package},
     {title : "Cocina", url: "kitchen", icon: ChefHat},
     {title : "Etiquetas", url: "fundation-tags", icon: Tag}
@@ -28,7 +28,7 @@ const Sidebar = () => {
 
       <div className="mt-4 flex flex-col items-center gap-4">
         {items.map((item) => (
-          <div key={item.url}>
+          <Tooltip key={item.url}>
             <NavLink
               to={item.url}
               end
@@ -42,7 +42,8 @@ const Sidebar = () => {
             >
               <item.icon className="h-5 w-5" />
             </NavLink>
-          </div>
+            <Tooltip.Content>{item.title}</Tooltip.Content>
+          </Tooltip>
         ))}
       </div>
 

@@ -22,7 +22,11 @@ import { useDeleteProductCategory } from "../hooks/useDeleteProductCategory";
 import { useUpdateProductCategory } from "../hooks/useUpdateProductCategory";
 import { CheckIcon, SquareCheck, SquareX } from "lucide-react";
 
-const Index = () => {
+interface ProductCategoriesProps {
+  embedded?: boolean;
+}
+
+const Index = ({ embedded = false }: ProductCategoriesProps) => {
   const { data: productCategories } = useGetAllProductCategories();
   const { mutate: createProductCategory } = useCreateProductCategory();
   const { mutate: deleteProductCategory } = useDeleteProductCategory();
@@ -113,15 +117,15 @@ const Index = () => {
   } | null>(null);
   return (
     <>
-      <div className="flex h-full w-full flex-col items-center justify-start gap-4 p-10">
-        <div className="w-full rounded-[24px] bg-pos-order-bg px-6 py-5 text-white shadow-[0_18px_40px_-30px_rgba(84,56,32,0.45)]">
+      <div className={`flex h-full w-full flex-col items-center justify-start gap-4 ${embedded ? "" : "p-10"}`}>
+        {!embedded && <div className="w-full rounded-[24px] bg-pos-order-bg px-6 py-5 text-white shadow-[0_18px_40px_-30px_rgba(84,56,32,0.45)]">
           <h1 className="text-4xl font-bold text-white">
             Categorias de productos
           </h1>
           <p className="mt-1 text-sm text-white/70">
             Administra y organiza las categorías del catálogo.
           </p>
-        </div>
+        </div>}
         <div className="flex w-full justify-end">
           <Button
             onClick={() => {
@@ -132,7 +136,7 @@ const Index = () => {
             + Agregar categoría
           </Button>
         </div>
-        <Table className="mt-10 w-full overflow-hidden rounded-[24px] border border-border bg-pos-surface shadow-sm">
+        <Table className={`${embedded ? "mt-2" : "mt-10"} w-full overflow-hidden rounded-[24px] border border-border bg-pos-surface shadow-sm`}>
           <Table.ScrollContainer>
             <Table.Content aria-label="Categorias de productos">
               <Table.Header>
@@ -221,12 +225,15 @@ const Index = () => {
           <Modal.Container>
             <Modal.Dialog className="rounded-lg">
               <Modal.CloseTrigger
-                onClick={() => setCreateCategoryModal(false)}
+                onClick={() => {
+                  setCreateCategoryModal(false);
+                  setSelectedCategory(null);
+                }}
               />
 
               <Modal.Header>
                 <Modal.Heading className="text-xl">
-                  Crear categoría
+                  {selectedCategory ? "Editar categoría" : "Crear categoría"}
                 </Modal.Heading>
               </Modal.Header>
 
@@ -247,7 +254,7 @@ const Index = () => {
                         }
                       }}
                     >
-                      <Label className="text-white">Nombre</Label>
+                      <Label className="text-foreground">Nombre</Label>
                       <Input className="w-full mt-2" />
                       <FieldError />
                     </TextField>
@@ -268,7 +275,7 @@ const Index = () => {
                   </div>
 
                   <div className="flex flex-col gap-1 w-full">
-                    <Label className="text-white">Descripción</Label>
+                    <Label className="text-foreground">Descripción</Label>
                     <TextArea
                       className="resize-none mt-2"
                       name="description"
@@ -277,7 +284,7 @@ const Index = () => {
                   </div>
                   <Modal.Footer className="px-5 pb-5">
                     <Button className="w-full" type="submit">
-                      Crear
+                      {selectedCategory ? "Guardar cambios" : "Crear categoría"}
                     </Button>
                   </Modal.Footer>
                 </Form>
@@ -304,7 +311,7 @@ const Index = () => {
               <Modal.Body className="px-5 py-4 flex flex-col gap-3">
                 <p className="text-sm ">
                   ¿Estás seguro que deseas eliminar{" "}
-                  <span className="font-medium text-white ">
+                  <span className="font-medium text-foreground">
                     {selectedCategory?.name}
                   </span>
                   ?

@@ -1,6 +1,7 @@
-import { Plus, Trash2, ShoppingBag, Pencil, Check } from "lucide-react";
+import { Plus, Trash2, ShoppingBag, Pencil, Check, ChefHat } from "lucide-react";
 import numeral from "numeral";
 import { useState } from "react";
+import type { KitchenTicket } from "../../../shared/kitchen/kitchenTickets.store";
 
 interface Account {
   accountItems: AccountItem[];
@@ -24,6 +25,7 @@ interface TableGridProps {
   onAdd: (name: string) => void;
   onRemove: (id: number) => void;
   onRename: (id: number, newLabel: string) => void;
+  kitchenTickets: KitchenTicket[];
 }
 
 const TableGrid = ({
@@ -32,6 +34,7 @@ const TableGrid = ({
   onAdd,
   onRemove,
   onRename,
+  kitchenTickets,
 }: TableGridProps) => {
   const [editingId, setEditingId] = useState< number | null>(null);
   const [editValue, setEditValue] = useState("");
@@ -69,6 +72,9 @@ const TableGrid = ({
           );
           const hasItems = table?.accountItems?.length > 0;
           const isEditing = editingId === table.id;
+          const accountTickets = kitchenTickets.filter((ticket) => ticket.accountId === table.id && ticket.status !== "DELIVERED");
+          const hasReadyTicket = accountTickets.some((ticket) => ticket.status === "READY");
+          const hasPreparingTicket = accountTickets.some((ticket) => ticket.status === "PREPARING");
 
           return (
             <button
@@ -80,6 +86,12 @@ const TableGrid = ({
                   : "border-white/10 bg-pos-order-bg/95 text-pos-order-fg hover:border-primary/30"
               }`}
             >
+              {accountTickets.length > 0 && (
+                <span className={`absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-black shadow-md ${hasReadyTicket ? "bg-success text-success-foreground animate-pulse" : hasPreparingTicket ? "bg-warning text-warning-foreground" : "bg-secondary text-foreground"}`}>
+                  <ChefHat className="h-3.5 w-3.5" />
+                  {hasReadyTicket ? "¡Listo para recoger!" : hasPreparingTicket ? "En preparación" : "En espera"}
+                </span>
+              )}
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
                 {!isEditing && (
                   <span

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button, Input, Label } from "@heroui/react";
 import { BsArrowLeft, BsBank, BsQrCode } from "react-icons/bs";
 import { BiCreditCard } from "react-icons/bi";
@@ -40,6 +40,7 @@ interface CheckoutViewProps {
   accountInfo: {
     accountId: number;
     cashRegisterId: number;
+    terminalId: number;
   };
 }
 
@@ -50,8 +51,7 @@ const CheckoutView = ({
   onBack,
   accountInfo,
 }: CheckoutViewProps) => {
-  const [discount, setDiscount] = useState("");
-  const [discountReason, setDiscountReason] = useState("");
+  const [discount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [cashReceived, setCashReceived] = useState("");
   const [qrGenerated, setQrGenerated] = useState(false);
@@ -123,14 +123,6 @@ const CheckoutView = ({
       (paymentMethod === "CASH" && cashValue >= total) ||
       (paymentMethod === "QR" && qrGenerated));
   const [confirmOpen, setConfirmOpen] = useState(false);
-
-  useEffect(() => {
-    if (!accountInfo?.accountId) return;
-
-    socket.emit("show-account", {
-      accountId: accountInfo.accountId,
-    });
-  }, [accountInfo?.accountId]);
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-background">
@@ -340,7 +332,7 @@ const CheckoutView = ({
               ) : (
                 <Button
                   onClick={() => {
-                    socket.emit("generate-qr", { total });
+                    socket.emit("generate-qr", { total, terminalId: accountInfo.terminalId });
                     console.log("QR generado");
                     setQrGenerated(true)}}
                   variant="outline"

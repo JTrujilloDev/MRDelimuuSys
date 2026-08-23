@@ -262,6 +262,7 @@ export type AccountItemWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"AccountItem"> | Date | string
   account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
   productVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
+  kitchenTicketItems?: Prisma.KitchenTicketItemListRelationFilter
 }
 
 export type AccountItemOrderByWithRelationInput = {
@@ -275,6 +276,7 @@ export type AccountItemOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   account?: Prisma.AccountOrderByWithRelationInput
   productVariant?: Prisma.ProductVariantOrderByWithRelationInput
+  kitchenTicketItems?: Prisma.KitchenTicketItemOrderByRelationAggregateInput
 }
 
 export type AccountItemWhereUniqueInput = Prisma.AtLeast<{
@@ -292,6 +294,7 @@ export type AccountItemWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"AccountItem"> | Date | string
   account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
   productVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
+  kitchenTicketItems?: Prisma.KitchenTicketItemListRelationFilter
 }, "id" | "accountId_productVariantId">
 
 export type AccountItemOrderByWithAggregationInput = {
@@ -332,6 +335,7 @@ export type AccountItemCreateInput = {
   createdAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutAccountItemsInput
   productVariant: Prisma.ProductVariantCreateNestedOneWithoutAccountItemsInput
+  kitchenTicketItems?: Prisma.KitchenTicketItemCreateNestedManyWithoutAccountItemInput
 }
 
 export type AccountItemUncheckedCreateInput = {
@@ -343,6 +347,7 @@ export type AccountItemUncheckedCreateInput = {
   price: number
   subtotal: number
   createdAt?: Date | string
+  kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutAccountItemInput
 }
 
 export type AccountItemUpdateInput = {
@@ -353,6 +358,7 @@ export type AccountItemUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutAccountItemsNestedInput
   productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutAccountItemsNestedInput
+  kitchenTicketItems?: Prisma.KitchenTicketItemUpdateManyWithoutAccountItemNestedInput
 }
 
 export type AccountItemUncheckedUpdateInput = {
@@ -364,6 +370,7 @@ export type AccountItemUncheckedUpdateInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutAccountItemNestedInput
 }
 
 export type AccountItemCreateManyInput = {
@@ -462,6 +469,11 @@ export type AccountItemSumOrderByAggregateInput = {
   subtotal?: Prisma.SortOrder
 }
 
+export type AccountItemScalarRelationFilter = {
+  is?: Prisma.AccountItemWhereInput
+  isNot?: Prisma.AccountItemWhereInput
+}
+
 export type AccountItemCreateNestedManyWithoutProductVariantInput = {
   create?: Prisma.XOR<Prisma.AccountItemCreateWithoutProductVariantInput, Prisma.AccountItemUncheckedCreateWithoutProductVariantInput> | Prisma.AccountItemCreateWithoutProductVariantInput[] | Prisma.AccountItemUncheckedCreateWithoutProductVariantInput[]
   connectOrCreate?: Prisma.AccountItemCreateOrConnectWithoutProductVariantInput | Prisma.AccountItemCreateOrConnectWithoutProductVariantInput[]
@@ -546,6 +558,20 @@ export type AccountItemUncheckedUpdateManyWithoutAccountNestedInput = {
   deleteMany?: Prisma.AccountItemScalarWhereInput | Prisma.AccountItemScalarWhereInput[]
 }
 
+export type AccountItemCreateNestedOneWithoutKitchenTicketItemsInput = {
+  create?: Prisma.XOR<Prisma.AccountItemCreateWithoutKitchenTicketItemsInput, Prisma.AccountItemUncheckedCreateWithoutKitchenTicketItemsInput>
+  connectOrCreate?: Prisma.AccountItemCreateOrConnectWithoutKitchenTicketItemsInput
+  connect?: Prisma.AccountItemWhereUniqueInput
+}
+
+export type AccountItemUpdateOneRequiredWithoutKitchenTicketItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountItemCreateWithoutKitchenTicketItemsInput, Prisma.AccountItemUncheckedCreateWithoutKitchenTicketItemsInput>
+  connectOrCreate?: Prisma.AccountItemCreateOrConnectWithoutKitchenTicketItemsInput
+  upsert?: Prisma.AccountItemUpsertWithoutKitchenTicketItemsInput
+  connect?: Prisma.AccountItemWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountItemUpdateToOneWithWhereWithoutKitchenTicketItemsInput, Prisma.AccountItemUpdateWithoutKitchenTicketItemsInput>, Prisma.AccountItemUncheckedUpdateWithoutKitchenTicketItemsInput>
+}
+
 export type AccountItemCreateWithoutProductVariantInput = {
   productName: string
   quantity?: number
@@ -553,6 +579,7 @@ export type AccountItemCreateWithoutProductVariantInput = {
   subtotal: number
   createdAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutAccountItemsInput
+  kitchenTicketItems?: Prisma.KitchenTicketItemCreateNestedManyWithoutAccountItemInput
 }
 
 export type AccountItemUncheckedCreateWithoutProductVariantInput = {
@@ -563,6 +590,7 @@ export type AccountItemUncheckedCreateWithoutProductVariantInput = {
   price: number
   subtotal: number
   createdAt?: Date | string
+  kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutAccountItemInput
 }
 
 export type AccountItemCreateOrConnectWithoutProductVariantInput = {
@@ -612,6 +640,7 @@ export type AccountItemCreateWithoutAccountInput = {
   subtotal: number
   createdAt?: Date | string
   productVariant: Prisma.ProductVariantCreateNestedOneWithoutAccountItemsInput
+  kitchenTicketItems?: Prisma.KitchenTicketItemCreateNestedManyWithoutAccountItemInput
 }
 
 export type AccountItemUncheckedCreateWithoutAccountInput = {
@@ -622,6 +651,7 @@ export type AccountItemUncheckedCreateWithoutAccountInput = {
   price: number
   subtotal: number
   createdAt?: Date | string
+  kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutAccountItemInput
 }
 
 export type AccountItemCreateOrConnectWithoutAccountInput = {
@@ -650,6 +680,64 @@ export type AccountItemUpdateManyWithWhereWithoutAccountInput = {
   data: Prisma.XOR<Prisma.AccountItemUpdateManyMutationInput, Prisma.AccountItemUncheckedUpdateManyWithoutAccountInput>
 }
 
+export type AccountItemCreateWithoutKitchenTicketItemsInput = {
+  productName: string
+  quantity?: number
+  price: number
+  subtotal: number
+  createdAt?: Date | string
+  account: Prisma.AccountCreateNestedOneWithoutAccountItemsInput
+  productVariant: Prisma.ProductVariantCreateNestedOneWithoutAccountItemsInput
+}
+
+export type AccountItemUncheckedCreateWithoutKitchenTicketItemsInput = {
+  id?: number
+  accountId: number
+  productVariantId: number
+  productName: string
+  quantity?: number
+  price: number
+  subtotal: number
+  createdAt?: Date | string
+}
+
+export type AccountItemCreateOrConnectWithoutKitchenTicketItemsInput = {
+  where: Prisma.AccountItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountItemCreateWithoutKitchenTicketItemsInput, Prisma.AccountItemUncheckedCreateWithoutKitchenTicketItemsInput>
+}
+
+export type AccountItemUpsertWithoutKitchenTicketItemsInput = {
+  update: Prisma.XOR<Prisma.AccountItemUpdateWithoutKitchenTicketItemsInput, Prisma.AccountItemUncheckedUpdateWithoutKitchenTicketItemsInput>
+  create: Prisma.XOR<Prisma.AccountItemCreateWithoutKitchenTicketItemsInput, Prisma.AccountItemUncheckedCreateWithoutKitchenTicketItemsInput>
+  where?: Prisma.AccountItemWhereInput
+}
+
+export type AccountItemUpdateToOneWithWhereWithoutKitchenTicketItemsInput = {
+  where?: Prisma.AccountItemWhereInput
+  data: Prisma.XOR<Prisma.AccountItemUpdateWithoutKitchenTicketItemsInput, Prisma.AccountItemUncheckedUpdateWithoutKitchenTicketItemsInput>
+}
+
+export type AccountItemUpdateWithoutKitchenTicketItemsInput = {
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  account?: Prisma.AccountUpdateOneRequiredWithoutAccountItemsNestedInput
+  productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutAccountItemsNestedInput
+}
+
+export type AccountItemUncheckedUpdateWithoutKitchenTicketItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  accountId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type AccountItemCreateManyProductVariantInput = {
   id?: number
   accountId: number
@@ -667,6 +755,7 @@ export type AccountItemUpdateWithoutProductVariantInput = {
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutAccountItemsNestedInput
+  kitchenTicketItems?: Prisma.KitchenTicketItemUpdateManyWithoutAccountItemNestedInput
 }
 
 export type AccountItemUncheckedUpdateWithoutProductVariantInput = {
@@ -677,6 +766,7 @@ export type AccountItemUncheckedUpdateWithoutProductVariantInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutAccountItemNestedInput
 }
 
 export type AccountItemUncheckedUpdateManyWithoutProductVariantInput = {
@@ -706,6 +796,7 @@ export type AccountItemUpdateWithoutAccountInput = {
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutAccountItemsNestedInput
+  kitchenTicketItems?: Prisma.KitchenTicketItemUpdateManyWithoutAccountItemNestedInput
 }
 
 export type AccountItemUncheckedUpdateWithoutAccountInput = {
@@ -716,6 +807,7 @@ export type AccountItemUncheckedUpdateWithoutAccountInput = {
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutAccountItemNestedInput
 }
 
 export type AccountItemUncheckedUpdateManyWithoutAccountInput = {
@@ -729,6 +821,35 @@ export type AccountItemUncheckedUpdateManyWithoutAccountInput = {
 }
 
 
+/**
+ * Count Type AccountItemCountOutputType
+ */
+
+export type AccountItemCountOutputType = {
+  kitchenTicketItems: number
+}
+
+export type AccountItemCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  kitchenTicketItems?: boolean | AccountItemCountOutputTypeCountKitchenTicketItemsArgs
+}
+
+/**
+ * AccountItemCountOutputType without action
+ */
+export type AccountItemCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccountItemCountOutputType
+   */
+  select?: Prisma.AccountItemCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * AccountItemCountOutputType without action
+ */
+export type AccountItemCountOutputTypeCountKitchenTicketItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.KitchenTicketItemWhereInput
+}
+
 
 export type AccountItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -741,6 +862,8 @@ export type AccountItemSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   createdAt?: boolean
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  kitchenTicketItems?: boolean | Prisma.AccountItem$kitchenTicketItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.AccountItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["accountItem"]>
 
 export type AccountItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -784,6 +907,8 @@ export type AccountItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type AccountItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  kitchenTicketItems?: boolean | Prisma.AccountItem$kitchenTicketItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.AccountItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AccountItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
@@ -799,6 +924,7 @@ export type $AccountItemPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     account: Prisma.$AccountPayload<ExtArgs>
     productVariant: Prisma.$ProductVariantPayload<ExtArgs>
+    kitchenTicketItems: Prisma.$KitchenTicketItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1205,6 +1331,7 @@ export interface Prisma__AccountItemClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   account<T extends Prisma.AccountDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccountDefaultArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   productVariant<T extends Prisma.ProductVariantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariantDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductVariantClient<runtime.Types.Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  kitchenTicketItems<T extends Prisma.AccountItem$kitchenTicketItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccountItem$kitchenTicketItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenTicketItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1640,6 +1767,30 @@ export type AccountItemDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many AccountItems to delete.
    */
   limit?: number
+}
+
+/**
+ * AccountItem.kitchenTicketItems
+ */
+export type AccountItem$kitchenTicketItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the KitchenTicketItem
+   */
+  select?: Prisma.KitchenTicketItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the KitchenTicketItem
+   */
+  omit?: Prisma.KitchenTicketItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KitchenTicketItemInclude<ExtArgs> | null
+  where?: Prisma.KitchenTicketItemWhereInput
+  orderBy?: Prisma.KitchenTicketItemOrderByWithRelationInput | Prisma.KitchenTicketItemOrderByWithRelationInput[]
+  cursor?: Prisma.KitchenTicketItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.KitchenTicketItemScalarFieldEnum | Prisma.KitchenTicketItemScalarFieldEnum[]
 }
 
 /**

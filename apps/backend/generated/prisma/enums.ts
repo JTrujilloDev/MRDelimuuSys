@@ -21,6 +21,13 @@ export const ProductType = {
 export type ProductType = (typeof ProductType)[keyof typeof ProductType]
 
 
+export const PreparationArea = {
+  KITCHEN: 'KITCHEN'
+} as const
+
+export type PreparationArea = (typeof PreparationArea)[keyof typeof PreparationArea]
+
+
 export const Unit = {
   UNIT: 'UNIT',
   GRAM: 'GRAM',
@@ -111,3 +118,25 @@ export const CashRegisterStatus = {
 } as const
 
 export type CashRegisterStatus = (typeof CashRegisterStatus)[keyof typeof CashRegisterStatus]
+
+
+export const KitchenTicketStatus = {
+  PENDING: 'PENDING',
+  PREPARING: 'PREPARING',
+  READY: 'READY',
+  DELIVERED: 'DELIVERED'
+} as const
+
+export type KitchenTicketStatus = (typeof KitchenTicketStatus)[keyof typeof KitchenTicketStatus]
+
+
+export const KitchenStatus = {
+  PENDING: 'PENDING',
+  SENT: 'SENT',
+  IN_PROGRESS: 'IN_PROGRESS',
+  READY: 'READY',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type KitchenStatus = (typeof KitchenStatus)[keyof typeof KitchenStatus]

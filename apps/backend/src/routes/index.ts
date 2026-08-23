@@ -10,6 +10,7 @@ import financialTransactionRoutes from "./financialTransaction.routes";
 import POSInventoryRoutes from "./POSInventory.routes";
 import reportGenerationRoutes from "./reportGeneration.routes";
 import qzRoutes from "./qz.routes";
+import kitchenTicketRoutes from "./kitchenTicket.routes";
 
 const router = Router();
 
@@ -24,6 +25,7 @@ router.use("/financial-transactions", financialTransactionRoutes);
 router.use("/pos-inventory", POSInventoryRoutes);
 router.use("/reports", reportGenerationRoutes);
 router.use("/qz", qzRoutes);
+router.use("/kitchen-tickets", kitchenTicketRoutes);
 
 
 export default router;

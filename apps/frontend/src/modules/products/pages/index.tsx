@@ -47,6 +47,9 @@ interface Product {
   id: string;
   name: string;
   categoryId: number | null;
+  category?: {
+    name: string;
+  } | null;
   description: string;
   productType: string;
   variants: ProductVariant[];
@@ -79,7 +82,11 @@ const emptyVariant = (): ProductVariant => ({
   recipeItems: null,
 });
 
-const Products = () => {
+interface ProductsProps {
+  embedded?: boolean;
+}
+
+const Products = ({ embedded = false }: ProductsProps) => {
   const { data: products } = useGetAllProducts();
   const { data: categories } = useGetAllProductCategories();
   const { mutate: createProduct } = useCreateProduct();
@@ -116,13 +123,14 @@ const Products = () => {
   const selectedProductType = watch("productType");
 
   const filteredProducts = (products?.data ?? []).filter(
-    (product: Product & { category: { name: string } }) => {
+    (product: Product) => {
       const query = searchQuery.trim().toLowerCase();
+      const categoryName = product.category?.name ?? "Sin categoría";
 
       if (!query) return true;
       return (
         product.name.toLowerCase().includes(query) ||
-        product.category.name.toLowerCase().includes(query) ||
+        categoryName.toLowerCase().includes(query) ||
         product.description.toLowerCase().includes(query) ||
         product.variants.some((variant: { name: string }) =>
           variant.name.toLowerCase().includes(query),
@@ -227,7 +235,7 @@ const Products = () => {
   }, [selectedProductType]);
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col gap-6 p-6">
+    <div className={`mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col gap-6 ${embedded ? "" : "p-6"}`}>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Productos</h1>
         <Button onClick={openNew} size="sm">
@@ -248,7 +256,7 @@ const Products = () => {
       <div className="min-h-0 flex-1 overflow-y-auto pr-1">
         <div className="grid gap-3 pb-2">
           {filteredProducts.map(
-            (product: Product & { category: { name: string } }) => {
+            (product: Product) => {
               const isExpanded = expandedProduct === product.id;
               const config = productTypes.find(
                 (type) => type.value === product.productType,
@@ -289,7 +297,7 @@ const Products = () => {
                           {product.name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {product.category.name} · {product.variants.length}{" "}
+                          {product.category?.name ?? "Sin categoría"} · {product.variants.length}{" "}
                           {product.variants.length === 1
                             ? "variante"
                             : "variantes"}

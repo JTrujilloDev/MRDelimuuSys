@@ -79,6 +79,7 @@ export const createProductService = async (productData: CreateProductData) => {
           productCost: variant.productCost,
           isActive: variant.isActive ?? true,
           requirePreparation: variant.requirePreparation ?? false,
+          preparationArea: "KITCHEN",
           unit: variant.unit,
           recipeItems: {
             create:

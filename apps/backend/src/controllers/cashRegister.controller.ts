@@ -3,8 +3,34 @@ import {
   closeCashRegisterService,
   createCashRegisterService,
   getAllCashRegistersService,
+  getCashRegisterHistoryService,
   getOpenCashRegisterService,
 } from "../service/cashRegister.service";
+
+export const getCashRegisterHistory = async (req: Request, res: Response) => {
+  try {
+    const from = new Date(String(req.query.from));
+    const to = new Date(String(req.query.to));
+
+    if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
+      res.status(400).json({ success: false, message: "from and to must be valid dates" });
+      return;
+    }
+    if (from > to) {
+      res.status(400).json({ success: false, message: "from cannot be after to" });
+      return;
+    }
+
+    const cashRegisters = await getCashRegisterHistoryService(from, to);
+    res.status(200).json({
+      success: true,
+      message: "Cash register history fetched successfully",
+      data: cashRegisters,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
+  }
+};
 
 export const createCashRegister = async (req: Request, res: Response) => {
   try {

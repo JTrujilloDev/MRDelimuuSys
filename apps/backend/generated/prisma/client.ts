@@ -104,3 +104,13 @@ export type Store = Prisma.StoreModel
  * 
  */
 export type Terminal = Prisma.TerminalModel
+/**
+ * Model KitchenTicket
+ * 
+ */
+export type KitchenTicket = Prisma.KitchenTicketModel
+/**
+ * Model KitchenTicketItem
+ * 
+ */
+export type KitchenTicketItem = Prisma.KitchenTicketItemModel

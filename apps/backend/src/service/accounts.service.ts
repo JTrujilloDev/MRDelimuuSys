@@ -167,7 +167,13 @@ export const getAllAccountsService = async (relatedUserId: number) => {
       status: "OPEN",
     },
     include: {
-      accountItems: true,
+      accountItems: {
+        include: {
+          productVariant: {
+            select: { id: true, requirePreparation: true },
+          },
+        },
+      },
     },
   });
   return accounts;
