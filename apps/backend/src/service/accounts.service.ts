@@ -151,7 +151,17 @@ export const deleteAccountService = async (accountId: number) => {
       throw new Error("Account not found");
     }
 
-    // 4. Eliminar la cuenta
+    if (account.status !== "OPEN") {
+      throw new Error("Only open accounts can be deleted");
+    }
+
+    // Los elementos de comanda restringen la eliminación de AccountItem.
+    // Eliminar primero las comandas; sus items y ajustes caen en cascada.
+    await tx.kitchenTicket.deleteMany({
+      where: { accountId },
+    });
+
+    // Eliminar la cuenta y sus productos abiertos en cascada.
     const deletedAccount = await tx.account.delete({
       where: { id: accountId },
     });

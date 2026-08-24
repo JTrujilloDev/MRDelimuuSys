@@ -398,7 +398,8 @@ export const ModelName = {
   Store: 'Store',
   Terminal: 'Terminal',
   KitchenTicket: 'KitchenTicket',
-  KitchenTicketItem: 'KitchenTicketItem'
+  KitchenTicketItem: 'KitchenTicketItem',
+  KitchenTicketAdjustment: 'KitchenTicketAdjustment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "store" | "terminal" | "kitchenTicket" | "kitchenTicketItem"
+    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "store" | "terminal" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1528,6 +1529,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    KitchenTicketAdjustment: {
+      payload: Prisma.$KitchenTicketAdjustmentPayload<ExtArgs>
+      fields: Prisma.KitchenTicketAdjustmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KitchenTicketAdjustmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KitchenTicketAdjustmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>
+        }
+        findFirst: {
+          args: Prisma.KitchenTicketAdjustmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KitchenTicketAdjustmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>
+        }
+        findMany: {
+          args: Prisma.KitchenTicketAdjustmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>[]
+        }
+        create: {
+          args: Prisma.KitchenTicketAdjustmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>
+        }
+        createMany: {
+          args: Prisma.KitchenTicketAdjustmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KitchenTicketAdjustmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>[]
+        }
+        delete: {
+          args: Prisma.KitchenTicketAdjustmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>
+        }
+        update: {
+          args: Prisma.KitchenTicketAdjustmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.KitchenTicketAdjustmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KitchenTicketAdjustmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KitchenTicketAdjustmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.KitchenTicketAdjustmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenTicketAdjustmentPayload>
+        }
+        aggregate: {
+          args: Prisma.KitchenTicketAdjustmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKitchenTicketAdjustment>
+        }
+        groupBy: {
+          args: Prisma.KitchenTicketAdjustmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KitchenTicketAdjustmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KitchenTicketAdjustmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KitchenTicketAdjustmentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1776,6 +1851,23 @@ export const KitchenTicketItemScalarFieldEnum = {
 export type KitchenTicketItemScalarFieldEnum = (typeof KitchenTicketItemScalarFieldEnum)[keyof typeof KitchenTicketItemScalarFieldEnum]
 
 
+export const KitchenTicketAdjustmentScalarFieldEnum = {
+  id: 'id',
+  kitchenTicketId: 'kitchenTicketId',
+  kitchenTicketItemId: 'kitchenTicketItemId',
+  accountItemId: 'accountItemId',
+  productName: 'productName',
+  previousQuantity: 'previousQuantity',
+  newQuantity: 'newQuantity',
+  quantityDelta: 'quantityDelta',
+  status: 'status',
+  createdAt: 'createdAt',
+  acknowledgedAt: 'acknowledgedAt'
+} as const
+
+export type KitchenTicketAdjustmentScalarFieldEnum = (typeof KitchenTicketAdjustmentScalarFieldEnum)[keyof typeof KitchenTicketAdjustmentScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2022,6 +2114,20 @@ export type EnumKitchenTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputTy
 export type ListEnumKitchenTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenTicketStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'KitchenTicketAdjustmentStatus'
+ */
+export type EnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenTicketAdjustmentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'KitchenTicketAdjustmentStatus[]'
+ */
+export type ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenTicketAdjustmentStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2147,6 +2253,7 @@ export type GlobalOmitConfig = {
   terminal?: Prisma.TerminalOmit
   kitchenTicket?: Prisma.KitchenTicketOmit
   kitchenTicketItem?: Prisma.KitchenTicketItemOmit
+  kitchenTicketAdjustment?: Prisma.KitchenTicketAdjustmentOmit
 }
 
 /* Types for Logging */

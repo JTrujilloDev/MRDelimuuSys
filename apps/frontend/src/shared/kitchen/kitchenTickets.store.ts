@@ -12,6 +12,18 @@ export type KitchenTicketItem = {
   quantity: number;
   note?: string;
 };
+export type KitchenTicketAdjustment = {
+  id: number;
+  kitchenTicketId: number;
+  accountItemId: number;
+  productName: string;
+  previousQuantity: number;
+  newQuantity: number;
+  quantityDelta: number;
+  status: "PENDING" | "ACKNOWLEDGED";
+  createdAt: string;
+  acknowledgedAt?: string | null;
+};
 export type KitchenTicket = {
   id: number;
   accountId: number;
@@ -19,6 +31,7 @@ export type KitchenTicket = {
   status: KitchenTicketStatus;
   createdAt: string;
   items: KitchenTicketItem[];
+  adjustments: KitchenTicketAdjustment[];
 };
 
 const normalizeTicket = (ticket: any): KitchenTicket => ({
@@ -28,6 +41,7 @@ const normalizeTicket = (ticket: any): KitchenTicket => ({
     ...item,
     productVariantId: item.productVariantId ?? item.accountItem?.productVariantId,
   })),
+  adjustments: ticket.adjustments ?? [],
 });
 
 export const createKitchenTicket = async (
@@ -45,6 +59,20 @@ export const updateKitchenTicketStatus = async (id: number, status: KitchenTicke
   return normalizeTicket(data.data);
 };
 
+export const createKitchenTicketAdjustment = async (input: {
+  accountId: number;
+  accountItemId: number;
+  newQuantity: number;
+}) => {
+  const { data } = await api.post("kitchen-tickets/adjustments", input);
+  return data.data as KitchenTicketAdjustment;
+};
+
+export const acknowledgeKitchenTicketAdjustment = async (id: number) => {
+  const { data } = await api.patch(`kitchen-tickets/adjustments/${id}/acknowledge`);
+  return data.data as KitchenTicketAdjustment;
+};
+
 export const useKitchenTickets = () => {
   const queryClient = useQueryClient();
   const query = useQuery({
@@ -59,9 +87,13 @@ export const useKitchenTickets = () => {
     const refresh = () => queryClient.invalidateQueries({ queryKey: ["kitchenTickets"] });
     socket.on("kitchen-ticket:created", refresh);
     socket.on("kitchen-ticket:updated", refresh);
+    socket.on("kitchen-ticket:adjusted", refresh);
+    socket.on("kitchen-ticket:adjustment-acknowledged", refresh);
     return () => {
       socket.off("kitchen-ticket:created", refresh);
       socket.off("kitchen-ticket:updated", refresh);
+      socket.off("kitchen-ticket:adjusted", refresh);
+      socket.off("kitchen-ticket:adjustment-acknowledged", refresh);
     };
   }, [queryClient]);
 

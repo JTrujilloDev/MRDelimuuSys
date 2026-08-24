@@ -41,7 +41,7 @@ const OrderPanel = ({
     // During the prototype, missing metadata is treated as eligible so an old
     // cached account response cannot leave the kitchen action inaccessible.
     if (item.productVariant?.requirePreparation === false) return total;
-    const itemKey = item.productVariant?.id ?? item.id;
+    const itemKey = item.id;
     return total + Math.max(0, item.quantity - (sentToKitchen[itemKey] ?? 0));
   }, 0);
   return (
@@ -79,8 +79,8 @@ const OrderPanel = ({
                 </p>
                 {item.productVariant?.requirePreparation !== false && (
                   <p className={`mt-1 flex items-center gap-1 text-xs font-semibold ${item.quantity > (sentToKitchen[item.id] ?? 0) ? "text-warning" : "text-success"}`}>
-                    {item.quantity > (sentToKitchen[item.productVariant?.id ?? item.id] ?? 0) ? <ChefHat className="h-3 w-3" /> : <Check className="h-3 w-3" />}
-                    {item.quantity > (sentToKitchen[item.productVariant?.id ?? item.id] ?? 0) ? "Pendiente de enviar" : "Enviado a cocina"}
+                    {item.quantity > (sentToKitchen[item.id] ?? 0) ? <ChefHat className="h-3 w-3" /> : <Check className="h-3 w-3" />}
+                    {item.quantity > (sentToKitchen[item.id] ?? 0) ? "Pendiente de enviar" : "Enviado a cocina"}
                   </p>
                 )}
               </div>

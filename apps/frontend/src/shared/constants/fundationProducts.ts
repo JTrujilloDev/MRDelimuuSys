@@ -15,7 +15,7 @@ export const foundationProducts = {
     name: "Calao",
     content: "1,350 g (50 und. X 30g)",
     lotRef: "CA",
-    labelAmount: 6,
+    labelAmount: 3,
   },
   pan_maiz: {
     name: "Pan de maiz",
@@ -33,7 +33,7 @@ export const foundationProducts = {
     name: "Mantecada",
     content: "750 g (25 und. X 30g)",
     lotRef: "MA",
-    labelAmount: 5,
+    labelAmount: 6,
   },
   pan_rollo: {
     name: "Pan de rollo",

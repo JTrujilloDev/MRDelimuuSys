@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { KitchenTicketStatus } from "../../generated/prisma/enums";
 import { getIO } from "../socket";
-import { createKitchenTicketService, getKitchenTicketsService, updateKitchenTicketStatusService } from "../service/kitchenTicket.service";
+import { acknowledgeKitchenTicketAdjustmentService, createKitchenTicketAdjustmentService, createKitchenTicketService, getKitchenTicketsService, updateKitchenTicketStatusService } from "../service/kitchenTicket.service";
 
 export const getKitchenTickets = async (req: Request, res: Response) => {
   try {
@@ -29,6 +29,26 @@ export const updateKitchenTicketStatus = async (req: Request, res: Response) => 
     const ticket = await updateKitchenTicketStatusService(Number(req.params.id), status);
     getIO().emit("kitchen-ticket:updated", ticket);
     res.json({ success: true, data: ticket });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
+  }
+};
+
+export const createKitchenTicketAdjustment = async (req: Request, res: Response) => {
+  try {
+    const adjustment = await createKitchenTicketAdjustmentService(req.body);
+    getIO().emit("kitchen-ticket:adjusted", adjustment);
+    res.status(201).json({ success: true, data: adjustment });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
+  }
+};
+
+export const acknowledgeKitchenTicketAdjustment = async (req: Request, res: Response) => {
+  try {
+    const adjustment = await acknowledgeKitchenTicketAdjustmentService(Number(req.params.adjustmentId));
+    getIO().emit("kitchen-ticket:adjustment-acknowledged", adjustment);
+    res.json({ success: true, data: adjustment });
   } catch (error) {
     res.status(400).json({ success: false, message: (error as Error).message });
   }

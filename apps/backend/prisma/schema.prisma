@@ -317,6 +317,7 @@ model KitchenTicket {
   updatedAt DateTime @updatedAt
 
   items KitchenTicketItem[]
+  adjustments KitchenTicketAdjustment[]
 
   @@index([accountId, status])
 }
@@ -332,6 +333,7 @@ model KitchenTicketItem {
   kitchenTicket KitchenTicket @relation(fields:[kitchenTicketId], references:[id], onDelete: Cascade)
 
   accountItem AccountItem @relation(fields:[accountItemId], references:[id], onDelete: Restrict)
+  adjustments KitchenTicketAdjustment[]
 
   @@index([kitchenTicketId])
 }
@@ -341,6 +343,32 @@ enum KitchenTicketStatus {
   PREPARING
   READY
   DELIVERED
+}
+
+model KitchenTicketAdjustment {
+  id Int @id @default(autoincrement())
+
+  kitchenTicketId Int
+  kitchenTicket KitchenTicket @relation(fields: [kitchenTicketId], references: [id], onDelete: Cascade)
+  kitchenTicketItemId Int
+  kitchenTicketItem KitchenTicketItem @relation(fields: [kitchenTicketItemId], references: [id], onDelete: Cascade)
+
+  accountItemId Int
+  productName String
+  previousQuantity Int
+  newQuantity Int
+  quantityDelta Int
+  status KitchenTicketAdjustmentStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  acknowledgedAt DateTime?
+
+  @@index([kitchenTicketId, status])
+  @@index([accountItemId])
+}
+
+enum KitchenTicketAdjustmentStatus {
+  PENDING
+  ACKNOWLEDGED
 }
 
 enum KitchenStatus {

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Search, ArrowLeft } from "lucide-react";
 
 import type { ProductWithVariants, Variant } from "../components/VariantModal";
@@ -31,9 +32,10 @@ import { useCloseAccount } from "../hooks/accounts/useCloseAccount";
 import { printTicketService } from "../../../shared/services/qz.service";
 import SalesHistory from "../components/SalesHistory";
 import { useSocket } from "../../../shared/socket/useSocket";
-import { createKitchenTicket, useKitchenTickets } from "../../../shared/kitchen/kitchenTickets.store";
+import { createKitchenTicket, createKitchenTicketAdjustment, useKitchenTickets } from "../../../shared/kitchen/kitchenTickets.store";
 
 const Index = () => {
+  const queryClient = useQueryClient();
   const { mutate: openCashRegister } = useOpenCashRegister();
   const { mutate: createAccount } = useCreateAccount();
   const { mutate: addAccountItem } = useAddAccountItem();
@@ -66,12 +68,28 @@ const Index = () => {
       .filter((ticket) => ticket.accountId === activeTableId)
       .flatMap((ticket) => ticket.items)
       .reduce<Record<number, number>>((sent, item) => {
-        const itemKey = item.productVariantId ?? item.accountItemId;
+        const itemKey = item.accountItemId;
         sent[itemKey] = (sent[itemKey] ?? 0) + item.quantity;
         return sent;
       }, {}),
     [activeTableId, kitchenTickets],
   );
+
+  const kitchenAdjustmentsForActiveAccount = useMemo(
+    () => kitchenTickets
+      .filter((ticket) => ticket.accountId === activeTableId)
+      .flatMap((ticket) => ticket.adjustments),
+    [activeTableId, kitchenTickets],
+  );
+
+  const effectiveSentToKitchenForActiveAccount = useMemo(() => {
+    const effective = { ...sentToKitchenForActiveAccount };
+    kitchenAdjustmentsForActiveAccount.forEach((adjustment) => {
+      effective[adjustment.accountItemId] =
+        (effective[adjustment.accountItemId] ?? 0) + adjustment.quantityDelta;
+    });
+    return effective;
+  }, [kitchenAdjustmentsForActiveAccount, sentToKitchenForActiveAccount]);
 
   const handleOpenShift = useCallback(
     (initialAmount: number) => {
@@ -103,7 +121,9 @@ const Index = () => {
     : null;
 
   const orderItems = useMemo(
-    () => activeTable?.accountItems ?? [],
+    () => (activeTable?.accountItems ?? []).filter(
+      (item: { quantity: number }) => item.quantity > 0,
+    ),
     [activeTable?.accountItems],
   );
 
@@ -130,7 +150,7 @@ const Index = () => {
         item.productVariant?.requirePreparation !== false,
       )
       .map((item: { id: number; productVariantId?: number; productName: string; quantity: number; productVariant?: { id: number } }) => {
-        const itemKey = item.productVariant?.id ?? item.productVariantId ?? item.id;
+        const itemKey = item.id;
         const sent = sentToKitchenForActiveAccount[itemKey] ?? 0;
         return {
           product: item.productName,
@@ -174,6 +194,13 @@ const Index = () => {
     deleteAccount(id, {
       onSuccess: () => {
         toast("Cuenta eliminada exitosamente", { variant: "success" });
+      },
+      onError: (error) => {
+        const requestError = error as { response?: { data?: { message?: string } }; message?: string };
+        toast("No se pudo eliminar la cuenta", {
+          variant: "danger",
+          description: requestError.response?.data?.message ?? requestError.message,
+        });
       },
     });
   };
@@ -242,13 +269,62 @@ const Index = () => {
   const updateQuantity = useCallback(
     (id: number, delta: number) => {
       if (!activeTableId) return;
+      const item = orderItems.find((orderItem: { id: number }) => orderItem.id === id);
+      if (!item) return;
+
+      const sentQuantity = effectiveSentToKitchenForActiveAccount[item.id] ?? 0;
+      const newQuantity = item.quantity + delta;
+
+      if (delta < 0 && newQuantity < sentQuantity) {
+        void createKitchenTicketAdjustment({
+          accountId: activeTableId,
+          accountItemId: item.id,
+          newQuantity,
+        }).then(() => {
+          void queryClient.invalidateQueries({ queryKey: ["accounts"] });
+          toast("Cambio enviado a cocina", {
+            variant: "warning",
+            description: `Se solicitó cancelar ${sentQuantity - newQuantity} unidad(es) de ${item.productName}.`,
+          });
+        }).catch((error) => {
+          toast("No se pudo comunicar el cambio", {
+            variant: "danger",
+            description: error?.response?.data?.message ?? error.message,
+          });
+        });
+        return;
+      }
+
       adjustAccountItemQuantity({ accountItemId: id, delta });
     },
-    [activeTableId, adjustAccountItemQuantity],
+    [activeTableId, adjustAccountItemQuantity, effectiveSentToKitchenForActiveAccount, orderItems, queryClient],
   );
 
   const removeItem = (id: number) => {
     if (!activeTableId) return;
+    const item = orderItems.find((orderItem: { id: number }) => orderItem.id === id);
+    if (!item) return;
+
+    const sentQuantity = effectiveSentToKitchenForActiveAccount[item.id] ?? 0;
+    if (sentQuantity > 0) {
+      void createKitchenTicketAdjustment({
+        accountId: activeTableId,
+        accountItemId: item.id,
+        newQuantity: 0,
+      }).then(() => {
+        void queryClient.invalidateQueries({ queryKey: ["accounts"] });
+        toast("Cancelación enviada a cocina", {
+          variant: "warning",
+          description: `Se solicitó cancelar ${item.productName}.`,
+        });
+      }).catch((error) => {
+        toast("No se pudo comunicar la cancelación", {
+          variant: "danger",
+          description: error?.response?.data?.message ?? error.message,
+        });
+      });
+      return;
+    }
     deleteAccountItem(id);
   };
 
@@ -264,10 +340,10 @@ const Index = () => {
       (item: { productVariant?: { requirePreparation: boolean } }) =>
         item.productVariant?.requirePreparation !== false,
     );
-    const currentSent = sentToKitchenForActiveAccount;
+    const currentSent = effectiveSentToKitchenForActiveAccount;
     const pendingUnits = preparationItems.reduce(
       (total: number, item: { id: number; productVariantId?: number; quantity: number; productVariant?: { id: number } }) => {
-        const itemKey = item.productVariant?.id ?? item.productVariantId ?? item.id;
+        const itemKey = item.id;
         return total + Math.max(0, item.quantity - (currentSent[itemKey] ?? 0));
       },
       0,
@@ -294,7 +370,7 @@ const Index = () => {
             productName: item.productName,
             quantity: Math.max(
               0,
-              item.quantity - (currentSent[item.productVariant?.id ?? item.productVariantId ?? item.id] ?? 0),
+              item.quantity - (currentSent[item.id] ?? 0),
             ),
           }),
         )
@@ -323,7 +399,7 @@ const Index = () => {
       });
     });
 
-  }, [activeTable, activeTableId, orderItems, sentToKitchenForActiveAccount]);
+  }, [activeTable, activeTableId, effectiveSentToKitchenForActiveAccount, orderItems]);
 
   const handleConfirmPayment = ({
     accountId,
@@ -529,7 +605,7 @@ const Index = () => {
             onRemove={removeItem}
             onCharge={handleCharge}
             tableLabel={activeTable?.label}
-            sentToKitchen={sentToKitchenForActiveAccount}
+            sentToKitchen={effectiveSentToKitchenForActiveAccount}
             onSendToKitchen={handleSendToKitchen}
             kitchenTickets={kitchenTickets.filter(
               (ticket) => ticket.accountId === activeTableId && ticket.status !== "DELIVERED",

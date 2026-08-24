@@ -65,7 +65,8 @@ export const ModelName = {
   Store: 'Store',
   Terminal: 'Terminal',
   KitchenTicket: 'KitchenTicket',
-  KitchenTicketItem: 'KitchenTicketItem'
+  KitchenTicketItem: 'KitchenTicketItem',
+  KitchenTicketAdjustment: 'KitchenTicketAdjustment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -291,6 +292,23 @@ export const KitchenTicketItemScalarFieldEnum = {
 } as const
 
 export type KitchenTicketItemScalarFieldEnum = (typeof KitchenTicketItemScalarFieldEnum)[keyof typeof KitchenTicketItemScalarFieldEnum]
+
+
+export const KitchenTicketAdjustmentScalarFieldEnum = {
+  id: 'id',
+  kitchenTicketId: 'kitchenTicketId',
+  kitchenTicketItemId: 'kitchenTicketItemId',
+  accountItemId: 'accountItemId',
+  productName: 'productName',
+  previousQuantity: 'previousQuantity',
+  newQuantity: 'newQuantity',
+  quantityDelta: 'quantityDelta',
+  status: 'status',
+  createdAt: 'createdAt',
+  acknowledgedAt: 'acknowledgedAt'
+} as const
+
+export type KitchenTicketAdjustmentScalarFieldEnum = (typeof KitchenTicketAdjustmentScalarFieldEnum)[keyof typeof KitchenTicketAdjustmentScalarFieldEnum]
 
 
 export const SortOrder = {

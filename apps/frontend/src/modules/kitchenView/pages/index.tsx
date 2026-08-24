@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Check, ChefHat, ChevronRight, Clock3, PackageCheck, Play, ShoppingBag, Timer, UtensilsCrossed } from "lucide-react";
-import { updateKitchenTicketStatus, useKitchenTickets } from "../../../shared/kitchen/kitchenTickets.store";
+import { Modal } from "@heroui/react";
+import { AlertTriangle, Check, ChefHat, ChevronRight, Clock3, PackageCheck, Play, ShoppingBag, Timer, UtensilsCrossed } from "lucide-react";
+import { acknowledgeKitchenTicketAdjustment, updateKitchenTicketStatus, useKitchenTickets } from "../../../shared/kitchen/kitchenTickets.store";
 
 type KitchenStatus = "PENDING" | "PREPARING" | "READY";
 type KitchenOrder = {
@@ -27,6 +28,7 @@ const elapsedMinutes = (date: Date) => Math.max(0, Math.floor((Date.now() - date
 const KitchenView = () => {
   const tickets = useKitchenTickets();
   const [, setClockTick] = useState(0);
+  const [acknowledgingAdjustmentId, setAcknowledgingAdjustmentId] = useState<number | null>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -44,8 +46,30 @@ const KitchenView = () => {
       orderNumber: ticket.id,
       createdAt: new Date(ticket.createdAt),
       status: ticket.status as KitchenStatus,
-      products: ticket.items.map((item) => ({ name: item.productName, quantity: item.quantity, note: item.note })),
+      products: ticket.items.map((item) => ({
+        name: item.productName,
+        quantity: Math.max(0, item.quantity + ticket.adjustments
+          .filter((adjustment) => adjustment.accountItemId === item.accountItemId)
+          .reduce((total, adjustment) => total + adjustment.quantityDelta, 0)),
+        note: item.note,
+      })).filter((item) => item.quantity > 0),
     })), [tickets]);
+  const pendingAdjustments = tickets.flatMap((ticket) =>
+    ticket.adjustments
+      .filter((adjustment) => adjustment.status === "PENDING")
+      .map((adjustment) => ({ ...adjustment, accountName: ticket.accountName })),
+  );
+  const currentAdjustment = pendingAdjustments[0];
+
+  const acknowledgeAdjustment = async () => {
+    if (!currentAdjustment || acknowledgingAdjustmentId) return;
+    setAcknowledgingAdjustmentId(currentAdjustment.id);
+    try {
+      await acknowledgeKitchenTicketAdjustment(currentAdjustment.id);
+    } finally {
+      setAcknowledgingAdjustmentId(null);
+    }
+  };
   const activeOrder = orders.find((order) => order.status === "PREPARING");
   const pendingOrders = useMemo(() => orders.filter((order) => order.status === "PENDING"), [orders]);
   const nextOrder = pendingOrders[0];
@@ -72,6 +96,65 @@ const KitchenView = () => {
           <Counter label="Listos" value={orders.filter((order) => order.status === "READY").length} className="hidden bg-success/15 text-success sm:block" />
         </div>
       </header>
+
+      <Modal>
+        <Modal.Backdrop isOpen={Boolean(currentAdjustment)} isDismissable={false}>
+          <Modal.Container placement="center" size="md">
+            <Modal.Dialog className="overflow-hidden rounded-[28px] border-2 border-destructive bg-pos-surface shadow-2xl">
+              {currentAdjustment && (
+                <>
+                  <Modal.Header className="flex items-center gap-4 bg-destructive px-6 py-5 text-destructive-foreground">
+                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20">
+                      <AlertTriangle className="h-8 w-8" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.18em] opacity-80">Modificación urgente</p>
+                      <Modal.Heading className="text-2xl font-black">Cambio en una comanda</Modal.Heading>
+                    </div>
+                  </Modal.Header>
+
+                  <Modal.Body className="space-y-5 px-6 py-6">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Mesa o cuenta</p>
+                      <p className="mt-1 text-3xl font-black text-foreground">{currentAdjustment.accountName}</p>
+                    </div>
+
+                    <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-5">
+                      <p className="text-sm font-bold text-destructive">Cancelar producto</p>
+                      <p className="mt-1 text-2xl font-black text-foreground">
+                        {Math.abs(currentAdjustment.quantityDelta)} × {currentAdjustment.productName}
+                      </p>
+                      <div className="mt-4 flex items-center gap-3 text-base font-bold">
+                        <span className="rounded-xl bg-secondary px-3 py-2 text-muted-foreground">Antes: {currentAdjustment.previousQuantity}</span>
+                        <span aria-hidden="true" className="text-muted-foreground">→</span>
+                        <span className="rounded-xl bg-destructive px-3 py-2 text-destructive-foreground">Ahora: {currentAdjustment.newQuantity}</span>
+                      </div>
+                    </div>
+
+                    {pendingAdjustments.length > 1 && (
+                      <p className="text-center text-sm font-semibold text-muted-foreground">
+                        Quedan {pendingAdjustments.length - 1} cambios por revisar.
+                      </p>
+                    )}
+                  </Modal.Body>
+
+                  <Modal.Footer className="border-t border-border bg-secondary/30 p-5">
+                    <button
+                      type="button"
+                      disabled={acknowledgingAdjustmentId === currentAdjustment.id}
+                      onClick={() => void acknowledgeAdjustment()}
+                      className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-destructive px-5 text-lg font-black text-destructive-foreground transition hover:brightness-95 disabled:cursor-wait disabled:opacity-60"
+                    >
+                      <Check className="h-6 w-6" />
+                      {acknowledgingAdjustmentId === currentAdjustment.id ? "Confirmando…" : "Entendido, aplicar cambio"}
+                    </button>
+                  </Modal.Footer>
+                </>
+              )}
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
 
       <div className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[minmax(360px,0.8fr)_minmax(0,1.55fr)]">
         <section className="flex min-h-0 flex-col overflow-hidden rounded-[28px] border-2 border-primary bg-pos-surface shadow-[0_24px_60px_-35px_rgba(120,72,30,0.6)] xl:order-2">

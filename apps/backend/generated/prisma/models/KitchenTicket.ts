@@ -222,6 +222,7 @@ export type KitchenTicketWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"KitchenTicket"> | Date | string
   account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
   items?: Prisma.KitchenTicketItemListRelationFilter
+  adjustments?: Prisma.KitchenTicketAdjustmentListRelationFilter
 }
 
 export type KitchenTicketOrderByWithRelationInput = {
@@ -232,6 +233,7 @@ export type KitchenTicketOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   account?: Prisma.AccountOrderByWithRelationInput
   items?: Prisma.KitchenTicketItemOrderByRelationAggregateInput
+  adjustments?: Prisma.KitchenTicketAdjustmentOrderByRelationAggregateInput
 }
 
 export type KitchenTicketWhereUniqueInput = Prisma.AtLeast<{
@@ -245,6 +247,7 @@ export type KitchenTicketWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"KitchenTicket"> | Date | string
   account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
   items?: Prisma.KitchenTicketItemListRelationFilter
+  adjustments?: Prisma.KitchenTicketAdjustmentListRelationFilter
 }, "id">
 
 export type KitchenTicketOrderByWithAggregationInput = {
@@ -277,6 +280,7 @@ export type KitchenTicketCreateInput = {
   updatedAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutKitchenTicketsInput
   items?: Prisma.KitchenTicketItemCreateNestedManyWithoutKitchenTicketInput
+  adjustments?: Prisma.KitchenTicketAdjustmentCreateNestedManyWithoutKitchenTicketInput
 }
 
 export type KitchenTicketUncheckedCreateInput = {
@@ -286,6 +290,7 @@ export type KitchenTicketUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutKitchenTicketInput
+  adjustments?: Prisma.KitchenTicketAdjustmentUncheckedCreateNestedManyWithoutKitchenTicketInput
 }
 
 export type KitchenTicketUpdateInput = {
@@ -294,6 +299,7 @@ export type KitchenTicketUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutKitchenTicketsNestedInput
   items?: Prisma.KitchenTicketItemUpdateManyWithoutKitchenTicketNestedInput
+  adjustments?: Prisma.KitchenTicketAdjustmentUpdateManyWithoutKitchenTicketNestedInput
 }
 
 export type KitchenTicketUncheckedUpdateInput = {
@@ -303,6 +309,7 @@ export type KitchenTicketUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutKitchenTicketNestedInput
+  adjustments?: Prisma.KitchenTicketAdjustmentUncheckedUpdateManyWithoutKitchenTicketNestedInput
 }
 
 export type KitchenTicketCreateManyInput = {
@@ -436,11 +443,26 @@ export type KitchenTicketUpdateOneRequiredWithoutItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenTicketUpdateToOneWithWhereWithoutItemsInput, Prisma.KitchenTicketUpdateWithoutItemsInput>, Prisma.KitchenTicketUncheckedUpdateWithoutItemsInput>
 }
 
+export type KitchenTicketCreateNestedOneWithoutAdjustmentsInput = {
+  create?: Prisma.XOR<Prisma.KitchenTicketCreateWithoutAdjustmentsInput, Prisma.KitchenTicketUncheckedCreateWithoutAdjustmentsInput>
+  connectOrCreate?: Prisma.KitchenTicketCreateOrConnectWithoutAdjustmentsInput
+  connect?: Prisma.KitchenTicketWhereUniqueInput
+}
+
+export type KitchenTicketUpdateOneRequiredWithoutAdjustmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.KitchenTicketCreateWithoutAdjustmentsInput, Prisma.KitchenTicketUncheckedCreateWithoutAdjustmentsInput>
+  connectOrCreate?: Prisma.KitchenTicketCreateOrConnectWithoutAdjustmentsInput
+  upsert?: Prisma.KitchenTicketUpsertWithoutAdjustmentsInput
+  connect?: Prisma.KitchenTicketWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenTicketUpdateToOneWithWhereWithoutAdjustmentsInput, Prisma.KitchenTicketUpdateWithoutAdjustmentsInput>, Prisma.KitchenTicketUncheckedUpdateWithoutAdjustmentsInput>
+}
+
 export type KitchenTicketCreateWithoutAccountInput = {
   status?: $Enums.KitchenTicketStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.KitchenTicketItemCreateNestedManyWithoutKitchenTicketInput
+  adjustments?: Prisma.KitchenTicketAdjustmentCreateNestedManyWithoutKitchenTicketInput
 }
 
 export type KitchenTicketUncheckedCreateWithoutAccountInput = {
@@ -449,6 +471,7 @@ export type KitchenTicketUncheckedCreateWithoutAccountInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutKitchenTicketInput
+  adjustments?: Prisma.KitchenTicketAdjustmentUncheckedCreateNestedManyWithoutKitchenTicketInput
 }
 
 export type KitchenTicketCreateOrConnectWithoutAccountInput = {
@@ -493,6 +516,7 @@ export type KitchenTicketCreateWithoutItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutKitchenTicketsInput
+  adjustments?: Prisma.KitchenTicketAdjustmentCreateNestedManyWithoutKitchenTicketInput
 }
 
 export type KitchenTicketUncheckedCreateWithoutItemsInput = {
@@ -501,6 +525,7 @@ export type KitchenTicketUncheckedCreateWithoutItemsInput = {
   status?: $Enums.KitchenTicketStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  adjustments?: Prisma.KitchenTicketAdjustmentUncheckedCreateNestedManyWithoutKitchenTicketInput
 }
 
 export type KitchenTicketCreateOrConnectWithoutItemsInput = {
@@ -524,6 +549,7 @@ export type KitchenTicketUpdateWithoutItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutKitchenTicketsNestedInput
+  adjustments?: Prisma.KitchenTicketAdjustmentUpdateManyWithoutKitchenTicketNestedInput
 }
 
 export type KitchenTicketUncheckedUpdateWithoutItemsInput = {
@@ -532,6 +558,57 @@ export type KitchenTicketUncheckedUpdateWithoutItemsInput = {
   status?: Prisma.EnumKitchenTicketStatusFieldUpdateOperationsInput | $Enums.KitchenTicketStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  adjustments?: Prisma.KitchenTicketAdjustmentUncheckedUpdateManyWithoutKitchenTicketNestedInput
+}
+
+export type KitchenTicketCreateWithoutAdjustmentsInput = {
+  status?: $Enums.KitchenTicketStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  account: Prisma.AccountCreateNestedOneWithoutKitchenTicketsInput
+  items?: Prisma.KitchenTicketItemCreateNestedManyWithoutKitchenTicketInput
+}
+
+export type KitchenTicketUncheckedCreateWithoutAdjustmentsInput = {
+  id?: number
+  accountId: number
+  status?: $Enums.KitchenTicketStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutKitchenTicketInput
+}
+
+export type KitchenTicketCreateOrConnectWithoutAdjustmentsInput = {
+  where: Prisma.KitchenTicketWhereUniqueInput
+  create: Prisma.XOR<Prisma.KitchenTicketCreateWithoutAdjustmentsInput, Prisma.KitchenTicketUncheckedCreateWithoutAdjustmentsInput>
+}
+
+export type KitchenTicketUpsertWithoutAdjustmentsInput = {
+  update: Prisma.XOR<Prisma.KitchenTicketUpdateWithoutAdjustmentsInput, Prisma.KitchenTicketUncheckedUpdateWithoutAdjustmentsInput>
+  create: Prisma.XOR<Prisma.KitchenTicketCreateWithoutAdjustmentsInput, Prisma.KitchenTicketUncheckedCreateWithoutAdjustmentsInput>
+  where?: Prisma.KitchenTicketWhereInput
+}
+
+export type KitchenTicketUpdateToOneWithWhereWithoutAdjustmentsInput = {
+  where?: Prisma.KitchenTicketWhereInput
+  data: Prisma.XOR<Prisma.KitchenTicketUpdateWithoutAdjustmentsInput, Prisma.KitchenTicketUncheckedUpdateWithoutAdjustmentsInput>
+}
+
+export type KitchenTicketUpdateWithoutAdjustmentsInput = {
+  status?: Prisma.EnumKitchenTicketStatusFieldUpdateOperationsInput | $Enums.KitchenTicketStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  account?: Prisma.AccountUpdateOneRequiredWithoutKitchenTicketsNestedInput
+  items?: Prisma.KitchenTicketItemUpdateManyWithoutKitchenTicketNestedInput
+}
+
+export type KitchenTicketUncheckedUpdateWithoutAdjustmentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  accountId?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumKitchenTicketStatusFieldUpdateOperationsInput | $Enums.KitchenTicketStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutKitchenTicketNestedInput
 }
 
 export type KitchenTicketCreateManyAccountInput = {
@@ -546,6 +623,7 @@ export type KitchenTicketUpdateWithoutAccountInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.KitchenTicketItemUpdateManyWithoutKitchenTicketNestedInput
+  adjustments?: Prisma.KitchenTicketAdjustmentUpdateManyWithoutKitchenTicketNestedInput
 }
 
 export type KitchenTicketUncheckedUpdateWithoutAccountInput = {
@@ -554,6 +632,7 @@ export type KitchenTicketUncheckedUpdateWithoutAccountInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutKitchenTicketNestedInput
+  adjustments?: Prisma.KitchenTicketAdjustmentUncheckedUpdateManyWithoutKitchenTicketNestedInput
 }
 
 export type KitchenTicketUncheckedUpdateManyWithoutAccountInput = {
@@ -570,10 +649,12 @@ export type KitchenTicketUncheckedUpdateManyWithoutAccountInput = {
 
 export type KitchenTicketCountOutputType = {
   items: number
+  adjustments: number
 }
 
 export type KitchenTicketCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | KitchenTicketCountOutputTypeCountItemsArgs
+  adjustments?: boolean | KitchenTicketCountOutputTypeCountAdjustmentsArgs
 }
 
 /**
@@ -593,6 +674,13 @@ export type KitchenTicketCountOutputTypeCountItemsArgs<ExtArgs extends runtime.T
   where?: Prisma.KitchenTicketItemWhereInput
 }
 
+/**
+ * KitchenTicketCountOutputType without action
+ */
+export type KitchenTicketCountOutputTypeCountAdjustmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.KitchenTicketAdjustmentWhereInput
+}
+
 
 export type KitchenTicketSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -602,6 +690,7 @@ export type KitchenTicketSelect<ExtArgs extends runtime.Types.Extensions.Interna
   updatedAt?: boolean
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   items?: boolean | Prisma.KitchenTicket$itemsArgs<ExtArgs>
+  adjustments?: boolean | Prisma.KitchenTicket$adjustmentsArgs<ExtArgs>
   _count?: boolean | Prisma.KitchenTicketCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["kitchenTicket"]>
 
@@ -635,6 +724,7 @@ export type KitchenTicketOmit<ExtArgs extends runtime.Types.Extensions.InternalA
 export type KitchenTicketInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   items?: boolean | Prisma.KitchenTicket$itemsArgs<ExtArgs>
+  adjustments?: boolean | Prisma.KitchenTicket$adjustmentsArgs<ExtArgs>
   _count?: boolean | Prisma.KitchenTicketCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type KitchenTicketIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -649,6 +739,7 @@ export type $KitchenTicketPayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     account: Prisma.$AccountPayload<ExtArgs>
     items: Prisma.$KitchenTicketItemPayload<ExtArgs>[]
+    adjustments: Prisma.$KitchenTicketAdjustmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1052,6 +1143,7 @@ export interface Prisma__KitchenTicketClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   account<T extends Prisma.AccountDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccountDefaultArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.KitchenTicket$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenTicket$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenTicketItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  adjustments<T extends Prisma.KitchenTicket$adjustmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenTicket$adjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenTicketAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1508,6 +1600,30 @@ export type KitchenTicket$itemsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.KitchenTicketItemScalarFieldEnum | Prisma.KitchenTicketItemScalarFieldEnum[]
+}
+
+/**
+ * KitchenTicket.adjustments
+ */
+export type KitchenTicket$adjustmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the KitchenTicketAdjustment
+   */
+  select?: Prisma.KitchenTicketAdjustmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the KitchenTicketAdjustment
+   */
+  omit?: Prisma.KitchenTicketAdjustmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KitchenTicketAdjustmentInclude<ExtArgs> | null
+  where?: Prisma.KitchenTicketAdjustmentWhereInput
+  orderBy?: Prisma.KitchenTicketAdjustmentOrderByWithRelationInput | Prisma.KitchenTicketAdjustmentOrderByWithRelationInput[]
+  cursor?: Prisma.KitchenTicketAdjustmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.KitchenTicketAdjustmentScalarFieldEnum | Prisma.KitchenTicketAdjustmentScalarFieldEnum[]
 }
 
 /**

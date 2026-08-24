@@ -114,3 +114,8 @@ export type KitchenTicket = Prisma.KitchenTicketModel
  * 
  */
 export type KitchenTicketItem = Prisma.KitchenTicketItemModel
+/**
+ * Model KitchenTicketAdjustment
+ * 
+ */
+export type KitchenTicketAdjustment = Prisma.KitchenTicketAdjustmentModel

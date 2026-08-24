@@ -170,3 +170,45 @@
   display: none;
 }
 
+/* HeroUI toast contrast overrides for the custom light/dark palettes. */
+.toast {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--surface-foreground);
+}
+
+.toast .toast__title {
+  color: var(--surface-foreground);
+  font-weight: 650;
+}
+
+.toast .toast__description {
+  color: var(--muted);
+}
+
+.toast--success {
+  border-left: 4px solid var(--success);
+  background: color-mix(in oklab, var(--surface) 92%, var(--success) 8%);
+}
+
+.toast--warning {
+  border-left: 4px solid var(--warning);
+  background: color-mix(in oklab, var(--surface) 88%, var(--warning) 12%);
+}
+
+.toast--danger {
+  border-left: 4px solid var(--danger);
+  background: color-mix(in oklab, var(--surface) 92%, var(--danger) 8%);
+}
+
+.toast--success .toast__indicator {
+  color: var(--success);
+}
+
+.toast--warning .toast__indicator {
+  color: var(--warning-foreground);
+}
+
+.toast--danger .toast__indicator {
+  color: var(--danger);
+}

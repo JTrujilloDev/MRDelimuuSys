@@ -443,6 +443,23 @@ export type EnumKitchenTicketStatusWithAggregatesFilter<$PrismaModel = never> = 
   _max?: Prisma.NestedEnumKitchenTicketStatusFilter<$PrismaModel>
 }
 
+export type EnumKitchenTicketAdjustmentStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.KitchenTicketAdjustmentStatus | Prisma.EnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.KitchenTicketAdjustmentStatus[] | Prisma.ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KitchenTicketAdjustmentStatus[] | Prisma.ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKitchenTicketAdjustmentStatusFilter<$PrismaModel> | $Enums.KitchenTicketAdjustmentStatus
+}
+
+export type EnumKitchenTicketAdjustmentStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.KitchenTicketAdjustmentStatus | Prisma.EnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.KitchenTicketAdjustmentStatus[] | Prisma.ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KitchenTicketAdjustmentStatus[] | Prisma.ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKitchenTicketAdjustmentStatusWithAggregatesFilter<$PrismaModel> | $Enums.KitchenTicketAdjustmentStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumKitchenTicketAdjustmentStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumKitchenTicketAdjustmentStatusFilter<$PrismaModel>
+}
+
 export type NestedIntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -861,6 +878,23 @@ export type NestedEnumKitchenTicketStatusWithAggregatesFilter<$PrismaModel = nev
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumKitchenTicketStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumKitchenTicketStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumKitchenTicketAdjustmentStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.KitchenTicketAdjustmentStatus | Prisma.EnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.KitchenTicketAdjustmentStatus[] | Prisma.ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KitchenTicketAdjustmentStatus[] | Prisma.ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKitchenTicketAdjustmentStatusFilter<$PrismaModel> | $Enums.KitchenTicketAdjustmentStatus
+}
+
+export type NestedEnumKitchenTicketAdjustmentStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.KitchenTicketAdjustmentStatus | Prisma.EnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.KitchenTicketAdjustmentStatus[] | Prisma.ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KitchenTicketAdjustmentStatus[] | Prisma.ListEnumKitchenTicketAdjustmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKitchenTicketAdjustmentStatusWithAggregatesFilter<$PrismaModel> | $Enums.KitchenTicketAdjustmentStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumKitchenTicketAdjustmentStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumKitchenTicketAdjustmentStatusFilter<$PrismaModel>
 }
 
 

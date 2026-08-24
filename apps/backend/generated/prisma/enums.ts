@@ -130,6 +130,14 @@ export const KitchenTicketStatus = {
 export type KitchenTicketStatus = (typeof KitchenTicketStatus)[keyof typeof KitchenTicketStatus]
 
 
+export const KitchenTicketAdjustmentStatus = {
+  PENDING: 'PENDING',
+  ACKNOWLEDGED: 'ACKNOWLEDGED'
+} as const
+
+export type KitchenTicketAdjustmentStatus = (typeof KitchenTicketAdjustmentStatus)[keyof typeof KitchenTicketAdjustmentStatus]
+
+
 export const KitchenStatus = {
   PENDING: 'PENDING',
   SENT: 'SENT',
