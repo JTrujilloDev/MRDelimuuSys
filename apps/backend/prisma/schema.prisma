@@ -184,6 +184,7 @@ model AccountItem {
 
 model InventoryTransaction {
   id               Int                      @id @default(autoincrement())
+  operationId      String?
   productVariantId Int
   relatedAccountId Int?
   productVariant   ProductVariant           @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
@@ -193,6 +194,10 @@ model InventoryTransaction {
   observation      String?
 
   createdAt DateTime @default(now())
+
+  @@index([operationId])
+  @@index([createdAt])
+  @@index([type])
 }
 
 enum InventoryTransactionType {

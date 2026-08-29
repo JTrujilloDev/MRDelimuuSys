@@ -549,6 +549,7 @@ export const closeAccountService = async ({
             productVariantId: product.id,
             relatedAccountId: accountId,
             quantity: -item.quantity,
+            unit: product.unit,
             type: "SALE",
           },
         });
@@ -580,6 +581,7 @@ export const closeAccountService = async ({
               productVariantId: recipeItem.ingredientVariantId,
               relatedAccountId: accountId,
               quantity: -consumedQuantity,
+              unit: recipeItem.ingredientVariant.unit,
               type: "SALE",
             },
           });

@@ -42,6 +42,7 @@ export type InventoryTransactionSumAggregateOutputType = {
 
 export type InventoryTransactionMinAggregateOutputType = {
   id: number | null
+  operationId: string | null
   productVariantId: number | null
   relatedAccountId: number | null
   quantity: number | null
@@ -53,6 +54,7 @@ export type InventoryTransactionMinAggregateOutputType = {
 
 export type InventoryTransactionMaxAggregateOutputType = {
   id: number | null
+  operationId: string | null
   productVariantId: number | null
   relatedAccountId: number | null
   quantity: number | null
@@ -64,6 +66,7 @@ export type InventoryTransactionMaxAggregateOutputType = {
 
 export type InventoryTransactionCountAggregateOutputType = {
   id: number
+  operationId: number
   productVariantId: number
   relatedAccountId: number
   quantity: number
@@ -91,6 +94,7 @@ export type InventoryTransactionSumAggregateInputType = {
 
 export type InventoryTransactionMinAggregateInputType = {
   id?: true
+  operationId?: true
   productVariantId?: true
   relatedAccountId?: true
   quantity?: true
@@ -102,6 +106,7 @@ export type InventoryTransactionMinAggregateInputType = {
 
 export type InventoryTransactionMaxAggregateInputType = {
   id?: true
+  operationId?: true
   productVariantId?: true
   relatedAccountId?: true
   quantity?: true
@@ -113,6 +118,7 @@ export type InventoryTransactionMaxAggregateInputType = {
 
 export type InventoryTransactionCountAggregateInputType = {
   id?: true
+  operationId?: true
   productVariantId?: true
   relatedAccountId?: true
   quantity?: true
@@ -211,6 +217,7 @@ export type InventoryTransactionGroupByArgs<ExtArgs extends runtime.Types.Extens
 
 export type InventoryTransactionGroupByOutputType = {
   id: number
+  operationId: string | null
   productVariantId: number
   relatedAccountId: number | null
   quantity: number
@@ -245,6 +252,7 @@ export type InventoryTransactionWhereInput = {
   OR?: Prisma.InventoryTransactionWhereInput[]
   NOT?: Prisma.InventoryTransactionWhereInput | Prisma.InventoryTransactionWhereInput[]
   id?: Prisma.IntFilter<"InventoryTransaction"> | number
+  operationId?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   productVariantId?: Prisma.IntFilter<"InventoryTransaction"> | number
   relatedAccountId?: Prisma.IntNullableFilter<"InventoryTransaction"> | number | null
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
@@ -257,6 +265,7 @@ export type InventoryTransactionWhereInput = {
 
 export type InventoryTransactionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  operationId?: Prisma.SortOrderInput | Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   relatedAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -272,6 +281,7 @@ export type InventoryTransactionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.InventoryTransactionWhereInput | Prisma.InventoryTransactionWhereInput[]
   OR?: Prisma.InventoryTransactionWhereInput[]
   NOT?: Prisma.InventoryTransactionWhereInput | Prisma.InventoryTransactionWhereInput[]
+  operationId?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   productVariantId?: Prisma.IntFilter<"InventoryTransaction"> | number
   relatedAccountId?: Prisma.IntNullableFilter<"InventoryTransaction"> | number | null
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
@@ -284,6 +294,7 @@ export type InventoryTransactionWhereUniqueInput = Prisma.AtLeast<{
 
 export type InventoryTransactionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  operationId?: Prisma.SortOrderInput | Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   relatedAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -303,6 +314,7 @@ export type InventoryTransactionScalarWhereWithAggregatesInput = {
   OR?: Prisma.InventoryTransactionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.InventoryTransactionScalarWhereWithAggregatesInput | Prisma.InventoryTransactionScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"InventoryTransaction"> | number
+  operationId?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransaction"> | string | null
   productVariantId?: Prisma.IntWithAggregatesFilter<"InventoryTransaction"> | number
   relatedAccountId?: Prisma.IntNullableWithAggregatesFilter<"InventoryTransaction"> | number | null
   quantity?: Prisma.IntWithAggregatesFilter<"InventoryTransaction"> | number
@@ -313,6 +325,7 @@ export type InventoryTransactionScalarWhereWithAggregatesInput = {
 }
 
 export type InventoryTransactionCreateInput = {
+  operationId?: string | null
   relatedAccountId?: number | null
   quantity: number
   unit?: $Enums.Unit
@@ -324,6 +337,7 @@ export type InventoryTransactionCreateInput = {
 
 export type InventoryTransactionUncheckedCreateInput = {
   id?: number
+  operationId?: string | null
   productVariantId: number
   relatedAccountId?: number | null
   quantity: number
@@ -334,6 +348,7 @@ export type InventoryTransactionUncheckedCreateInput = {
 }
 
 export type InventoryTransactionUpdateInput = {
+  operationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
@@ -345,6 +360,7 @@ export type InventoryTransactionUpdateInput = {
 
 export type InventoryTransactionUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  operationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
@@ -356,6 +372,7 @@ export type InventoryTransactionUncheckedUpdateInput = {
 
 export type InventoryTransactionCreateManyInput = {
   id?: number
+  operationId?: string | null
   productVariantId: number
   relatedAccountId?: number | null
   quantity: number
@@ -366,6 +383,7 @@ export type InventoryTransactionCreateManyInput = {
 }
 
 export type InventoryTransactionUpdateManyMutationInput = {
+  operationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
@@ -376,6 +394,7 @@ export type InventoryTransactionUpdateManyMutationInput = {
 
 export type InventoryTransactionUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  operationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
@@ -397,6 +416,7 @@ export type InventoryTransactionOrderByRelationAggregateInput = {
 
 export type InventoryTransactionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  operationId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   relatedAccountId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -415,6 +435,7 @@ export type InventoryTransactionAvgOrderByAggregateInput = {
 
 export type InventoryTransactionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  operationId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   relatedAccountId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -426,6 +447,7 @@ export type InventoryTransactionMaxOrderByAggregateInput = {
 
 export type InventoryTransactionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  operationId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   relatedAccountId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
@@ -489,6 +511,7 @@ export type EnumInventoryTransactionTypeFieldUpdateOperationsInput = {
 }
 
 export type InventoryTransactionCreateWithoutProductVariantInput = {
+  operationId?: string | null
   relatedAccountId?: number | null
   quantity: number
   unit?: $Enums.Unit
@@ -499,6 +522,7 @@ export type InventoryTransactionCreateWithoutProductVariantInput = {
 
 export type InventoryTransactionUncheckedCreateWithoutProductVariantInput = {
   id?: number
+  operationId?: string | null
   relatedAccountId?: number | null
   quantity: number
   unit?: $Enums.Unit
@@ -538,6 +562,7 @@ export type InventoryTransactionScalarWhereInput = {
   OR?: Prisma.InventoryTransactionScalarWhereInput[]
   NOT?: Prisma.InventoryTransactionScalarWhereInput | Prisma.InventoryTransactionScalarWhereInput[]
   id?: Prisma.IntFilter<"InventoryTransaction"> | number
+  operationId?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   productVariantId?: Prisma.IntFilter<"InventoryTransaction"> | number
   relatedAccountId?: Prisma.IntNullableFilter<"InventoryTransaction"> | number | null
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
@@ -549,6 +574,7 @@ export type InventoryTransactionScalarWhereInput = {
 
 export type InventoryTransactionCreateManyProductVariantInput = {
   id?: number
+  operationId?: string | null
   relatedAccountId?: number | null
   quantity: number
   unit?: $Enums.Unit
@@ -558,6 +584,7 @@ export type InventoryTransactionCreateManyProductVariantInput = {
 }
 
 export type InventoryTransactionUpdateWithoutProductVariantInput = {
+  operationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
@@ -568,6 +595,7 @@ export type InventoryTransactionUpdateWithoutProductVariantInput = {
 
 export type InventoryTransactionUncheckedUpdateWithoutProductVariantInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  operationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
@@ -578,6 +606,7 @@ export type InventoryTransactionUncheckedUpdateWithoutProductVariantInput = {
 
 export type InventoryTransactionUncheckedUpdateManyWithoutProductVariantInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  operationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
@@ -590,6 +619,7 @@ export type InventoryTransactionUncheckedUpdateManyWithoutProductVariantInput = 
 
 export type InventoryTransactionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  operationId?: boolean
   productVariantId?: boolean
   relatedAccountId?: boolean
   quantity?: boolean
@@ -602,6 +632,7 @@ export type InventoryTransactionSelect<ExtArgs extends runtime.Types.Extensions.
 
 export type InventoryTransactionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  operationId?: boolean
   productVariantId?: boolean
   relatedAccountId?: boolean
   quantity?: boolean
@@ -614,6 +645,7 @@ export type InventoryTransactionSelectCreateManyAndReturn<ExtArgs extends runtim
 
 export type InventoryTransactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  operationId?: boolean
   productVariantId?: boolean
   relatedAccountId?: boolean
   quantity?: boolean
@@ -626,6 +658,7 @@ export type InventoryTransactionSelectUpdateManyAndReturn<ExtArgs extends runtim
 
 export type InventoryTransactionSelectScalar = {
   id?: boolean
+  operationId?: boolean
   productVariantId?: boolean
   relatedAccountId?: boolean
   quantity?: boolean
@@ -635,7 +668,7 @@ export type InventoryTransactionSelectScalar = {
   createdAt?: boolean
 }
 
-export type InventoryTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productVariantId" | "relatedAccountId" | "quantity" | "unit" | "type" | "observation" | "createdAt", ExtArgs["result"]["inventoryTransaction"]>
+export type InventoryTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "operationId" | "productVariantId" | "relatedAccountId" | "quantity" | "unit" | "type" | "observation" | "createdAt", ExtArgs["result"]["inventoryTransaction"]>
 export type InventoryTransactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
 }
@@ -653,6 +686,7 @@ export type $InventoryTransactionPayload<ExtArgs extends runtime.Types.Extension
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    operationId: string | null
     productVariantId: number
     relatedAccountId: number | null
     quantity: number
@@ -1085,6 +1119,7 @@ export interface Prisma__InventoryTransactionClient<T, Null = never, ExtArgs ext
  */
 export interface InventoryTransactionFieldRefs {
   readonly id: Prisma.FieldRef<"InventoryTransaction", 'Int'>
+  readonly operationId: Prisma.FieldRef<"InventoryTransaction", 'String'>
   readonly productVariantId: Prisma.FieldRef<"InventoryTransaction", 'Int'>
   readonly relatedAccountId: Prisma.FieldRef<"InventoryTransaction", 'Int'>
   readonly quantity: Prisma.FieldRef<"InventoryTransaction", 'Int'>

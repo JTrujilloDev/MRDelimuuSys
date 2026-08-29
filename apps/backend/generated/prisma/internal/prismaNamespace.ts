@@ -1750,6 +1750,7 @@ export type AccountItemScalarFieldEnum = (typeof AccountItemScalarFieldEnum)[key
 
 export const InventoryTransactionScalarFieldEnum = {
   id: 'id',
+  operationId: 'operationId',
   productVariantId: 'productVariantId',
   relatedAccountId: 'relatedAccountId',
   quantity: 'quantity',

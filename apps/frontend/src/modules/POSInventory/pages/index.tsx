@@ -7,61 +7,25 @@ import {
   Table,
   Tabs,
 } from "@heroui/react";
-import { FileText, Filter, PackagePlus, Search } from "lucide-react";
+import { FileText, Search } from "lucide-react";
 import { useState } from "react";
-import { useGetPOSInventoryTransactions } from "../hooks/useGetPOSInventoryTransactions";
-import dayjs from "dayjs";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
 import { useGetAllActiveProducts } from "../../products/hooks/useGetAllActiveProducts";
 import { getReportPDF } from "../services/report.service";
-import { transactionTypes } from "../../../shared/constants/inventoryTransactionsByProductType";
 import { productUnits } from "../../../shared/constants/productUnits";
-import { io } from "socket.io-client";
 import TransactionForm from "../components/TransactionForm";
-
-const getTransactionChipProps = (type: string) => {
-  return (
-    Object.values(transactionTypes).find((item) => item.value === type) ?? {
-      value: type,
-      label: type,
-      className: "bg-border text-foreground",
-    }
-  );
-};
+import InventoryMovements from "../components/InventoryMovements";
 const Inventory = () => {
-  const { data: { data: transactions = [] } = ({} = {}) } =
-    useGetPOSInventoryTransactions();
   const { data: categories } = useGetAllProductCategories();
   const { data: { data: activeProducts = [] } = ({} = {}) } =
     useGetAllActiveProducts();
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [selectedFilter, setSelectedFilter] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterCategory, setFilterCategory] = useState<string>("");
 
-  // useEffect(() => {
-  //   const socket = io("http://localhost:3000");
-
-  //   socket.on("connect", () => {
-  //     console.log("Conectado:", socket.id);
-  //   });
-
-  //    socket.emit("hello",{
-  //     message: "hola"
-  //   });
-
-  //   socket.on("disconnect", () => {
-  //     console.log("Desconectado");
-  //   });
-
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, []);
-
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       <h1 className="text-2xl font-bold text-foreground">Inventario</h1>
       <Tabs className="w-full">
         <Tabs.ListContainer className="w-sm rounded-md bg-card border border-border">
@@ -85,151 +49,8 @@ const Inventory = () => {
             </Tabs.Tab>
           </Tabs.List>
         </Tabs.ListContainer>
-        <Tabs.Panel className="pt-4 w-full flex flex-col gap-4" id="movements">
-          <div className="flex items-center justify-end">
-            <div className="flex gap-2">
-              <Button onClick={() => setDialogOpen(true)} size="sm">
-                <PackagePlus className="h-4 w-4 mr-1" /> Regitrar movimiento
-              </Button>
-            </div>
-          </div>
-
-          {/* Summary cards */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-xs text-muted-foreground mb-1">
-                Transacciones
-              </p>
-              <p className="text-2xl font-bold text-foreground">
-                {transactions.length}
-              </p>
-            </div>
-            <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-xs text-muted-foreground mb-1">
-                Producción Total
-              </p>
-              <p className="text-2xl font-bold text-green-600"></p>
-            </div>
-            <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-xs text-muted-foreground mb-1">Merma Total</p>
-              <p className="text-2xl font-bold text-destructive"></p>
-            </div>
-          </div>
-
-          {/* Filter */}
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
-            <Button
-              size="sm"
-              className={`rounded-md ${
-                !selectedFilter
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground bg-muted"
-              }`}
-              onClick={() => setSelectedFilter("")}
-            >
-              Todas
-            </Button>
-            {Object.values(transactionTypes).map((item) => (
-              <Button
-                key={item.value}
-                size="sm"
-                variant="outline"
-                className={`rounded-md ${
-                  selectedFilter === item.value
-                    ? `${item.className}`
-                    : "text-muted-foreground"
-                }`}
-                onClick={() => setSelectedFilter(item.value)}
-              >
-                {item.label}
-              </Button>
-            ))}
-          </div>
-
-          {/* Transaction table */}
-          <Table className="w-full overflow-hidden rounded-[24px] border border-border bg-pos-surface shadow-sm">
-            <Table.ScrollContainer className="max-h-[55vh] overflow-y-auto overflow-x-auto">
-              <Table.Content aria-label="Example table">
-                <Table.Header>
-                  <Table.Column
-                    className="bg-pos-order-bg text-white text font-extrabold"
-                    isRowHeader
-                  >
-                    Tipo
-                  </Table.Column>
-                  <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
-                    Producto
-                  </Table.Column>
-                  <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
-                    Variante
-                  </Table.Column>
-                  <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
-                    Cantidad
-                  </Table.Column>
-                  <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
-                    Unidad
-                  </Table.Column>
-
-                  <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
-                    Observaciones
-                  </Table.Column>
-                  <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
-                    Fecha
-                  </Table.Column>
-                </Table.Header>
-                <Table.Body>
-                  {transactions
-                    .filter(
-                      (tx :any ) => tx.type === selectedFilter || !selectedFilter,
-                    )
-                    .map((tx : any) => (
-                      <Table.Row key={tx.id}>
-                        <Table.Cell>
-                          {(() => {
-                            const chipProps = getTransactionChipProps(tx.type);
-                            return (
-                              <Chip
-                                className={`text-xs font-medium ${chipProps.className}`}
-                              >
-                                {chipProps.label}
-                              </Chip>
-                            );
-                          })()}
-                        </Table.Cell>
-
-                        <Table.Cell className="text-foreground">
-                          {tx.productVariant?.product?.name}
-                        </Table.Cell>
-
-                        <Table.Cell className="text-foreground">
-                          {tx.productVariant?.name}
-                        </Table.Cell>
-
-                        <Table.Cell className="text-foreground font-medium text-center">
-                          {tx.quantity}
-                        </Table.Cell>
-                        <Table.Cell className="text-foreground font-medium text-center">
-                          {
-                            productUnits.find((unit) => unit.value === tx.unit)
-                              ?.label
-                          }
-                        </Table.Cell>
-
-                        <Table.Cell className="text-foreground max-w-[150px] truncate">
-                          {tx.observation || "—"}
-                        </Table.Cell>
-
-                        <Table.Cell className="text-foreground text-xs">
-                          {dayjs(tx.createdAt).format("DD/MM HH:mm")}
-                        </Table.Cell>
-                      </Table.Row>
-                    ))}
-                </Table.Body>
-              </Table.Content>
-            </Table.ScrollContainer>
-            <Table.Footer>{/* Optional footer content */}</Table.Footer>
-          </Table>
+        <Tabs.Panel className="pt-4 w-full" id="movements">
+          <InventoryMovements onCreate={() => setDialogOpen(true)} />
         </Tabs.Panel>
         <Tabs.Panel className="pt-4 flex flex-col gap-4" id="current-stock">
           <div className="flex items-center justify-between gap-3 flex-wrap w-full ">
@@ -443,7 +264,7 @@ const Inventory = () => {
 
       <TransactionForm
         dialogOpen={dialogOpen}
-        categories={categories}
+        activeProducts={activeProducts}
         setDialogOpen={setDialogOpen}
       />
     </div>

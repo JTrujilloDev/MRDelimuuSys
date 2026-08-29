@@ -1,4 +1,4 @@
-import { Button, Chip } from "@heroui/react";
+import { Button, Chip, Input } from "@heroui/react";
 import dayjs from "dayjs";
 import {
   Banknote,
@@ -7,6 +7,7 @@ import {
   Clock3,
   PackageCheck,
   ReceiptText,
+  Search,
   SearchX,
   Store,
   UserRound,
@@ -20,6 +21,17 @@ type SoldVariant = {
   productName: string;
   variantName: string;
   quantity: number;
+};
+
+type SoldProduct = {
+  productId: number;
+  productName: string;
+  quantity: number;
+  variants: Array<{
+    productVariantId: number;
+    variantName: string;
+    quantity: number;
+  }>;
 };
 
 type AccountItem = {
@@ -82,19 +94,42 @@ const paymentLabels: Record<string, string> = {
 const CashRegisterHistory = () => {
   const [from, setFrom] = useState(dayjs().subtract(6, "day").format("YYYY-MM-DD"));
   const [to, setTo] = useState(dayjs().format("YYYY-MM-DD"));
+  const [productSearch, setProductSearch] = useState("");
   const fromIso = dayjs(from).startOf("day").toISOString();
   const toIso = dayjs(to).endOf("day").toISOString();
   const invalidRange = dayjs(from).isAfter(dayjs(to), "day");
   const { data, isLoading, isError } = useCashRegisterHistory(fromIso, toIso, !invalidRange);
   const registers: CashRegister[] = invalidRange ? [] : (data?.data ?? []);
+  const soldProducts: SoldProduct[] = invalidRange
+    ? []
+    : (data?.soldProducts ?? []);
+
+  const filteredSoldProducts = useMemo(() => {
+    const search = productSearch.trim().toLowerCase();
+    if (!search) return soldProducts;
+
+    return soldProducts.filter(
+      (product) =>
+        product.productName.toLowerCase().includes(search) ||
+        product.variants.some((variant) =>
+          variant.variantName.toLowerCase().includes(search),
+        ),
+    );
+  }, [productSearch, soldProducts]);
 
   const summary = useMemo(
     () => ({
       sales: registers.reduce((total, register) => total + register.totalSales, 0),
       tickets: registers.reduce((total, register) => total + register.accounts.length, 0),
-      units: registers.reduce((total, register) => total + register.soldVariantUnits, 0),
+      units:
+        soldProducts.length > 0
+          ? soldProducts.reduce((total, product) => total + product.quantity, 0)
+          : registers.reduce(
+              (total, register) => total + register.soldVariantUnits,
+              0,
+            ),
     }),
-    [registers],
+    [registers, soldProducts],
   );
 
   const applyPreset = (days: number) => {
@@ -190,6 +225,100 @@ const CashRegisterHistory = () => {
           <SummaryCard icon={Banknote} label="Ventas del período" value={money(summary.sales)} />
           <SummaryCard icon={ReceiptText} label="Ventas realizadas" value={String(summary.tickets)} />
           <SummaryCard icon={PackageCheck} label="Unidades vendidas" value={String(summary.units)} />
+        </section>
+
+        <section className="overflow-hidden rounded-2xl border border-border bg-pos-surface shadow-sm">
+          <div className="flex flex-col gap-4 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <PackageCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-foreground">
+                  Unidades vendidas por producto
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  Total consolidado de las ventas cerradas en el período seleccionado.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative w-full sm:w-72">
+              <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                aria-label="Buscar producto o variante vendida"
+                className="w-full border border-border bg-background pl-9 text-foreground"
+                placeholder="Buscar producto..."
+                value={productSearch}
+                onChange={(event) => setProductSearch(event.target.value)}
+              />
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="p-10 text-center text-sm text-muted-foreground">
+              Calculando productos vendidos…
+            </div>
+          ) : isError ? (
+            <div className="p-10 text-center text-sm text-destructive">
+              No fue posible cargar los productos vendidos.
+            </div>
+          ) : filteredSoldProducts.length === 0 ? (
+            <div className="p-10 text-center text-sm text-muted-foreground">
+              {productSearch
+                ? "No se encontraron productos con esta búsqueda."
+                : "No se vendieron productos en este período."}
+            </div>
+          ) : (
+            <div className="max-h-[420px] overflow-auto">
+              <table className="w-full min-w-[620px] text-left text-sm">
+                <thead className="sticky top-0 z-10 bg-pos-order-bg text-pos-order-fg">
+                  <tr>
+                    <th className="w-14 px-4 py-3 text-center">#</th>
+                    <th className="px-4 py-3">Producto</th>
+                    <th className="px-4 py-3">Variantes vendidas</th>
+                    <th className="px-4 py-3 text-right">Total unidades</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {filteredSoldProducts.map((product, index) => (
+                    <tr
+                      key={product.productId}
+                      className="bg-pos-surface transition-colors hover:bg-secondary/40"
+                    >
+                      <td className="px-4 py-3 text-center font-medium text-muted-foreground">
+                        {index + 1}
+                      </td>
+                      <td className="px-4 py-3 font-semibold text-foreground">
+                        {product.productName}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-1.5">
+                          {product.variants.map((variant) => (
+                            <span
+                              key={variant.productVariantId}
+                              className="rounded-lg bg-secondary px-2 py-1 text-xs text-foreground"
+                            >
+                              {variant.variantName}: {variant.quantity}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <span className="inline-flex min-w-12 justify-center rounded-lg bg-primary/10 px-3 py-1.5 font-bold text-primary">
+                          {product.quantity}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="border-t border-border bg-secondary/20 px-4 py-3 text-xs text-muted-foreground sm:px-5">
+            {soldProducts.length} {soldProducts.length === 1 ? "producto" : "productos"} · {summary.units} unidades vendidas
+          </div>
         </section>
 
         <section className="space-y-3">

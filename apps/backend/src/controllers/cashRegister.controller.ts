@@ -21,11 +21,12 @@ export const getCashRegisterHistory = async (req: Request, res: Response) => {
       return;
     }
 
-    const cashRegisters = await getCashRegisterHistoryService(from, to);
+    const result = await getCashRegisterHistoryService(from, to);
     res.status(200).json({
       success: true,
       message: "Cash register history fetched successfully",
-      data: cashRegisters,
+      data: result.cashRegisters,
+      soldProducts: result.soldProducts,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: (error as Error).message });

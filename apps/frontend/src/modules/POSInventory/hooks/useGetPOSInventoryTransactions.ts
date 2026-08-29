@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPOSInventoryTransactions } from "../services/POSInventory.service";
+import {
+  getPOSInventoryTransactions,
+  type InventoryTransactionFilters,
+} from "../services/POSInventory.service";
 
-export const useGetPOSInventoryTransactions = () => {
+export const useGetPOSInventoryTransactions = (
+  filters: InventoryTransactionFilters = {},
+) => {
   return useQuery({
-    queryKey: ["POSInventoryTransactions"],
-    queryFn: getPOSInventoryTransactions,
+    queryKey: ["POSInventoryTransactions", filters],
+    queryFn: () => getPOSInventoryTransactions(filters),
+    placeholderData: (previousData) => previousData,
   });
 };

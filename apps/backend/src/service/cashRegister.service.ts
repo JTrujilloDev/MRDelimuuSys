@@ -182,12 +182,10 @@ export const getCashRegisterHistoryService = async (
 ) => {
   const cashRegisters = await prisma.cashRegister.findMany({
     where: {
+      openedAt: { lte: to },
       OR: [
-        { closedAt: { gte: from, lte: to } },
-        {
-          closedAt: null,
-          openedAt: { gte: from, lte: to },
-        },
+        { closedAt: { gte: from } },
+        { closedAt: null },
       ],
     },
     orderBy: [{ closedAt: "desc" }, { openedAt: "desc" }],
@@ -214,7 +212,70 @@ export const getCashRegisterHistoryService = async (
     },
   });
 
-  return cashRegisters.map((cashRegister) => {
+  const cashRegisterIds = cashRegisters.map((cashRegister) => cashRegister.id);
+  const periodSoldItems = cashRegisterIds.length
+    ? await prisma.accountItem.findMany({
+        where: {
+          account: {
+            status: "CLOSED",
+            cashRegisterId: { in: cashRegisterIds },
+          },
+        },
+        select: {
+          quantity: true,
+          productVariantId: true,
+          productVariant: {
+            select: {
+              name: true,
+              product: { select: { id: true, name: true } },
+            },
+          },
+        },
+      })
+    : [];
+
+  const products = new Map<
+    number,
+    {
+      productId: number;
+      productName: string;
+      quantity: number;
+      variants: Map<
+        number,
+        { productVariantId: number; variantName: string; quantity: number }
+      >;
+    }
+  >();
+
+  for (const item of periodSoldItems) {
+    const product = item.productVariant.product;
+    let currentProduct = products.get(product.id);
+
+    if (!currentProduct) {
+      currentProduct = {
+        productId: product.id,
+        productName: product.name,
+        quantity: 0,
+        variants: new Map(),
+      };
+      products.set(product.id, currentProduct);
+    }
+
+    currentProduct.quantity += item.quantity;
+    const currentVariant = currentProduct.variants.get(item.productVariantId);
+
+    if (currentVariant) {
+      currentVariant.quantity += item.quantity;
+    } else {
+      currentProduct.variants.set(item.productVariantId, {
+        productVariantId: item.productVariantId,
+        variantName: item.productVariant.name,
+        quantity: item.quantity,
+      });
+    }
+  }
+
+  const registersWithSales = cashRegisters.map((cashRegister) => {
     const variants = new Map<
       number,
       { productVariantId: number; productName: string; variantName: string; quantity: number }
@@ -247,6 +308,20 @@ export const getCashRegisterHistoryService = async (
       ),
     };
   });
+
+  return {
+    cashRegisters: registersWithSales,
+    soldProducts: Array.from(products.values())
+      .map((product) => ({
+        productId: product.productId,
+        productName: product.productName,
+        quantity: product.quantity,
+        variants: Array.from(product.variants.values()).sort(
+          (a, b) => b.quantity - a.quantity,
+        ),
+      }))
+      .sort((a, b) => b.quantity - a.quantity),
+  };
 };
 
 export const getOpenCashRegisterService = async (terminalId: number) => {
