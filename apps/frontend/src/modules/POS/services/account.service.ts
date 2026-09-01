@@ -25,6 +25,17 @@ export const createAccount = async (accountData: AccountData) => {
   return data;
 };
 
+export const updateAccount = async ({
+  accountId,
+  name,
+}: {
+  accountId: number;
+  name: string;
+}) => {
+  const { data } = await api.put(`accounts/${accountId}`, { name });
+  return data;
+};
+
 export const addAccountItem = async (accountData: AccountItem) => {
   const { data } = await api.put(`accounts/add-item`, {
     accountId: accountData.accountId,

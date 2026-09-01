@@ -10,6 +10,7 @@ import {
   removeAccountItemService,
   updateAccountService,
 } from "../service/accounts.service";
+import { getIO } from "../socket";
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
@@ -211,8 +212,13 @@ export const closeAccount = async (req: Request, res: Response) => {
 
   try {
     const closedAccount = await closeAccountService(
-      {accountId: Number(accountId), paymentMethod, cashRegisterId}
+      {
+        accountId: Number(accountId),
+        paymentMethod,
+        cashRegisterId: Number(cashRegisterId),
+      }
     );
+    getIO().emit("inventory:updated");
     res.status(200).json({
       success: true,
       message: "Account closed successfully",

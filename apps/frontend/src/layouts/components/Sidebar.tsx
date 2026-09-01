@@ -2,7 +2,7 @@ import Logo from "/DeliLogo.png";
 import { NavLink, useNavigate } from "react-router";
 import { Tooltip } from "@heroui/react";
 import { BiUser } from "react-icons/bi";
-import { BookOpen, ChefHat, History, Moon, Package, ShoppingCart, Sun, Tag } from "lucide-react";
+import { BookOpen, Camera, ChefHat, History, Moon, Package, ShoppingCart, Sun, Tag } from "lucide-react";
 import { LuLogOut } from "react-icons/lu";
 import { useTheme } from "../../app/providers";
 
@@ -16,6 +16,7 @@ const Sidebar = () => {
     { title: "Catálogo", url: "catalog", icon: BookOpen },
     {title: "Inventario" , url: "inventory", icon: Package},
     {title : "Cocina", url: "kitchen", icon: ChefHat},
+    { title: "Cámaras", url: "security-cameras", icon: Camera },
     {title : "Etiquetas", url: "fundation-tags", icon: Tag}
   ];
   return (
@@ -26,7 +27,7 @@ const Sidebar = () => {
         <BiUser size={28} />
       </div>
 
-      <div className="mt-4 flex flex-col items-center gap-4">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto px-1">
         {items.map((item) => (
           <Tooltip key={item.url}>
             <NavLink
@@ -47,7 +48,7 @@ const Sidebar = () => {
         ))}
       </div>
 
-      <div className="mt-auto flex flex-col items-center gap-3">
+      <div className="mt-auto flex shrink-0 flex-col items-center gap-3">
         <Tooltip>
           <button
             type="button"

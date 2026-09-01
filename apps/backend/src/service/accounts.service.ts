@@ -1,4 +1,4 @@
-import { Account, AccountItem } from "../../generated/prisma/client";
+import { Account, AccountItem, Prisma } from "../../generated/prisma/client";
 import { AccountStatus, PaymentMethod } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import {
@@ -8,7 +8,7 @@ import {
 
 interface CreateAccountItem {
   productVariantId: number;
-  productName: string;
+  productName?: string;
   quantity?: number;
   price: number;
   subtotal?: number;
@@ -20,6 +20,91 @@ interface AccountData extends Omit<
 > {
   accountItems?: CreateAccountItem[];
 }
+
+const validateRecipeAvailabilityForAccount = async (
+  tx: Prisma.TransactionClient,
+  accountId: number,
+) => {
+  const recipeAccountItems = await tx.accountItem.findMany({
+    where: {
+      accountId,
+      quantity: { gt: 0 },
+      productVariant: {
+        product: { productType: "RECIPE_PRODUCT" },
+      },
+    },
+    select: {
+      quantity: true,
+      productVariant: {
+        select: {
+          name: true,
+          product: { select: { name: true } },
+          recipeItems: {
+            select: {
+              quantity: true,
+              ingredientVariantId: true,
+              ingredientVariant: {
+                select: {
+                  name: true,
+                  stock: true,
+                  product: { select: { name: true } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const ingredientConsumption = new Map<
+    number,
+    {
+      productName: string;
+      variantName: string;
+      stock: number;
+      requiredQuantity: number;
+    }
+  >();
+
+  for (const accountItem of recipeAccountItems) {
+    const { productVariant } = accountItem;
+
+    if (productVariant.recipeItems.length === 0) {
+      throw new Error(
+        `${productVariant.product.name} · ${productVariant.name} no tiene una receta configurada`,
+      );
+    }
+
+    for (const recipeItem of productVariant.recipeItems) {
+      if (recipeItem.quantity <= 0) {
+        throw new Error(
+          `La receta de ${productVariant.name} contiene una cantidad inválida`,
+        );
+      }
+
+      const current = ingredientConsumption.get(
+        recipeItem.ingredientVariantId,
+      );
+      ingredientConsumption.set(recipeItem.ingredientVariantId, {
+        productName: recipeItem.ingredientVariant.product.name,
+        variantName: recipeItem.ingredientVariant.name,
+        stock: recipeItem.ingredientVariant.stock,
+        requiredQuantity:
+          (current?.requiredQuantity ?? 0) +
+          recipeItem.quantity * accountItem.quantity,
+      });
+    }
+  }
+
+  for (const ingredient of ingredientConsumption.values()) {
+    if (ingredient.stock < ingredient.requiredQuantity) {
+      throw new Error(
+        `Stock insuficiente: ${ingredient.productName} · ${ingredient.variantName}. Disponible: ${ingredient.stock}; requerido: ${ingredient.requiredQuantity}`,
+      );
+    }
+  }
+};
 
 export const createAccountService = async (data: AccountData) => {
   return await prisma.$transaction(async (tx) => {
@@ -78,6 +163,10 @@ export const updateAccountService = async (
   data: AccountUpdateData,
 ) => {
   return await prisma.$transaction(async (tx) => {
+    if (data.name !== undefined && !data.name.trim()) {
+      throw new Error("Account name cannot be empty");
+    }
+
     // 1. Buscar cuenta
     const account = await tx.account.findUnique({
       where: { id: accountId },
@@ -95,7 +184,7 @@ export const updateAccountService = async (
 
     // 3. Campos permitidos (whitelist)
     const allowedData: Partial<AccountUpdateData> = {
-      name: data.name,
+      name: data.name?.trim(),
       customerId: data.customerId,
       tableNumber: data.tableNumber,
       terminalId: data.terminalId,
@@ -155,11 +244,15 @@ export const deleteAccountService = async (accountId: number) => {
       throw new Error("Only open accounts can be deleted");
     }
 
-    // Los elementos de comanda restringen la eliminación de AccountItem.
-    // Eliminar primero las comandas; sus items y ajustes caen en cascada.
-    await tx.kitchenTicket.deleteMany({
-      where: { accountId },
+    const activeKitchenTickets = await tx.kitchenTicket.count({
+      where: { accountId, status: { not: "DELIVERED" } },
     });
+
+    if (activeKitchenTickets > 0) {
+      throw new Error("No se puede eliminar una cuenta con comandas activas");
+    }
+
+    await tx.kitchenTicket.deleteMany({ where: { accountId } });
 
     // Eliminar la cuenta y sus productos abiertos en cascada.
     const deletedAccount = await tx.account.delete({
@@ -210,6 +303,7 @@ export const addAccountItemService = async (
     // 2. Obtener producto
     const product = await tx.productVariant.findUnique({
       where: { id: item.productVariantId },
+      include: { product: { select: { name: true } } },
     });
 
     if (!product || !product.isActive) {
@@ -241,6 +335,7 @@ export const addAccountItemService = async (
       await tx.accountItem.update({
         where: { id: existingItem.id },
         data: {
+          productName: `${product.product.name} - ${product.name}`,
           quantity: newQuantity,
           subtotal: newQuantity * price,
         },
@@ -251,13 +346,15 @@ export const addAccountItemService = async (
         data: {
           accountId,
           productVariantId: product.id,
-          productName: item.productName,
+          productName: `${product.product.name} - ${product.name}`,
           quantity: quantityToAdd,
           price,
           subtotal: quantityToAdd * price,
         },
       });
     }
+
+    await validateRecipeAvailabilityForAccount(tx, accountId);
 
     // 6. Recalcular total (seguro)
     const items = await tx.accountItem.findMany({
@@ -372,6 +469,8 @@ export const adjustAccountItemQuantityService = async ({
       });
     }
 
+    await validateRecipeAvailabilityForAccount(tx, item.accountId);
+
     // 4. Recalcular total de la cuenta
     const remainingItems = await tx.accountItem.findMany({
       where: { accountId: item.accountId },
@@ -400,7 +499,32 @@ export const closeAccountService = async ({
   cashRegisterId: number;
 }) => {
   return await prisma.$transaction(async (tx) => {
-    // 1. Obtener cuenta
+    if (!Object.values(PaymentMethod).includes(paymentMethod)) {
+      throw new Error("Invalid payment method");
+    }
+
+    if (!Number.isInteger(cashRegisterId) || cashRegisterId <= 0) {
+      throw new Error("Invalid cash register");
+    }
+
+    // Reclamar la cuenta de forma atómica. Una segunda solicitud concurrente
+    // esperará esta transacción y no podrá procesar la misma venta otra vez.
+    const claimedAccount = await tx.account.updateMany({
+      where: { id: accountId, status: "OPEN" },
+      data: { status: "CLOSED" },
+    });
+
+    if (claimedAccount.count === 0) {
+      const existingAccount = await tx.account.findUnique({
+        where: { id: accountId },
+        select: { id: true },
+      });
+      throw new Error(
+        existingAccount ? "Account already closed" : "Account not found",
+      );
+    }
+
+    // 1. Obtener cuenta ya reclamada
     const account = await tx.account.findUnique({
       where: { id: accountId },
       include: {
@@ -418,12 +542,35 @@ export const closeAccountService = async ({
       throw new Error("Account not found");
     }
 
-    if (account.status !== "OPEN") {
-      throw new Error("Account already closed");
-    }
-
     if (!account.accountItems.length) {
       throw new Error("Cannot close empty account");
+    }
+
+    const cashRegister = await tx.cashRegister.findUnique({
+      where: { id: cashRegisterId },
+      select: { id: true, status: true, terminalId: true },
+    });
+
+    if (!cashRegister || cashRegister.status !== "OPEN") {
+      throw new Error("Cash register not found or closed");
+    }
+
+    if (cashRegister.terminalId !== account.terminalId) {
+      throw new Error("Cash register does not belong to the account terminal");
+    }
+
+    const pendingKitchenAdjustments =
+      await tx.kitchenTicketAdjustment.count({
+        where: {
+          status: "PENDING",
+          kitchenTicket: { accountId },
+        },
+      });
+
+    if (pendingKitchenAdjustments > 0) {
+      throw new Error(
+        "No se puede cobrar mientras cocina tenga cancelaciones pendientes de confirmar",
+      );
     }
 
     // 2. Calcular total
@@ -459,7 +606,9 @@ export const closeAccountService = async ({
       }
 
       if (product.stock < item.quantity) {
-        throw new Error(`Insufficient stock for ${product.name}`);
+        throw new Error(
+          `Stock insuficiente: ${item.productVariant.product.name} · ${item.productVariant.name}. Disponible: ${product.stock}; requerido: ${item.quantity}`,
+        );
       }
     }
 
@@ -500,6 +649,12 @@ export const closeAccountService = async ({
         throw new Error("Recipe product not found");
       }
 
+      if (recipeProduct.recipeItems.length === 0) {
+        throw new Error(
+          `La variante ${recipeProduct.name} no tiene una receta configurada`,
+        );
+      }
+
       for (const recipeItem of recipeProduct.recipeItems) {
         const requiredQuantity = recipeItem.quantity * item.quantity;
 
@@ -521,6 +676,9 @@ export const closeAccountService = async ({
           in: ingredientIds,
         },
       },
+      include: {
+        product: { select: { name: true } },
+      },
     });
 
     const ingredientMap = new Map(ingredients.map((i) => [i.id, i]));
@@ -533,7 +691,9 @@ export const closeAccountService = async ({
       }
 
       if (ingredient.stock < requiredQuantity) {
-        throw new Error(`Insufficient stock for ${ingredient.name}`);
+        throw new Error(
+          `Stock insuficiente: ${ingredient.product.name} · ${ingredient.name}. Disponible: ${ingredient.stock}; requerido: ${requiredQuantity}`,
+        );
       }
     }
 

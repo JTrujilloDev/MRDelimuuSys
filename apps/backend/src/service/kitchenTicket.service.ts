@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 
 type CreateKitchenTicketInput = {
   accountId: number;
+  instructions?: string | null;
   items: { accountItemId: number; quantity: number }[];
 };
 
@@ -22,8 +23,12 @@ export const getKitchenTicketsService = async (accountId?: number) =>
     orderBy: { createdAt: "asc" },
   });
 
-export const createKitchenTicketService = async ({ accountId, items }: CreateKitchenTicketInput) => {
+export const createKitchenTicketService = async ({ accountId, instructions, items }: CreateKitchenTicketInput) => {
   if (!accountId || !items?.length) throw new Error("accountId and items are required");
+  const normalizedInstructions = instructions?.trim() || null;
+  if (normalizedInstructions && normalizedInstructions.length > 300) {
+    throw new Error("Las indicaciones no pueden superar los 300 caracteres");
+  }
 
   return prisma.$transaction(async (tx) => {
     const account = await tx.account.findUnique({
@@ -67,6 +72,7 @@ export const createKitchenTicketService = async ({ accountId, items }: CreateKit
     return tx.kitchenTicket.create({
       data: {
         accountId,
+        instructions: normalizedInstructions,
         items: {
           create: requestedItems.map(({ requested, accountItem }) => ({
             accountItemId: accountItem.id,

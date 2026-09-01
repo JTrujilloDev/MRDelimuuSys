@@ -1,245 +1,93 @@
-import { useEffect, useState } from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useMemo, useState } from "react";
 import {
-  Plus,
-  Pencil,
   ChevronDown,
   ChevronRight,
-  Search,
-  Trash,
   Cuboid,
+  Pencil,
+  Plus,
+  Search,
 } from "lucide-react";
-import {
-  Button,
-  Input,
-  Label,
-  ListBox,
-  Select,
-  Switch,
-  Modal,
-  toast,
-  Chip,
-  Tooltip,
-} from "@heroui/react";
-import { useGetAllProducts } from "../hooks/useGetAllProducts";
+import { Button, Chip, Input, Tooltip } from "@heroui/react";
 import numeral from "numeral";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
-import { useCreateProduct } from "../hooks/userCreateProduct";
-import { useUpdateProduct } from "../hooks/useUpdateProduct";
 import { productTypes } from "../../../shared/constants/productTypes";
-import { productUnits } from "../../../shared/constants/productUnits";
-
-interface ProductVariant {
-  id?: number;
-  name: string;
-  description: string;
-  retailPrice: string;
-  wholesalePrice: string;
-  minStock: string;
-  productCost: string;
-  isActive: boolean;
-  requirePreparation: boolean;
-  unit?: string | null;
-  recipeItems?: RecipeItem[] | null;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  categoryId: number | null;
-  category?: {
-    name: string;
-  } | null;
-  description: string;
-  productType: string;
-  variants: ProductVariant[];
-}
-
-interface RecipeItem {
-  ingredientVariantId?: number | null;
-  quantity: number;
-}
-
-interface ProductFormData {
-  id?: string;
-  name: string;
-  categoryId: number | null;
-  productType: string;
-  description: string;
-  variants: ProductVariant[];
-}
-
-const emptyVariant = (): ProductVariant => ({
-  name: "",
-  description: "",
-  retailPrice: "",
-  wholesalePrice: "",
-  minStock: "",
-  productCost: "",
-  isActive: true,
-  requirePreparation: false,
-  unit: undefined,
-  recipeItems: null,
-});
+import { useGetAllProducts } from "../hooks/useGetAllProducts";
+import {
+  ProductFormModal,
+  type ProductRecord,
+  type ProductVariantRecord,
+} from "../components/ProductFormModal";
 
 interface ProductsProps {
   embedded?: boolean;
 }
 
 const Products = ({ embedded = false }: ProductsProps) => {
-  const { data: products } = useGetAllProducts();
-  const { data: categories } = useGetAllProductCategories();
-  const { mutate: createProduct } = useCreateProduct();
-  const { mutate: updateProduct } = useUpdateProduct();
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editing, setEditing] = useState<Product | null>(null);
-  const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
+  const { data: productsResponse } = useGetAllProducts();
+  const { data: categoriesResponse } = useGetAllProductCategories();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductRecord | null>(
+    null,
+  );
+  const [expandedProductId, setExpandedProductId] = useState<number | null>(
+    null,
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm<ProductFormData>({
-    defaultValues: {
-      name: "",
-      categoryId: null,
-      productType: "",
-      description: "",
-      variants: [emptyVariant()],
-    },
-  });
-
-  const { fields: variants, append } = useFieldArray({
-    control,
-    name: "variants",
-  });
-
-  const selectedProductType = watch("productType");
-
-  const filteredProducts = (products?.data ?? []).filter(
-    (product: Product) => {
-      const query = searchQuery.trim().toLowerCase();
-      const categoryName = product.category?.name ?? "Sin categoría";
-
-      if (!query) return true;
-      return (
-        product.name.toLowerCase().includes(query) ||
-        categoryName.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query) ||
-        product.variants.some((variant: { name: string }) =>
-          variant.name.toLowerCase().includes(query),
-        )
-      );
-    },
+  const products = useMemo(
+    () => (productsResponse?.data ?? []) as ProductRecord[],
+    [productsResponse],
   );
+  const categories = categoriesResponse?.data ?? [];
 
-  const openNew = () => {
-    setEditing(null);
-    reset({
-      name: "",
-      categoryId: null,
-      productType: "",
-      description: "",
-      variants: [emptyVariant()],
+  const filteredProducts = useMemo(() => {
+    const query = searchQuery.trim().toLocaleLowerCase("es");
+    if (!query) return products;
+
+    return products.filter((product) => {
+      const searchableText = [
+        product.name,
+        product.category?.name ?? "Sin categoría",
+        product.description ?? "",
+        ...product.variants.map((variant) => variant.name),
+      ]
+        .join(" ")
+        .toLocaleLowerCase("es");
+
+      return searchableText.includes(query);
     });
-    setDialogOpen(true);
+  }, [products, searchQuery]);
+
+  const openCreateForm = () => {
+    setEditingProduct(null);
+    setFormOpen(true);
   };
 
-  const openEdit = (product: Product) => {
-    setEditing(product);
-    reset({
-      id: product.id,
-      name: product.name,
-      categoryId: product.categoryId,
-      productType: (product as any).productType ?? "",
-      description: product.description,
-      variants: product.variants.map((v) => ({
-        ...v,
-        unit: (v as any).unit ?? null,
-        requirePreparation:
-          (v as any).requirePreparation ??
-          (v as any).requiresPreparation ??
-          false,
-      })),
-    });
-    setDialogOpen(true);
+  const openEditForm = (product: ProductRecord) => {
+    setEditingProduct(product);
+    setFormOpen(true);
   };
 
-  const onSubmit = (data: ProductFormData) => {
-    const parsedData = {
-      id: data.id,
-      name: data.name,
-      categoryId: Number(data.categoryId),
-      productType: data.productType,
-      description: data.description,
-      variants: data.variants.map((v) => ({
-        id: v?.id,
-        name: v.name,
-        retailPrice: Number(v.retailPrice),
-        wholesalePrice: Number(v.wholesalePrice),
-        minStock: Number(v.minStock),
-        productCost: Number(v.productCost),
-        isActive: v.isActive,
-        requirePreparation: v.requirePreparation,
-        unit: v.unit,
-        recipeItems: v.recipeItems,
-      })),
-    };
-
-    if (data?.id) {
-      updateProduct(parsedData as any, {
-        onSuccess: () => {
-          toast("Producto actualizado exitosamente", { variant: "success" });
-          closeDialog();
-        },
-      });
-    } else {
-      createProduct(parsedData as any, {
-        onSuccess: () => {
-          toast("Producto creado exitosamente", { variant: "success" });
-          closeDialog();
-        },
-      });
-    }
+  const closeForm = () => {
+    setFormOpen(false);
+    setEditingProduct(null);
   };
-
-  const closeDialog = () => {
-    reset();
-    setDialogOpen(false);
-    setEditing(null);
-  };
-
-  useEffect(() => {
-    if (
-      selectedProductType !== "INGREDIENT" &&
-      selectedProductType !== "PREPARED_BASE"
-    )
-      return;
-
-    const variants = watch("variants");
-
-    const updated = variants.map((v: any) => ({
-      ...v,
-      retailPrice: "0",
-      wholesalePrice: "0",
-      productCost: "0",
-    }));
-
-    setValue("variants", updated);
-  }, [selectedProductType]);
 
   return (
-    <div className={`mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col gap-6 ${embedded ? "" : "p-6"}`}>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Productos</h1>
-        <Button onClick={openNew} size="sm">
-          <Plus className="h-4 w-4 mr-1" /> Nuevo Producto
+    <div
+      className={`mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col gap-6 ${
+        embedded ? "" : "p-6"
+      }`}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Productos</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Administra presentaciones, precios, inventario y recetas.
+          </p>
+        </div>
+        <Button onClick={openCreateForm} size="sm">
+          <Plus className="mr-1 h-4 w-4" /> Nuevo producto
         </Button>
       </div>
 
@@ -247,782 +95,146 @@ const Products = ({ embedded = false }: ProductsProps) => {
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Buscar producto, categoría o variante..."
+          onChange={(event) => setSearchQuery(event.target.value)}
+          placeholder="Buscar producto, categoría o variante…"
           className="w-full pl-10"
+          aria-label="Buscar productos"
         />
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto pr-1">
         <div className="grid gap-3 pb-2">
-          {filteredProducts.map(
-            (product: Product) => {
-              const isExpanded = expandedProduct === product.id;
-              const config = productTypes.find(
-                (type) => type.value === product.productType,
-              ) || {
-                color: "bg-gray-100 text-gray-800",
-                icon: Cuboid,
-                label: "Tipo Desconocido",
-              };
-              return (
-                <div
-                  key={product.id}
-                  className="rounded-xl border border-border bg-card overflow-hidden"
-                >
-                  <div className="flex items-center justify-between p-4">
-                    <button
-                      className="flex items-center gap-2 text-left flex-1"
-                      onClick={() =>
-                        setExpandedProduct(isExpanded ? null : product.id)
-                      }
-                    >
-                      {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      )}
-                      <div
-                        className={`flex h-8 w-8 items-center justify-center rounded-full ${config.color}`}
+          {filteredProducts.map((product) => {
+            const isExpanded = expandedProductId === product.id;
+            const typeConfig = productTypes.find(
+              (type) => type.value === product.productType,
+            ) ?? {
+              color: "bg-gray-100 text-gray-800",
+              icon: Cuboid,
+              label: "Tipo desconocido",
+            };
+
+            return (
+              <article
+                key={product.id}
+                className="overflow-hidden rounded-xl border border-border bg-card"
+              >
+                <div className="flex items-center justify-between gap-3 p-4">
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                    onClick={() =>
+                      setExpandedProductId(isExpanded ? null : product.id)
+                    }
+                    aria-expanded={isExpanded}
+                  >
+                    {isExpanded ? (
+                      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    )}
+
+                    <Tooltip delay={0}>
+                      <span
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${typeConfig.color}`}
                       >
-                        <Tooltip delay={0}>
-                          {<config.icon className="h-4 w-4" />}
-                          <Tooltip.Content>
-                            <p>{config.label}</p>
-                          </Tooltip.Content>
-                        </Tooltip>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-foreground">
-                          {product.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {product.category?.name ?? "Sin categoría"} · {product.variants.length}{" "}
-                          {product.variants.length === 1
-                            ? "variante"
-                            : "variantes"}
-                        </p>
-                      </div>
-                    </button>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEdit(product)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      {/* <Button
-                      variant="ghost"
-                      size="sm"
-                      // onClick={() => handleDelete(product.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button> */}
-                    </div>
-                  </div>
-                  {isExpanded && (
-                    <div className="border-t border-border px-4 pb-4 pt-3 space-y-2">
-                      {product.description && (
-                        <p className="text-sm text-muted-foreground mb-3">
-                          {product.description}
-                        </p>
-                      )}
-                      {product.variants.map((v: ProductVariant) => (
-                        <div
-                          key={v.id}
-                          className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2 text-sm"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-foreground mr-5">
-                              {v.name}
-                            </span>
-                            {!v?.isActive && (
-                              <Chip
-                                size="sm"
-                                className="bg-[#ef4444]/20 text-[#ef4444]"
-                              >
-                                Inactivo
-                              </Chip>
-                            )}
-                            {v?.requirePreparation && (
-                              <Chip
-                                size="sm"
-                                className="bg-[#10b981]/20 text-[#10b981]"
-                              >
-                                Requiere comanda
-                              </Chip>
-                            )}
-                          </div>
-                          <div className="flex gap-4 text-muted-foreground">
-                            <span>
-                              Público: {numeral(v?.retailPrice).format("$0,0")}
-                            </span>
-                            <span>
-                              Mayorista:{" "}
-                              {numeral(v?.wholesalePrice).format("$0,0")}
-                            </span>
-                            <span>
-                              Costo: {numeral(v?.productCost).format("$0,0")}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        <typeConfig.icon className="h-4 w-4" />
+                      </span>
+                      <Tooltip.Content>{typeConfig.label}</Tooltip.Content>
+                    </Tooltip>
+
+                    <span className="min-w-0">
+                      <span className="block truncate font-semibold text-foreground">
+                        {product.name}
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {product.category?.name ?? "Sin categoría"} ·{" "}
+                        {product.variants.length}{" "}
+                        {product.variants.length === 1 ? "variante" : "variantes"}
+                      </span>
+                    </span>
+                  </button>
+
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    aria-label={`Editar ${product.name}`}
+                    onClick={() => openEditForm(product)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
                 </div>
-              );
-            },
-          )}
+
+                {isExpanded && (
+                  <div className="space-y-2 border-t border-border px-4 pb-4 pt-3">
+                    {product.description && (
+                      <p className="mb-3 text-sm text-muted-foreground">
+                        {product.description}
+                      </p>
+                    )}
+                    {product.variants.map((variant) => (
+                      <VariantSummary key={variant.id} variant={variant} />
+                    ))}
+                  </div>
+                )}
+              </article>
+            );
+          })}
+
           {filteredProducts.length === 0 && (
-            <p className="py-8 text-center text-muted-foreground">
-              {searchQuery.trim()
-                ? "No se encontraron productos con esa búsqueda."
-                : "No hay productos aún."}
-            </p>
+            <div className="rounded-xl border border-dashed border-border px-4 py-10 text-center">
+              <Cuboid className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+              <p className="font-medium text-foreground">
+                {searchQuery.trim()
+                  ? "No encontramos productos"
+                  : "Todavía no hay productos"}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {searchQuery.trim()
+                  ? "Prueba con otro nombre, categoría o variante."
+                  : "Crea el primero para comenzar a configurar el catálogo."}
+              </p>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Product Dialog */}
-
-      <Modal>
-        <Modal.Backdrop isOpen={dialogOpen}>
-          <Modal.Container>
-            <Modal.Dialog className=" w-full max-w-4xl rounded-lg">
-              <Modal.CloseTrigger
-                onClick={closeDialog}
-                className="rounded-full bg-pos-order-bg/90 p-2 text-white shadow-sm transition-all hover:bg-pos-order-bg"
-              />
-              <Modal.Header>
-                <Modal.Heading className="text-lg font-semibold">
-                  {editing ? "Editar Producto" : "Nuevo Producto"}
-                </Modal.Heading>
-              </Modal.Header>
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col h-full"
-              >
-                <Modal.Body className="overflow-y-auto flex-1 min-h-0">
-                  <div className="space-y-6 pr-2">
-                    {/* General Product Info */}
-                    <div className="space-y-4 p-4">
-                      <h3 className="text-sm font-semibold text-foreground">
-                        Información General
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-2 flex flex-col">
-                          <Label>Nombre</Label>
-                          <Input
-                            className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                            {...register("name", {
-                              required: "El nombre es requerido",
-                            })}
-                            placeholder="Ej: Croissant"
-                          />
-                          {errors.name && (
-                            <p className="text-xs text-destructive">
-                              {errors.name.message}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="space-y-2">
-                          <Controller
-                            name="productType"
-                            control={control}
-                            rules={{
-                              required: "Selecciona un tipo de producto",
-                            }}
-                            render={({ field }) => (
-                              <>
-                                <Select
-                                  className="w-full"
-                                  placeholder="Selecciona un tipo de producto"
-                                  {...field}
-                                  onChange={(e) => {
-                                    setValue("categoryId", null);
-                                    setValue("productType", e as string);
-
-                                    const currentVariants = watch("variants");
-
-                                    const resetVariants = currentVariants.map(
-                                      (v: any) => ({
-                                        ...v,
-                                        recipeItems:
-                                          selectedProductType ===
-                                          "RECIPE_PRODUCT"
-                                            ? v.recipeItems
-                                            : null,
-                                      }),
-                                    );
-
-                                    setValue("variants", resetVariants);
-                                  }}
-                                >
-                                  <Label>Tipo de Producto</Label>
-
-                                  <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
-                                    <Select.Value />
-                                    <Select.Indicator />
-                                  </Select.Trigger>
-
-                                  <Select.Popover className="rounded-md">
-                                    <ListBox>
-                                      {productTypes?.map(
-                                        (type: {
-                                          label: string;
-                                          value: string;
-                                        }) => (
-                                          <ListBox.Item
-                                            id={type.value}
-                                            textValue={type.label}
-                                            key={type.value}
-                                          >
-                                            {type.label}
-                                          </ListBox.Item>
-                                        ),
-                                      )}
-                                    </ListBox>
-                                  </Select.Popover>
-                                </Select>
-
-                                {errors.categoryId && (
-                                  <p className="text-xs text-destructive">
-                                    {errors.categoryId.message}
-                                  </p>
-                                )}
-                              </>
-                            )}
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Controller
-                          name="categoryId"
-                          control={control}
-                          rules={{ required: "Selecciona una categoría" }}
-                          render={({ field }) => {
-                            return (
-                              <>
-                                <Select
-                                  className="w-full"
-                                  placeholder="Selecciona una categoría"
-                                  {...field}
-                                >
-                                  <Label>Categoría</Label>
-
-                                  <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
-                                    <Select.Value />
-                                    <Select.Indicator />
-                                  </Select.Trigger>
-
-                                  <Select.Popover className="rounded-md">
-                                    <ListBox>
-                                      {selectedProductType &&
-                                        categories?.data
-                                          ?.filter((cat: any) => {
-                                            if (
-                                              selectedProductType ===
-                                                "INGREDIENT" ||
-                                              selectedProductType ===
-                                                "PREPARED_BASE"
-                                            ) {
-                                              return !cat?.posVisible;
-                                            }
-                                            if (
-                                              selectedProductType ===
-                                                "FINISHED_PRODUCT" ||
-                                              selectedProductType ===
-                                                "RECIPE_PRODUCT" || selectedProductType === "THIRD_PARTY_PRODUCT"
-                                            ) {
-                                              return !!cat?.posVisible;
-                                            }
-                                            // default: show POS visible
-                                            return !!cat?.posVisible;
-                                          })
-                                          .map(
-                                            (cat: {
-                                              id: string;
-                                              name: string;
-                                            }) => (
-                                              <ListBox.Item
-                                                id={cat.id}
-                                                textValue={cat.name}
-                                                key={cat.id}
-                                              >
-                                                {cat.name}
-                                              </ListBox.Item>
-                                            ),
-                                          )}
-                                    </ListBox>
-                                  </Select.Popover>
-                                </Select>
-
-                                {errors.categoryId && (
-                                  <p className="text-xs text-destructive">
-                                    {errors.categoryId.message}
-                                  </p>
-                                )}
-                              </>
-                            );
-                          }}
-                        />
-                      </div>
-                      {/* <div className="space-y-2 flex flex-col">
-                        <Label>Descripción</Label>
-                        <TextArea
-                          className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                          {...register("description")}
-                          placeholder="Descripción del producto"
-                          rows={2}
-                        />
-                      </div> */}
-                    </div>
-
-                    {/* Variants Section */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-semibold text-foreground">
-                          Variantes ({variants.length})
-                        </h3>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => append(emptyVariant())}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
-                        {variants.map((variant, variantIdx) => {
-                          return (
-                            <div
-                              key={variant.id}
-                              className="rounded-lg border border-border bg-muted/40 p-4 space-y-4"
-                            >
-                              {/* Variant Header */}
-                              <div className="flex items-center justify-between gap-2">
-                                <h4 className="text-sm font-medium text-foreground">
-                                  Variante {variantIdx + 1}
-                                </h4>
-                                {/* {variants.length > 1 && (
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7"
-                                  onClick={() => remove(idx)}
-                                >
-                                  <Trash2 className="h-4 w-4 text-destructive" />
-                                </Button>
-                              )} */}
-                              </div>
-
-                              {/* Basic Info */}
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div className="space-y-1  flex flex-col">
-                                  <Label className="text-xs">Nombre</Label>
-                                  <Input
-                                    className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                                    {...register(
-                                      `variants.${variantIdx}.name`,
-                                      {
-                                        required: "El nombre es requerido",
-                                      },
-                                    )}
-                                    placeholder="Ej: Grande"
-                                  />
-                                  {errors.variants?.[variantIdx]?.name && (
-                                    <p className="text-xs text-destructive">
-                                      {
-                                        errors.variants[variantIdx]?.name
-                                          ?.message
-                                      }
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="space-y-1 flex flex-col">
-                                  <Label className="text-xs">Descripción</Label>
-                                  <Input
-                                    className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                                    {...register(
-                                      `variants.${variantIdx}.description`,
-                                    )}
-                                    placeholder="Descripción"
-                                  />
-                                </div>
-                                {(selectedProductType === "INGREDIENT" ||
-                                  selectedProductType === "PREPARED_BASE") && (
-                                  <div className="space-y-1">
-                                    <Label className="text-xs">Unidad</Label>
-                                    <Controller
-                                      name={`variants.${variantIdx}.unit`}
-                                      control={control}
-                                      render={({ field }) => (
-                                        <Select
-                                          className="w-full"
-                                          {...field}
-                                          placeholder="Selecciona una unidad"
-                                        >
-                                          <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
-                                            <Select.Value />
-                                            <Select.Indicator />
-                                          </Select.Trigger>
-                                          <Select.Popover className="rounded-md">
-                                            <ListBox>
-                                              {productUnits?.map(
-                                                (unit: {
-                                                  label: string;
-                                                  value: string;
-                                                }) => (
-                                                  <ListBox.Item
-                                                    id={unit.value}
-                                                    textValue={unit.label}
-                                                    key={unit.value}
-                                                  >
-                                                    {unit.label}
-                                                  </ListBox.Item>
-                                                ),
-                                              )}
-                                            </ListBox>
-                                          </Select.Popover>
-                                        </Select>
-                                      )}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-
-                              {/* Prices Grid */}
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                <div className="space-y-1">
-                                  <Label className="text-xs">
-                                    Precio Público
-                                  </Label>
-                                  <Input
-                                    disabled={
-                                      selectedProductType === "INGREDIENT" ||
-                                      selectedProductType === "PREPARED_BASE"
-                                    }
-                                    className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                                    type="number"
-                                    step="0.01"
-                                    {...register(
-                                      `variants.${variantIdx}.retailPrice`,
-                                      {
-                                        required:
-                                          "El precio público es requerido",
-                                      },
-                                    )}
-                                  />
-                                  {errors.variants?.[variantIdx]
-                                    ?.retailPrice && (
-                                    <p className="text-xs text-destructive">
-                                      {errors.variants?.[variantIdx]
-                                        ?.retailPrice?.message || "Requerido"}
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="space-y-1">
-                                  <Label className="text-xs">Mayorista</Label>
-                                  <Input
-                                    disabled={
-                                      selectedProductType === "INGREDIENT" ||
-                                      selectedProductType === "PREPARED_BASE"
-                                    }
-                                    className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                                    type="text"
-                                    inputMode="decimal"
-                                    pattern="^\d+(\.\d{1,2})?$"
-                                    {...register(
-                                      `variants.${variantIdx}.wholesalePrice`,
-                                      {
-                                        required:
-                                          "El precio mayorista es requerido",
-                                        pattern: {
-                                          value: /^\d+(\.\d{1,2})?$/,
-                                          message:
-                                            "Solo números con máximo 2 decimales",
-                                        },
-                                      },
-                                    )}
-                                  />
-                                  {errors.variants?.[variantIdx]
-                                    ?.wholesalePrice && (
-                                    <p className="text-xs text-destructive">
-                                      {errors.variants?.[variantIdx]
-                                        ?.wholesalePrice?.message ||
-                                        "Requerido"}
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="space-y-1">
-                                  <Label className="text-xs">Costo</Label>
-                                  <Input
-                                    disabled={
-                                      selectedProductType === "INGREDIENT" ||
-                                      selectedProductType === "PREPARED_BASE"
-                                    }
-                                    className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                                    type="text"
-                                    inputMode="decimal"
-                                    pattern="^\d+(\.\d{1,2})?$"
-                                    {...register(
-                                      `variants.${variantIdx}.productCost`,
-                                      {
-                                        required: "El costo es requerido",
-                                        pattern: {
-                                          value: /^\d+(\.\d{1,2})?$/,
-                                          message:
-                                            "Solo números con máximo 2 decimales",
-                                        },
-                                      },
-                                    )}
-                                  />
-                                  {errors.variants?.[variantIdx]
-                                    ?.productCost && (
-                                    <p className="text-xs text-destructive">
-                                      {errors.variants?.[variantIdx]
-                                        ?.productCost?.message || "Requerido"}
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="space-y-1">
-                                  <Label className="text-xs">
-                                    Stock Mínimo
-                                  </Label>
-                                  <Input
-                                    className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="^\d+$"
-                                    {...register(
-                                      `variants.${variantIdx}.minStock`,
-                                      {
-                                        required:
-                                          "El stock mínimo es requerido",
-                                        pattern: {
-                                          value: /^\d+$/,
-                                          message: "Solo números enteros",
-                                        },
-                                      },
-                                    )}
-                                  />
-                                  {errors.variants?.[variantIdx]?.minStock && (
-                                    <p className="text-xs text-destructive">
-                                      {errors.variants?.[variantIdx]?.minStock
-                                        ?.message || "Requerido"}
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                              {selectedProductType === "RECIPE_PRODUCT" && (
-                                <VariantRecipeSection
-                                  variant={variant}
-                                  variantIdx={variantIdx}
-                                  control={control}
-                                  register={register}
-                                  products={products}
-                                  selectedProductType={selectedProductType}
-                                />
-                              )}
-
-                              {/* Toggles */}
-                              <div className="border-t border-border pt-3 flex flex-col sm:flex-row gap-4">
-                                <div className="flex items-center gap-2">
-                                  <Controller
-                                    name={`variants.${variantIdx}.isActive`}
-                                    control={control}
-                                    render={({ field }) => (
-                                      <Switch
-                                        isSelected={field.value}
-                                        onChange={field.onChange}
-                                        size="sm"
-                                      >
-                                        <Switch.Control>
-                                          <Switch.Thumb />
-                                        </Switch.Control>
-                                        <Switch.Content>
-                                          <Label>Activo</Label>
-                                        </Switch.Content>
-                                      </Switch>
-                                    )}
-                                  />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Controller
-                                    name={`variants.${variantIdx}.requirePreparation`}
-                                    control={control}
-                                    render={({ field }) => (
-                                      <>
-                                        <Switch
-                                          isSelected={field.value}
-                                          onChange={field.onChange}
-                                          size="sm"
-                                        >
-                                          <Switch.Control>
-                                            <Switch.Thumb />
-                                          </Switch.Control>
-                                          <Switch.Content>
-                                            <Label>Requiere comanda</Label>
-                                          </Switch.Content>
-                                        </Switch>
-                                      </>
-                                    )}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </Modal.Body>
-                <Modal.Footer className="gap-2">
-                  <Button variant="outline" onClick={closeDialog} type="button">
-                    Cancelar
-                  </Button>
-                  <Button type="submit">
-                    {editing ? "Guardar cambios" : "Crear producto"}
-                  </Button>
-                </Modal.Footer>
-              </form>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      {formOpen && (
+        <ProductFormModal
+          isOpen
+          product={editingProduct}
+          products={products}
+          categories={categories}
+          onClose={closeForm}
+        />
+      )}
     </div>
   );
 };
 
-interface VariantCardProps {
-  variant: any;
-  variantIdx: number;
-  control: any;
-  register: any;
-  products: any;
-  selectedProductType: string;
-}
-
-function VariantRecipeSection({
-  variantIdx,
-  control,
-  register,
-  products,
-}: VariantCardProps) {
-  const {
-    fields: recipeItems,
-    append: appendRecipeItem,
-    remove: removeRecipeItem,
-  } = useFieldArray({
-    control,
-    name: `variants.${variantIdx}.recipeItems`,
-  });
-
-  const currentRecipeItems =
-    control._formValues?.variants?.[variantIdx]?.recipeItems ?? [];
-
+function VariantSummary({ variant }: { variant: ProductVariantRecord }) {
   return (
-    <div className="border-t border-border pt-3 flex flex-col gap-4">
-      <Label className="text-md">Receta</Label>
-
-      {recipeItems.map((item, recipeIdx) => (
-        <div key={item.id} className="grid grid-cols-12 gap-2 items-center">
-          <div className="col-span-6">
-            <Controller
-              name={`variants.${variantIdx}.recipeItems.${recipeIdx}.ingredientVariantId`}
-              control={control}
-              render={({ field }) => {
-                return (
-                  <Select
-                    {...field}
-                    aria-label="ingredient-select"
-                    placeholder="Selecciona un ingrediente"
-                  >
-                    <Select.Trigger className="w-full h-10 rounded-lg border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none px-3 py-2 mt-0.5">
-                      <Select.Value />
-                      <Select.Indicator />
-                    </Select.Trigger>
-
-                    <Select.Popover className="rounded-md">
-                      <ListBox>
-                        {products?.data
-                          ?.filter((product: any) => {
-                            return (
-                              product.productType === "INGREDIENT" ||
-                              product.productType === "PREPARED_BASE"
-                            );
-                          })
-                          .flatMap((product: any) =>
-                            (product.variants ?? []).map(
-                              (variant: ProductVariant) => (
-                                <ListBox.Item
-                                  key={`${product.id}-${variant.id}`}
-                                  id={variant.id}
-                                  className={`${currentRecipeItems.some((ri: any) => ri.ingredientVariantId === variant.id) ? "hidden" : ""}`}
-                                >
-                                  {product.name} - {variant.name} -{" "}
-                                  {
-                                    productUnits.find(
-                                      (u: any) => u.value === variant.unit,
-                                    )?.label
-                                  }
-                                </ListBox.Item>
-                              ),
-                            ),
-                          )}
-                      </ListBox>
-                    </Select.Popover>
-                  </Select>
-                );
-              }}
-            />
-          </div>
-
-          <div className="col-span-2">
-            <Input
-              className="border border-border bg-background/10 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none h-10 px-3"
-              {...register(
-                `variants.${variantIdx}.recipeItems.${recipeIdx}.quantity`,
-                {
-                  valueAsNumber: true,
-                  required: true,
-                },
-              )}
-              placeholder="Cantidad"
-            />
-          </div>
-
-          <div className="col-span-4 sm:col-span-2 flex justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => removeRecipeItem(recipeIdx)}
-              className="h-10"
-            >
-              <Trash className="h-4 w-4 text-destructive" />
-            </Button>
-          </div>
-        </div>
-      ))}
-
-      <div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() =>
-            appendRecipeItem({
-              ingredientVariantId: null,
-              quantity: 0,
-            })
-          }
-        >
-          + Agregar ingrediente
-        </Button>
+    <div className="flex flex-col gap-2 rounded-lg bg-muted/50 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="font-medium text-foreground">{variant.name}</span>
+        {!variant.isActive && (
+          <Chip size="sm" className="bg-danger/15 text-danger">
+            Inactiva
+          </Chip>
+        )}
+        {variant.requirePreparation && (
+          <Chip size="sm" className="bg-success/15 text-success">
+            Requiere comanda
+          </Chip>
+        )}
+      </div>
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <span>Público: {numeral(variant.retailPrice).format("$0,0")}</span>
+        <span>
+          Mayorista: {numeral(variant.wholesalePrice).format("$0,0")}
+        </span>
+        <span>Costo: {numeral(variant.productCost).format("$0,0")}</span>
       </div>
     </div>
   );

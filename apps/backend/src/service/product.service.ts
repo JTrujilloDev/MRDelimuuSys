@@ -75,7 +75,10 @@ export const createProductService = async (productData: CreateProductData) => {
           name: variant.name,
           retailPrice: variant.retailPrice,
           wholesalePrice: variant.wholesalePrice,
-          minStock: variant.minStock,
+          minStock:
+            productData.productType === "RECIPE_PRODUCT"
+              ? 0
+              : variant.minStock,
           productCost: variant.productCost,
           isActive: variant.isActive ?? true,
           requirePreparation: variant.requirePreparation ?? false,
@@ -151,6 +154,17 @@ export const deleteProductService = async (id: number) => {
 };
 
 export const updateProductService = async (id: number, productData: any) => {
+  const currentProduct = await prisma.product.findUnique({
+    where: { id },
+    select: { productType: true },
+  });
+
+  if (!currentProduct) {
+    throw new Error("Product not found");
+  }
+
+  const resultingProductType =
+    productData.productType ?? currentProduct.productType;
   const variants = productData.variants || [];
   const variantsToCreate = variants.filter((v: any) => !v.id);
   const variantsToUpdate = variants.filter((v: any) => v.id);
@@ -176,7 +190,8 @@ export const updateProductService = async (id: number, productData: any) => {
             name: v.name,
             retailPrice: v.retailPrice,
             wholesalePrice: v.wholesalePrice,
-            minStock: v.minStock,
+            minStock:
+              resultingProductType === "RECIPE_PRODUCT" ? 0 : v.minStock,
             productCost: v.productCost,
             isActive: v.isActive ?? true,
             requirePreparation: v.requirePreparation ?? false,
@@ -201,9 +216,11 @@ export const updateProductService = async (id: number, productData: any) => {
               ...(v.wholesalePrice !== undefined && {
                 wholesalePrice: v.wholesalePrice,
               }),
-              ...(v.minStock !== undefined && {
-                minStock: v.minStock,
-              }),
+              ...(resultingProductType === "RECIPE_PRODUCT"
+                ? { minStock: 0 }
+                : v.minStock !== undefined
+                  ? { minStock: v.minStock }
+                  : {}),
               ...(v.productCost !== undefined && {
                 productCost: v.productCost,
               }),

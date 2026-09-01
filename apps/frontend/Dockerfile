@@ -5,8 +5,10 @@ WORKDIR /app
 
 # Archivos del workspace
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY apps/backend/package.json ./apps/backend/package.json
+COPY apps/frontend/package.json ./apps/frontend/package.json
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.33.2
 
 # Instalar dependencias
 RUN pnpm install --frozen-lockfile
@@ -17,7 +19,7 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.33.2
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
@@ -40,6 +42,7 @@ RUN rm -rf /usr/share/nginx/html/*
 
 # Copiar build
 COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
+COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

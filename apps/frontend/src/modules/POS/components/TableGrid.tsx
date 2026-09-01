@@ -1,6 +1,7 @@
-import { Plus, Trash2, ShoppingBag, Pencil, Check, ChefHat } from "lucide-react";
+import { AlertTriangle, Plus, Trash2, ShoppingBag, Pencil, Check, ChefHat } from "lucide-react";
 import numeral from "numeral";
 import { useState } from "react";
+import { Button, Modal } from "@heroui/react";
 import type { KitchenTicket } from "../../../shared/kitchen/kitchenTickets.store";
 
 interface Account {
@@ -39,7 +40,23 @@ const TableGrid = ({
   const [editingId, setEditingId] = useState< number | null>(null);
   const [editValue, setEditValue] = useState("");
   const [showNameInput, setShowNameInput] = useState(false);
-  const [newName, setNewName] = useState("Cuenta mostrador");
+  const [newName, setNewName] = useState("");
+  const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
+  const getNextAccountName = () => {
+    const highestAccountNumber = tables.reduce((highest, account) => {
+      const match = account.name.trim().match(/^Cuenta\s+(\d+)$/i);
+      return match ? Math.max(highest, Number(match[1])) : highest;
+    }, 0);
+
+    return `Cuenta ${highestAccountNumber + 1}`;
+  };
+  const activeTicketsForAccountToDelete = accountToDelete
+    ? kitchenTickets.filter(
+        (ticket) =>
+          ticket.accountId === accountToDelete.id &&
+          ticket.status !== "DELIVERED",
+      ).length
+    : 0;
 
   const startEdit = (e: React.MouseEvent,  account: Account) => {
     e.stopPropagation();
@@ -59,12 +76,12 @@ const TableGrid = ({
         <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
           Delimuu POS
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-2 text-base font-medium text-foreground/75">
           Selecciona o crea una cuenta para empezar el servicio
         </p>
       </div>
 
-      <div className="grid flex-1 content-start gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+      <div className="grid flex-1 content-start grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
         {tables.map((table) => {
           const total = table?.accountItems?.reduce(
             (s, i) => s + i.price * i.quantity,
@@ -80,50 +97,70 @@ const TableGrid = ({
             <button
               key={table.id}
               onClick={() => !isEditing && onSelect(table.id)}
-              className={`group relative flex min-h-44 flex-col items-center justify-center rounded-[24px] border-2 p-5 text-center transition-all hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] ${
+              aria-label={`Abrir cuenta ${table.name}, ${hasItems ? `${table.accountItems.length} productos, total ${numeral(total).format("$ 0,0")}` : "sin productos"}`}
+              className={`group relative flex min-h-52 flex-col items-center justify-center rounded-[24px] border-2 p-6 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/50 active:scale-[0.98] ${
                 hasItems
                   ? "border-primary/40 bg-pos-order-bg text-pos-order-fg hover:border-primary/60"
                   : "border-white/10 bg-pos-order-bg/95 text-pos-order-fg hover:border-primary/30"
               }`}
             >
               {accountTickets.length > 0 && (
-                <span className={`absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-black shadow-md ${hasReadyTicket ? "bg-success text-success-foreground animate-pulse" : hasPreparingTicket ? "bg-warning text-warning-foreground" : "bg-secondary text-foreground"}`}>
-                  <ChefHat className="h-3.5 w-3.5" />
+                <span className={`absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-black shadow-md ${hasReadyTicket ? "border-success bg-success text-success-foreground animate-pulse" : hasPreparingTicket ? "border-warning bg-warning text-warning-foreground" : "border-border bg-secondary text-foreground"}`}>
+                  <ChefHat className="h-4 w-4" />
                   {hasReadyTicket ? "¡Listo para recoger!" : hasPreparingTicket ? "En preparación" : "En espera"}
                 </span>
               )}
-              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+              <div className="absolute right-2 top-2 flex gap-1 transition-all">
                 {!isEditing && (
                   <span
                     role="button"
+                    tabIndex={0}
                     onClick={(e) => startEdit(e, table)}
-                    className="p-1.5 rounded-full text-muted-foreground/40 hover:text-primary hover:bg-primary/10"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setEditingId(table.id);
+                        setEditValue(table.name);
+                      }
+                    }}
+                    aria-label={`Editar nombre de ${table.name}`}
+                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/25 bg-black/30 text-white shadow-sm transition hover:border-primary hover:bg-primary hover:text-primary-foreground"
                   >
-                    <Pencil className="h-3.5 w-3.5" />
+                    <Pencil className="h-5 w-5" />
                   </span>
                 )}
                 {tables.length >= 1 && (
                   <span
                     role="button"
+                    tabIndex={0}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onRemove(table.id);
+                      setAccountToDelete(table);
                     }}
-                    className="p-1.5 rounded-full text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setAccountToDelete(table);
+                      }
+                    }}
+                    aria-label={`Eliminar cuenta ${table.name}`}
+                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/25 bg-black/30 text-white shadow-sm transition hover:border-destructive hover:bg-destructive hover:text-destructive-foreground"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-5 w-5" />
                   </span>
                 )}
               </div>
 
               <div
-                className={`mb-3 flex h-14 w-14 items-center justify-center rounded-xl ${
+                className={`mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border ${
                   hasItems
-                    ? "bg-primary/20 text-primary"
-                    : "bg-white/10 text-pos-order-fg/80"
+                    ? "border-primary/50 bg-primary/25 text-primary"
+                    : "border-white/25 bg-white/10 text-white"
                 }`}
               >
-                <ShoppingBag className="h-6 w-6" />
+                <ShoppingBag className="h-8 w-8" />
               </div>
 
               {isEditing ? (
@@ -139,34 +176,34 @@ const TableGrid = ({
                       if (e.key === "Enter") confirmEdit(table.id);
                       if (e.key === "Escape") setEditingId(null);
                     }}
-                    className="w-24 rounded-lg border border-white/10 bg-white/10 px-2 py-1 text-center text-sm font-bold text-white outline-none focus:ring-2 focus:ring-primary/30"
+                    className="h-11 w-36 rounded-xl border-2 border-white/50 bg-black/30 px-3 text-center text-base font-black text-white outline-none focus:border-primary focus:ring-2 focus:ring-primary/50"
                   />
                   <span
                     role="button"
                     onClick={() => confirmEdit(table.id)}
-                    className="p-1 rounded-full text-primary hover:bg-primary/10"
+                    className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground"
                   >
-                    <Check className="h-4 w-4" />
+                    <Check className="h-5 w-5" />
                   </span>
                 </div>
               ) : (
-                <span className="text-sm font-bold tracking-wide text-white drop-shadow-sm">
+                <span className="max-w-full text-lg font-black leading-tight tracking-wide text-white drop-shadow-sm sm:text-xl">
                   {table.name}
                 </span>
               )}
 
               {hasItems ? (
                 <>
-                  <span className="mt-1 text-xs text-white/70">
+                  <span className="mt-2 text-base font-semibold text-white/90">
                     {table.accountItems.length}{" "}
                     {table.accountItems.length === 1 ? "producto" : "productos"}
                   </span>
-                  <span className="text-sm font-bold text-primary mt-1.5">
+                  <span className="mt-2 text-xl font-black text-primary">
                     {numeral(total).format("$ 0,0")}
                   </span>
                 </>
               ) : (
-                <span className="mt-1 text-xs text-white/70">
+                <span className="mt-2 text-base font-semibold text-white/85">
                   Sin productos
                 </span>
               )}
@@ -176,7 +213,7 @@ const TableGrid = ({
 
         {/* Add table button */}
         {showNameInput ? (
-          <div className="flex min-h-44 flex-col items-center justify-center rounded-[24px] border-2 border-primary/30 bg-primary/5 p-5 shadow-sm">
+          <div className="flex min-h-52 flex-col items-center justify-center rounded-[24px] border-2 border-primary/50 bg-primary/10 p-6 shadow-sm">
             <input
               autoFocus
               value={newName}
@@ -193,7 +230,7 @@ const TableGrid = ({
                 }
               }}
               placeholder="Nombre de cuenta..."
-              className="w-full rounded-lg bg-secondary px-3 py-2 text-sm text-foreground text-center placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30 mb-3"
+              className="mb-4 h-12 w-full rounded-xl border-2 border-border bg-background px-3 text-center text-base font-bold text-foreground placeholder:text-foreground/55 outline-none focus:border-primary focus:ring-2 focus:ring-primary/40"
             />
             <div className="flex gap-2">
               <button
@@ -204,7 +241,7 @@ const TableGrid = ({
                     setShowNameInput(false);
                   }
                 }}
-                className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:brightness-110"
+                className="min-h-11 rounded-xl bg-primary px-4 text-base font-black text-primary-foreground hover:brightness-110"
               >
                 Crear
               </button>
@@ -213,7 +250,7 @@ const TableGrid = ({
                   setNewName("");
                   setShowNameInput(false);
                 }}
-                className="rounded-lg bg-secondary px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-secondary/80"
+                className="min-h-11 rounded-xl border border-border bg-secondary px-4 text-base font-bold text-foreground hover:bg-secondary/80"
               >
                 Cancelar
               </button>
@@ -221,16 +258,92 @@ const TableGrid = ({
           </div>
         ) : (
           <button
-            onClick={() => setShowNameInput(true)}
-            className="flex min-h-44 flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-border p-5 text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 hover:text-primary active:scale-[0.98]"
+            onClick={() => {
+              setNewName(getNextAccountName());
+              setShowNameInput(true);
+            }}
+            className="flex min-h-52 flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-foreground/35 bg-pos-surface p-6 text-foreground transition-all hover:border-primary hover:bg-primary/10 hover:text-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40 active:scale-[0.98]"
           >
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary mb-3">
               <Plus className="h-6 w-6" />
             </div>
-            <span className="text-sm font-semibold">Nueva cuenta</span>
+            <span className="text-lg font-black">Nueva cuenta</span>
           </button>
         )}
       </div>
+
+      <Modal>
+        <Modal.Backdrop
+          isOpen={Boolean(accountToDelete)}
+          className="fixed inset-0 bg-black/55 backdrop-blur-[2px]"
+        >
+          <Modal.Container
+            placement="center"
+            size="sm"
+            className="flex min-h-dvh items-center justify-center p-4"
+          >
+            <Modal.Dialog className="m-auto w-full max-w-md overflow-hidden rounded-[28px] border border-border bg-pos-surface shadow-2xl">
+              <Modal.Header className="border-b border-border bg-danger/5 px-6 py-5">
+                <div className="flex items-start gap-4">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-danger/15 text-danger">
+                    <AlertTriangle className="h-6 w-6" />
+                  </span>
+                  <div className="min-w-0">
+                    <Modal.Heading className="text-xl font-black text-foreground">
+                      ¿Eliminar esta cuenta?
+                    </Modal.Heading>
+                    <p className="mt-1 truncate text-sm font-semibold text-muted-foreground">
+                      {accountToDelete?.name}
+                    </p>
+                  </div>
+                </div>
+              </Modal.Header>
+              <Modal.Body className="space-y-4 px-6 py-5">
+                <p className="text-sm leading-6 text-muted-foreground">
+                  Se eliminarán todos los productos abiertos de esta cuenta. Esta acción es permanente y no se puede deshacer.
+                </p>
+                {(accountToDelete?.accountItems.length ?? 0) > 0 && (
+                  <div className="flex items-center justify-between rounded-2xl border border-warning/25 bg-warning/10 px-4 py-3">
+                    <span className="text-sm font-semibold text-foreground">Productos abiertos</span>
+                    <span className="rounded-full bg-warning/20 px-3 py-1 text-sm font-black text-warning">
+                      {accountToDelete?.accountItems.length}
+                    </span>
+                  </div>
+                )}
+                {activeTicketsForAccountToDelete > 0 && (
+                  <div className="rounded-2xl border border-danger/30 bg-danger/10 p-4">
+                    <p className="font-black text-danger">Eliminación bloqueada</p>
+                    <p className="mt-1 text-sm leading-5 text-foreground/70">
+                      Tiene {activeTicketsForAccountToDelete} comanda(s) activa(s). Primero deben completarse y marcarse como recogidas.
+                    </p>
+                  </div>
+                )}
+              </Modal.Body>
+              <Modal.Footer className="flex-col-reverse gap-2 border-t border-border bg-secondary/20 px-6 py-4 sm:flex-row sm:justify-end">
+                <Button
+                  variant="ghost"
+                  className="w-full sm:w-auto"
+                  onPress={() => setAccountToDelete(null)}
+                >
+                  Conservar cuenta
+                </Button>
+                {activeTicketsForAccountToDelete === 0 && (
+                  <Button
+                    className="w-full bg-danger font-bold text-danger-foreground sm:w-auto"
+                    onPress={() => {
+                      if (accountToDelete) onRemove(accountToDelete.id);
+                      setAccountToDelete(null);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Eliminar definitivamente
+                  </Button>
+                )}
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
     </div>
   );
 };

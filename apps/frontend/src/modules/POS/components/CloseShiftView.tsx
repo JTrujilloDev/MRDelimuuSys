@@ -11,7 +11,7 @@ import {
   Minus,
 } from "lucide-react";
 
-import { Button, Input } from "@heroui/react";
+import { Button } from "@heroui/react";
 import DenominationCounter, {
   BILL_DENOMINATIONS,
   COIN_DENOMINATIONS,
@@ -54,11 +54,9 @@ const CloseShiftView = ({
   onBack,
 }: CloseShiftViewProps) => {
   const { mutate: closeCashRegister } = useCloseCashRegister();
-  const { data: { data: { data: expenses = [], meta } = {} } = {} } =
+  const { data: { data: { data: expenses = [] } = {} } = {} } =
     useGetExpenses(cashRegisterId);
   const [billCounts, setBillCounts] = useState<Record<number, string>>({});
-
-  console.log(expenses);
 
   // Sales breakdown
   const totalSales = shift.totalSales;

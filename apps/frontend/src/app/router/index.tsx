@@ -9,6 +9,7 @@ import FundationTags from "../../modules/fundationTags/pages";
 import ClientView from "../../modules/clientView/pages";
 import KitchenView from "../../modules/kitchenView/pages";
 import CashRegisterHistory from "../../modules/cashRegisterHistory/pages";
+import SecurityCameras from "../../modules/securityCameras/pages";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
       { path: "fundation-tags", element: <FundationTags /> },
       { path: "kitchen", element: <KitchenView /> },
       { path: "cash-register-history", element: <CashRegisterHistory /> },
+      { path: "security-cameras", element: <SecurityCameras /> },
 
     ],
   },

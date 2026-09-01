@@ -29,6 +29,7 @@ export type KitchenTicket = {
   accountId: number;
   accountName: string;
   status: KitchenTicketStatus;
+  instructions?: string | null;
   createdAt: string;
   items: KitchenTicketItem[];
   adjustments: KitchenTicketAdjustment[];
@@ -45,10 +46,16 @@ const normalizeTicket = (ticket: any): KitchenTicket => ({
 });
 
 export const createKitchenTicket = async (
-  ticket: Omit<KitchenTicket, "id" | "status" | "createdAt">,
+  ticket: {
+    accountId: number;
+    accountName?: string;
+    instructions?: string | null;
+    items: KitchenTicketItem[];
+  },
 ) => {
   const { data } = await api.post("kitchen-tickets", {
     accountId: ticket.accountId,
+    instructions: ticket.instructions,
     items: ticket.items.map(({ accountItemId, quantity }) => ({ accountItemId, quantity })),
   });
   return normalizeTicket(data.data);

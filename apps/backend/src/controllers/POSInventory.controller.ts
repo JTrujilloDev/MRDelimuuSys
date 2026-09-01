@@ -4,6 +4,7 @@ import {
   createPOSInventoryTransactionService,
   getPOSInventoryTransactionsService,
 } from "../service/POSInventory.service";
+import { getIO } from "../socket";
 
 export const createPOSInventoryTransaction = async (
   req: Request,
@@ -11,6 +12,7 @@ export const createPOSInventoryTransaction = async (
 ) => {
   try {
     const transaction = await createPOSInventoryTransactionService(req.body);
+    getIO().emit("inventory:updated");
     res.status(201).json({
       success: true,
       message: "Inventory transaction created successfully",
@@ -30,6 +32,7 @@ export const createBulkPOSInventoryTransaction = async (
 ) => {
   try {
     const transactions = await createBulkPOSInventoryTransactionService(req.body);
+    getIO().emit("inventory:updated");
     res.status(201).json({
       success: true,
       message: "Inventory transactions created successfully",

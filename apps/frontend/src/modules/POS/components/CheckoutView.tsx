@@ -37,6 +37,7 @@ interface CheckoutViewProps {
   tableLabel: string;
   onConfirm: (params: CloseAccountParams) => void;
   onBack: () => void;
+  isProcessing: boolean;
   accountInfo: {
     accountId: number;
     cashRegisterId: number;
@@ -49,6 +50,7 @@ const CheckoutView = ({
   tableLabel,
   onConfirm,
   onBack,
+  isProcessing,
   accountInfo,
 }: CheckoutViewProps) => {
   const [discount] = useState("");
@@ -67,54 +69,21 @@ const CheckoutView = ({
   const cashValue = parseFloat(cashReceived) || 0;
   const change = Math.max(0, cashValue - total);
 
-  const suggestedBills = useMemo(() => {
+  const suggestedCashAmounts = useMemo(() => {
     if (!total || isNaN(total) || total <= 0) return [];
 
-    const largeBills = [100000, 50000, 20000, 10000]; // 👈 sin 2k ni 5k
+    const roundingSteps = [1000, 2000, 5000, 10000, 20000, 50000, 100000];
     const suggestions = new Set<number>();
 
-    const target = Math.ceil(total);
-
-    // 1. Exacto (solo si es múltiplo de 10k o 20k)
-    if (target % 10000 === 0) {
-      suggestions.add(target);
-    }
-
-    // 2. Un solo billete
-    largeBills.forEach((bill) => {
-      if (bill >= target) {
-        suggestions.add(bill);
-      }
+    suggestions.add(total);
+    roundingSteps.forEach((step) => {
+      suggestions.add(Math.ceil(total / step) * step);
     });
 
-    // 3. Combinaciones de 2 billetes (solo grandes)
-    for (let i = 0; i < largeBills.length; i++) {
-      for (let j = i; j < largeBills.length; j++) {
-        const sum = largeBills[i] + largeBills[j];
-        if (sum >= target) {
-          suggestions.add(sum);
-        }
-      }
-    }
-
-    // 4. Combinaciones de 3 billetes (muy limitadas)
-    for (let i = 0; i < largeBills.length; i++) {
-      for (let j = i; j < largeBills.length; j++) {
-        for (let k = j; k < largeBills.length; k++) {
-          const sum = largeBills[i] + largeBills[j] + largeBills[k];
-
-          // 👇 evitar valores absurdos
-          if (sum >= target && sum <= target + 30000) {
-            suggestions.add(sum);
-          }
-        }
-      }
-    }
-
-    // 5. Ordenar y limitar
     return Array.from(suggestions)
+      .filter((amount) => amount >= total)
       .sort((a, b) => a - b)
-      .slice(0, 4);
+      .slice(0, 6);
   }, [total]);
 
   const canConfirm =
@@ -131,6 +100,7 @@ const CheckoutView = ({
         <Button
           type="button"
           onClick={onBack}
+          isDisabled={isProcessing}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
         >
           <BsArrowLeft className="h-4 w-4" />
@@ -265,26 +235,29 @@ const CheckoutView = ({
                 />
               </div>
 
-              {/* Suggested bills */}
+              {/* Suggested cash amounts */}
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground block">
-                  Billetes sugeridos
+                  Montos sugeridos
                 </Label>
                 <div className="grid grid-cols-2 gap-3">
-                  {suggestedBills.map((bill) => (
-                    <Button
-                      key={bill}
-                      type="button"
-                      onClick={() => setCashReceived(String(bill))}
-                      className={`w-full rounded-2xl border-2 py-3 text-sm font-semibold transition-all ${
-                        cashValue === bill
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border bg-secondary/30 text-foreground hover:border-primary/30"
-                      }`}
-                    >
-                      {numeral(bill).format("$ 0,0")}
-                    </Button>
-                  ))}
+                  {suggestedCashAmounts.map((amount) => {
+                    return (
+                      <Button
+                        key={amount}
+                        type="button"
+                        onClick={() => setCashReceived(String(amount))}
+                        aria-label={`Recibir ${numeral(amount).format("$ 0,0")}`}
+                        className={`w-full rounded-2xl border-2 py-3 text-sm font-semibold transition-all ${
+                          cashValue === amount
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-secondary/30 text-foreground hover:border-primary/30"
+                        }`}
+                      >
+                        {numeral(amount).format("$ 0,0")}
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -333,7 +306,6 @@ const CheckoutView = ({
                 <Button
                   onClick={() => {
                     socket.emit("generate-qr", { total, terminalId: accountInfo.terminalId });
-                    console.log("QR generado");
                     setQrGenerated(true)}}
                   variant="outline"
                   size="lg"
@@ -361,11 +333,13 @@ const CheckoutView = ({
           <div className=" pt-6">
             <Button
               onClick={() => setConfirmOpen(true)}
-              isDisabled={!canConfirm}
+              isDisabled={!canConfirm || isProcessing}
               className="w-full py-6 text-base font-bold"
               size="lg"
             >
-              Confirmar Pago — {numeral(total).format("$ 0,0")}
+              {isProcessing
+                ? "Procesando pago…"
+                : `Confirmar Pago — ${numeral(total).format("$ 0,0")}`}
             </Button>
           </div>
         </div>
@@ -407,6 +381,7 @@ const CheckoutView = ({
               <Button
                 className="w-full"
                 variant="outline"
+                isDisabled={isProcessing}
                 onClick={() => setConfirmOpen(false)}
               >
                 Cancelar
@@ -414,6 +389,7 @@ const CheckoutView = ({
 
               <Button
                 className="w-full"
+                isDisabled={isProcessing}
                 onClick={() => {
                   setConfirmOpen(false);
                   onConfirm({
@@ -434,7 +410,7 @@ const CheckoutView = ({
                   });
                 }}
               >
-                Confirmar
+                {isProcessing ? "Procesando…" : "Confirmar"}
               </Button>
             </div>
           </div>

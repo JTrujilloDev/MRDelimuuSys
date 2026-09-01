@@ -1,5 +1,27 @@
 import { api } from "../../../shared/services/api";
-import type { Variant } from "../../POS/components/VariantModal";
+
+export interface ProductPayload {
+  id?: number;
+  name: string;
+  categoryId: number;
+  productType: string;
+  description: string;
+  variants: Array<{
+    id?: number;
+    name: string;
+    retailPrice: number;
+    wholesalePrice: number;
+    minStock: number;
+    productCost: number;
+    isActive: boolean;
+    requirePreparation: boolean;
+    unit: string;
+    recipeItems: Array<{
+      ingredientVariantId: number;
+      quantity: number;
+    }>;
+  }>;
+}
 
 export const getAllProducts = async () => {
   const { data } = await api.get("/products");
@@ -11,24 +33,14 @@ export const getProductsByCategory = async (id: number) => {
   return data;
 };
 
-export const createProduct = async (product: {
-  name: string;
-  categoryId: number;
-  description: string;
-  variants: Array<Variant & { requirePreparation?: boolean }>;
-}) => {
+export const createProduct = async (product: ProductPayload) => {
   const { data } = await api.post("/products", product);
   return data;
 };
 
-export const updateProduct = async (product: {
-  id: number;
-  name: string;
-  categoryId: number;
-  productType: string;
-  description: string;
-  variants: Array<Variant & { requirePreparation?: boolean }>;
-}) => {
+export const updateProduct = async (
+  product: ProductPayload & { id: number },
+) => {
   const { data } = await api.put(`/products/${product.id}`, product);
   return data;
 };

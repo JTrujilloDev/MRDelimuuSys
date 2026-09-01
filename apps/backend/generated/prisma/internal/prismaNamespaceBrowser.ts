@@ -277,6 +277,7 @@ export const KitchenTicketScalarFieldEnum = {
   id: 'id',
   accountId: 'accountId',
   status: 'status',
+  instructions: 'instructions',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
