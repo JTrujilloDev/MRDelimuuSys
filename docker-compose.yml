@@ -1,13 +1,10 @@
 name: delimuu
 
 x-backend-image: &backend-image
-  build:
-    context: .
-    dockerfile: apps/backend/Dockerfile
-  image: delimuu-backend:local
+  image: jtrujillodev/delimuu-backend:latest
 
 x-backend-environment: &backend-environment
-  DATABASE_URL: postgresql://${POSTGRES_USER:-delimuu}:${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-delimuu}
+  DATABASE_URL: postgresql://${POSTGRES_USER:-delimuu}:${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en las variables del stack}@db:5432/${POSTGRES_DB:-delimuu}
   NODE_ENV: production
 
 services:
@@ -16,7 +13,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-delimuu}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en las variables del stack}
       POSTGRES_DB: ${POSTGRES_DB:-delimuu}
     volumes:
       - db_data:/var/lib/postgresql/data
@@ -31,7 +28,6 @@ services:
 
   migrate:
     <<: *backend-image
-    image: delimuu-migrate:local
     restart: "no"
     environment: *backend-environment
     command: ["pnpm", "exec", "prisma", "migrate", "deploy"]
@@ -61,10 +57,7 @@ services:
       start_period: 10s
 
   frontend:
-    build:
-      context: .
-      dockerfile: apps/frontend/Dockerfile
-    image: delimuu-frontend:local
+    image: jtrujillodev/delimuu-frontend:latest
     restart: unless-stopped
     depends_on:
       backend:
