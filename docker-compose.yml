@@ -4,79 +4,106 @@ x-backend-image: &backend-image
   image: jtrujillodev/delimuu-backend:latest
 
 x-backend-environment: &backend-environment
-  DATABASE_URL: postgresql://${POSTGRES_USER:-delimuu}:${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en las variables del stack}@db:5432/${POSTGRES_DB:-delimuu}
+  DATABASE_URL: postgresql://${POSTGRES_USER:-deli-db}:${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en las variables del stack}@db:5432/${POSTGRES_DB:-delimuu}
   NODE_ENV: production
 
 services:
   db:
     image: postgres:15-alpine
     restart: unless-stopped
+
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-delimuu}
+      POSTGRES_USER: ${POSTGRES_USER:-deli-db}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en las variables del stack}
       POSTGRES_DB: ${POSTGRES_DB:-delimuu}
+
     volumes:
       - db_data:/var/lib/postgresql/data
+
     networks:
       - database
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 10s
 
-  migrate:
-    <<: *backend-image
-    restart: "no"
-    environment: *backend-environment
-    command: ["pnpm", "exec", "prisma", "migrate", "deploy"]
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - database
 
   backend:
     <<: *backend-image
     restart: unless-stopped
+
     environment: *backend-environment
+
+    volumes:
+      # Ruta en el servidor Docker administrado por Portainer.
+      - /opt/delimuu/certificates:/app/certificates:ro
+
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+
     expose:
       - "3000"
+
     networks:
       - application
       - database
+
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health >/dev/null || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1:3000/health >/dev/null || exit 1"
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
 
+
   frontend:
     image: jtrujillodev/delimuu-frontend:latest
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
     restart: unless-stopped
-    depends_on:
-      backend:
-        condition: service_healthy
+
+    # Nginx sirve el frontend aunque el backend siga arrancando o falle.
+
     ports:
       - "0.0.0.0:${APP_PORT:-8080}:80"
+
     networks:
       - application
+
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost/health >/dev/null || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1/health >/dev/null || exit 1"
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 5s
 
+
 networks:
   application:
+
   database:
     internal: true
 
+
 volumes:
   db_data:
+    external: true
+    name: downloads_db_data
+    # Para DB que esta en PC de local se usa el volumen

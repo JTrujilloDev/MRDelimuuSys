@@ -1,9 +1,9 @@
 export const foundationProducts = {
   pan_blando: {
     name: "Pan blando",
-    content: "1,500 g (25 und. X 60g)",
+    content: "1,500 g (27 und. X 60g)",
     lotRef: "PB",
-    labelAmount: 6,
+    labelAmount: 4,
   },
   mogolla_blanca: {
     name: "Mogolla blanca",
@@ -19,15 +19,15 @@ export const foundationProducts = {
   },
   pan_maiz: {
     name: "Pan de maiz",
-    content: "1,500 g (25 und. X 60g)",
+    content: "1,500 g (27 und. X 60g)",
     lotRef: "PM",
-    labelAmount: 6,
+    labelAmount: 4,
   },
   mogolla_integral: {
     name: "Mogolla integral",
-    content: "1,500 g (25 und. X 60g)",
+    content: "1,500 g (27 und. X 60g)",
     lotRef: "MI",
-    labelAmount: 6,
+    labelAmount: 4,
   },
   mantecada: {
     name: "Mantecada",
@@ -36,16 +36,16 @@ export const foundationProducts = {
     labelAmount: 6,
   },
   pan_rollo: {
-    name: "Pan de rollo",
-    content: "1,500 g (25 und. X 60g)",
+    name: "Pan rollo",
+    content: "1,500 g (27 und. X 60g)",
     lotRef: "PR",
-    labelAmount: 6,
+    labelAmount: 4,
   },
   croissant: {
     name: "Croissant",
-    content: "1,500 g (25 und. X 60g)",
+    content: "1,500 g (27 und. X 60g)",
     lotRef: "CR",
-    labelAmount: 6,
+    labelAmount: 4,
   },
   galleta_avena: {
     name: "Galleta de avena",

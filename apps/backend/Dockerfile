@@ -96,5 +96,5 @@ EXPOSE 3000
 # Copiar node_modules hoisted desde el builder (layout clásico creado arriba)
 COPY --from=builder /app/node_modules ./node_modules
 
-# El servicio `migrate` de Docker Compose aplica las migraciones antes del arranque.
+# Las migraciones se ejecutan manualmente, fuera del arranque del contenedor.
 CMD ["node", "dist/src/server.js"]

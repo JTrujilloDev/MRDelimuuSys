@@ -32,7 +32,7 @@ COPY . .
 RUN pnpm --filter frontend install
 
 # Build del frontend
-RUN pnpm --filter frontend build
+RUN VITE_API_URL=/api VITE_SOCKET_URL= pnpm --filter frontend build
 
 # ----------- STAGE 3: runner (nginx) -----------
 FROM nginx:alpine AS runner
