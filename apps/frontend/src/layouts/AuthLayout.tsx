@@ -1,14 +1,8 @@
-import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { Outlet } from "react-router";
 
 export function AuthLayout() { 
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate("/app/POS");
-  }, []);
   return (
-    <div className="w-full h-screen flex items-center justify-center ">
+    <div className="flex min-h-screen w-full items-center justify-center bg-background p-6">
       <Outlet />
     </div>
   );

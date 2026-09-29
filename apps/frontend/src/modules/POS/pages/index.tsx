@@ -35,6 +35,7 @@ import { printTicketService } from "../../../shared/services/qz.service";
 import SalesHistory from "../components/SalesHistory";
 import { useSocket } from "../../../shared/socket/useSocket";
 import { createKitchenTicket, createKitchenTicketAdjustment, useKitchenTickets } from "../../../shared/kitchen/kitchenTickets.store";
+import { useAuth } from "../../../app/auth/AuthProvider";
 
 interface RecentProductShortcut {
   productName: string;
@@ -52,6 +53,10 @@ const readSessionValue = <T,>(key: string, fallback: T): T => {
 };
 
 const Index = () => {
+  const { state } = useAuth();
+  const userId = state!.user.id;
+  const terminalId = state!.activeContext!.terminal.id;
+  const kitchenEnabled = state!.activeContext!.store.kitchenMode === "TICKETS";
   const queryClient = useQueryClient();
   const { mutate: openCashRegister } = useOpenCashRegister();
   const { mutate: createAccount } = useCreateAccount();
@@ -67,8 +72,8 @@ const Index = () => {
   const { mutate: closeAccount, isPending: isClosingAccount } = useCloseAccount();
   const closingAccountRef = useRef(false);
   const { data: categories } = useGetAllProductCategories();
-  const { data: openCashRegisterData } = useGetOpenCashRegister(1);
-  const { data: accounts } = useGetAllAccounts(1);
+  const { data: openCashRegisterData } = useGetOpenCashRegister(terminalId);
+  const { data: accounts } = useGetAllAccounts(userId);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     () => readSessionValue<number | null>("pos:selected-category", null),
   );
@@ -193,7 +198,7 @@ const Index = () => {
   const handleOpenShift = useCallback(
     (initialAmount: number) => {
       openCashRegister(
-        { userId: 1, terminalId: 1, openingAmount: initialAmount },
+        { userId, terminalId, openingAmount: initialAmount },
         {
           onSuccess: () => {
             toast("Turno abierto exitosamente", { variant: "success" });
@@ -207,7 +212,7 @@ const Index = () => {
         },
       );
     },
-    [openCashRegister],
+    [openCashRegister, terminalId, userId],
   );
 
   const handleCloseShift = useCallback(() => {
@@ -304,17 +309,17 @@ const Index = () => {
       if (activeTable) {
         socket.emit("show-account", {
           accountId: activeTable.id,
-          terminalId: activeTable.terminalId ?? 1,
+          terminalId,
         });
       } else if (!activeTableId) {
-        socket.emit("clear-view", { terminalId: 1 });
+        socket.emit("clear-view", { terminalId });
       }
     };
 
     syncClientDisplay();
     socket.on("connect", syncClientDisplay);
     return () => { socket.off("connect", syncClientDisplay); };
-  }, [activeTable, activeTableId, socket]);
+  }, [activeTable, activeTableId, socket, terminalId]);
 
   useEffect(() => {
     const refreshProductStock = () => {
@@ -331,8 +336,8 @@ const Index = () => {
     createAccount(
       {
         name: name,
-        userId: 1,
-        terminalId: 1,
+        userId,
+        terminalId,
       },
       {
         onSuccess: () => {
@@ -530,7 +535,7 @@ const Index = () => {
   }, [activeTable, orderItems]);
 
   const handleSendToKitchen = useCallback(() => {
-    if (!activeTableId) return;
+    if (!kitchenEnabled || !activeTableId) return;
 
     const preparationItems = orderItems.filter(
       (item: { productVariant?: { requirePreparation: boolean } }) =>
@@ -592,7 +597,7 @@ const Index = () => {
       });
     });
 
-  }, [activeTable, activeTableId, effectiveSentToKitchenForActiveAccount, kitchenInstructions, orderItems]);
+  }, [activeTable, activeTableId, effectiveSentToKitchenForActiveAccount, kitchenEnabled, kitchenInstructions, orderItems]);
 
   const handleConfirmPayment = ({
     accountId,
@@ -747,7 +752,7 @@ const Index = () => {
         accountInfo={{
           accountId: activeTable.id,
           cashRegisterId: openCashRegisterData.data.id,
-          terminalId: activeTable.terminalId ?? 1,
+          terminalId,
         }}
       />
     );
@@ -886,6 +891,7 @@ const Index = () => {
             kitchenTickets={kitchenTickets.filter(
               (ticket) => ticket.accountId === activeTableId && ticket.status !== "DELIVERED",
             )}
+            kitchenEnabled={kitchenEnabled}
           />
         </div>
       </div>

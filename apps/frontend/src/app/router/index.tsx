@@ -10,12 +10,17 @@ import ClientView from "../../modules/clientView/pages";
 import KitchenView from "../../modules/kitchenView/pages";
 import CashRegisterHistory from "../../modules/cashRegisterHistory/pages";
 import SecurityCameras from "../../modules/securityCameras/pages";
+import ContextSelector from "../../pages/ContextSelector";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <AuthLayout />,
-    children: [{ path: "login", element: <Login /> }],
+    children: [
+      { index: true, element: <Navigate to="login" replace /> },
+      { path: "login", element: <Login /> },
+      { path: "select-context", element: <ContextSelector /> },
+    ],
   },
   {
     path: "/app",

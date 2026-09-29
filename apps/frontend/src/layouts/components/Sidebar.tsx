@@ -5,17 +5,22 @@ import { BiUser } from "react-icons/bi";
 import { BookOpen, Camera, ChefHat, History, Moon, Package, ShoppingCart, Sun, Tag } from "lucide-react";
 import { LuLogOut } from "react-icons/lu";
 import { useTheme } from "../../app/providers";
+import { useAuth } from "../../app/auth/AuthProvider";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { state, logout } = useAuth();
+  const activeContext = state!.activeContext!;
 
   const items = [
     { title: "Punto de Venta", url: "pos", icon: ShoppingCart },
     { title: "Historial de cajas", url: "cash-register-history", icon: History },
     { title: "Catálogo", url: "catalog", icon: BookOpen },
     {title: "Inventario" , url: "inventory", icon: Package},
-    {title : "Cocina", url: "kitchen", icon: ChefHat},
+    ...(activeContext.store.kitchenMode === "TICKETS"
+      ? [{ title: "Cocina", url: "kitchen", icon: ChefHat }]
+      : []),
     { title: "Cámaras", url: "security-cameras", icon: Camera },
     {title : "Etiquetas", url: "fundation-tags", icon: Tag}
   ];
@@ -23,9 +28,12 @@ const Sidebar = () => {
     <div className="flex h-full w-24 flex-col items-center gap-4 rounded-tr-[24px] rounded-br-[24px] border-r border-border/70 bg-pos-surface/95 py-4 shadow-[0_18px_40px_-30px_rgba(84,56,32,0.45)]">
       <img src={Logo} alt="Logo" className="mt-4 w-14 rounded-2xl" />
 
-      <div className="mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary text-foreground">
-        <BiUser size={28} />
-      </div>
+      <Tooltip>
+        <div className="mt-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary text-foreground">
+          <BiUser size={28} />
+        </div>
+        <Tooltip.Content>{state?.user.name} · {activeContext.store.name}</Tooltip.Content>
+      </Tooltip>
 
       <div className="mt-4 flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto px-1">
         {items.map((item) => (
@@ -65,7 +73,10 @@ const Sidebar = () => {
 
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl text-muted-foreground transition-all hover:cursor-pointer hover:bg-destructive/10 hover:text-destructive">
           <Tooltip>
-            <LuLogOut size={22} onClick={() => navigate("/login")} />
+            <LuLogOut
+              size={22}
+              onClick={() => void logout().then(() => navigate("/login", { replace: true }))}
+            />
             <Tooltip.Content>Cerrar sesión</Tooltip.Content>
           </Tooltip>
         </div>

@@ -7,22 +7,51 @@ import {
   TextField,
 } from "@heroui/react";
 import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useAuth } from "../app/auth/AuthProvider";
 
 const Login = () => {
   const navigate = useNavigate();
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const { state, isLoading, login, selectContext } = useAuth();
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isLoading || !state) return;
+    navigate(state.activeContext ? "/app/POS" : "/select-context", { replace: true });
+  }, [isLoading, navigate, state]);
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data: Record<string, string> = {};
-    formData.forEach((value, key) => {
-      data[key] = value.toString();
-    });
-    alert(`Form submitted with: ${JSON.stringify(data, null, 2)}`);
-    navigate("/app/POS");
+    setError("");
+    setIsSubmitting(true);
+    try {
+      const nextState = await login(
+        String(formData.get("email") ?? ""),
+        String(formData.get("password") ?? ""),
+      );
+      const onlyStore = nextState.stores.length === 1 ? nextState.stores[0] : null;
+      const onlyTerminal = onlyStore?.terminals.length === 1 ? onlyStore.terminals[0] : null;
+      if (onlyStore && onlyTerminal) {
+        const selected = await selectContext(onlyStore.id, onlyTerminal.id);
+        navigate(
+          selected.activeContext?.role === "KITCHEN" ? "/app/kitchen" : "/app/POS",
+          { replace: true },
+        );
+      } else {
+        navigate("/select-context", { replace: true });
+      }
+    } catch (requestError: any) {
+      setError(requestError.response?.data?.message ?? "No fue posible iniciar sesión");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <div className="flex w-96 flex-col">
-      <h1 className="text-2xl font-bold mb-5">Delimuu Sys</h1>
+      <h1 className="text-2xl font-bold mb-1">Delimuu Sys</h1>
+      <p className="mb-5 text-sm text-muted-foreground">Ingresa con tu usuario de trabajo</p>
       <Form className="flex flex-col gap-4" onSubmit={onSubmit}>
         <TextField
           isRequired
@@ -44,8 +73,9 @@ const Login = () => {
           <Input />
           <FieldError />
         </TextField>
-        <Button type="submit" variant="primary" className="w-full">
-          Iniciar sesión
+        {error && <p className="text-sm text-danger">{error}</p>}
+        <Button type="submit" variant="primary" className="w-full" isDisabled={isSubmitting}>
+          {isSubmitting ? "Ingresando…" : "Iniciar sesión"}
         </Button>
       </Form>
     </div>

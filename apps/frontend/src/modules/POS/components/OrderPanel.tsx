@@ -35,6 +35,7 @@ interface OrderPanelProps {
   kitchenInstructions: string;
   onKitchenInstructionsChange: (instructions: string) => void;
   kitchenTickets: KitchenTicket[];
+  kitchenEnabled: boolean;
 }
 
 const OrderPanel = ({
@@ -48,6 +49,7 @@ const OrderPanel = ({
   kitchenInstructions,
   onKitchenInstructionsChange,
   kitchenTickets,
+  kitchenEnabled,
 }: OrderPanelProps) => {
   const [isKitchenModalOpen, setIsKitchenModalOpen] = useState(false);
   const [isCheckoutWarningOpen, setIsCheckoutWarningOpen] = useState(false);
@@ -83,9 +85,10 @@ const OrderPanel = ({
     pendingAdjustments.map((adjustment) => adjustment.accountItemId),
   );
   const hasKitchenCheckoutWarnings =
-    kitchenPendingUnits > 0 ||
-    kitchenTickets.length > 0 ||
-    pendingAdjustments.length > 0;
+    kitchenEnabled &&
+    (kitchenPendingUnits > 0 ||
+      kitchenTickets.length > 0 ||
+      pendingAdjustments.length > 0);
 
   const requestCharge = () => {
     if (hasKitchenCheckoutWarnings) {
@@ -171,7 +174,7 @@ const OrderPanel = ({
                           <p className="truncate text-lg font-bold leading-tight">
                             {productName}
                           </p>
-                          {requiresPreparation && (
+                          {kitchenEnabled && requiresPreparation && (
                             <span
                               title={
                                 hasPendingAdjustment
@@ -256,18 +259,20 @@ const OrderPanel = ({
         </div>
 
         <div className="shrink-0 space-y-3 border-t border-white/10 bg-black/10 px-5 py-4">
-          <button
-            type="button"
-            onClick={() => setIsKitchenModalOpen(true)}
-            disabled={items.length === 0 && kitchenTickets.length === 0}
-            className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-sm font-bold transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-35 ${kitchenButtonState.className}`}
-          >
-            <span className="flex items-center gap-2">
-              {kitchenButtonState.icon}
-              {kitchenButtonState.label}
-            </span>
-            <span className="text-xs opacity-70">Ver detalles</span>
-          </button>
+          {kitchenEnabled && (
+            <button
+              type="button"
+              onClick={() => setIsKitchenModalOpen(true)}
+              disabled={items.length === 0 && kitchenTickets.length === 0}
+              className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-sm font-bold transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-35 ${kitchenButtonState.className}`}
+            >
+              <span className="flex items-center gap-2">
+                {kitchenButtonState.icon}
+                {kitchenButtonState.label}
+              </span>
+              <span className="text-xs opacity-70">Ver detalles</span>
+            </button>
+          )}
 
           <div className="flex items-end justify-between px-1">
             <div>

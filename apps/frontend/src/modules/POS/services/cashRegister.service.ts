@@ -1,6 +1,6 @@
 import { api } from "../../../shared/services/api";
 
-export const openCashRegister = async (cashRegisterData: { terminalId: number; openingAmount: number }) => {
+export const openCashRegister = async (cashRegisterData: { userId: number; terminalId: number; openingAmount: number }) => {
   const { data } = await api.post("cash-register/open", cashRegisterData);
   return data;
 };
