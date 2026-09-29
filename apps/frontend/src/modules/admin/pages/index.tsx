@@ -91,7 +91,6 @@ export default function AdminPage() {
             aria-selected={section === "users"}
           >
             <CircleUserRound className="h-5 w-5" /> Usuarios
-            {section === "users" && <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] uppercase">Activa</span>}
           </button>
           <button
             className={`flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-black transition-all ${
@@ -104,7 +103,6 @@ export default function AdminPage() {
             aria-selected={section === "stores"}
           >
             <Building2 className="h-5 w-5" /> Puntos y cajas
-            {section === "stores" && <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] uppercase">Activa</span>}
           </button>
         </div>
 
