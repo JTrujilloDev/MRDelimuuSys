@@ -95,12 +95,22 @@ export const resolveSessionService = async (rawToken: string) => {
     where: { tokenHash: hashSessionToken(rawToken) },
     include: {
       user: { select: userSelect },
-      activeStore: true,
+      activeStore: { include: { group: true } },
       activeTerminal: true,
     },
   });
 
   if (!session || session.revokedAt || session.expiresAt <= new Date() || !session.user.isActive) {
+    return null;
+  }
+
+  if (
+    session.activeStoreId &&
+    (!session.activeStore?.isActive ||
+      !session.activeStore.group.isActive ||
+      !session.activeTerminal?.isActive ||
+      session.activeTerminal.storeId !== session.activeStoreId)
+  ) {
     return null;
   }
 
