@@ -1,15 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { Building2, CircleUserRound, Monitor, Plus, Save } from "lucide-react";
+import {
+  Building2,
+  ChefHat,
+  CircleUserRound,
+  Monitor,
+  Plus,
+  Store,
+  X,
+} from "lucide-react";
 import { useMemo, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { Navigate } from "react-router";
 import { useAuth } from "../../../app/auth/AuthProvider";
 import type { UserRole } from "../../../app/auth/auth.service";
-import type {
-  AdminStore,
-  AdminUser,
-} from "../admin.service";
+import type { AdminStore, AdminUser } from "../admin.service";
 import {
   createTerminal,
   createUser,
@@ -20,8 +25,12 @@ import {
   updateUser,
 } from "../admin.service";
 
-const inputClass = "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary";
-const buttonClass = "inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-40";
+const inputClass =
+  "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
+const buttonClass =
+  "inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40";
+const inactiveTabClass =
+  "border border-border bg-pos-surface text-foreground shadow-sm hover:border-primary/50 hover:bg-secondary";
 const roleOptions: Array<{ value: UserRole; label: string }> = [
   { value: "CASHIER", label: "Cajera" },
   { value: "KITCHEN", label: "Cocina" },
@@ -56,13 +65,24 @@ export default function AdminPage() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-7">
           <p className="text-sm font-bold uppercase tracking-wider text-primary">Administración</p>
-          <h1 className="text-3xl font-black">Usuarios, puntos y terminales</h1>
+          <h1 className="text-3xl font-black">Usuarios, puntos y cajas</h1>
         </div>
-        <div className="mb-6 flex gap-2">
-          <button className={`${buttonClass} ${section !== "users" ? "bg-secondary text-foreground" : ""}`} onClick={() => setSection("users")}>
+
+        <div className="mb-6 flex gap-2" role="tablist" aria-label="Secciones de administración">
+          <button
+            className={`${buttonClass} ${section !== "users" ? inactiveTabClass : "shadow-md"}`}
+            onClick={() => setSection("users")}
+            role="tab"
+            aria-selected={section === "users"}
+          >
             <CircleUserRound className="h-4 w-4" /> Usuarios
           </button>
-          <button className={`${buttonClass} ${section !== "stores" ? "bg-secondary text-foreground" : ""}`} onClick={() => setSection("stores")}>
+          <button
+            className={`${buttonClass} ${section !== "stores" ? inactiveTabClass : "shadow-md"}`}
+            onClick={() => setSection("stores")}
+            role="tab"
+            aria-selected={section === "stores"}
+          >
             <Building2 className="h-4 w-4" /> Puntos y cajas
           </button>
         </div>
@@ -76,7 +96,11 @@ export default function AdminPage() {
             onChanged={refresh}
           />
         ) : (
-          <StoresSection groups={groupsQuery.data ?? []} isLoading={groupsQuery.isLoading} onChanged={refresh} />
+          <StoresSection
+            groups={groupsQuery.data ?? []}
+            isLoading={groupsQuery.isLoading}
+            onChanged={refresh}
+          />
         )}
       </div>
     </main>
@@ -90,69 +114,85 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
   isLoading: boolean;
   onChanged: () => Promise<unknown>;
 }) {
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [accesses, setAccesses] = useState<Record<number, UserRole | "">>({});
   const [isGlobalAdmin, setIsGlobalAdmin] = useState(false);
-  const createMutation = useMutation({ mutationFn: createUser, onSuccess: onChanged });
+  const createMutation = useMutation({ mutationFn: createUser });
   const updateMutation = useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: Parameters<typeof updateUser>[1] }) => updateUser(id, payload),
-    onSuccess: onChanged,
+    mutationFn: ({ id, payload }: { id: number; payload: Parameters<typeof updateUser>[1] }) =>
+      updateUser(id, payload),
   });
+
+  const closeCreate = () => {
+    setIsCreateOpen(false);
+    setError("");
+    setAccesses({});
+    setIsGlobalAdmin(false);
+  };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     setError("");
-    const form = new FormData(event.currentTarget);
+    setNotice("");
     try {
       await createMutation.mutateAsync({
-        name: String(form.get("name") ?? ""),
-        email: String(form.get("email") ?? ""),
-        password: String(form.get("password") ?? ""),
+        name: String(form.get("new-user-name") ?? ""),
+        email: String(form.get("new-user-email") ?? ""),
+        password: String(form.get("new-user-password") ?? ""),
         isGlobalAdmin,
         accesses: Object.entries(accesses)
           .filter((entry): entry is [string, UserRole] => Boolean(entry[1]))
           .map(([storeId, role]) => ({ storeId: Number(storeId), role })),
       });
-      event.currentTarget.reset();
-      setAccesses({});
-      setIsGlobalAdmin(false);
+      formElement.reset();
+      await onChanged();
+      closeCreate();
+      setNotice("Usuario creado correctamente.");
+    } catch (requestError) {
+      setError(errorMessage(requestError));
+    }
+  };
+
+  const toggleUser = async (user: AdminUser) => {
+    setError("");
+    setNotice("");
+    try {
+      await updateMutation.mutateAsync({ id: user.id, payload: { isActive: !user.isActive } });
+      await onChanged();
+      setNotice(`${user.name} fue ${user.isActive ? "desactivado" : "activado"}.`);
     } catch (requestError) {
       setError(errorMessage(requestError));
     }
   };
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
-      <form onSubmit={submit} className="h-fit space-y-4 rounded-2xl border border-border bg-pos-surface p-5">
-        <h2 className="text-lg font-black">Crear usuario</h2>
-        <input className={inputClass} name="name" placeholder="Nombre completo" required />
-        <input className={inputClass} name="email" type="email" placeholder="Correo" required />
-        <input className={inputClass} name="password" type="password" minLength={10} placeholder="Contraseña de mínimo 10 caracteres" required />
-        <label className="flex items-center gap-2 text-sm font-semibold">
-          <input type="checkbox" checked={isGlobalAdmin} onChange={(event) => setIsGlobalAdmin(event.target.checked)} />
-          Administrador general
-        </label>
-        {!isGlobalAdmin && stores.map((store) => (
-          <label key={store.id} className="block text-sm">
-            <span className="mb-1 block font-bold">{store.name}</span>
-            <select className={inputClass} value={accesses[store.id] ?? ""} onChange={(event) => setAccesses((current) => ({ ...current, [store.id]: event.target.value as UserRole | "" }))}>
-              <option value="">Sin acceso</option>
-              {roleOptions
-                .filter((option) => option.value !== "KITCHEN" || store.kitchenMode === "TICKETS")
-                .map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-            </select>
-          </label>
-        ))}
-        {error && <p className="text-sm text-danger">{error}</p>}
-        <button className={buttonClass} disabled={createMutation.isPending}><Plus className="h-4 w-4" /> Crear usuario</button>
-      </form>
+    <section>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-black">Usuarios</h2>
+          <p className="text-sm text-muted-foreground">Administra quién puede entrar y a qué puntos tiene acceso.</p>
+        </div>
+        <button className={buttonClass} onClick={() => setIsCreateOpen(true)}>
+          <Plus className="h-4 w-4" /> Crear usuario
+        </button>
+      </div>
 
-      <section className="space-y-3">
+      {notice && <p className="mb-4 rounded-xl bg-success/10 p-3 text-sm font-semibold text-success">{notice}</p>}
+      {error && !isCreateOpen && <p className="mb-4 rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
+
+      <div className="space-y-3">
         {isLoading ? <p>Cargando usuarios…</p> : users.map((user) => (
-          <article key={user.id} className="rounded-2xl border border-border bg-pos-surface p-5">
+          <article key={user.id} className="rounded-2xl border border-border bg-pos-surface p-5 shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h3 className="font-black">{user.name}</h3>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-black">{user.name}</h3>
+                  <StatusPill isActive={user.isActive} />
+                </div>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
                 <p className="mt-2 text-xs text-muted-foreground">
                   {user.isGlobalAdmin
@@ -161,17 +201,84 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
                 </p>
               </div>
               <button
-                className={`${buttonClass} ${user.isActive ? "bg-destructive text-white" : "bg-success text-white"}`}
+                className={`${buttonClass} ${user.isActive ? "bg-destructive hover:bg-destructive/90" : "bg-success hover:bg-success/90"}`}
                 disabled={user.id === currentUserId || updateMutation.isPending}
-                onClick={() => updateMutation.mutate({ id: user.id, payload: { isActive: !user.isActive } })}
+                onClick={() => void toggleUser(user)}
+                title={user.id === currentUserId ? "No puedes desactivar tu propio usuario" : undefined}
               >
                 {user.isActive ? "Desactivar" : "Activar"}
               </button>
             </div>
           </article>
         ))}
-      </section>
-    </div>
+      </div>
+
+      {isCreateOpen && (
+        <Modal title="Crear usuario" description="Define sus credenciales y los puntos a los que podrá acceder." onClose={closeCreate}>
+          <form onSubmit={submit} autoComplete="off" className="space-y-4">
+            <input
+              className={inputClass}
+              name="new-user-name"
+              placeholder="Nombre completo"
+              autoComplete="off"
+              required
+            />
+            <input
+              className={inputClass}
+              name="new-user-email"
+              type="email"
+              placeholder="Correo"
+              autoComplete="off"
+              data-lpignore="true"
+              required
+            />
+            <input
+              className={inputClass}
+              name="new-user-password"
+              type="password"
+              minLength={10}
+              placeholder="Contraseña de mínimo 10 caracteres"
+              autoComplete="new-password"
+              data-lpignore="true"
+              required
+            />
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input
+                type="checkbox"
+                checked={isGlobalAdmin}
+                onChange={(event) => setIsGlobalAdmin(event.target.checked)}
+              />
+              Administrador general
+            </label>
+            {!isGlobalAdmin && stores.map((storeItem) => (
+              <label key={storeItem.id} className="block text-sm">
+                <span className="mb-1 block font-bold">{storeItem.name}</span>
+                <select
+                  className={inputClass}
+                  value={accesses[storeItem.id] ?? ""}
+                  onChange={(event) => setAccesses((current) => ({
+                    ...current,
+                    [storeItem.id]: event.target.value as UserRole | "",
+                  }))}
+                >
+                  <option value="">Sin acceso</option>
+                  {roleOptions
+                    .filter((option) => option.value !== "KITCHEN" || storeItem.kitchenMode === "TICKETS")
+                    .map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+              </label>
+            ))}
+            {error && <p className="rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
+            <div className="flex justify-end gap-2 pt-2">
+              <button type="button" className={`${buttonClass} ${inactiveTabClass}`} onClick={closeCreate}>Cancelar</button>
+              <button className={buttonClass} disabled={createMutation.isPending}>
+                <Plus className="h-4 w-4" /> {createMutation.isPending ? "Creando…" : "Crear usuario"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+    </section>
   );
 }
 
@@ -180,63 +287,261 @@ function StoresSection({ groups, isLoading, onChanged }: {
   isLoading: boolean;
   onChanged: () => Promise<unknown>;
 }) {
+  const stores = useMemo(
+    () => groups.flatMap((group) => group.stores.map((storeItem) => ({ ...storeItem, groupName: group.name }))),
+    [groups],
+  );
+  const [selectedStoreId, setSelectedStoreId] = useState<number | null>(null);
+  const [isCreateTerminalOpen, setIsCreateTerminalOpen] = useState(false);
   const [error, setError] = useState("");
-  const storeMutation = useMutation({ mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) => updateStore(id, { isActive }), onSuccess: onChanged });
-  const terminalMutation = useMutation({ mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) => updateTerminal(id, { isActive }), onSuccess: onChanged });
-  const createTerminalMutation = useMutation({ mutationFn: createTerminal, onSuccess: onChanged });
+  const [notice, setNotice] = useState("");
+  const selectedStore = stores.find((storeItem) => storeItem.id === selectedStoreId) ?? stores[0] ?? null;
+  const storeMutation = useMutation({
+    mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) => updateStore(id, { isActive }),
+  });
+  const terminalMutation = useMutation({
+    mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) => updateTerminal(id, { isActive }),
+  });
+  const createTerminalMutation = useMutation({ mutationFn: createTerminal });
 
-  const addTerminal = async (event: FormEvent<HTMLFormElement>, storeId: number) => {
-    event.preventDefault();
+  const toggleStore = async () => {
+    if (!selectedStore) return;
+    if (selectedStore.isActive && !window.confirm(`¿Desactivar ${selectedStore.name} y todas sus cajas?`)) return;
     setError("");
-    const form = new FormData(event.currentTarget);
+    setNotice("");
     try {
-      await createTerminalMutation.mutateAsync({ storeId, code: String(form.get("code") ?? ""), name: String(form.get("name") ?? "") });
-      event.currentTarget.reset();
+      await storeMutation.mutateAsync({ id: selectedStore.id, isActive: !selectedStore.isActive });
+      await onChanged();
+      setNotice(`${selectedStore.name} fue ${selectedStore.isActive ? "desactivado" : "activado"}.`);
+    } catch (requestError) {
+      setError(errorMessage(requestError));
+    }
+  };
+
+  const toggleTerminal = async (terminal: AdminStore["terminals"][number]) => {
+    setError("");
+    setNotice("");
+    try {
+      await terminalMutation.mutateAsync({ id: terminal.id, isActive: !terminal.isActive });
+      await onChanged();
+      setNotice(`${terminal.name} fue ${terminal.isActive ? "desactivada" : "activada"}.`);
+    } catch (requestError) {
+      setError(errorMessage(requestError));
+    }
+  };
+
+  const addTerminal = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedStore) return;
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    setError("");
+    setNotice("");
+    try {
+      await createTerminalMutation.mutateAsync({
+        storeId: selectedStore.id,
+        code: String(form.get("new-terminal-code") ?? "").trim().toUpperCase(),
+        name: String(form.get("new-terminal-name") ?? "").trim(),
+      });
+      formElement.reset();
+      await onChanged();
+      setIsCreateTerminalOpen(false);
+      setNotice("Caja creada correctamente.");
     } catch (requestError) {
       setError(errorMessage(requestError));
     }
   };
 
   if (isLoading) return <p>Cargando puntos…</p>;
+  if (!selectedStore) return <p>No hay puntos de venta configurados.</p>;
+
   return (
-    <div className="space-y-7">
-      {error && <p className="rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
-      {groups.map((group) => (
-        <section key={group.id}>
-          <h2 className="mb-3 text-xl font-black">{group.name}</h2>
-          <div className="grid gap-4 lg:grid-cols-2">
-            {group.stores.map((store) => (
-              <article key={store.id} className="rounded-2xl border border-border bg-pos-surface p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="font-black">{store.name}</h3>
-                    <p className="text-xs text-muted-foreground">{store.code} · Cocina {store.kitchenMode === "TICKETS" ? "habilitada" : "deshabilitada"}</p>
-                  </div>
-                  <button className={`${buttonClass} ${store.isActive ? "bg-destructive text-white" : "bg-success text-white"}`} onClick={() => storeMutation.mutate({ id: store.id, isActive: !store.isActive })}>
-                    {store.isActive ? "Desactivar" : "Activar"}
+    <section>
+      <div className="mb-5">
+        <h2 className="text-xl font-black">Puntos y cajas</h2>
+        <p className="text-sm text-muted-foreground">Selecciona un punto para administrar únicamente sus cajas.</p>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
+        <nav className="h-fit space-y-2 rounded-2xl border border-border bg-pos-surface p-3 shadow-sm" aria-label="Puntos de venta">
+          {stores.map((storeItem) => {
+            const isSelected = storeItem.id === selectedStore.id;
+            return (
+              <button
+                key={storeItem.id}
+                className={`w-full rounded-xl border p-3 text-left transition-colors ${
+                  isSelected
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                    : "border-border bg-background text-foreground hover:border-primary/50 hover:bg-secondary"
+                }`}
+                onClick={() => {
+                  setSelectedStoreId(storeItem.id);
+                  setError("");
+                  setNotice("");
+                }}
+                aria-current={isSelected ? "page" : undefined}
+              >
+                <span className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-2 font-black"><Store className="h-4 w-4" /> {storeItem.name}</span>
+                  <span className={`h-2.5 w-2.5 rounded-full ${storeItem.isActive ? "bg-success" : "bg-muted-foreground"}`} />
+                </span>
+                <span className={`mt-1 block text-xs ${isSelected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                  {storeItem.groupName} · {storeItem.terminals.length} caja{storeItem.terminals.length === 1 ? "" : "s"}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <article className="rounded-2xl border border-border bg-pos-surface p-5 shadow-sm lg:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-2xl font-black">{selectedStore.name}</h3>
+                <StatusPill isActive={selectedStore.isActive} />
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {selectedStore.groupName} · Código {selectedStore.code}
+              </p>
+              <p className="mt-2 flex items-center gap-2 text-sm font-semibold">
+                <ChefHat className="h-4 w-4" />
+                Cocina {selectedStore.kitchenMode === "TICKETS" ? "habilitada" : "deshabilitada"}
+              </p>
+            </div>
+            <button
+              className={`${buttonClass} ${selectedStore.isActive ? "bg-destructive hover:bg-destructive/90" : "bg-success hover:bg-success/90"}`}
+              onClick={() => void toggleStore()}
+              disabled={storeMutation.isPending}
+            >
+              {selectedStore.isActive ? "Desactivar punto" : "Activar punto"}
+            </button>
+          </div>
+
+          {notice && <p className="mt-4 rounded-xl bg-success/10 p-3 text-sm font-semibold text-success">{notice}</p>}
+          {error && !isCreateTerminalOpen && <p className="mt-4 rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h4 className="font-black">Cajas de este punto</h4>
+              <p className="text-xs text-muted-foreground">Cada caja pertenece únicamente a este inventario.</p>
+            </div>
+            <button
+              className={buttonClass}
+              onClick={() => {
+                setError("");
+                setIsCreateTerminalOpen(true);
+              }}
+              disabled={!selectedStore.isActive}
+              title={!selectedStore.isActive ? "Activa el punto antes de crear una caja" : undefined}
+            >
+              <Plus className="h-4 w-4" /> Nueva caja
+            </button>
+          </div>
+
+          <div className="mt-4 space-y-2">
+            {selectedStore.terminals.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-border p-5 text-center text-sm text-muted-foreground">
+                Este punto todavía no tiene cajas.
+              </p>
+            ) : selectedStore.terminals.map((terminal) => (
+              <div key={terminal.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-background px-4 py-3">
+                <div>
+                  <span className="flex items-center gap-2 text-sm font-black"><Monitor className="h-4 w-4" /> {terminal.name}</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">Código {terminal.code}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <StatusPill isActive={terminal.isActive} />
+                  <button
+                    className="text-xs font-bold text-primary hover:underline disabled:opacity-40"
+                    onClick={() => void toggleTerminal(terminal)}
+                    disabled={terminalMutation.isPending || (!selectedStore.isActive && !terminal.isActive)}
+                  >
+                    {terminal.isActive ? "Desactivar" : "Activar"}
                   </button>
                 </div>
-                <div className="mt-5 space-y-2">
-                  {store.terminals.map((terminal) => (
-                    <div key={terminal.id} className="flex items-center justify-between rounded-xl bg-secondary/50 px-3 py-2">
-                      <span className="flex items-center gap-2 text-sm font-bold"><Monitor className="h-4 w-4" /> {terminal.name}</span>
-                      <button className="text-xs font-bold text-primary" onClick={() => terminalMutation.mutate({ id: terminal.id, isActive: !terminal.isActive })}>
-                        {terminal.isActive ? "Desactivar" : "Activar"}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <form className="mt-4 grid grid-cols-[1fr_1fr_auto] gap-2" onSubmit={(event) => void addTerminal(event, store.id)}>
-                  <input className={inputClass} name="code" placeholder="Código" required />
-                  <input className={inputClass} name="name" placeholder="Nombre" required />
-                  <button className={buttonClass} title="Crear terminal"><Save className="h-4 w-4" /></button>
-                </form>
-              </article>
+              </div>
             ))}
           </div>
-        </section>
-      ))}
-    </div>
+        </article>
+      </div>
+
+      {isCreateTerminalOpen && (
+        <Modal
+          title={`Nueva caja en ${selectedStore.name}`}
+          description="La caja quedará asociada únicamente a este punto de venta."
+          onClose={() => {
+            setIsCreateTerminalOpen(false);
+            setError("");
+          }}
+        >
+          <form onSubmit={addTerminal} autoComplete="off" className="space-y-4">
+            <label className="block text-sm">
+              <span className="mb-1 block font-bold">Código</span>
+              <input className={inputClass} name="new-terminal-code" placeholder="Ej. VEL-CAJA-02" autoComplete="off" required />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block font-bold">Nombre</span>
+              <input className={inputClass} name="new-terminal-name" placeholder="Ej. Caja terraza" autoComplete="off" required />
+            </label>
+            {error && <p className="rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                className={`${buttonClass} ${inactiveTabClass}`}
+                onClick={() => {
+                  setIsCreateTerminalOpen(false);
+                  setError("");
+                }}
+              >
+                Cancelar
+              </button>
+              <button className={buttonClass} disabled={createTerminalMutation.isPending}>
+                <Plus className="h-4 w-4" /> {createTerminalMutation.isPending ? "Guardando…" : "Crear caja"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+    </section>
   );
 }
 
+function StatusPill({ isActive }: { isActive: boolean }) {
+  return (
+    <span className={`rounded-full px-2 py-1 text-[11px] font-black uppercase tracking-wide ${
+      isActive ? "bg-success/15 text-success" : "bg-secondary text-muted-foreground"
+    }`}>
+      {isActive ? "Activo" : "Inactivo"}
+    </span>
+  );
+}
+
+function Modal({ title, description, onClose, children }: {
+  title: string;
+  description: string;
+  onClose: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4" role="presentation" onMouseDown={onClose}>
+      <section
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-pos-surface p-5 shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-modal-title"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            <h2 id="admin-modal-title" className="text-xl font-black">{title}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          </div>
+          <button className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground" onClick={onClose} aria-label="Cerrar">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        {children}
+      </section>
+    </div>
+  );
+}

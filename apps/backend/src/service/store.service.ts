@@ -91,7 +91,10 @@ export const updateStoreService = async (
       where: { terminal: { storeId: id }, status: "OPEN" },
     });
     if (openRegisters > 0) {
-      throw new Error("Close all cash registers before deactivating the store");
+      const registerLabel = openRegisters === 1 ? "caja tiene" : "cajas tienen";
+      throw new Error(
+        `No se puede desactivar ${current.name}: ${openRegisters} ${registerLabel} un turno abierto. Cierra los turnos primero.`,
+      );
     }
   }
 
