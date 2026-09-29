@@ -395,6 +395,7 @@ export const ModelName = {
   FinancialTransaction: 'FinancialTransaction',
   Customer: 'Customer',
   CashRegister: 'CashRegister',
+  StoreGroup: 'StoreGroup',
   Store: 'Store',
   Terminal: 'Terminal',
   KitchenTicket: 'KitchenTicket',
@@ -415,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "store" | "terminal" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
+    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "storeGroup" | "store" | "terminal" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1233,6 +1234,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    StoreGroup: {
+      payload: Prisma.$StoreGroupPayload<ExtArgs>
+      fields: Prisma.StoreGroupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StoreGroupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StoreGroupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>
+        }
+        findFirst: {
+          args: Prisma.StoreGroupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StoreGroupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>
+        }
+        findMany: {
+          args: Prisma.StoreGroupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>[]
+        }
+        create: {
+          args: Prisma.StoreGroupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>
+        }
+        createMany: {
+          args: Prisma.StoreGroupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StoreGroupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>[]
+        }
+        delete: {
+          args: Prisma.StoreGroupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>
+        }
+        update: {
+          args: Prisma.StoreGroupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>
+        }
+        deleteMany: {
+          args: Prisma.StoreGroupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StoreGroupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StoreGroupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>[]
+        }
+        upsert: {
+          args: Prisma.StoreGroupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreGroupPayload>
+        }
+        aggregate: {
+          args: Prisma.StoreGroupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStoreGroup>
+        }
+        groupBy: {
+          args: Prisma.StoreGroupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StoreGroupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StoreGroupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StoreGroupCountAggregateOutputType> | number
+        }
+      }
+    }
     Store: {
       payload: Prisma.$StorePayload<ExtArgs>
       fields: Prisma.StoreFieldRefs
@@ -1812,10 +1887,27 @@ export const CashRegisterScalarFieldEnum = {
 export type CashRegisterScalarFieldEnum = (typeof CashRegisterScalarFieldEnum)[keyof typeof CashRegisterScalarFieldEnum]
 
 
+export const StoreGroupScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreGroupScalarFieldEnum = (typeof StoreGroupScalarFieldEnum)[keyof typeof StoreGroupScalarFieldEnum]
+
+
 export const StoreScalarFieldEnum = {
   id: 'id',
+  groupId: 'groupId',
+  code: 'code',
   name: 'name',
-  createdAt: 'createdAt'
+  isActive: 'isActive',
+  kitchenMode: 'kitchenMode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type StoreScalarFieldEnum = (typeof StoreScalarFieldEnum)[keyof typeof StoreScalarFieldEnum]
@@ -1823,8 +1915,12 @@ export type StoreScalarFieldEnum = (typeof StoreScalarFieldEnum)[keyof typeof St
 
 export const TerminalScalarFieldEnum = {
   id: 'id',
+  code: 'code',
   name: 'name',
-  storeId: 'storeId'
+  isActive: 'isActive',
+  storeId: 'storeId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type TerminalScalarFieldEnum = (typeof TerminalScalarFieldEnum)[keyof typeof TerminalScalarFieldEnum]
@@ -2104,6 +2200,20 @@ export type ListEnumCashRegisterStatusFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'KitchenMode'
+ */
+export type EnumKitchenModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenMode'>
+    
+
+
+/**
+ * Reference to a field of type 'KitchenMode[]'
+ */
+export type ListEnumKitchenModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenMode[]'>
+    
+
+
+/**
  * Reference to a field of type 'KitchenTicketStatus'
  */
 export type EnumKitchenTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenTicketStatus'>
@@ -2251,6 +2361,7 @@ export type GlobalOmitConfig = {
   financialTransaction?: Prisma.FinancialTransactionOmit
   customer?: Prisma.CustomerOmit
   cashRegister?: Prisma.CashRegisterOmit
+  storeGroup?: Prisma.StoreGroupOmit
   store?: Prisma.StoreOmit
   terminal?: Prisma.TerminalOmit
   kitchenTicket?: Prisma.KitchenTicketOmit

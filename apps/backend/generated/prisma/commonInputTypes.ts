@@ -426,6 +426,23 @@ export type EnumCashRegisterStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumCashRegisterStatusFilter<$PrismaModel>
 }
 
+export type EnumKitchenModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.KitchenMode | Prisma.EnumKitchenModeFieldRefInput<$PrismaModel>
+  in?: $Enums.KitchenMode[] | Prisma.ListEnumKitchenModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KitchenMode[] | Prisma.ListEnumKitchenModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKitchenModeFilter<$PrismaModel> | $Enums.KitchenMode
+}
+
+export type EnumKitchenModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.KitchenMode | Prisma.EnumKitchenModeFieldRefInput<$PrismaModel>
+  in?: $Enums.KitchenMode[] | Prisma.ListEnumKitchenModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KitchenMode[] | Prisma.ListEnumKitchenModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKitchenModeWithAggregatesFilter<$PrismaModel> | $Enums.KitchenMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumKitchenModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumKitchenModeFilter<$PrismaModel>
+}
+
 export type EnumKitchenTicketStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.KitchenTicketStatus | Prisma.EnumKitchenTicketStatusFieldRefInput<$PrismaModel>
   in?: $Enums.KitchenTicketStatus[] | Prisma.ListEnumKitchenTicketStatusFieldRefInput<$PrismaModel>
@@ -861,6 +878,23 @@ export type NestedEnumCashRegisterStatusWithAggregatesFilter<$PrismaModel = neve
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumCashRegisterStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumCashRegisterStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumKitchenModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.KitchenMode | Prisma.EnumKitchenModeFieldRefInput<$PrismaModel>
+  in?: $Enums.KitchenMode[] | Prisma.ListEnumKitchenModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KitchenMode[] | Prisma.ListEnumKitchenModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKitchenModeFilter<$PrismaModel> | $Enums.KitchenMode
+}
+
+export type NestedEnumKitchenModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.KitchenMode | Prisma.EnumKitchenModeFieldRefInput<$PrismaModel>
+  in?: $Enums.KitchenMode[] | Prisma.ListEnumKitchenModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KitchenMode[] | Prisma.ListEnumKitchenModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKitchenModeWithAggregatesFilter<$PrismaModel> | $Enums.KitchenMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumKitchenModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumKitchenModeFilter<$PrismaModel>
 }
 
 export type NestedEnumKitchenTicketStatusFilter<$PrismaModel = never> = {

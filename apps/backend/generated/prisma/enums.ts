@@ -120,6 +120,14 @@ export const CashRegisterStatus = {
 export type CashRegisterStatus = (typeof CashRegisterStatus)[keyof typeof CashRegisterStatus]
 
 
+export const KitchenMode = {
+  NONE: 'NONE',
+  TICKETS: 'TICKETS'
+} as const
+
+export type KitchenMode = (typeof KitchenMode)[keyof typeof KitchenMode]
+
+
 export const KitchenTicketStatus = {
   PENDING: 'PENDING',
   PREPARING: 'PREPARING',

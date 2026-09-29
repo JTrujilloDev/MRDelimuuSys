@@ -95,6 +95,11 @@ export type Customer = Prisma.CustomerModel
  */
 export type CashRegister = Prisma.CashRegisterModel
 /**
+ * Model StoreGroup
+ * 
+ */
+export type StoreGroup = Prisma.StoreGroupModel
+/**
  * Model Store
  * 
  */

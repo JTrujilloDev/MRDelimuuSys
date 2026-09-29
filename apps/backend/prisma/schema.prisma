@@ -44,21 +44,21 @@ enum ProductType {
 }
 
 model ProductVariant {
-  id                 Int     @id @default(autoincrement())
+  id                 Int             @id @default(autoincrement())
   name               String
-  retailPrice        Float   @default(0)
-  wholesalePrice     Float?  @default(0)
-  stock              Int     @default(0)
-  minStock           Int     @default(0)
-  isActive           Boolean @default(true)
-  requirePreparation Boolean @default(false)
+  retailPrice        Float           @default(0)
+  wholesalePrice     Float?          @default(0)
+  stock              Int             @default(0)
+  minStock           Int             @default(0)
+  isActive           Boolean         @default(true)
+  requirePreparation Boolean         @default(false)
   preparationArea    PreparationArea @default(KITCHEN)
-  productCost        Float   @default(0)
+  productCost        Float           @default(0)
   productId          Int
-  unit               Unit    @default(UNIT)
-  product            Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  isNew              Boolean @default(true)
-  createdAt DateTime @default(now())
+  unit               Unit            @default(UNIT)
+  product            Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  isNew              Boolean         @default(true)
+  createdAt          DateTime        @default(now())
 
   accountItems          AccountItem[]
   InventoryTransactions InventoryTransaction[]
@@ -131,9 +131,9 @@ model Account {
   cashRegisterId Int?
   cashRegister   CashRegister? @relation(fields: [cashRegisterId], references: [id])
 
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  accountItems AccountItem[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  accountItems   AccountItem[]
   kitchenTickets KitchenTicket[]
 
   total               Float          @default(0)
@@ -147,7 +147,6 @@ model Account {
   financialTransactions FinancialTransaction[] @relation("AccountFinancialTransactions")
 
   financialTransactionId Int?
-
 }
 
 enum AccountStatus {
@@ -176,7 +175,7 @@ model AccountItem {
   price            Float
   subtotal         Float
 
-  createdAt DateTime @default(now())
+  createdAt          DateTime            @default(now())
   kitchenTicketItems KitchenTicketItem[]
 
   @@unique([accountId, productVariantId])
@@ -261,7 +260,7 @@ model CashRegister {
 
   userId     Int
   terminalId Int
-  terminal   Terminal  @relation(fields: [terminalId], references: [id], onDelete: Cascade)
+  terminal   Terminal  @relation(fields: [terminalId], references: [id], onDelete: Restrict)
   openedAt   DateTime
   closedAt   DateTime?
 
@@ -291,38 +290,72 @@ enum CashRegisterStatus {
   CLOSED
 }
 
-model Store {
-  id        Int      @id @default(autoincrement())
-  name      String
+model StoreGroup {
+  id       Int     @id @default(autoincrement())
+  code     String  @unique
+  name     String
+  isActive Boolean @default(true)
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stores Store[]
+}
+
+enum KitchenMode {
+  NONE
+  TICKETS
+}
+
+model Store {
+  id          Int         @id @default(autoincrement())
+  groupId     Int
+  group       StoreGroup  @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  code        String      @unique
+  name        String
+  isActive    Boolean     @default(true)
+  kitchenMode KitchenMode @default(NONE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   terminals Terminal[]
+
+  @@index([groupId, isActive])
 }
 
 model Terminal {
-  id   Int    @id @default(autoincrement())
-  name String
+  id       Int     @id @default(autoincrement())
+  code     String
+  name     String
+  isActive Boolean @default(true)
 
   storeId Int
-  store   Store @relation(fields: [storeId], references: [id])
+  store   Store @relation(fields: [storeId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   registers CashRegister[]
   accounts  Account[]
+
+  @@unique([storeId, code])
+  @@index([storeId, isActive])
 }
 
 model KitchenTicket {
   id Int @id @default(autoincrement())
 
   accountId Int
-  account   Account @relation(fields:[accountId], references:[id], onDelete: Cascade)
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  status KitchenTicketStatus @default(PENDING)
+  status       KitchenTicketStatus @default(PENDING)
   instructions String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items KitchenTicketItem[]
+  items       KitchenTicketItem[]
   adjustments KitchenTicketAdjustment[]
 
   @@index([accountId, status])
@@ -332,13 +365,13 @@ model KitchenTicketItem {
   id Int @id @default(autoincrement())
 
   kitchenTicketId Int
-  accountItemId Int
-  productName String
-  quantity Int
+  accountItemId   Int
+  productName     String
+  quantity        Int
 
-  kitchenTicket KitchenTicket @relation(fields:[kitchenTicketId], references:[id], onDelete: Cascade)
+  kitchenTicket KitchenTicket @relation(fields: [kitchenTicketId], references: [id], onDelete: Cascade)
 
-  accountItem AccountItem @relation(fields:[accountItemId], references:[id], onDelete: Restrict)
+  accountItem AccountItem               @relation(fields: [accountItemId], references: [id], onDelete: Restrict)
   adjustments KitchenTicketAdjustment[]
 
   @@index([kitchenTicketId])
@@ -354,19 +387,19 @@ enum KitchenTicketStatus {
 model KitchenTicketAdjustment {
   id Int @id @default(autoincrement())
 
-  kitchenTicketId Int
-  kitchenTicket KitchenTicket @relation(fields: [kitchenTicketId], references: [id], onDelete: Cascade)
+  kitchenTicketId     Int
+  kitchenTicket       KitchenTicket     @relation(fields: [kitchenTicketId], references: [id], onDelete: Cascade)
   kitchenTicketItemId Int
-  kitchenTicketItem KitchenTicketItem @relation(fields: [kitchenTicketItemId], references: [id], onDelete: Cascade)
+  kitchenTicketItem   KitchenTicketItem @relation(fields: [kitchenTicketItemId], references: [id], onDelete: Cascade)
 
-  accountItemId Int
-  productName String
+  accountItemId    Int
+  productName      String
   previousQuantity Int
-  newQuantity Int
-  quantityDelta Int
-  status KitchenTicketAdjustmentStatus @default(PENDING)
-  createdAt DateTime @default(now())
-  acknowledgedAt DateTime?
+  newQuantity      Int
+  quantityDelta    Int
+  status           KitchenTicketAdjustmentStatus @default(PENDING)
+  createdAt        DateTime                      @default(now())
+  acknowledgedAt   DateTime?
 
   @@index([kitchenTicketId, status])
   @@index([accountItemId])

@@ -38,20 +38,32 @@ export type TerminalSumAggregateOutputType = {
 
 export type TerminalMinAggregateOutputType = {
   id: number | null
+  code: string | null
   name: string | null
+  isActive: boolean | null
   storeId: number | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type TerminalMaxAggregateOutputType = {
   id: number | null
+  code: string | null
   name: string | null
+  isActive: boolean | null
   storeId: number | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type TerminalCountAggregateOutputType = {
   id: number
+  code: number
   name: number
+  isActive: number
   storeId: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -68,20 +80,32 @@ export type TerminalSumAggregateInputType = {
 
 export type TerminalMinAggregateInputType = {
   id?: true
+  code?: true
   name?: true
+  isActive?: true
   storeId?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type TerminalMaxAggregateInputType = {
   id?: true
+  code?: true
   name?: true
+  isActive?: true
   storeId?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type TerminalCountAggregateInputType = {
   id?: true
+  code?: true
   name?: true
+  isActive?: true
   storeId?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -173,8 +197,12 @@ export type TerminalGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type TerminalGroupByOutputType = {
   id: number
+  code: string
   name: string
+  isActive: boolean
   storeId: number
+  createdAt: Date
+  updatedAt: Date
   _count: TerminalCountAggregateOutputType | null
   _avg: TerminalAvgAggregateOutputType | null
   _sum: TerminalSumAggregateOutputType | null
@@ -202,8 +230,12 @@ export type TerminalWhereInput = {
   OR?: Prisma.TerminalWhereInput[]
   NOT?: Prisma.TerminalWhereInput | Prisma.TerminalWhereInput[]
   id?: Prisma.IntFilter<"Terminal"> | number
+  code?: Prisma.StringFilter<"Terminal"> | string
   name?: Prisma.StringFilter<"Terminal"> | string
+  isActive?: Prisma.BoolFilter<"Terminal"> | boolean
   storeId?: Prisma.IntFilter<"Terminal"> | number
+  createdAt?: Prisma.DateTimeFilter<"Terminal"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Terminal"> | Date | string
   store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>
   registers?: Prisma.CashRegisterListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
@@ -211,8 +243,12 @@ export type TerminalWhereInput = {
 
 export type TerminalOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   storeId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   store?: Prisma.StoreOrderByWithRelationInput
   registers?: Prisma.CashRegisterOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
@@ -220,20 +256,29 @@ export type TerminalOrderByWithRelationInput = {
 
 export type TerminalWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  storeId_code?: Prisma.TerminalStoreIdCodeCompoundUniqueInput
   AND?: Prisma.TerminalWhereInput | Prisma.TerminalWhereInput[]
   OR?: Prisma.TerminalWhereInput[]
   NOT?: Prisma.TerminalWhereInput | Prisma.TerminalWhereInput[]
+  code?: Prisma.StringFilter<"Terminal"> | string
   name?: Prisma.StringFilter<"Terminal"> | string
+  isActive?: Prisma.BoolFilter<"Terminal"> | boolean
   storeId?: Prisma.IntFilter<"Terminal"> | number
+  createdAt?: Prisma.DateTimeFilter<"Terminal"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Terminal"> | Date | string
   store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>
   registers?: Prisma.CashRegisterListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
-}, "id">
+}, "id" | "storeId_code">
 
 export type TerminalOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   storeId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.TerminalCountOrderByAggregateInput
   _avg?: Prisma.TerminalAvgOrderByAggregateInput
   _max?: Prisma.TerminalMaxOrderByAggregateInput
@@ -246,12 +291,20 @@ export type TerminalScalarWhereWithAggregatesInput = {
   OR?: Prisma.TerminalScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TerminalScalarWhereWithAggregatesInput | Prisma.TerminalScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Terminal"> | number
+  code?: Prisma.StringWithAggregatesFilter<"Terminal"> | string
   name?: Prisma.StringWithAggregatesFilter<"Terminal"> | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"Terminal"> | boolean
   storeId?: Prisma.IntWithAggregatesFilter<"Terminal"> | number
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Terminal"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Terminal"> | Date | string
 }
 
 export type TerminalCreateInput = {
+  code: string
   name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   store: Prisma.StoreCreateNestedOneWithoutTerminalsInput
   registers?: Prisma.CashRegisterCreateNestedManyWithoutTerminalInput
   accounts?: Prisma.AccountCreateNestedManyWithoutTerminalInput
@@ -259,14 +312,22 @@ export type TerminalCreateInput = {
 
 export type TerminalUncheckedCreateInput = {
   id?: number
+  code: string
   name: string
+  isActive?: boolean
   storeId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   registers?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutTerminalInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutTerminalInput
 }
 
 export type TerminalUpdateInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   store?: Prisma.StoreUpdateOneRequiredWithoutTerminalsNestedInput
   registers?: Prisma.CashRegisterUpdateManyWithoutTerminalNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutTerminalNestedInput
@@ -274,26 +335,42 @@ export type TerminalUpdateInput = {
 
 export type TerminalUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   storeId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registers?: Prisma.CashRegisterUncheckedUpdateManyWithoutTerminalNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutTerminalNestedInput
 }
 
 export type TerminalCreateManyInput = {
   id?: number
+  code: string
   name: string
+  isActive?: boolean
   storeId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type TerminalUpdateManyMutationInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TerminalUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   storeId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TerminalScalarRelationFilter = {
@@ -311,10 +388,19 @@ export type TerminalOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type TerminalStoreIdCodeCompoundUniqueInput = {
+  storeId: number
+  code: string
+}
+
 export type TerminalCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   storeId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type TerminalAvgOrderByAggregateInput = {
@@ -324,14 +410,22 @@ export type TerminalAvgOrderByAggregateInput = {
 
 export type TerminalMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   storeId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type TerminalMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   storeId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type TerminalSumOrderByAggregateInput = {
@@ -410,15 +504,23 @@ export type TerminalUncheckedUpdateManyWithoutStoreNestedInput = {
 }
 
 export type TerminalCreateWithoutAccountsInput = {
+  code: string
   name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   store: Prisma.StoreCreateNestedOneWithoutTerminalsInput
   registers?: Prisma.CashRegisterCreateNestedManyWithoutTerminalInput
 }
 
 export type TerminalUncheckedCreateWithoutAccountsInput = {
   id?: number
+  code: string
   name: string
+  isActive?: boolean
   storeId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   registers?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutTerminalInput
 }
 
@@ -439,28 +541,44 @@ export type TerminalUpdateToOneWithWhereWithoutAccountsInput = {
 }
 
 export type TerminalUpdateWithoutAccountsInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   store?: Prisma.StoreUpdateOneRequiredWithoutTerminalsNestedInput
   registers?: Prisma.CashRegisterUpdateManyWithoutTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateWithoutAccountsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   storeId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registers?: Prisma.CashRegisterUncheckedUpdateManyWithoutTerminalNestedInput
 }
 
 export type TerminalCreateWithoutRegistersInput = {
+  code: string
   name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   store: Prisma.StoreCreateNestedOneWithoutTerminalsInput
   accounts?: Prisma.AccountCreateNestedManyWithoutTerminalInput
 }
 
 export type TerminalUncheckedCreateWithoutRegistersInput = {
   id?: number
+  code: string
   name: string
+  isActive?: boolean
   storeId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutTerminalInput
 }
 
@@ -481,27 +599,43 @@ export type TerminalUpdateToOneWithWhereWithoutRegistersInput = {
 }
 
 export type TerminalUpdateWithoutRegistersInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   store?: Prisma.StoreUpdateOneRequiredWithoutTerminalsNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateWithoutRegistersInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   storeId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutTerminalNestedInput
 }
 
 export type TerminalCreateWithoutStoreInput = {
+  code: string
   name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   registers?: Prisma.CashRegisterCreateNestedManyWithoutTerminalInput
   accounts?: Prisma.AccountCreateNestedManyWithoutTerminalInput
 }
 
 export type TerminalUncheckedCreateWithoutStoreInput = {
   id?: number
+  code: string
   name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   registers?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutTerminalInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutTerminalInput
 }
@@ -537,31 +671,51 @@ export type TerminalScalarWhereInput = {
   OR?: Prisma.TerminalScalarWhereInput[]
   NOT?: Prisma.TerminalScalarWhereInput | Prisma.TerminalScalarWhereInput[]
   id?: Prisma.IntFilter<"Terminal"> | number
+  code?: Prisma.StringFilter<"Terminal"> | string
   name?: Prisma.StringFilter<"Terminal"> | string
+  isActive?: Prisma.BoolFilter<"Terminal"> | boolean
   storeId?: Prisma.IntFilter<"Terminal"> | number
+  createdAt?: Prisma.DateTimeFilter<"Terminal"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Terminal"> | Date | string
 }
 
 export type TerminalCreateManyStoreInput = {
   id?: number
+  code: string
   name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type TerminalUpdateWithoutStoreInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registers?: Prisma.CashRegisterUpdateManyWithoutTerminalNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateWithoutStoreInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registers?: Prisma.CashRegisterUncheckedUpdateManyWithoutTerminalNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateManyWithoutStoreInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -606,8 +760,12 @@ export type TerminalCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Typ
 
 export type TerminalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
+  isActive?: boolean
   storeId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   registers?: boolean | Prisma.Terminal$registersArgs<ExtArgs>
   accounts?: boolean | Prisma.Terminal$accountsArgs<ExtArgs>
@@ -616,25 +774,37 @@ export type TerminalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 
 export type TerminalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
+  isActive?: boolean
   storeId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["terminal"]>
 
 export type TerminalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
+  isActive?: boolean
   storeId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["terminal"]>
 
 export type TerminalSelectScalar = {
   id?: boolean
+  code?: boolean
   name?: boolean
+  isActive?: boolean
   storeId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type TerminalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "storeId", ExtArgs["result"]["terminal"]>
+export type TerminalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "isActive" | "storeId" | "createdAt" | "updatedAt", ExtArgs["result"]["terminal"]>
 export type TerminalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   registers?: boolean | Prisma.Terminal$registersArgs<ExtArgs>
@@ -657,8 +827,12 @@ export type $TerminalPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    code: string
     name: string
+    isActive: boolean
     storeId: number
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["terminal"]>
   composites: {}
 }
@@ -1086,8 +1260,12 @@ export interface Prisma__TerminalClient<T, Null = never, ExtArgs extends runtime
  */
 export interface TerminalFieldRefs {
   readonly id: Prisma.FieldRef<"Terminal", 'Int'>
+  readonly code: Prisma.FieldRef<"Terminal", 'String'>
   readonly name: Prisma.FieldRef<"Terminal", 'String'>
+  readonly isActive: Prisma.FieldRef<"Terminal", 'Boolean'>
   readonly storeId: Prisma.FieldRef<"Terminal", 'Int'>
+  readonly createdAt: Prisma.FieldRef<"Terminal", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Terminal", 'DateTime'>
 }
     
 

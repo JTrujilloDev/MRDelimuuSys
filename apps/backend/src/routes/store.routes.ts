@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { createStore } from "../controllers/store.controller";
-;
+import { createStore, getStores, updateStore } from "../controllers/store.controller";
 
-const router = Router()
+const router = Router();
 
-router.post("/", createStore)
+router.get("/", getStores);
+router.post("/", createStore);
+router.patch("/:id", updateStore);
 
-export default router
+export default router;

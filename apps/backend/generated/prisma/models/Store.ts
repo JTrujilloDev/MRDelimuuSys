@@ -28,56 +28,90 @@ export type AggregateStore = {
 
 export type StoreAvgAggregateOutputType = {
   id: number | null
+  groupId: number | null
 }
 
 export type StoreSumAggregateOutputType = {
   id: number | null
+  groupId: number | null
 }
 
 export type StoreMinAggregateOutputType = {
   id: number | null
+  groupId: number | null
+  code: string | null
   name: string | null
+  isActive: boolean | null
+  kitchenMode: $Enums.KitchenMode | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type StoreMaxAggregateOutputType = {
   id: number | null
+  groupId: number | null
+  code: string | null
   name: string | null
+  isActive: boolean | null
+  kitchenMode: $Enums.KitchenMode | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type StoreCountAggregateOutputType = {
   id: number
+  groupId: number
+  code: number
   name: number
+  isActive: number
+  kitchenMode: number
   createdAt: number
+  updatedAt: number
   _all: number
 }
 
 
 export type StoreAvgAggregateInputType = {
   id?: true
+  groupId?: true
 }
 
 export type StoreSumAggregateInputType = {
   id?: true
+  groupId?: true
 }
 
 export type StoreMinAggregateInputType = {
   id?: true
+  groupId?: true
+  code?: true
   name?: true
+  isActive?: true
+  kitchenMode?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type StoreMaxAggregateInputType = {
   id?: true
+  groupId?: true
+  code?: true
   name?: true
+  isActive?: true
+  kitchenMode?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type StoreCountAggregateInputType = {
   id?: true
+  groupId?: true
+  code?: true
   name?: true
+  isActive?: true
+  kitchenMode?: true
   createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -169,8 +203,13 @@ export type StoreGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type StoreGroupByOutputType = {
   id: number
+  groupId: number
+  code: string
   name: string
+  isActive: boolean
+  kitchenMode: $Enums.KitchenMode
   createdAt: Date
+  updatedAt: Date
   _count: StoreCountAggregateOutputType | null
   _avg: StoreAvgAggregateOutputType | null
   _sum: StoreSumAggregateOutputType | null
@@ -198,32 +237,55 @@ export type StoreWhereInput = {
   OR?: Prisma.StoreWhereInput[]
   NOT?: Prisma.StoreWhereInput | Prisma.StoreWhereInput[]
   id?: Prisma.IntFilter<"Store"> | number
+  groupId?: Prisma.IntFilter<"Store"> | number
+  code?: Prisma.StringFilter<"Store"> | string
   name?: Prisma.StringFilter<"Store"> | string
+  isActive?: Prisma.BoolFilter<"Store"> | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFilter<"Store"> | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFilter<"Store"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Store"> | Date | string
+  group?: Prisma.XOR<Prisma.StoreGroupScalarRelationFilter, Prisma.StoreGroupWhereInput>
   terminals?: Prisma.TerminalListRelationFilter
 }
 
 export type StoreOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  kitchenMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  group?: Prisma.StoreGroupOrderByWithRelationInput
   terminals?: Prisma.TerminalOrderByRelationAggregateInput
 }
 
 export type StoreWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  code?: string
   AND?: Prisma.StoreWhereInput | Prisma.StoreWhereInput[]
   OR?: Prisma.StoreWhereInput[]
   NOT?: Prisma.StoreWhereInput | Prisma.StoreWhereInput[]
+  groupId?: Prisma.IntFilter<"Store"> | number
   name?: Prisma.StringFilter<"Store"> | string
+  isActive?: Prisma.BoolFilter<"Store"> | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFilter<"Store"> | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFilter<"Store"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Store"> | Date | string
+  group?: Prisma.XOR<Prisma.StoreGroupScalarRelationFilter, Prisma.StoreGroupWhereInput>
   terminals?: Prisma.TerminalListRelationFilter
-}, "id">
+}, "id" | "code">
 
 export type StoreOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  kitchenMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.StoreCountOrderByAggregateInput
   _avg?: Prisma.StoreAvgOrderByAggregateInput
   _max?: Prisma.StoreMaxOrderByAggregateInput
@@ -236,82 +298,194 @@ export type StoreScalarWhereWithAggregatesInput = {
   OR?: Prisma.StoreScalarWhereWithAggregatesInput[]
   NOT?: Prisma.StoreScalarWhereWithAggregatesInput | Prisma.StoreScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Store"> | number
+  groupId?: Prisma.IntWithAggregatesFilter<"Store"> | number
+  code?: Prisma.StringWithAggregatesFilter<"Store"> | string
   name?: Prisma.StringWithAggregatesFilter<"Store"> | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"Store"> | boolean
+  kitchenMode?: Prisma.EnumKitchenModeWithAggregatesFilter<"Store"> | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Store"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Store"> | Date | string
 }
 
 export type StoreCreateInput = {
+  code: string
   name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
   createdAt?: Date | string
+  updatedAt?: Date | string
+  group: Prisma.StoreGroupCreateNestedOneWithoutStoresInput
   terminals?: Prisma.TerminalCreateNestedManyWithoutStoreInput
 }
 
 export type StoreUncheckedCreateInput = {
   id?: number
+  groupId: number
+  code: string
   name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
   createdAt?: Date | string
+  updatedAt?: Date | string
   terminals?: Prisma.TerminalUncheckedCreateNestedManyWithoutStoreInput
 }
 
 export type StoreUpdateInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  group?: Prisma.StoreGroupUpdateOneRequiredWithoutStoresNestedInput
   terminals?: Prisma.TerminalUpdateManyWithoutStoreNestedInput
 }
 
 export type StoreUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   terminals?: Prisma.TerminalUncheckedUpdateManyWithoutStoreNestedInput
 }
 
 export type StoreCreateManyInput = {
   id?: number
+  groupId: number
+  code: string
   name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type StoreUpdateManyMutationInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type StoreUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StoreListRelationFilter = {
+  every?: Prisma.StoreWhereInput
+  some?: Prisma.StoreWhereInput
+  none?: Prisma.StoreWhereInput
+}
+
+export type StoreOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type StoreCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  kitchenMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type StoreAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type StoreMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  kitchenMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type StoreMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  kitchenMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type StoreSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type StoreScalarRelationFilter = {
   is?: Prisma.StoreWhereInput
   isNot?: Prisma.StoreWhereInput
+}
+
+export type StoreCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutGroupInput, Prisma.StoreUncheckedCreateWithoutGroupInput> | Prisma.StoreCreateWithoutGroupInput[] | Prisma.StoreUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutGroupInput | Prisma.StoreCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.StoreCreateManyGroupInputEnvelope
+  connect?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+}
+
+export type StoreUncheckedCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutGroupInput, Prisma.StoreUncheckedCreateWithoutGroupInput> | Prisma.StoreCreateWithoutGroupInput[] | Prisma.StoreUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutGroupInput | Prisma.StoreCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.StoreCreateManyGroupInputEnvelope
+  connect?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+}
+
+export type StoreUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutGroupInput, Prisma.StoreUncheckedCreateWithoutGroupInput> | Prisma.StoreCreateWithoutGroupInput[] | Prisma.StoreUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutGroupInput | Prisma.StoreCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.StoreUpsertWithWhereUniqueWithoutGroupInput | Prisma.StoreUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.StoreCreateManyGroupInputEnvelope
+  set?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+  disconnect?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+  delete?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+  connect?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+  update?: Prisma.StoreUpdateWithWhereUniqueWithoutGroupInput | Prisma.StoreUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.StoreUpdateManyWithWhereWithoutGroupInput | Prisma.StoreUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.StoreScalarWhereInput | Prisma.StoreScalarWhereInput[]
+}
+
+export type StoreUncheckedUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutGroupInput, Prisma.StoreUncheckedCreateWithoutGroupInput> | Prisma.StoreCreateWithoutGroupInput[] | Prisma.StoreUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutGroupInput | Prisma.StoreCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.StoreUpsertWithWhereUniqueWithoutGroupInput | Prisma.StoreUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.StoreCreateManyGroupInputEnvelope
+  set?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+  disconnect?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+  delete?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+  connect?: Prisma.StoreWhereUniqueInput | Prisma.StoreWhereUniqueInput[]
+  update?: Prisma.StoreUpdateWithWhereUniqueWithoutGroupInput | Prisma.StoreUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.StoreUpdateManyWithWhereWithoutGroupInput | Prisma.StoreUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.StoreScalarWhereInput | Prisma.StoreScalarWhereInput[]
+}
+
+export type EnumKitchenModeFieldUpdateOperationsInput = {
+  set?: $Enums.KitchenMode
 }
 
 export type StoreCreateNestedOneWithoutTerminalsInput = {
@@ -328,15 +502,86 @@ export type StoreUpdateOneRequiredWithoutTerminalsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StoreUpdateToOneWithWhereWithoutTerminalsInput, Prisma.StoreUpdateWithoutTerminalsInput>, Prisma.StoreUncheckedUpdateWithoutTerminalsInput>
 }
 
-export type StoreCreateWithoutTerminalsInput = {
+export type StoreCreateWithoutGroupInput = {
+  code: string
   name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
   createdAt?: Date | string
+  updatedAt?: Date | string
+  terminals?: Prisma.TerminalCreateNestedManyWithoutStoreInput
+}
+
+export type StoreUncheckedCreateWithoutGroupInput = {
+  id?: number
+  code: string
+  name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  terminals?: Prisma.TerminalUncheckedCreateNestedManyWithoutStoreInput
+}
+
+export type StoreCreateOrConnectWithoutGroupInput = {
+  where: Prisma.StoreWhereUniqueInput
+  create: Prisma.XOR<Prisma.StoreCreateWithoutGroupInput, Prisma.StoreUncheckedCreateWithoutGroupInput>
+}
+
+export type StoreCreateManyGroupInputEnvelope = {
+  data: Prisma.StoreCreateManyGroupInput | Prisma.StoreCreateManyGroupInput[]
+  skipDuplicates?: boolean
+}
+
+export type StoreUpsertWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.StoreWhereUniqueInput
+  update: Prisma.XOR<Prisma.StoreUpdateWithoutGroupInput, Prisma.StoreUncheckedUpdateWithoutGroupInput>
+  create: Prisma.XOR<Prisma.StoreCreateWithoutGroupInput, Prisma.StoreUncheckedCreateWithoutGroupInput>
+}
+
+export type StoreUpdateWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.StoreWhereUniqueInput
+  data: Prisma.XOR<Prisma.StoreUpdateWithoutGroupInput, Prisma.StoreUncheckedUpdateWithoutGroupInput>
+}
+
+export type StoreUpdateManyWithWhereWithoutGroupInput = {
+  where: Prisma.StoreScalarWhereInput
+  data: Prisma.XOR<Prisma.StoreUpdateManyMutationInput, Prisma.StoreUncheckedUpdateManyWithoutGroupInput>
+}
+
+export type StoreScalarWhereInput = {
+  AND?: Prisma.StoreScalarWhereInput | Prisma.StoreScalarWhereInput[]
+  OR?: Prisma.StoreScalarWhereInput[]
+  NOT?: Prisma.StoreScalarWhereInput | Prisma.StoreScalarWhereInput[]
+  id?: Prisma.IntFilter<"Store"> | number
+  groupId?: Prisma.IntFilter<"Store"> | number
+  code?: Prisma.StringFilter<"Store"> | string
+  name?: Prisma.StringFilter<"Store"> | string
+  isActive?: Prisma.BoolFilter<"Store"> | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFilter<"Store"> | $Enums.KitchenMode
+  createdAt?: Prisma.DateTimeFilter<"Store"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Store"> | Date | string
+}
+
+export type StoreCreateWithoutTerminalsInput = {
+  code: string
+  name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  group: Prisma.StoreGroupCreateNestedOneWithoutStoresInput
 }
 
 export type StoreUncheckedCreateWithoutTerminalsInput = {
   id?: number
+  groupId: number
+  code: string
   name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type StoreCreateOrConnectWithoutTerminalsInput = {
@@ -356,14 +601,65 @@ export type StoreUpdateToOneWithWhereWithoutTerminalsInput = {
 }
 
 export type StoreUpdateWithoutTerminalsInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  group?: Prisma.StoreGroupUpdateOneRequiredWithoutStoresNestedInput
 }
 
 export type StoreUncheckedUpdateWithoutTerminalsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StoreCreateManyGroupInput = {
+  id?: number
+  code: string
+  name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type StoreUpdateWithoutGroupInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  terminals?: Prisma.TerminalUpdateManyWithoutStoreNestedInput
+}
+
+export type StoreUncheckedUpdateWithoutGroupInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  terminals?: Prisma.TerminalUncheckedUpdateManyWithoutStoreNestedInput
+}
+
+export type StoreUncheckedUpdateManyWithoutGroupInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -399,47 +695,81 @@ export type StoreCountOutputTypeCountTerminalsArgs<ExtArgs extends runtime.Types
 
 export type StoreSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  groupId?: boolean
+  code?: boolean
   name?: boolean
+  isActive?: boolean
+  kitchenMode?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
   terminals?: boolean | Prisma.Store$terminalsArgs<ExtArgs>
   _count?: boolean | Prisma.StoreCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["store"]>
 
 export type StoreSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  groupId?: boolean
+  code?: boolean
   name?: boolean
+  isActive?: boolean
+  kitchenMode?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["store"]>
 
 export type StoreSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  groupId?: boolean
+  code?: boolean
   name?: boolean
+  isActive?: boolean
+  kitchenMode?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["store"]>
 
 export type StoreSelectScalar = {
   id?: boolean
+  groupId?: boolean
+  code?: boolean
   name?: boolean
+  isActive?: boolean
+  kitchenMode?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type StoreOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt", ExtArgs["result"]["store"]>
+export type StoreOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "code" | "name" | "isActive" | "kitchenMode" | "createdAt" | "updatedAt", ExtArgs["result"]["store"]>
 export type StoreInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
   terminals?: boolean | Prisma.Store$terminalsArgs<ExtArgs>
   _count?: boolean | Prisma.StoreCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type StoreIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type StoreIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type StoreIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
+}
+export type StoreIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
+}
 
 export type $StorePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Store"
   objects: {
+    group: Prisma.$StoreGroupPayload<ExtArgs>
     terminals: Prisma.$TerminalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    groupId: number
+    code: string
     name: string
+    isActive: boolean
+    kitchenMode: $Enums.KitchenMode
     createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["store"]>
   composites: {}
 }
@@ -834,6 +1164,7 @@ readonly fields: StoreFieldRefs;
  */
 export interface Prisma__StoreClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  group<T extends Prisma.StoreGroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreGroupDefaultArgs<ExtArgs>>): Prisma.Prisma__StoreGroupClient<runtime.Types.Result.GetResult<Prisma.$StoreGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   terminals<T extends Prisma.Store$terminalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Store$terminalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TerminalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -865,8 +1196,13 @@ export interface Prisma__StoreClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface StoreFieldRefs {
   readonly id: Prisma.FieldRef<"Store", 'Int'>
+  readonly groupId: Prisma.FieldRef<"Store", 'Int'>
+  readonly code: Prisma.FieldRef<"Store", 'String'>
   readonly name: Prisma.FieldRef<"Store", 'String'>
+  readonly isActive: Prisma.FieldRef<"Store", 'Boolean'>
+  readonly kitchenMode: Prisma.FieldRef<"Store", 'KitchenMode'>
   readonly createdAt: Prisma.FieldRef<"Store", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Store", 'DateTime'>
 }
     
 
@@ -1121,6 +1457,10 @@ export type StoreCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.StoreCreateManyInput | Prisma.StoreCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StoreIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1191,6 +1531,10 @@ export type StoreUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many Stores to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StoreIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

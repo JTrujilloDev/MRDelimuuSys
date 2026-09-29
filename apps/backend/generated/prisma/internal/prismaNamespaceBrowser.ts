@@ -62,6 +62,7 @@ export const ModelName = {
   FinancialTransaction: 'FinancialTransaction',
   Customer: 'Customer',
   CashRegister: 'CashRegister',
+  StoreGroup: 'StoreGroup',
   Store: 'Store',
   Terminal: 'Terminal',
   KitchenTicket: 'KitchenTicket',
@@ -255,10 +256,27 @@ export const CashRegisterScalarFieldEnum = {
 export type CashRegisterScalarFieldEnum = (typeof CashRegisterScalarFieldEnum)[keyof typeof CashRegisterScalarFieldEnum]
 
 
+export const StoreGroupScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreGroupScalarFieldEnum = (typeof StoreGroupScalarFieldEnum)[keyof typeof StoreGroupScalarFieldEnum]
+
+
 export const StoreScalarFieldEnum = {
   id: 'id',
+  groupId: 'groupId',
+  code: 'code',
   name: 'name',
-  createdAt: 'createdAt'
+  isActive: 'isActive',
+  kitchenMode: 'kitchenMode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type StoreScalarFieldEnum = (typeof StoreScalarFieldEnum)[keyof typeof StoreScalarFieldEnum]
@@ -266,8 +284,12 @@ export type StoreScalarFieldEnum = (typeof StoreScalarFieldEnum)[keyof typeof St
 
 export const TerminalScalarFieldEnum = {
   id: 'id',
+  code: 'code',
   name: 'name',
-  storeId: 'storeId'
+  isActive: 'isActive',
+  storeId: 'storeId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type TerminalScalarFieldEnum = (typeof TerminalScalarFieldEnum)[keyof typeof TerminalScalarFieldEnum]
