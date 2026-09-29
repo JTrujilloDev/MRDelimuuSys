@@ -65,6 +65,8 @@ export const ModelName = {
   StoreGroup: 'StoreGroup',
   Store: 'Store',
   Terminal: 'Terminal',
+  UserStoreAccess: 'UserStoreAccess',
+  UserSession: 'UserSession',
   KitchenTicket: 'KitchenTicket',
   KitchenTicketItem: 'KitchenTicketItem',
   KitchenTicketAdjustment: 'KitchenTicketAdjustment'
@@ -149,6 +151,8 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   isActive: 'isActive',
+  isGlobalAdmin: 'isGlobalAdmin',
+  lastLoginAt: 'lastLoginAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -293,6 +297,34 @@ export const TerminalScalarFieldEnum = {
 } as const
 
 export type TerminalScalarFieldEnum = (typeof TerminalScalarFieldEnum)[keyof typeof TerminalScalarFieldEnum]
+
+
+export const UserStoreAccessScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  storeId: 'storeId',
+  role: 'role',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserStoreAccessScalarFieldEnum = (typeof UserStoreAccessScalarFieldEnum)[keyof typeof UserStoreAccessScalarFieldEnum]
+
+
+export const UserSessionScalarFieldEnum = {
+  id: 'id',
+  tokenHash: 'tokenHash',
+  userId: 'userId',
+  activeStoreId: 'activeStoreId',
+  activeTerminalId: 'activeTerminalId',
+  expiresAt: 'expiresAt',
+  lastSeenAt: 'lastSeenAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type UserSessionScalarFieldEnum = (typeof UserSessionScalarFieldEnum)[keyof typeof UserSessionScalarFieldEnum]
 
 
 export const KitchenTicketScalarFieldEnum = {

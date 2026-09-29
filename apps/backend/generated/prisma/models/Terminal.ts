@@ -239,6 +239,7 @@ export type TerminalWhereInput = {
   store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>
   registers?: Prisma.CashRegisterListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
+  activeSessions?: Prisma.UserSessionListRelationFilter
 }
 
 export type TerminalOrderByWithRelationInput = {
@@ -252,6 +253,7 @@ export type TerminalOrderByWithRelationInput = {
   store?: Prisma.StoreOrderByWithRelationInput
   registers?: Prisma.CashRegisterOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
+  activeSessions?: Prisma.UserSessionOrderByRelationAggregateInput
 }
 
 export type TerminalWhereUniqueInput = Prisma.AtLeast<{
@@ -269,6 +271,7 @@ export type TerminalWhereUniqueInput = Prisma.AtLeast<{
   store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>
   registers?: Prisma.CashRegisterListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
+  activeSessions?: Prisma.UserSessionListRelationFilter
 }, "id" | "storeId_code">
 
 export type TerminalOrderByWithAggregationInput = {
@@ -308,6 +311,7 @@ export type TerminalCreateInput = {
   store: Prisma.StoreCreateNestedOneWithoutTerminalsInput
   registers?: Prisma.CashRegisterCreateNestedManyWithoutTerminalInput
   accounts?: Prisma.AccountCreateNestedManyWithoutTerminalInput
+  activeSessions?: Prisma.UserSessionCreateNestedManyWithoutActiveTerminalInput
 }
 
 export type TerminalUncheckedCreateInput = {
@@ -320,6 +324,7 @@ export type TerminalUncheckedCreateInput = {
   updatedAt?: Date | string
   registers?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutTerminalInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutTerminalInput
+  activeSessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutActiveTerminalInput
 }
 
 export type TerminalUpdateInput = {
@@ -331,6 +336,7 @@ export type TerminalUpdateInput = {
   store?: Prisma.StoreUpdateOneRequiredWithoutTerminalsNestedInput
   registers?: Prisma.CashRegisterUpdateManyWithoutTerminalNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutTerminalNestedInput
+  activeSessions?: Prisma.UserSessionUpdateManyWithoutActiveTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateInput = {
@@ -343,6 +349,7 @@ export type TerminalUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registers?: Prisma.CashRegisterUncheckedUpdateManyWithoutTerminalNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutTerminalNestedInput
+  activeSessions?: Prisma.UserSessionUncheckedUpdateManyWithoutActiveTerminalNestedInput
 }
 
 export type TerminalCreateManyInput = {
@@ -433,6 +440,11 @@ export type TerminalSumOrderByAggregateInput = {
   storeId?: Prisma.SortOrder
 }
 
+export type TerminalNullableScalarRelationFilter = {
+  is?: Prisma.TerminalWhereInput | null
+  isNot?: Prisma.TerminalWhereInput | null
+}
+
 export type TerminalCreateNestedOneWithoutAccountsInput = {
   create?: Prisma.XOR<Prisma.TerminalCreateWithoutAccountsInput, Prisma.TerminalUncheckedCreateWithoutAccountsInput>
   connectOrCreate?: Prisma.TerminalCreateOrConnectWithoutAccountsInput
@@ -503,6 +515,22 @@ export type TerminalUncheckedUpdateManyWithoutStoreNestedInput = {
   deleteMany?: Prisma.TerminalScalarWhereInput | Prisma.TerminalScalarWhereInput[]
 }
 
+export type TerminalCreateNestedOneWithoutActiveSessionsInput = {
+  create?: Prisma.XOR<Prisma.TerminalCreateWithoutActiveSessionsInput, Prisma.TerminalUncheckedCreateWithoutActiveSessionsInput>
+  connectOrCreate?: Prisma.TerminalCreateOrConnectWithoutActiveSessionsInput
+  connect?: Prisma.TerminalWhereUniqueInput
+}
+
+export type TerminalUpdateOneWithoutActiveSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.TerminalCreateWithoutActiveSessionsInput, Prisma.TerminalUncheckedCreateWithoutActiveSessionsInput>
+  connectOrCreate?: Prisma.TerminalCreateOrConnectWithoutActiveSessionsInput
+  upsert?: Prisma.TerminalUpsertWithoutActiveSessionsInput
+  disconnect?: Prisma.TerminalWhereInput | boolean
+  delete?: Prisma.TerminalWhereInput | boolean
+  connect?: Prisma.TerminalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TerminalUpdateToOneWithWhereWithoutActiveSessionsInput, Prisma.TerminalUpdateWithoutActiveSessionsInput>, Prisma.TerminalUncheckedUpdateWithoutActiveSessionsInput>
+}
+
 export type TerminalCreateWithoutAccountsInput = {
   code: string
   name: string
@@ -511,6 +539,7 @@ export type TerminalCreateWithoutAccountsInput = {
   updatedAt?: Date | string
   store: Prisma.StoreCreateNestedOneWithoutTerminalsInput
   registers?: Prisma.CashRegisterCreateNestedManyWithoutTerminalInput
+  activeSessions?: Prisma.UserSessionCreateNestedManyWithoutActiveTerminalInput
 }
 
 export type TerminalUncheckedCreateWithoutAccountsInput = {
@@ -522,6 +551,7 @@ export type TerminalUncheckedCreateWithoutAccountsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   registers?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutTerminalInput
+  activeSessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutActiveTerminalInput
 }
 
 export type TerminalCreateOrConnectWithoutAccountsInput = {
@@ -548,6 +578,7 @@ export type TerminalUpdateWithoutAccountsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   store?: Prisma.StoreUpdateOneRequiredWithoutTerminalsNestedInput
   registers?: Prisma.CashRegisterUpdateManyWithoutTerminalNestedInput
+  activeSessions?: Prisma.UserSessionUpdateManyWithoutActiveTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateWithoutAccountsInput = {
@@ -559,6 +590,7 @@ export type TerminalUncheckedUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registers?: Prisma.CashRegisterUncheckedUpdateManyWithoutTerminalNestedInput
+  activeSessions?: Prisma.UserSessionUncheckedUpdateManyWithoutActiveTerminalNestedInput
 }
 
 export type TerminalCreateWithoutRegistersInput = {
@@ -569,6 +601,7 @@ export type TerminalCreateWithoutRegistersInput = {
   updatedAt?: Date | string
   store: Prisma.StoreCreateNestedOneWithoutTerminalsInput
   accounts?: Prisma.AccountCreateNestedManyWithoutTerminalInput
+  activeSessions?: Prisma.UserSessionCreateNestedManyWithoutActiveTerminalInput
 }
 
 export type TerminalUncheckedCreateWithoutRegistersInput = {
@@ -580,6 +613,7 @@ export type TerminalUncheckedCreateWithoutRegistersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutTerminalInput
+  activeSessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutActiveTerminalInput
 }
 
 export type TerminalCreateOrConnectWithoutRegistersInput = {
@@ -606,6 +640,7 @@ export type TerminalUpdateWithoutRegistersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   store?: Prisma.StoreUpdateOneRequiredWithoutTerminalsNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutTerminalNestedInput
+  activeSessions?: Prisma.UserSessionUpdateManyWithoutActiveTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateWithoutRegistersInput = {
@@ -617,6 +652,7 @@ export type TerminalUncheckedUpdateWithoutRegistersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutTerminalNestedInput
+  activeSessions?: Prisma.UserSessionUncheckedUpdateManyWithoutActiveTerminalNestedInput
 }
 
 export type TerminalCreateWithoutStoreInput = {
@@ -627,6 +663,7 @@ export type TerminalCreateWithoutStoreInput = {
   updatedAt?: Date | string
   registers?: Prisma.CashRegisterCreateNestedManyWithoutTerminalInput
   accounts?: Prisma.AccountCreateNestedManyWithoutTerminalInput
+  activeSessions?: Prisma.UserSessionCreateNestedManyWithoutActiveTerminalInput
 }
 
 export type TerminalUncheckedCreateWithoutStoreInput = {
@@ -638,6 +675,7 @@ export type TerminalUncheckedCreateWithoutStoreInput = {
   updatedAt?: Date | string
   registers?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutTerminalInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutTerminalInput
+  activeSessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutActiveTerminalInput
 }
 
 export type TerminalCreateOrConnectWithoutStoreInput = {
@@ -679,6 +717,68 @@ export type TerminalScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Terminal"> | Date | string
 }
 
+export type TerminalCreateWithoutActiveSessionsInput = {
+  code: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  store: Prisma.StoreCreateNestedOneWithoutTerminalsInput
+  registers?: Prisma.CashRegisterCreateNestedManyWithoutTerminalInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutTerminalInput
+}
+
+export type TerminalUncheckedCreateWithoutActiveSessionsInput = {
+  id?: number
+  code: string
+  name: string
+  isActive?: boolean
+  storeId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  registers?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutTerminalInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutTerminalInput
+}
+
+export type TerminalCreateOrConnectWithoutActiveSessionsInput = {
+  where: Prisma.TerminalWhereUniqueInput
+  create: Prisma.XOR<Prisma.TerminalCreateWithoutActiveSessionsInput, Prisma.TerminalUncheckedCreateWithoutActiveSessionsInput>
+}
+
+export type TerminalUpsertWithoutActiveSessionsInput = {
+  update: Prisma.XOR<Prisma.TerminalUpdateWithoutActiveSessionsInput, Prisma.TerminalUncheckedUpdateWithoutActiveSessionsInput>
+  create: Prisma.XOR<Prisma.TerminalCreateWithoutActiveSessionsInput, Prisma.TerminalUncheckedCreateWithoutActiveSessionsInput>
+  where?: Prisma.TerminalWhereInput
+}
+
+export type TerminalUpdateToOneWithWhereWithoutActiveSessionsInput = {
+  where?: Prisma.TerminalWhereInput
+  data: Prisma.XOR<Prisma.TerminalUpdateWithoutActiveSessionsInput, Prisma.TerminalUncheckedUpdateWithoutActiveSessionsInput>
+}
+
+export type TerminalUpdateWithoutActiveSessionsInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  store?: Prisma.StoreUpdateOneRequiredWithoutTerminalsNestedInput
+  registers?: Prisma.CashRegisterUpdateManyWithoutTerminalNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutTerminalNestedInput
+}
+
+export type TerminalUncheckedUpdateWithoutActiveSessionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  storeId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registers?: Prisma.CashRegisterUncheckedUpdateManyWithoutTerminalNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutTerminalNestedInput
+}
+
 export type TerminalCreateManyStoreInput = {
   id?: number
   code: string
@@ -696,6 +796,7 @@ export type TerminalUpdateWithoutStoreInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registers?: Prisma.CashRegisterUpdateManyWithoutTerminalNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutTerminalNestedInput
+  activeSessions?: Prisma.UserSessionUpdateManyWithoutActiveTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateWithoutStoreInput = {
@@ -707,6 +808,7 @@ export type TerminalUncheckedUpdateWithoutStoreInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   registers?: Prisma.CashRegisterUncheckedUpdateManyWithoutTerminalNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutTerminalNestedInput
+  activeSessions?: Prisma.UserSessionUncheckedUpdateManyWithoutActiveTerminalNestedInput
 }
 
 export type TerminalUncheckedUpdateManyWithoutStoreInput = {
@@ -726,11 +828,13 @@ export type TerminalUncheckedUpdateManyWithoutStoreInput = {
 export type TerminalCountOutputType = {
   registers: number
   accounts: number
+  activeSessions: number
 }
 
 export type TerminalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   registers?: boolean | TerminalCountOutputTypeCountRegistersArgs
   accounts?: boolean | TerminalCountOutputTypeCountAccountsArgs
+  activeSessions?: boolean | TerminalCountOutputTypeCountActiveSessionsArgs
 }
 
 /**
@@ -757,6 +861,13 @@ export type TerminalCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.AccountWhereInput
 }
 
+/**
+ * TerminalCountOutputType without action
+ */
+export type TerminalCountOutputTypeCountActiveSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserSessionWhereInput
+}
+
 
 export type TerminalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -769,6 +880,7 @@ export type TerminalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   registers?: boolean | Prisma.Terminal$registersArgs<ExtArgs>
   accounts?: boolean | Prisma.Terminal$accountsArgs<ExtArgs>
+  activeSessions?: boolean | Prisma.Terminal$activeSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.TerminalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["terminal"]>
 
@@ -809,6 +921,7 @@ export type TerminalInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   registers?: boolean | Prisma.Terminal$registersArgs<ExtArgs>
   accounts?: boolean | Prisma.Terminal$accountsArgs<ExtArgs>
+  activeSessions?: boolean | Prisma.Terminal$activeSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.TerminalCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TerminalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -824,6 +937,7 @@ export type $TerminalPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     store: Prisma.$StorePayload<ExtArgs>
     registers: Prisma.$CashRegisterPayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
+    activeSessions: Prisma.$UserSessionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1230,6 +1344,7 @@ export interface Prisma__TerminalClient<T, Null = never, ExtArgs extends runtime
   store<T extends Prisma.StoreDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreDefaultArgs<ExtArgs>>): Prisma.Prisma__StoreClient<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   registers<T extends Prisma.Terminal$registersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Terminal$registersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CashRegisterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.Terminal$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Terminal$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activeSessions<T extends Prisma.Terminal$activeSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Terminal$activeSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1712,6 +1827,30 @@ export type Terminal$accountsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.AccountScalarFieldEnum | Prisma.AccountScalarFieldEnum[]
+}
+
+/**
+ * Terminal.activeSessions
+ */
+export type Terminal$activeSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserSession
+   */
+  select?: Prisma.UserSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserSession
+   */
+  omit?: Prisma.UserSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserSessionInclude<ExtArgs> | null
+  where?: Prisma.UserSessionWhereInput
+  orderBy?: Prisma.UserSessionOrderByWithRelationInput | Prisma.UserSessionOrderByWithRelationInput[]
+  cursor?: Prisma.UserSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserSessionScalarFieldEnum | Prisma.UserSessionScalarFieldEnum[]
 }
 
 /**

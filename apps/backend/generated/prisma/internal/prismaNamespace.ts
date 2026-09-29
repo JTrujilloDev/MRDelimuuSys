@@ -398,6 +398,8 @@ export const ModelName = {
   StoreGroup: 'StoreGroup',
   Store: 'Store',
   Terminal: 'Terminal',
+  UserStoreAccess: 'UserStoreAccess',
+  UserSession: 'UserSession',
   KitchenTicket: 'KitchenTicket',
   KitchenTicketItem: 'KitchenTicketItem',
   KitchenTicketAdjustment: 'KitchenTicketAdjustment'
@@ -416,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "storeGroup" | "store" | "terminal" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
+    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "storeGroup" | "store" | "terminal" | "userStoreAccess" | "userSession" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1456,6 +1458,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserStoreAccess: {
+      payload: Prisma.$UserStoreAccessPayload<ExtArgs>
+      fields: Prisma.UserStoreAccessFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserStoreAccessFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserStoreAccessFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>
+        }
+        findFirst: {
+          args: Prisma.UserStoreAccessFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserStoreAccessFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>
+        }
+        findMany: {
+          args: Prisma.UserStoreAccessFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>[]
+        }
+        create: {
+          args: Prisma.UserStoreAccessCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>
+        }
+        createMany: {
+          args: Prisma.UserStoreAccessCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserStoreAccessCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>[]
+        }
+        delete: {
+          args: Prisma.UserStoreAccessDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>
+        }
+        update: {
+          args: Prisma.UserStoreAccessUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserStoreAccessDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserStoreAccessUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserStoreAccessUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserStoreAccessUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserStoreAccessPayload>
+        }
+        aggregate: {
+          args: Prisma.UserStoreAccessAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserStoreAccess>
+        }
+        groupBy: {
+          args: Prisma.UserStoreAccessGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserStoreAccessGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserStoreAccessCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserStoreAccessCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserSession: {
+      payload: Prisma.$UserSessionPayload<ExtArgs>
+      fields: Prisma.UserSessionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserSessionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserSessionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>
+        }
+        findFirst: {
+          args: Prisma.UserSessionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserSessionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>
+        }
+        findMany: {
+          args: Prisma.UserSessionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>[]
+        }
+        create: {
+          args: Prisma.UserSessionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>
+        }
+        createMany: {
+          args: Prisma.UserSessionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserSessionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>[]
+        }
+        delete: {
+          args: Prisma.UserSessionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>
+        }
+        update: {
+          args: Prisma.UserSessionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserSessionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserSessionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserSessionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserSessionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSessionPayload>
+        }
+        aggregate: {
+          args: Prisma.UserSessionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserSession>
+        }
+        groupBy: {
+          args: Prisma.UserSessionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserSessionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserSessionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserSessionCountAggregateOutputType> | number
+        }
+      }
+    }
     KitchenTicket: {
       payload: Prisma.$KitchenTicketPayload<ExtArgs>
       fields: Prisma.KitchenTicketFieldRefs
@@ -1780,6 +1930,8 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   isActive: 'isActive',
+  isGlobalAdmin: 'isGlobalAdmin',
+  lastLoginAt: 'lastLoginAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1924,6 +2076,34 @@ export const TerminalScalarFieldEnum = {
 } as const
 
 export type TerminalScalarFieldEnum = (typeof TerminalScalarFieldEnum)[keyof typeof TerminalScalarFieldEnum]
+
+
+export const UserStoreAccessScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  storeId: 'storeId',
+  role: 'role',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserStoreAccessScalarFieldEnum = (typeof UserStoreAccessScalarFieldEnum)[keyof typeof UserStoreAccessScalarFieldEnum]
+
+
+export const UserSessionScalarFieldEnum = {
+  id: 'id',
+  tokenHash: 'tokenHash',
+  userId: 'userId',
+  activeStoreId: 'activeStoreId',
+  activeTerminalId: 'activeTerminalId',
+  expiresAt: 'expiresAt',
+  lastSeenAt: 'lastSeenAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type UserSessionScalarFieldEnum = (typeof UserSessionScalarFieldEnum)[keyof typeof UserSessionScalarFieldEnum]
 
 
 export const KitchenTicketScalarFieldEnum = {
@@ -2364,6 +2544,8 @@ export type GlobalOmitConfig = {
   storeGroup?: Prisma.StoreGroupOmit
   store?: Prisma.StoreOmit
   terminal?: Prisma.TerminalOmit
+  userStoreAccess?: Prisma.UserStoreAccessOmit
+  userSession?: Prisma.UserSessionOmit
   kitchenTicket?: Prisma.KitchenTicketOmit
   kitchenTicketItem?: Prisma.KitchenTicketItemOmit
   kitchenTicketAdjustment?: Prisma.KitchenTicketAdjustmentOmit

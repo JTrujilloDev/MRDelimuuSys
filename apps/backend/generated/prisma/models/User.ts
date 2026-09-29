@@ -41,6 +41,8 @@ export type UserMinAggregateOutputType = {
   password: string | null
   role: $Enums.Role | null
   isActive: boolean | null
+  isGlobalAdmin: boolean | null
+  lastLoginAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +54,8 @@ export type UserMaxAggregateOutputType = {
   password: string | null
   role: $Enums.Role | null
   isActive: boolean | null
+  isGlobalAdmin: boolean | null
+  lastLoginAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,6 +67,8 @@ export type UserCountAggregateOutputType = {
   password: number
   role: number
   isActive: number
+  isGlobalAdmin: number
+  lastLoginAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -84,6 +90,8 @@ export type UserMinAggregateInputType = {
   password?: true
   role?: true
   isActive?: true
+  isGlobalAdmin?: true
+  lastLoginAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -95,6 +103,8 @@ export type UserMaxAggregateInputType = {
   password?: true
   role?: true
   isActive?: true
+  isGlobalAdmin?: true
+  lastLoginAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +116,8 @@ export type UserCountAggregateInputType = {
   password?: true
   role?: true
   isActive?: true
+  isGlobalAdmin?: true
+  lastLoginAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -204,6 +216,8 @@ export type UserGroupByOutputType = {
   password: string
   role: $Enums.Role
   isActive: boolean
+  isGlobalAdmin: boolean
+  lastLoginAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -238,10 +252,14 @@ export type UserWhereInput = {
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   isActive?: Prisma.BoolFilter<"User"> | boolean
+  isGlobalAdmin?: Prisma.BoolFilter<"User"> | boolean
+  lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   Accounts?: Prisma.AccountListRelationFilter
   CashRegisters?: Prisma.CashRegisterListRelationFilter
+  storeAccesses?: Prisma.UserStoreAccessListRelationFilter
+  sessions?: Prisma.UserSessionListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -251,10 +269,14 @@ export type UserOrderByWithRelationInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isGlobalAdmin?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   Accounts?: Prisma.AccountOrderByRelationAggregateInput
   CashRegisters?: Prisma.CashRegisterOrderByRelationAggregateInput
+  storeAccesses?: Prisma.UserStoreAccessOrderByRelationAggregateInput
+  sessions?: Prisma.UserSessionOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -267,10 +289,14 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   isActive?: Prisma.BoolFilter<"User"> | boolean
+  isGlobalAdmin?: Prisma.BoolFilter<"User"> | boolean
+  lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   Accounts?: Prisma.AccountListRelationFilter
   CashRegisters?: Prisma.CashRegisterListRelationFilter
+  storeAccesses?: Prisma.UserStoreAccessListRelationFilter
+  sessions?: Prisma.UserSessionListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -280,6 +306,8 @@ export type UserOrderByWithAggregationInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isGlobalAdmin?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -299,6 +327,8 @@ export type UserScalarWhereWithAggregatesInput = {
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  isGlobalAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  lastLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -309,10 +339,14 @@ export type UserCreateInput = {
   password: string
   role?: $Enums.Role
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -322,10 +356,14 @@ export type UserUncheckedCreateInput = {
   password: string
   role?: $Enums.Role
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -334,10 +372,14 @@ export type UserUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -347,10 +389,14 @@ export type UserUncheckedUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -360,6 +406,8 @@ export type UserCreateManyInput = {
   password: string
   role?: $Enums.Role
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -370,6 +418,8 @@ export type UserUpdateManyMutationInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -381,6 +431,8 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -392,6 +444,8 @@ export type UserCountOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isGlobalAdmin?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -407,6 +461,8 @@ export type UserMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isGlobalAdmin?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -418,6 +474,8 @@ export type UserMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isGlobalAdmin?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -433,6 +491,10 @@ export type UserScalarRelationFilter = {
 
 export type EnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type UserCreateNestedOneWithoutAccountsInput = {
@@ -463,15 +525,47 @@ export type UserUpdateOneRequiredWithoutCashRegistersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCashRegistersInput, Prisma.UserUpdateWithoutCashRegistersInput>, Prisma.UserUncheckedUpdateWithoutCashRegistersInput>
 }
 
+export type UserCreateNestedOneWithoutStoreAccessesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutStoreAccessesInput, Prisma.UserUncheckedCreateWithoutStoreAccessesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutStoreAccessesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutStoreAccessesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutStoreAccessesInput, Prisma.UserUncheckedCreateWithoutStoreAccessesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutStoreAccessesInput
+  upsert?: Prisma.UserUpsertWithoutStoreAccessesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutStoreAccessesInput, Prisma.UserUpdateWithoutStoreAccessesInput>, Prisma.UserUncheckedUpdateWithoutStoreAccessesInput>
+}
+
+export type UserCreateNestedOneWithoutSessionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSessionsInput, Prisma.UserUncheckedCreateWithoutSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSessionsInput, Prisma.UserUncheckedCreateWithoutSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSessionsInput
+  upsert?: Prisma.UserUpsertWithoutSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionsInput, Prisma.UserUpdateWithoutSessionsInput>, Prisma.UserUncheckedUpdateWithoutSessionsInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   name: string
   email: string
   password: string
   role?: $Enums.Role
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -481,9 +575,13 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   password: string
   role?: $Enums.Role
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -508,9 +606,13 @@ export type UserUpdateWithoutAccountsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -520,9 +622,13 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCashRegistersInput = {
@@ -531,9 +637,13 @@ export type UserCreateWithoutCashRegistersInput = {
   password: string
   role?: $Enums.Role
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCashRegistersInput = {
@@ -543,9 +653,13 @@ export type UserUncheckedCreateWithoutCashRegistersInput = {
   password: string
   role?: $Enums.Role
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCashRegistersInput = {
@@ -570,9 +684,13 @@ export type UserUpdateWithoutCashRegistersInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCashRegistersInput = {
@@ -582,9 +700,169 @@ export type UserUncheckedUpdateWithoutCashRegistersInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutStoreAccessesInput = {
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutStoreAccessesInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutStoreAccessesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutStoreAccessesInput, Prisma.UserUncheckedCreateWithoutStoreAccessesInput>
+}
+
+export type UserUpsertWithoutStoreAccessesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutStoreAccessesInput, Prisma.UserUncheckedUpdateWithoutStoreAccessesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutStoreAccessesInput, Prisma.UserUncheckedCreateWithoutStoreAccessesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutStoreAccessesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutStoreAccessesInput, Prisma.UserUncheckedUpdateWithoutStoreAccessesInput>
+}
+
+export type UserUpdateWithoutStoreAccessesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutStoreAccessesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSessionsInput = {
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSessionsInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSessionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSessionsInput, Prisma.UserUncheckedCreateWithoutSessionsInput>
+}
+
+export type UserUpsertWithoutSessionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSessionsInput, Prisma.UserUncheckedUpdateWithoutSessionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSessionsInput, Prisma.UserUncheckedCreateWithoutSessionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSessionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSessionsInput, Prisma.UserUncheckedUpdateWithoutSessionsInput>
+}
+
+export type UserUpdateWithoutSessionsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSessionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -595,11 +873,15 @@ export type UserUncheckedUpdateWithoutCashRegistersInput = {
 export type UserCountOutputType = {
   Accounts: number
   CashRegisters: number
+  storeAccesses: number
+  sessions: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Accounts?: boolean | UserCountOutputTypeCountAccountsArgs
   CashRegisters?: boolean | UserCountOutputTypeCountCashRegistersArgs
+  storeAccesses?: boolean | UserCountOutputTypeCountStoreAccessesArgs
+  sessions?: boolean | UserCountOutputTypeCountSessionsArgs
 }
 
 /**
@@ -626,6 +908,20 @@ export type UserCountOutputTypeCountCashRegistersArgs<ExtArgs extends runtime.Ty
   where?: Prisma.CashRegisterWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountStoreAccessesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserStoreAccessWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserSessionWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -634,10 +930,14 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   password?: boolean
   role?: boolean
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   Accounts?: boolean | Prisma.User$AccountsArgs<ExtArgs>
   CashRegisters?: boolean | Prisma.User$CashRegistersArgs<ExtArgs>
+  storeAccesses?: boolean | Prisma.User$storeAccessesArgs<ExtArgs>
+  sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -648,6 +948,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   role?: boolean
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -659,6 +961,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   role?: boolean
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -670,14 +974,18 @@ export type UserSelectScalar = {
   password?: boolean
   role?: boolean
   isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "isActive" | "isGlobalAdmin" | "lastLoginAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Accounts?: boolean | Prisma.User$AccountsArgs<ExtArgs>
   CashRegisters?: boolean | Prisma.User$CashRegistersArgs<ExtArgs>
+  storeAccesses?: boolean | Prisma.User$storeAccessesArgs<ExtArgs>
+  sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -688,6 +996,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     Accounts: Prisma.$AccountPayload<ExtArgs>[]
     CashRegisters: Prisma.$CashRegisterPayload<ExtArgs>[]
+    storeAccesses: Prisma.$UserStoreAccessPayload<ExtArgs>[]
+    sessions: Prisma.$UserSessionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -696,6 +1006,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     password: string
     role: $Enums.Role
     isActive: boolean
+    isGlobalAdmin: boolean
+    lastLoginAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1094,6 +1406,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   Accounts<T extends Prisma.User$AccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$AccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   CashRegisters<T extends Prisma.User$CashRegistersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$CashRegistersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CashRegisterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  storeAccesses<T extends Prisma.User$storeAccessesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$storeAccessesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserStoreAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1129,6 +1443,8 @@ export interface UserFieldRefs {
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
+  readonly isGlobalAdmin: Prisma.FieldRef<"User", 'Boolean'>
+  readonly lastLoginAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -1569,6 +1885,54 @@ export type User$CashRegistersArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.CashRegisterScalarFieldEnum | Prisma.CashRegisterScalarFieldEnum[]
+}
+
+/**
+ * User.storeAccesses
+ */
+export type User$storeAccessesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserStoreAccess
+   */
+  select?: Prisma.UserStoreAccessSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserStoreAccess
+   */
+  omit?: Prisma.UserStoreAccessOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserStoreAccessInclude<ExtArgs> | null
+  where?: Prisma.UserStoreAccessWhereInput
+  orderBy?: Prisma.UserStoreAccessOrderByWithRelationInput | Prisma.UserStoreAccessOrderByWithRelationInput[]
+  cursor?: Prisma.UserStoreAccessWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserStoreAccessScalarFieldEnum | Prisma.UserStoreAccessScalarFieldEnum[]
+}
+
+/**
+ * User.sessions
+ */
+export type User$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserSession
+   */
+  select?: Prisma.UserSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserSession
+   */
+  omit?: Prisma.UserSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserSessionInclude<ExtArgs> | null
+  where?: Prisma.UserSessionWhereInput
+  orderBy?: Prisma.UserSessionOrderByWithRelationInput | Prisma.UserSessionOrderByWithRelationInput[]
+  cursor?: Prisma.UserSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserSessionScalarFieldEnum | Prisma.UserSessionScalarFieldEnum[]
 }
 
 /**

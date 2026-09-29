@@ -88,6 +88,16 @@ export type Store = Prisma.StoreModel
  */
 export type Terminal = Prisma.TerminalModel
 /**
+ * Model UserStoreAccess
+ * 
+ */
+export type UserStoreAccess = Prisma.UserStoreAccessModel
+/**
+ * Model UserSession
+ * 
+ */
+export type UserSession = Prisma.UserSessionModel
+/**
  * Model KitchenTicket
  * 
  */

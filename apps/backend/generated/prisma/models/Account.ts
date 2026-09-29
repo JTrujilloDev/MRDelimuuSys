@@ -742,10 +742,6 @@ export type EnumAccountStatusFieldUpdateOperationsInput = {
   set?: $Enums.AccountStatus
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type NullableEnumPaymentMethodFieldUpdateOperationsInput = {
   set?: $Enums.PaymentMethod | null
 }

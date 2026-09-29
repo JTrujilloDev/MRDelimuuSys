@@ -246,6 +246,8 @@ export type StoreWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Store"> | Date | string
   group?: Prisma.XOR<Prisma.StoreGroupScalarRelationFilter, Prisma.StoreGroupWhereInput>
   terminals?: Prisma.TerminalListRelationFilter
+  userAccesses?: Prisma.UserStoreAccessListRelationFilter
+  activeSessions?: Prisma.UserSessionListRelationFilter
 }
 
 export type StoreOrderByWithRelationInput = {
@@ -259,6 +261,8 @@ export type StoreOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   group?: Prisma.StoreGroupOrderByWithRelationInput
   terminals?: Prisma.TerminalOrderByRelationAggregateInput
+  userAccesses?: Prisma.UserStoreAccessOrderByRelationAggregateInput
+  activeSessions?: Prisma.UserSessionOrderByRelationAggregateInput
 }
 
 export type StoreWhereUniqueInput = Prisma.AtLeast<{
@@ -275,6 +279,8 @@ export type StoreWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Store"> | Date | string
   group?: Prisma.XOR<Prisma.StoreGroupScalarRelationFilter, Prisma.StoreGroupWhereInput>
   terminals?: Prisma.TerminalListRelationFilter
+  userAccesses?: Prisma.UserStoreAccessListRelationFilter
+  activeSessions?: Prisma.UserSessionListRelationFilter
 }, "id" | "code">
 
 export type StoreOrderByWithAggregationInput = {
@@ -316,6 +322,8 @@ export type StoreCreateInput = {
   updatedAt?: Date | string
   group: Prisma.StoreGroupCreateNestedOneWithoutStoresInput
   terminals?: Prisma.TerminalCreateNestedManyWithoutStoreInput
+  userAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutStoreInput
+  activeSessions?: Prisma.UserSessionCreateNestedManyWithoutActiveStoreInput
 }
 
 export type StoreUncheckedCreateInput = {
@@ -328,6 +336,8 @@ export type StoreUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   terminals?: Prisma.TerminalUncheckedCreateNestedManyWithoutStoreInput
+  userAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutStoreInput
+  activeSessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutActiveStoreInput
 }
 
 export type StoreUpdateInput = {
@@ -339,6 +349,8 @@ export type StoreUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.StoreGroupUpdateOneRequiredWithoutStoresNestedInput
   terminals?: Prisma.TerminalUpdateManyWithoutStoreNestedInput
+  userAccesses?: Prisma.UserStoreAccessUpdateManyWithoutStoreNestedInput
+  activeSessions?: Prisma.UserSessionUpdateManyWithoutActiveStoreNestedInput
 }
 
 export type StoreUncheckedUpdateInput = {
@@ -351,6 +363,8 @@ export type StoreUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   terminals?: Prisma.TerminalUncheckedUpdateManyWithoutStoreNestedInput
+  userAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutStoreNestedInput
+  activeSessions?: Prisma.UserSessionUncheckedUpdateManyWithoutActiveStoreNestedInput
 }
 
 export type StoreCreateManyInput = {
@@ -442,6 +456,11 @@ export type StoreScalarRelationFilter = {
   isNot?: Prisma.StoreWhereInput
 }
 
+export type StoreNullableScalarRelationFilter = {
+  is?: Prisma.StoreWhereInput | null
+  isNot?: Prisma.StoreWhereInput | null
+}
+
 export type StoreCreateNestedManyWithoutGroupInput = {
   create?: Prisma.XOR<Prisma.StoreCreateWithoutGroupInput, Prisma.StoreUncheckedCreateWithoutGroupInput> | Prisma.StoreCreateWithoutGroupInput[] | Prisma.StoreUncheckedCreateWithoutGroupInput[]
   connectOrCreate?: Prisma.StoreCreateOrConnectWithoutGroupInput | Prisma.StoreCreateOrConnectWithoutGroupInput[]
@@ -502,6 +521,36 @@ export type StoreUpdateOneRequiredWithoutTerminalsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StoreUpdateToOneWithWhereWithoutTerminalsInput, Prisma.StoreUpdateWithoutTerminalsInput>, Prisma.StoreUncheckedUpdateWithoutTerminalsInput>
 }
 
+export type StoreCreateNestedOneWithoutUserAccessesInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutUserAccessesInput, Prisma.StoreUncheckedCreateWithoutUserAccessesInput>
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutUserAccessesInput
+  connect?: Prisma.StoreWhereUniqueInput
+}
+
+export type StoreUpdateOneRequiredWithoutUserAccessesNestedInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutUserAccessesInput, Prisma.StoreUncheckedCreateWithoutUserAccessesInput>
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutUserAccessesInput
+  upsert?: Prisma.StoreUpsertWithoutUserAccessesInput
+  connect?: Prisma.StoreWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StoreUpdateToOneWithWhereWithoutUserAccessesInput, Prisma.StoreUpdateWithoutUserAccessesInput>, Prisma.StoreUncheckedUpdateWithoutUserAccessesInput>
+}
+
+export type StoreCreateNestedOneWithoutActiveSessionsInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutActiveSessionsInput, Prisma.StoreUncheckedCreateWithoutActiveSessionsInput>
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutActiveSessionsInput
+  connect?: Prisma.StoreWhereUniqueInput
+}
+
+export type StoreUpdateOneWithoutActiveSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutActiveSessionsInput, Prisma.StoreUncheckedCreateWithoutActiveSessionsInput>
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutActiveSessionsInput
+  upsert?: Prisma.StoreUpsertWithoutActiveSessionsInput
+  disconnect?: Prisma.StoreWhereInput | boolean
+  delete?: Prisma.StoreWhereInput | boolean
+  connect?: Prisma.StoreWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StoreUpdateToOneWithWhereWithoutActiveSessionsInput, Prisma.StoreUpdateWithoutActiveSessionsInput>, Prisma.StoreUncheckedUpdateWithoutActiveSessionsInput>
+}
+
 export type StoreCreateWithoutGroupInput = {
   code: string
   name: string
@@ -510,6 +559,8 @@ export type StoreCreateWithoutGroupInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   terminals?: Prisma.TerminalCreateNestedManyWithoutStoreInput
+  userAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutStoreInput
+  activeSessions?: Prisma.UserSessionCreateNestedManyWithoutActiveStoreInput
 }
 
 export type StoreUncheckedCreateWithoutGroupInput = {
@@ -521,6 +572,8 @@ export type StoreUncheckedCreateWithoutGroupInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   terminals?: Prisma.TerminalUncheckedCreateNestedManyWithoutStoreInput
+  userAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutStoreInput
+  activeSessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutActiveStoreInput
 }
 
 export type StoreCreateOrConnectWithoutGroupInput = {
@@ -571,6 +624,8 @@ export type StoreCreateWithoutTerminalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   group: Prisma.StoreGroupCreateNestedOneWithoutStoresInput
+  userAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutStoreInput
+  activeSessions?: Prisma.UserSessionCreateNestedManyWithoutActiveStoreInput
 }
 
 export type StoreUncheckedCreateWithoutTerminalsInput = {
@@ -582,6 +637,8 @@ export type StoreUncheckedCreateWithoutTerminalsInput = {
   kitchenMode?: $Enums.KitchenMode
   createdAt?: Date | string
   updatedAt?: Date | string
+  userAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutStoreInput
+  activeSessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutActiveStoreInput
 }
 
 export type StoreCreateOrConnectWithoutTerminalsInput = {
@@ -608,6 +665,8 @@ export type StoreUpdateWithoutTerminalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.StoreGroupUpdateOneRequiredWithoutStoresNestedInput
+  userAccesses?: Prisma.UserStoreAccessUpdateManyWithoutStoreNestedInput
+  activeSessions?: Prisma.UserSessionUpdateManyWithoutActiveStoreNestedInput
 }
 
 export type StoreUncheckedUpdateWithoutTerminalsInput = {
@@ -619,6 +678,140 @@ export type StoreUncheckedUpdateWithoutTerminalsInput = {
   kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutStoreNestedInput
+  activeSessions?: Prisma.UserSessionUncheckedUpdateManyWithoutActiveStoreNestedInput
+}
+
+export type StoreCreateWithoutUserAccessesInput = {
+  code: string
+  name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  group: Prisma.StoreGroupCreateNestedOneWithoutStoresInput
+  terminals?: Prisma.TerminalCreateNestedManyWithoutStoreInput
+  activeSessions?: Prisma.UserSessionCreateNestedManyWithoutActiveStoreInput
+}
+
+export type StoreUncheckedCreateWithoutUserAccessesInput = {
+  id?: number
+  groupId: number
+  code: string
+  name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  terminals?: Prisma.TerminalUncheckedCreateNestedManyWithoutStoreInput
+  activeSessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutActiveStoreInput
+}
+
+export type StoreCreateOrConnectWithoutUserAccessesInput = {
+  where: Prisma.StoreWhereUniqueInput
+  create: Prisma.XOR<Prisma.StoreCreateWithoutUserAccessesInput, Prisma.StoreUncheckedCreateWithoutUserAccessesInput>
+}
+
+export type StoreUpsertWithoutUserAccessesInput = {
+  update: Prisma.XOR<Prisma.StoreUpdateWithoutUserAccessesInput, Prisma.StoreUncheckedUpdateWithoutUserAccessesInput>
+  create: Prisma.XOR<Prisma.StoreCreateWithoutUserAccessesInput, Prisma.StoreUncheckedCreateWithoutUserAccessesInput>
+  where?: Prisma.StoreWhereInput
+}
+
+export type StoreUpdateToOneWithWhereWithoutUserAccessesInput = {
+  where?: Prisma.StoreWhereInput
+  data: Prisma.XOR<Prisma.StoreUpdateWithoutUserAccessesInput, Prisma.StoreUncheckedUpdateWithoutUserAccessesInput>
+}
+
+export type StoreUpdateWithoutUserAccessesInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  group?: Prisma.StoreGroupUpdateOneRequiredWithoutStoresNestedInput
+  terminals?: Prisma.TerminalUpdateManyWithoutStoreNestedInput
+  activeSessions?: Prisma.UserSessionUpdateManyWithoutActiveStoreNestedInput
+}
+
+export type StoreUncheckedUpdateWithoutUserAccessesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  terminals?: Prisma.TerminalUncheckedUpdateManyWithoutStoreNestedInput
+  activeSessions?: Prisma.UserSessionUncheckedUpdateManyWithoutActiveStoreNestedInput
+}
+
+export type StoreCreateWithoutActiveSessionsInput = {
+  code: string
+  name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  group: Prisma.StoreGroupCreateNestedOneWithoutStoresInput
+  terminals?: Prisma.TerminalCreateNestedManyWithoutStoreInput
+  userAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutStoreInput
+}
+
+export type StoreUncheckedCreateWithoutActiveSessionsInput = {
+  id?: number
+  groupId: number
+  code: string
+  name: string
+  isActive?: boolean
+  kitchenMode?: $Enums.KitchenMode
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  terminals?: Prisma.TerminalUncheckedCreateNestedManyWithoutStoreInput
+  userAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutStoreInput
+}
+
+export type StoreCreateOrConnectWithoutActiveSessionsInput = {
+  where: Prisma.StoreWhereUniqueInput
+  create: Prisma.XOR<Prisma.StoreCreateWithoutActiveSessionsInput, Prisma.StoreUncheckedCreateWithoutActiveSessionsInput>
+}
+
+export type StoreUpsertWithoutActiveSessionsInput = {
+  update: Prisma.XOR<Prisma.StoreUpdateWithoutActiveSessionsInput, Prisma.StoreUncheckedUpdateWithoutActiveSessionsInput>
+  create: Prisma.XOR<Prisma.StoreCreateWithoutActiveSessionsInput, Prisma.StoreUncheckedCreateWithoutActiveSessionsInput>
+  where?: Prisma.StoreWhereInput
+}
+
+export type StoreUpdateToOneWithWhereWithoutActiveSessionsInput = {
+  where?: Prisma.StoreWhereInput
+  data: Prisma.XOR<Prisma.StoreUpdateWithoutActiveSessionsInput, Prisma.StoreUncheckedUpdateWithoutActiveSessionsInput>
+}
+
+export type StoreUpdateWithoutActiveSessionsInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  group?: Prisma.StoreGroupUpdateOneRequiredWithoutStoresNestedInput
+  terminals?: Prisma.TerminalUpdateManyWithoutStoreNestedInput
+  userAccesses?: Prisma.UserStoreAccessUpdateManyWithoutStoreNestedInput
+}
+
+export type StoreUncheckedUpdateWithoutActiveSessionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenMode?: Prisma.EnumKitchenModeFieldUpdateOperationsInput | $Enums.KitchenMode
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  terminals?: Prisma.TerminalUncheckedUpdateManyWithoutStoreNestedInput
+  userAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutStoreNestedInput
 }
 
 export type StoreCreateManyGroupInput = {
@@ -639,6 +832,8 @@ export type StoreUpdateWithoutGroupInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   terminals?: Prisma.TerminalUpdateManyWithoutStoreNestedInput
+  userAccesses?: Prisma.UserStoreAccessUpdateManyWithoutStoreNestedInput
+  activeSessions?: Prisma.UserSessionUpdateManyWithoutActiveStoreNestedInput
 }
 
 export type StoreUncheckedUpdateWithoutGroupInput = {
@@ -650,6 +845,8 @@ export type StoreUncheckedUpdateWithoutGroupInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   terminals?: Prisma.TerminalUncheckedUpdateManyWithoutStoreNestedInput
+  userAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutStoreNestedInput
+  activeSessions?: Prisma.UserSessionUncheckedUpdateManyWithoutActiveStoreNestedInput
 }
 
 export type StoreUncheckedUpdateManyWithoutGroupInput = {
@@ -669,10 +866,14 @@ export type StoreUncheckedUpdateManyWithoutGroupInput = {
 
 export type StoreCountOutputType = {
   terminals: number
+  userAccesses: number
+  activeSessions: number
 }
 
 export type StoreCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   terminals?: boolean | StoreCountOutputTypeCountTerminalsArgs
+  userAccesses?: boolean | StoreCountOutputTypeCountUserAccessesArgs
+  activeSessions?: boolean | StoreCountOutputTypeCountActiveSessionsArgs
 }
 
 /**
@@ -692,6 +893,20 @@ export type StoreCountOutputTypeCountTerminalsArgs<ExtArgs extends runtime.Types
   where?: Prisma.TerminalWhereInput
 }
 
+/**
+ * StoreCountOutputType without action
+ */
+export type StoreCountOutputTypeCountUserAccessesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserStoreAccessWhereInput
+}
+
+/**
+ * StoreCountOutputType without action
+ */
+export type StoreCountOutputTypeCountActiveSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserSessionWhereInput
+}
+
 
 export type StoreSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -704,6 +919,8 @@ export type StoreSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   updatedAt?: boolean
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
   terminals?: boolean | Prisma.Store$terminalsArgs<ExtArgs>
+  userAccesses?: boolean | Prisma.Store$userAccessesArgs<ExtArgs>
+  activeSessions?: boolean | Prisma.Store$activeSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.StoreCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["store"]>
 
@@ -746,6 +963,8 @@ export type StoreOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
 export type StoreInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
   terminals?: boolean | Prisma.Store$terminalsArgs<ExtArgs>
+  userAccesses?: boolean | Prisma.Store$userAccessesArgs<ExtArgs>
+  activeSessions?: boolean | Prisma.Store$activeSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.StoreCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StoreIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -760,6 +979,8 @@ export type $StorePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     group: Prisma.$StoreGroupPayload<ExtArgs>
     terminals: Prisma.$TerminalPayload<ExtArgs>[]
+    userAccesses: Prisma.$UserStoreAccessPayload<ExtArgs>[]
+    activeSessions: Prisma.$UserSessionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1166,6 +1387,8 @@ export interface Prisma__StoreClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   group<T extends Prisma.StoreGroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreGroupDefaultArgs<ExtArgs>>): Prisma.Prisma__StoreGroupClient<runtime.Types.Result.GetResult<Prisma.$StoreGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   terminals<T extends Prisma.Store$terminalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Store$terminalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TerminalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userAccesses<T extends Prisma.Store$userAccessesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Store$userAccessesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserStoreAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activeSessions<T extends Prisma.Store$activeSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Store$activeSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1625,6 +1848,54 @@ export type Store$terminalsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.TerminalScalarFieldEnum | Prisma.TerminalScalarFieldEnum[]
+}
+
+/**
+ * Store.userAccesses
+ */
+export type Store$userAccessesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserStoreAccess
+   */
+  select?: Prisma.UserStoreAccessSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserStoreAccess
+   */
+  omit?: Prisma.UserStoreAccessOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserStoreAccessInclude<ExtArgs> | null
+  where?: Prisma.UserStoreAccessWhereInput
+  orderBy?: Prisma.UserStoreAccessOrderByWithRelationInput | Prisma.UserStoreAccessOrderByWithRelationInput[]
+  cursor?: Prisma.UserStoreAccessWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserStoreAccessScalarFieldEnum | Prisma.UserStoreAccessScalarFieldEnum[]
+}
+
+/**
+ * Store.activeSessions
+ */
+export type Store$activeSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserSession
+   */
+  select?: Prisma.UserSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserSession
+   */
+  omit?: Prisma.UserSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserSessionInclude<ExtArgs> | null
+  where?: Prisma.UserSessionWhereInput
+  orderBy?: Prisma.UserSessionOrderByWithRelationInput | Prisma.UserSessionOrderByWithRelationInput[]
+  cursor?: Prisma.UserSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserSessionScalarFieldEnum | Prisma.UserSessionScalarFieldEnum[]
 }
 
 /**

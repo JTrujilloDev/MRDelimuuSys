@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authRoutes from "./auth.routes";
 import productCategoriesRoutes from "./productCategories.routes";
 import productsRoutes from "./products.routes";
 import accountRoutes from "./account.routes";
@@ -14,6 +15,7 @@ import qzRoutes from "./qz.routes";
 import kitchenTicketRoutes from "./kitchenTicket.routes";
 
 const router = Router();
+router.use("/auth", authRoutes);
 
 router.use("/accounts", accountRoutes);
 router.use("/product-categories", productCategoriesRoutes);
