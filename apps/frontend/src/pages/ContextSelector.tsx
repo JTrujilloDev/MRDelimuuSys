@@ -1,7 +1,7 @@
 import { Button, ListBox, Select } from "@heroui/react";
 import { Building2, Monitor } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate, useNavigate, useSearchParams } from "react-router";
 import { useAuth } from "../app/auth/AuthProvider";
 import axios from "axios";
 
@@ -11,6 +11,8 @@ const destinationForRole = (role: string, kitchenMode: string) =>
 export default function ContextSelector() {
   const { state, isLoading, selectContext, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isChangingContext = searchParams.get("change") === "1";
   const [storeId, setStoreId] = useState<number | null>(null);
   const [terminalId, setTerminalId] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -23,7 +25,7 @@ export default function ContextSelector() {
 
   if (isLoading) return <p>Cargando sesión…</p>;
   if (!state) return <Navigate to="/login" replace />;
-  if (state.activeContext) {
+  if (state.activeContext && !isChangingContext) {
     return (
       <Navigate
         to={destinationForRole(state.activeContext.role, state.activeContext.store.kitchenMode)}

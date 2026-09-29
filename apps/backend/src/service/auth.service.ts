@@ -180,6 +180,16 @@ export const selectSessionContextService = async (
     throw new Error("Kitchen access is not enabled for this store");
   }
 
+  if (session.activeTerminalId && session.activeTerminalId !== terminalId) {
+    const openRegister = await prisma.cashRegister.findFirst({
+      where: { userId: session.userId, status: "OPEN" },
+      select: { id: true },
+    });
+    if (openRegister) {
+      throw new Error("Close your current cash register before changing store or terminal");
+    }
+  }
+
   await prisma.userSession.update({
     where: { id: sessionId },
     data: { activeStoreId: storeId, activeTerminalId: terminalId, lastSeenAt: new Date() },

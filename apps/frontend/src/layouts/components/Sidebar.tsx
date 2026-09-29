@@ -2,7 +2,7 @@ import Logo from "/DeliLogo.png";
 import { NavLink, useNavigate } from "react-router";
 import { Tooltip } from "@heroui/react";
 import { BiUser } from "react-icons/bi";
-import { BookOpen, Camera, ChefHat, History, Moon, Package, ShoppingCart, Sun, Tag } from "lucide-react";
+import { BookOpen, Camera, ChefHat, History, Moon, Package, Repeat2, ShoppingCart, Sun, Tag, UserCog } from "lucide-react";
 import { LuLogOut } from "react-icons/lu";
 import { useTheme } from "../../app/providers";
 import { useAuth } from "../../app/auth/AuthProvider";
@@ -20,6 +20,9 @@ const Sidebar = () => {
     {title: "Inventario" , url: "inventory", icon: Package},
     ...(activeContext.store.kitchenMode === "TICKETS"
       ? [{ title: "Cocina", url: "kitchen", icon: ChefHat }]
+      : []),
+    ...(state?.user.isGlobalAdmin
+      ? [{ title: "Administración", url: "admin", icon: UserCog }]
       : []),
     { title: "Cámaras", url: "security-cameras", icon: Camera },
     {title : "Etiquetas", url: "fundation-tags", icon: Tag}
@@ -57,6 +60,19 @@ const Sidebar = () => {
       </div>
 
       <div className="mt-auto flex shrink-0 flex-col items-center gap-3">
+        {state?.stores.length && state.stores.length > 1 ? (
+          <Tooltip>
+            <button
+              type="button"
+              onClick={() => navigate("/select-context?change=1")}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
+              aria-label="Cambiar punto"
+            >
+              <Repeat2 className="h-5 w-5" />
+            </button>
+            <Tooltip.Content>Cambiar punto</Tooltip.Content>
+          </Tooltip>
+        ) : null}
         <Tooltip>
           <button
             type="button"

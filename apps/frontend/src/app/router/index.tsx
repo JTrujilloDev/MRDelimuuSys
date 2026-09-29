@@ -11,6 +11,7 @@ import KitchenView from "../../modules/kitchenView/pages";
 import CashRegisterHistory from "../../modules/cashRegisterHistory/pages";
 import SecurityCameras from "../../modules/securityCameras/pages";
 import ContextSelector from "../../pages/ContextSelector";
+import AdminPage from "../../modules/admin/pages";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
       { path: "kitchen", element: <KitchenView /> },
       { path: "cash-register-history", element: <CashRegisterHistory /> },
       { path: "security-cameras", element: <SecurityCameras /> },
+      { path: "admin", element: <AdminPage /> },
 
     ],
   },

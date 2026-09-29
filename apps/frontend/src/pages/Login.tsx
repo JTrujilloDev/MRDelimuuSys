@@ -19,7 +19,14 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoading || !state) return;
-    navigate(state.activeContext ? "/app/POS" : "/select-context", { replace: true });
+    navigate(
+      state.activeContext
+        ? state.activeContext.role === "KITCHEN"
+          ? "/app/kitchen"
+          : "/app/POS"
+        : "/select-context",
+      { replace: true },
+    );
   }, [isLoading, navigate, state]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
