@@ -3,9 +3,12 @@ import axios from "axios";
 import {
   Building2,
   ChefHat,
+  CircleDollarSign,
   CircleUserRound,
   Monitor,
+  Pencil,
   Plus,
+  ShieldCheck,
   Store,
   X,
 } from "lucide-react";
@@ -36,6 +39,14 @@ const roleOptions: Array<{ value: UserRole; label: string }> = [
   { value: "KITCHEN", label: "Cocina" },
   { value: "ADMIN", label: "Administrador del punto" },
 ];
+
+const roleLabels: Record<UserRole, string> = {
+  ADMIN: "Administrador del punto",
+  CASHIER: "Cajera",
+  KITCHEN: "Cocina",
+  WAITER: "Mesero",
+  BAKERY: "Panadería",
+};
 
 const errorMessage = (error: unknown) =>
   axios.isAxiosError<{ message?: string }>(error)
@@ -68,22 +79,32 @@ export default function AdminPage() {
           <h1 className="text-3xl font-black">Usuarios, puntos y cajas</h1>
         </div>
 
-        <div className="mb-6 flex gap-2" role="tablist" aria-label="Secciones de administración">
+        <div className="mb-6 grid max-w-xl grid-cols-2 gap-2 rounded-2xl border border-border bg-secondary/60 p-2" role="tablist" aria-label="Secciones de administración">
           <button
-            className={`${buttonClass} ${section !== "users" ? inactiveTabClass : "shadow-md"}`}
+            className={`flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-black transition-all ${
+              section === "users"
+                ? "border-primary bg-primary text-primary-foreground shadow-md"
+                : "border-transparent bg-background text-foreground hover:border-primary/40"
+            }`}
             onClick={() => setSection("users")}
             role="tab"
             aria-selected={section === "users"}
           >
-            <CircleUserRound className="h-4 w-4" /> Usuarios
+            <CircleUserRound className="h-5 w-5" /> Usuarios
+            {section === "users" && <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] uppercase">Activa</span>}
           </button>
           <button
-            className={`${buttonClass} ${section !== "stores" ? inactiveTabClass : "shadow-md"}`}
+            className={`flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-black transition-all ${
+              section === "stores"
+                ? "border-primary bg-primary text-primary-foreground shadow-md"
+                : "border-transparent bg-background text-foreground hover:border-primary/40"
+            }`}
             onClick={() => setSection("stores")}
             role="tab"
             aria-selected={section === "stores"}
           >
-            <Building2 className="h-4 w-4" /> Puntos y cajas
+            <Building2 className="h-5 w-5" /> Puntos y cajas
+            {section === "stores" && <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] uppercase">Activa</span>}
           </button>
         </div>
 
@@ -115,10 +136,13 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
   onChanged: () => Promise<unknown>;
 }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [accesses, setAccesses] = useState<Record<number, UserRole | "">>({});
   const [isGlobalAdmin, setIsGlobalAdmin] = useState(false);
+  const [editAccesses, setEditAccesses] = useState<Record<number, UserRole | "">>({});
+  const [editIsGlobalAdmin, setEditIsGlobalAdmin] = useState(false);
   const createMutation = useMutation({ mutationFn: createUser });
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }: { id: number; payload: Parameters<typeof updateUser>[1] }) =>
@@ -130,6 +154,25 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
     setError("");
     setAccesses({});
     setIsGlobalAdmin(false);
+  };
+
+  const openEdit = (user: AdminUser) => {
+    setError("");
+    setNotice("");
+    setEditingUser(user);
+    setEditIsGlobalAdmin(user.isGlobalAdmin);
+    setEditAccesses(Object.fromEntries(
+      user.storeAccesses
+        .filter((access) => access.isActive)
+        .map((access) => [access.storeId, access.role]),
+    ));
+  };
+
+  const closeEdit = () => {
+    setEditingUser(null);
+    setEditAccesses({});
+    setEditIsGlobalAdmin(false);
+    setError("");
   };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -169,6 +212,35 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
     }
   };
 
+  const submitEdit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingUser) return;
+    const form = new FormData(event.currentTarget);
+    setError("");
+    setNotice("");
+    try {
+      await updateMutation.mutateAsync({
+        id: editingUser.id,
+        payload: {
+          name: String(form.get("edit-user-name") ?? ""),
+          email: String(form.get("edit-user-email") ?? ""),
+          isGlobalAdmin: editIsGlobalAdmin,
+          accesses: editIsGlobalAdmin
+            ? []
+            : Object.entries(editAccesses)
+              .filter((entry): entry is [string, UserRole] => Boolean(entry[1]))
+              .map(([storeId, role]) => ({ storeId: Number(storeId), role })),
+        },
+      });
+      await onChanged();
+      const userName = String(form.get("edit-user-name") ?? editingUser.name);
+      closeEdit();
+      setNotice(`${userName} fue actualizado correctamente.`);
+    } catch (requestError) {
+      setError(errorMessage(requestError));
+    }
+  };
+
   return (
     <section>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
@@ -182,7 +254,7 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
       </div>
 
       {notice && <p className="mb-4 rounded-xl bg-success/10 p-3 text-sm font-semibold text-success">{notice}</p>}
-      {error && !isCreateOpen && <p className="mb-4 rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
+      {error && !isCreateOpen && !editingUser && <p className="mb-4 rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
 
       <div className="space-y-3">
         {isLoading ? <p>Cargando usuarios…</p> : users.map((user) => (
@@ -194,20 +266,30 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
                   <StatusPill isActive={user.isActive} />
                 </div>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {user.isGlobalAdmin
-                    ? "Administrador general"
-                    : user.storeAccesses.map((access) => `${access.store.name}: ${access.role}`).join(" · ") || "Sin puntos asignados"}
-                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {user.isGlobalAdmin ? (
+                    <RoleTag role="ADMIN" label="Administrador general" />
+                  ) : user.storeAccesses.length ? user.storeAccesses.map((access) => (
+                    <div key={access.storeId} className="flex items-center gap-1.5 rounded-xl border border-border bg-background p-1.5 pr-2.5">
+                      <span className="text-xs font-bold text-muted-foreground">{access.store.name}</span>
+                      <RoleTag role={access.role} />
+                    </div>
+                  )) : <span className="text-xs text-muted-foreground">Sin puntos asignados</span>}
+                </div>
               </div>
-              <button
-                className={`${buttonClass} ${user.isActive ? "bg-destructive hover:bg-destructive/90" : "bg-success hover:bg-success/90"}`}
-                disabled={user.id === currentUserId || updateMutation.isPending}
-                onClick={() => void toggleUser(user)}
-                title={user.id === currentUserId ? "No puedes desactivar tu propio usuario" : undefined}
-              >
-                {user.isActive ? "Desactivar" : "Activar"}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <button className={`${buttonClass} ${inactiveTabClass}`} onClick={() => openEdit(user)}>
+                  <Pencil className="h-4 w-4" /> Editar
+                </button>
+                <button
+                  className={`${buttonClass} ${user.isActive ? "bg-destructive hover:bg-destructive/90" : "bg-success hover:bg-success/90"}`}
+                  disabled={user.id === currentUserId || updateMutation.isPending}
+                  onClick={() => void toggleUser(user)}
+                  title={user.id === currentUserId ? "No puedes desactivar tu propio usuario" : undefined}
+                >
+                  {user.isActive ? "Desactivar" : "Activar"}
+                </button>
+              </div>
             </div>
           </article>
         ))}
@@ -250,7 +332,7 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
               />
               Administrador general
             </label>
-            {!isGlobalAdmin && stores.map((storeItem) => (
+            {!isGlobalAdmin && stores.filter((storeItem) => storeItem.isActive).map((storeItem) => (
               <label key={storeItem.id} className="block text-sm">
                 <span className="mb-1 block font-bold">{storeItem.name}</span>
                 <select
@@ -278,6 +360,69 @@ function UsersSection({ users, stores, currentUserId, isLoading, onChanged }: {
           </form>
         </Modal>
       )}
+
+      {editingUser && (
+        <Modal
+          title={`Editar a ${editingUser.name}`}
+          description="Puedes cambiar sus datos de ingreso y los roles que cumple en cada punto."
+          onClose={closeEdit}
+        >
+          <form onSubmit={submitEdit} autoComplete="off" className="space-y-4">
+            <label className="block text-sm">
+              <span className="mb-1 block font-bold">Nombre completo</span>
+              <input className={inputClass} name="edit-user-name" defaultValue={editingUser.name} autoComplete="off" required />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block font-bold">Correo de ingreso</span>
+              <input className={inputClass} name="edit-user-email" type="email" defaultValue={editingUser.email} autoComplete="off" required />
+              <span className="mt-1 block text-xs text-muted-foreground">Si lo cambias, deberá iniciar sesión con el nuevo correo.</span>
+            </label>
+            <label className="flex items-start gap-2 text-sm font-semibold">
+              <input
+                className="mt-1"
+                type="checkbox"
+                checked={editIsGlobalAdmin}
+                disabled={editingUser.id === currentUserId && editingUser.isGlobalAdmin}
+                onChange={(event) => setEditIsGlobalAdmin(event.target.checked)}
+              />
+              <span>
+                Administrador general
+                {editingUser.id === currentUserId && editingUser.isGlobalAdmin && (
+                  <span className="block text-xs font-normal text-muted-foreground">No puedes retirar tu propio acceso administrativo.</span>
+                )}
+              </span>
+            </label>
+            {!editIsGlobalAdmin && stores.filter((storeItem) => storeItem.isActive).map((storeItem) => (
+              <label key={storeItem.id} className="block text-sm">
+                <span className="mb-1 block font-bold">{storeItem.name}</span>
+                <select
+                  className={inputClass}
+                  value={editAccesses[storeItem.id] ?? ""}
+                  onChange={(event) => setEditAccesses((current) => ({
+                    ...current,
+                    [storeItem.id]: event.target.value as UserRole | "",
+                  }))}
+                >
+                  <option value="">Sin acceso</option>
+                  {roleOptions
+                    .filter((option) => option.value !== "KITCHEN" || storeItem.kitchenMode === "TICKETS")
+                    .map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+              </label>
+            ))}
+            <p className="rounded-xl bg-secondary/60 p-3 text-xs text-muted-foreground">
+              La contraseña no se muestra ni se cambia aquí. Tendrá un flujo independiente de restablecimiento.
+            </p>
+            {error && <p className="rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
+            <div className="flex justify-end gap-2 pt-2">
+              <button type="button" className={`${buttonClass} ${inactiveTabClass}`} onClick={closeEdit}>Cancelar</button>
+              <button className={buttonClass} disabled={updateMutation.isPending}>
+                {updateMutation.isPending ? "Guardando…" : "Guardar cambios"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </section>
   );
 }
@@ -293,11 +438,16 @@ function StoresSection({ groups, isLoading, onChanged }: {
   );
   const [selectedStoreId, setSelectedStoreId] = useState<number | null>(null);
   const [isCreateTerminalOpen, setIsCreateTerminalOpen] = useState(false);
+  const [isEditStoreOpen, setIsEditStoreOpen] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const selectedStore = stores.find((storeItem) => storeItem.id === selectedStoreId) ?? stores[0] ?? null;
   const storeMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) => updateStore(id, { isActive }),
+  });
+  const editStoreMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: Parameters<typeof updateStore>[1] }) =>
+      updateStore(id, payload),
   });
   const terminalMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) => updateTerminal(id, { isActive }),
@@ -347,6 +497,28 @@ function StoresSection({ groups, isLoading, onChanged }: {
       await onChanged();
       setIsCreateTerminalOpen(false);
       setNotice("Caja creada correctamente.");
+    } catch (requestError) {
+      setError(errorMessage(requestError));
+    }
+  };
+
+  const submitStoreEdit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedStore) return;
+    const form = new FormData(event.currentTarget);
+    setError("");
+    setNotice("");
+    try {
+      await editStoreMutation.mutateAsync({
+        id: selectedStore.id,
+        payload: {
+          name: String(form.get("edit-store-name") ?? "").trim(),
+          kitchenMode: String(form.get("edit-store-kitchen-mode") ?? "NONE") as AdminStore["kitchenMode"],
+        },
+      });
+      await onChanged();
+      setIsEditStoreOpen(false);
+      setNotice("Datos del punto actualizados correctamente.");
     } catch (requestError) {
       setError(errorMessage(requestError));
     }
@@ -408,17 +580,28 @@ function StoresSection({ groups, isLoading, onChanged }: {
                 Cocina {selectedStore.kitchenMode === "TICKETS" ? "habilitada" : "deshabilitada"}
               </p>
             </div>
-            <button
-              className={`${buttonClass} ${selectedStore.isActive ? "bg-destructive hover:bg-destructive/90" : "bg-success hover:bg-success/90"}`}
-              onClick={() => void toggleStore()}
-              disabled={storeMutation.isPending}
-            >
-              {selectedStore.isActive ? "Desactivar punto" : "Activar punto"}
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                className={`${buttonClass} ${inactiveTabClass}`}
+                onClick={() => {
+                  setError("");
+                  setIsEditStoreOpen(true);
+                }}
+              >
+                <Pencil className="h-4 w-4" /> Editar datos
+              </button>
+              <button
+                className={`${buttonClass} ${selectedStore.isActive ? "bg-destructive hover:bg-destructive/90" : "bg-success hover:bg-success/90"}`}
+                onClick={() => void toggleStore()}
+                disabled={storeMutation.isPending}
+              >
+                {selectedStore.isActive ? "Desactivar punto" : "Activar punto"}
+              </button>
+            </div>
           </div>
 
           {notice && <p className="mt-4 rounded-xl bg-success/10 p-3 text-sm font-semibold text-success">{notice}</p>}
-          {error && !isCreateTerminalOpen && <p className="mt-4 rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
+          {error && !isCreateTerminalOpen && !isEditStoreOpen && <p className="mt-4 rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -502,7 +685,73 @@ function StoresSection({ groups, isLoading, onChanged }: {
           </form>
         </Modal>
       )}
+
+      {isEditStoreOpen && (
+        <Modal
+          title={`Editar ${selectedStore.name}`}
+          description="El código y el inventario asociado se conservan para mantener la trazabilidad."
+          onClose={() => {
+            setIsEditStoreOpen(false);
+            setError("");
+          }}
+        >
+          <form onSubmit={submitStoreEdit} className="space-y-4">
+            <label className="block text-sm">
+              <span className="mb-1 block font-bold">Nombre visible</span>
+              <input className={inputClass} name="edit-store-name" defaultValue={selectedStore.name} required />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block font-bold">Conexión con cocina</span>
+              <select className={inputClass} name="edit-store-kitchen-mode" defaultValue={selectedStore.kitchenMode}>
+                <option value="NONE">Sin conexión con cocina</option>
+                <option value="TICKETS">Enviar pedidos a cocina</option>
+              </select>
+              <span className="mt-1 block text-xs text-muted-foreground">Esta opción debe permanecer deshabilitada para los puntos de Veleño.</span>
+            </label>
+            <div className="rounded-xl border border-border bg-secondary/50 p-3 text-xs text-muted-foreground">
+              Código fijo del punto: <strong className="text-foreground">{selectedStore.code}</strong>
+            </div>
+            {error && <p className="rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                className={`${buttonClass} ${inactiveTabClass}`}
+                onClick={() => {
+                  setIsEditStoreOpen(false);
+                  setError("");
+                }}
+              >
+                Cancelar
+              </button>
+              <button className={buttonClass} disabled={editStoreMutation.isPending}>
+                {editStoreMutation.isPending ? "Guardando…" : "Guardar cambios"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </section>
+  );
+}
+
+function RoleTag({ role, label }: { role: UserRole; label?: string }) {
+  const Icon = role === "ADMIN"
+    ? ShieldCheck
+    : role === "CASHIER"
+      ? CircleDollarSign
+      : role === "KITCHEN" || role === "BAKERY"
+        ? ChefHat
+        : CircleUserRound;
+  const colorClass = role === "ADMIN"
+    ? "border-primary/25 bg-primary/10 text-primary"
+    : role === "CASHIER"
+      ? "border-success/25 bg-success/10 text-success"
+      : "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300";
+
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] font-black ${colorClass}`}>
+      <Icon className="h-3.5 w-3.5" /> {label ?? roleLabels[role]}
+    </span>
   );
 }
 
