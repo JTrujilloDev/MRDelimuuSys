@@ -33,7 +33,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    void refresh();
+    let isMounted = true;
+    void getCurrentSessionRequest()
+      .then((nextState) => {
+        if (isMounted) setState(nextState);
+      })
+      .catch(() => {
+        if (isMounted) setState(null);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const value = useMemo<AuthContextValue>(

@@ -13,18 +13,22 @@ import POSInventoryRoutes from "./POSInventory.routes";
 import reportGenerationRoutes from "./reportGeneration.routes";
 import qzRoutes from "./qz.routes";
 import kitchenTicketRoutes from "./kitchenTicket.routes";
+import { requireActiveContext, requireAuth } from "../middleware/auth.middleware";
 
 const router = Router();
 router.use("/auth", authRoutes);
+
+router.use("/store", storeRoutes);
+router.use("/store-groups", storeGroupRoutes);
+router.use("/terminal", terminalRoutes);
+router.use("/users", usersRoutes);
+
+router.use(requireAuth, requireActiveContext);
 
 router.use("/accounts", accountRoutes);
 router.use("/product-categories", productCategoriesRoutes);
 router.use("/products", productsRoutes);
 router.use("/cash-register", cashRegisterRoutes);
-router.use("/store", storeRoutes);
-router.use("/store-groups", storeGroupRoutes);
-router.use("/terminal", terminalRoutes);
-router.use("/users", usersRoutes);
 router.use("/financial-transactions", financialTransactionRoutes);
 router.use("/pos-inventory", POSInventoryRoutes);
 router.use("/reports", reportGenerationRoutes);

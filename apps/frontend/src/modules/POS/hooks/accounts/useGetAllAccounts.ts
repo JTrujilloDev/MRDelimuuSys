@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllAccounts } from "../../services/account.service";
 
-export const useGetAllAccounts = (relatedUserId?: number) => {
+export const useGetAllAccounts = () => {
   return useQuery({
-    queryKey: ["accounts", relatedUserId],
-    queryFn: () => getAllAccounts(relatedUserId!),
-    enabled: !!relatedUserId,
+    queryKey: ["accounts"],
+    queryFn: getAllAccounts,
   });
 };

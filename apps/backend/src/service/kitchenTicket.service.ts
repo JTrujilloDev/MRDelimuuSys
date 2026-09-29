@@ -16,14 +16,17 @@ const ticketInclude = {
   adjustments: { orderBy: { createdAt: "asc" as const } },
 };
 
-export const getKitchenTicketsService = async (accountId?: number) =>
+export const getKitchenTicketsService = async (storeId: number, accountId?: number) =>
   prisma.kitchenTicket.findMany({
-    where: accountId ? { accountId } : undefined,
+    where: {
+      ...(accountId && { accountId }),
+      account: { terminal: { storeId } },
+    },
     include: ticketInclude,
     orderBy: { createdAt: "asc" },
   });
 
-export const createKitchenTicketService = async ({ accountId, instructions, items }: CreateKitchenTicketInput) => {
+export const createKitchenTicketService = async (storeId: number, { accountId, instructions, items }: CreateKitchenTicketInput) => {
   if (!accountId || !items?.length) throw new Error("accountId and items are required");
   const normalizedInstructions = instructions?.trim() || null;
   if (normalizedInstructions && normalizedInstructions.length > 300) {
@@ -33,9 +36,13 @@ export const createKitchenTicketService = async ({ accountId, instructions, item
   return prisma.$transaction(async (tx) => {
     const account = await tx.account.findUnique({
       where: { id: accountId },
-      include: { accountItems: { include: { productVariant: true } } },
+      include: {
+        terminal: { select: { storeId: true } },
+        accountItems: { include: { productVariant: true } },
+      },
     });
     if (!account || account.status !== "OPEN") throw new Error("Open account not found");
+    if (account.terminal.storeId !== storeId) throw new Error("Account belongs to another store");
 
     const requestedItems = items.map((requested) => {
       const accountItem = account.accountItems.find((item) => item.id === requested.accountItemId);

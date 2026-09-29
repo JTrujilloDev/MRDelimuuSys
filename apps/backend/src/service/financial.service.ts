@@ -89,6 +89,7 @@ interface FinancialTransactionFilters {
 }
 export const getFinancialTransactionsService = async (
   filters: FinancialTransactionFilters,
+  storeId: number,
 ) => {
   const {
     type,
@@ -104,7 +105,9 @@ export const getFinancialTransactionsService = async (
     limit = 20,
   } = filters;
 
-  const where: any = {};
+  const where: any = {
+    cashRegister: { terminal: { storeId } },
+  };
 
   // 1. Filtros directos
   if (type) where.type = type;

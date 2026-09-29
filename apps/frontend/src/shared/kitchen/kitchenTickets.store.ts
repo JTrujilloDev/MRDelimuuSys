@@ -35,10 +35,16 @@ export type KitchenTicket = {
   adjustments: KitchenTicketAdjustment[];
 };
 
-const normalizeTicket = (ticket: any): KitchenTicket => ({
+type RawKitchenTicket = Omit<KitchenTicket, "items"> & {
+  accountName?: string;
+  account?: { name?: string };
+  items: Array<KitchenTicketItem & { accountItem?: { productVariantId?: number } }>;
+};
+
+const normalizeTicket = (ticket: RawKitchenTicket): KitchenTicket => ({
   ...ticket,
   accountName: ticket.accountName ?? ticket.account?.name ?? `Cuenta ${ticket.accountId}`,
-  items: ticket.items.map((item: any) => ({
+  items: ticket.items.map((item) => ({
     ...item,
     productVariantId: item.productVariantId ?? item.accountItem?.productVariantId,
   })),
@@ -80,14 +86,15 @@ export const acknowledgeKitchenTicketAdjustment = async (id: number) => {
   return data.data as KitchenTicketAdjustment;
 };
 
-export const useKitchenTickets = () => {
+export const useKitchenTickets = (enabled = true) => {
   const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ["kitchenTickets"],
     queryFn: async () => {
       const { data } = await api.get("kitchen-tickets");
-      return data.data.map(normalizeTicket) as KitchenTicket[];
+      return (data.data as RawKitchenTicket[]).map(normalizeTicket);
     },
+    enabled,
   });
 
   useEffect(() => {
@@ -104,7 +111,7 @@ export const useKitchenTickets = () => {
     };
   }, [queryClient]);
 
-  return query.data ?? [];
+  return enabled ? query.data ?? [] : [];
 };
 
 export const getActiveKitchenTicketsForAccount = (tickets: KitchenTicket[], accountId: number) =>

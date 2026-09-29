@@ -3,6 +3,7 @@ import { Building2, Monitor } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import { useAuth } from "../app/auth/AuthProvider";
+import axios from "axios";
 
 const destinationForRole = (role: string, kitchenMode: string) =>
   role === "KITCHEN" && kitchenMode === "TICKETS" ? "/app/kitchen" : "/app/POS";
@@ -39,8 +40,11 @@ export default function ContextSelector() {
       const nextState = await selectContext(storeId, terminalId);
       const context = nextState.activeContext!;
       navigate(destinationForRole(context.role, context.store.kitchenMode), { replace: true });
-    } catch (requestError: any) {
-      setError(requestError.response?.data?.message ?? "No se pudo seleccionar el punto");
+    } catch (requestError: unknown) {
+      const message = axios.isAxiosError<{ message?: string }>(requestError)
+        ? requestError.response?.data?.message
+        : undefined;
+      setError(message ?? "No se pudo seleccionar el punto");
     } finally {
       setIsSubmitting(false);
     }

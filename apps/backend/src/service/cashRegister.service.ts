@@ -29,8 +29,8 @@ export const createCashRegisterService = async (data: CashRegister) => {
     // 3. Verificar si ya hay caja abierta (por terminal o usuario)
     const existingCashRegister = await tx.cashRegister.findFirst({
       where: {
-        terminalId: data.terminalId,
         status: "OPEN",
+        OR: [{ terminalId: data.terminalId }, { userId: data.userId }],
       },
     });
 
@@ -171,17 +171,21 @@ export const closeCashRegisterService = async (
   });
 };
 
-export const getAllCashRegistersService = async () => {
-  const cashRegisters = await prisma.cashRegister.findMany();
+export const getAllCashRegistersService = async (storeId: number) => {
+  const cashRegisters = await prisma.cashRegister.findMany({
+    where: { terminal: { storeId } },
+  });
   return cashRegisters;
 };
 
 export const getCashRegisterHistoryService = async (
   from: Date,
   to: Date,
+  storeId: number,
 ) => {
   const cashRegisters = await prisma.cashRegister.findMany({
     where: {
+      terminal: { storeId },
       openedAt: { lte: to },
       OR: [
         { closedAt: { gte: from } },

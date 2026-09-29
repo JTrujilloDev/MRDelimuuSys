@@ -21,7 +21,7 @@ export const getCashRegisterHistory = async (req: Request, res: Response) => {
       return;
     }
 
-    const result = await getCashRegisterHistoryService(from, to);
+    const result = await getCashRegisterHistoryService(from, to, req.auth!.activeStoreId!);
     res.status(200).json({
       success: true,
       message: "Cash register history fetched successfully",
@@ -35,7 +35,11 @@ export const getCashRegisterHistory = async (req: Request, res: Response) => {
 
 export const createCashRegister = async (req: Request, res: Response) => {
   try {
-    const cashRegister = await createCashRegisterService(req.body);
+    const cashRegister = await createCashRegisterService({
+      ...req.body,
+      userId: req.auth!.userId,
+      terminalId: req.auth!.activeTerminalId!,
+    });
     res.status(201).json({
       success: true,
       message: "Cash register created successfully",
@@ -51,7 +55,7 @@ export const createCashRegister = async (req: Request, res: Response) => {
 
 export const getAllCashRegisters = async (req: Request, res: Response) => {
   try {
-    const cashRegisters = await getAllCashRegistersService();
+    const cashRegisters = await getAllCashRegistersService(req.auth!.activeStoreId!);
     res.status(200).json({
       success: true,
       message: "Cash registers fetched successfully",
@@ -87,10 +91,7 @@ export const closeCashRegister = async (req: Request, res: Response) => {
 
 export const getOpenCashRegister = async (req: Request, res: Response) => {
   try {
-    const { terminalId } = req.params;
-    const openCashRegister = await getOpenCashRegisterService(
-      Number(terminalId),
-    );
+    const openCashRegister = await getOpenCashRegisterService(req.auth!.activeTerminalId!);
     res.status(200).json({
       success: true,
       message: "Open cash register fetched successfully",

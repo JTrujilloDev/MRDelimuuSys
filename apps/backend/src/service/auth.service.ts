@@ -80,14 +80,14 @@ export const loginService = async (emailValue: unknown, passwordValue: unknown) 
 
   const rawToken = randomBytes(32).toString("base64url");
   const expiresAt = new Date(Date.now() + getSessionTtlHours() * 60 * 60 * 1000);
-  const session = await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx) => {
     await tx.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
     return tx.userSession.create({
       data: { tokenHash: hashSessionToken(rawToken), userId: user.id, expiresAt },
     });
   });
 
-  return { rawToken, sessionId: session.id, user, stores, activeContext: null };
+  return { rawToken, user, stores, activeContext: null };
 };
 
 export const resolveSessionService = async (rawToken: string) => {

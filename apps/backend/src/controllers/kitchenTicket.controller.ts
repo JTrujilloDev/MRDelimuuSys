@@ -5,7 +5,10 @@ import { acknowledgeKitchenTicketAdjustmentService, createKitchenTicketAdjustmen
 
 export const getKitchenTickets = async (req: Request, res: Response) => {
   try {
-    const tickets = await getKitchenTicketsService(req.query.accountId ? Number(req.query.accountId) : undefined);
+    const tickets = await getKitchenTicketsService(
+      req.auth!.activeStoreId!,
+      req.query.accountId ? Number(req.query.accountId) : undefined,
+    );
     res.json({ success: true, data: tickets });
   } catch (error) {
     res.status(400).json({ success: false, message: (error as Error).message });
@@ -14,7 +17,7 @@ export const getKitchenTickets = async (req: Request, res: Response) => {
 
 export const createKitchenTicket = async (req: Request, res: Response) => {
   try {
-    const ticket = await createKitchenTicketService(req.body);
+    const ticket = await createKitchenTicketService(req.auth!.activeStoreId!, req.body);
     getIO().emit("kitchen-ticket:created", ticket);
     res.status(201).json({ success: true, data: ticket });
   } catch (error) {

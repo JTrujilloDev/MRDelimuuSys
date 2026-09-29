@@ -15,8 +15,8 @@ export interface AccountItem {
   subtotal?: number;
 }
 
-export const getAllAccounts = async (relatedUserId: number) => {
-  const { data } = await api.get(`accounts/${relatedUserId}`);
+export const getAllAccounts = async () => {
+  const { data } = await api.get("accounts");
   return data;
 };
 

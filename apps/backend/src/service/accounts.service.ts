@@ -263,10 +263,10 @@ export const deleteAccountService = async (accountId: number) => {
   });
 };
 
-export const getAllAccountsService = async (relatedUserId: number) => {
+export const getAllAccountsService = async (storeId: number) => {
   const accounts = await prisma.account.findMany({
     where: {
-      userId: relatedUserId,
+      terminal: { storeId },
       status: "OPEN",
     },
     include: {

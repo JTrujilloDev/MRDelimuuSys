@@ -30,7 +30,7 @@ export const readSessionToken = (req: Request) => {
 const cookieOptions = (): CookieOptions => ({
   httpOnly: true,
   sameSite: "lax",
-  secure: process.env.NODE_ENV === "production",
+  secure: process.env.COOKIE_SECURE === "true",
   path: "/",
 });
 

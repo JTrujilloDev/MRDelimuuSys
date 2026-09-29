@@ -5,11 +5,12 @@ import {
   getOpenCashRegister,
   getCashRegisterHistory,
 } from "../controllers/cashRegister.controller";
+import { requireCashRegisterInActiveStore } from "../middleware/storeScope.middleware";
 
 const router = Router();
 
 router.post("/open", createCashRegister);
-router.post("/close", closeCashRegister);
+router.post("/close", requireCashRegisterInActiveStore, closeCashRegister);
 router.get("/history", getCashRegisterHistory);
 router.get("/open/:terminalId", getOpenCashRegister);
 

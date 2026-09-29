@@ -14,7 +14,11 @@ import { getIO } from "../socket";
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
-    const accountData = req.body;
+    const accountData = {
+      ...req.body,
+      userId: req.auth!.userId,
+      terminalId: req.auth!.activeTerminalId!,
+    };
     const createdAccount = await createAccountService(accountData);
     res.status(201).json({
       success: true,
@@ -54,7 +58,8 @@ export const getAccountById = async (req: Request, res: Response) => {
 
 export const updateAccount = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const updateData = req.body;
+  const { name, customerId, tableNumber, discount, discountObservation } = req.body;
+  const updateData = { name, customerId, tableNumber, discount, discountObservation };
   try {
     const updatedAccount = await updateAccountService(Number(id), updateData);
     res.status(200).json({
@@ -96,9 +101,8 @@ export const deleteAccount = async (req: Request, res: Response) => {
 };
 
 export const getAllAccounts = async (req: Request, res: Response) => {
-  const { relatedUserId } = req.params;
   try {
-    const accounts = await getAllAccountsService(Number(relatedUserId));
+    const accounts = await getAllAccountsService(req.auth!.activeStoreId!);
     res.status(200).json({
       success: true,
       message: "Accounts fetched successfully",

@@ -26,7 +26,10 @@ export const createFinancialTransaction = async (
 export const getFinancialTransactions = async (req: Request, res: Response) => {
   try {
    
-    const transactions = await getFinancialTransactionsService( req.query);
+    const transactions = await getFinancialTransactionsService(
+      req.query,
+      req.auth!.activeStoreId!,
+    );
     res.status(200).json({
       success: true,
       message: "Financial transactions fetched successfully",

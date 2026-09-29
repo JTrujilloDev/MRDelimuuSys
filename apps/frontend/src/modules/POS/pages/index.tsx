@@ -73,7 +73,7 @@ const Index = () => {
   const closingAccountRef = useRef(false);
   const { data: categories } = useGetAllProductCategories();
   const { data: openCashRegisterData } = useGetOpenCashRegister(terminalId);
-  const { data: accounts } = useGetAllAccounts(userId);
+  const { data: accounts } = useGetAllAccounts();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     () => readSessionValue<number | null>("pos:selected-category", null),
   );
@@ -166,7 +166,7 @@ const Index = () => {
   }, [products?.data, searchQuery]);
 
   const socket = useSocket();
-  const kitchenTickets = useKitchenTickets();
+  const kitchenTickets = useKitchenTickets(kitchenEnabled);
   const sentToKitchenForActiveAccount = useMemo(
     () => kitchenTickets
       .filter((ticket) => ticket.accountId === activeTableId)

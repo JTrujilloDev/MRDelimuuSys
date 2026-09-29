@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "../app/auth/AuthProvider";
+import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -42,8 +43,11 @@ const Login = () => {
       } else {
         navigate("/select-context", { replace: true });
       }
-    } catch (requestError: any) {
-      setError(requestError.response?.data?.message ?? "No fue posible iniciar sesión");
+    } catch (requestError: unknown) {
+      const message = axios.isAxiosError<{ message?: string }>(requestError)
+        ? requestError.response?.data?.message
+        : undefined;
+      setError(message ?? "No fue posible iniciar sesión");
     } finally {
       setIsSubmitting(false);
     }
