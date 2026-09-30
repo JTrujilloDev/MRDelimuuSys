@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createProduct, deleteProduct, getAllActiveProducts, getAllProducts, getProductById, getProductsByCategory, updateProduct } from "../controllers/product.controller";
+import { requireGlobalAdmin } from "../middleware/auth.middleware";
 
 const router = Router();
 
@@ -10,8 +11,8 @@ router.get("/by-category/:id", getProductsByCategory);
 
 router.get("/:id", getProductById);
 
-router.post("/", createProduct);
-router.put("/:id", updateProduct);
-router.delete("/:id", deleteProduct);
+router.post("/", requireGlobalAdmin, createProduct);
+router.put("/:id", requireGlobalAdmin, updateProduct);
+router.delete("/:id", requireGlobalAdmin, deleteProduct);
 
 export default router;

@@ -5,12 +5,13 @@ import {
   getAllCategories,
   updateCategory,
 } from "../controllers/productCategories.controller";
+import { requireGlobalAdmin } from "../middleware/auth.middleware";
 
 const router = Router();
 
-router.post("/", createCategory);
+router.post("/", requireGlobalAdmin, createCategory);
 router.get("/", getAllCategories);
-router.delete("/:id", deleteCategory);
-router.put("/:id", updateCategory);
+router.delete("/:id", requireGlobalAdmin, deleteCategory);
+router.put("/:id", requireGlobalAdmin, updateCategory);
 
 export default router;

@@ -30,7 +30,7 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
-    const products = await getAllProductsService();
+    const products = await getAllProductsService(Boolean(req.auth?.isGlobalAdmin));
     res.status(200).json({
       success: true,
       message: "Products fetched successfully",
@@ -47,7 +47,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
 export const getProductById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const product = await getProductByIdService(Number(id));
+    const product = await getProductByIdService(Number(id), Boolean(req.auth?.isGlobalAdmin));
 
     if (!product) {
       return res.status(404).json({

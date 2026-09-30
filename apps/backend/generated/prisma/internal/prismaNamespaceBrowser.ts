@@ -189,6 +189,7 @@ export const AccountItemScalarFieldEnum = {
   productName: 'productName',
   quantity: 'quantity',
   price: 'price',
+  unitCost: 'unitCost',
   subtotal: 'subtotal',
   createdAt: 'createdAt'
 } as const
@@ -279,6 +280,7 @@ export const GroupCatalogItemScalarFieldEnum = {
   groupId: 'groupId',
   productVariantId: 'productVariantId',
   salePrice: 'salePrice',
+  costPrice: 'costPrice',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

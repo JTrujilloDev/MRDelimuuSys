@@ -338,6 +338,7 @@ export const addAccountItemService = async (
       throw new Error("Product is not available in this store catalog");
     }
     const price = Number(catalogItem.salePrice);
+    const unitCost = Number(catalogItem.costPrice);
 
     // 5. Buscar si ya existe el item en la cuenta
     const existingItem = await tx.accountItem.findFirst({
@@ -356,6 +357,8 @@ export const addAccountItemService = async (
         data: {
           productName: `${product.product.name} - ${product.name}`,
           quantity: newQuantity,
+          price,
+          unitCost,
           subtotal: newQuantity * price,
         },
       });
@@ -368,6 +371,7 @@ export const addAccountItemService = async (
           productName: `${product.product.name} - ${product.name}`,
           quantity: quantityToAdd,
           price,
+          unitCost,
           subtotal: quantityToAdd * price,
         },
       });

@@ -32,6 +32,7 @@ export type AccountItemAvgAggregateOutputType = {
   productVariantId: number | null
   quantity: number | null
   price: number | null
+  unitCost: number | null
   subtotal: number | null
 }
 
@@ -41,6 +42,7 @@ export type AccountItemSumAggregateOutputType = {
   productVariantId: number | null
   quantity: number | null
   price: number | null
+  unitCost: number | null
   subtotal: number | null
 }
 
@@ -51,6 +53,7 @@ export type AccountItemMinAggregateOutputType = {
   productName: string | null
   quantity: number | null
   price: number | null
+  unitCost: number | null
   subtotal: number | null
   createdAt: Date | null
 }
@@ -62,6 +65,7 @@ export type AccountItemMaxAggregateOutputType = {
   productName: string | null
   quantity: number | null
   price: number | null
+  unitCost: number | null
   subtotal: number | null
   createdAt: Date | null
 }
@@ -73,6 +77,7 @@ export type AccountItemCountAggregateOutputType = {
   productName: number
   quantity: number
   price: number
+  unitCost: number
   subtotal: number
   createdAt: number
   _all: number
@@ -85,6 +90,7 @@ export type AccountItemAvgAggregateInputType = {
   productVariantId?: true
   quantity?: true
   price?: true
+  unitCost?: true
   subtotal?: true
 }
 
@@ -94,6 +100,7 @@ export type AccountItemSumAggregateInputType = {
   productVariantId?: true
   quantity?: true
   price?: true
+  unitCost?: true
   subtotal?: true
 }
 
@@ -104,6 +111,7 @@ export type AccountItemMinAggregateInputType = {
   productName?: true
   quantity?: true
   price?: true
+  unitCost?: true
   subtotal?: true
   createdAt?: true
 }
@@ -115,6 +123,7 @@ export type AccountItemMaxAggregateInputType = {
   productName?: true
   quantity?: true
   price?: true
+  unitCost?: true
   subtotal?: true
   createdAt?: true
 }
@@ -126,6 +135,7 @@ export type AccountItemCountAggregateInputType = {
   productName?: true
   quantity?: true
   price?: true
+  unitCost?: true
   subtotal?: true
   createdAt?: true
   _all?: true
@@ -224,6 +234,7 @@ export type AccountItemGroupByOutputType = {
   productName: string
   quantity: number
   price: number
+  unitCost: number
   subtotal: number
   createdAt: Date
   _count: AccountItemCountAggregateOutputType | null
@@ -258,6 +269,7 @@ export type AccountItemWhereInput = {
   productName?: Prisma.StringFilter<"AccountItem"> | string
   quantity?: Prisma.IntFilter<"AccountItem"> | number
   price?: Prisma.FloatFilter<"AccountItem"> | number
+  unitCost?: Prisma.FloatFilter<"AccountItem"> | number
   subtotal?: Prisma.FloatFilter<"AccountItem"> | number
   createdAt?: Prisma.DateTimeFilter<"AccountItem"> | Date | string
   account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
@@ -272,6 +284,7 @@ export type AccountItemOrderByWithRelationInput = {
   productName?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   account?: Prisma.AccountOrderByWithRelationInput
@@ -290,6 +303,7 @@ export type AccountItemWhereUniqueInput = Prisma.AtLeast<{
   productName?: Prisma.StringFilter<"AccountItem"> | string
   quantity?: Prisma.IntFilter<"AccountItem"> | number
   price?: Prisma.FloatFilter<"AccountItem"> | number
+  unitCost?: Prisma.FloatFilter<"AccountItem"> | number
   subtotal?: Prisma.FloatFilter<"AccountItem"> | number
   createdAt?: Prisma.DateTimeFilter<"AccountItem"> | Date | string
   account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
@@ -304,6 +318,7 @@ export type AccountItemOrderByWithAggregationInput = {
   productName?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.AccountItemCountOrderByAggregateInput
@@ -323,6 +338,7 @@ export type AccountItemScalarWhereWithAggregatesInput = {
   productName?: Prisma.StringWithAggregatesFilter<"AccountItem"> | string
   quantity?: Prisma.IntWithAggregatesFilter<"AccountItem"> | number
   price?: Prisma.FloatWithAggregatesFilter<"AccountItem"> | number
+  unitCost?: Prisma.FloatWithAggregatesFilter<"AccountItem"> | number
   subtotal?: Prisma.FloatWithAggregatesFilter<"AccountItem"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AccountItem"> | Date | string
 }
@@ -331,6 +347,7 @@ export type AccountItemCreateInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutAccountItemsInput
@@ -345,6 +362,7 @@ export type AccountItemUncheckedCreateInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
   kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutAccountItemInput
@@ -354,6 +372,7 @@ export type AccountItemUpdateInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutAccountItemsNestedInput
@@ -368,6 +387,7 @@ export type AccountItemUncheckedUpdateInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutAccountItemNestedInput
@@ -380,6 +400,7 @@ export type AccountItemCreateManyInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
 }
@@ -388,6 +409,7 @@ export type AccountItemUpdateManyMutationInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -399,6 +421,7 @@ export type AccountItemUncheckedUpdateManyInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -425,6 +448,7 @@ export type AccountItemCountOrderByAggregateInput = {
   productName?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -435,6 +459,7 @@ export type AccountItemAvgOrderByAggregateInput = {
   productVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
 }
 
@@ -445,6 +470,7 @@ export type AccountItemMaxOrderByAggregateInput = {
   productName?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -456,6 +482,7 @@ export type AccountItemMinOrderByAggregateInput = {
   productName?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -466,6 +493,7 @@ export type AccountItemSumOrderByAggregateInput = {
   productVariantId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
 }
 
@@ -576,6 +604,7 @@ export type AccountItemCreateWithoutProductVariantInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutAccountItemsInput
@@ -588,6 +617,7 @@ export type AccountItemUncheckedCreateWithoutProductVariantInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
   kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutAccountItemInput
@@ -629,6 +659,7 @@ export type AccountItemScalarWhereInput = {
   productName?: Prisma.StringFilter<"AccountItem"> | string
   quantity?: Prisma.IntFilter<"AccountItem"> | number
   price?: Prisma.FloatFilter<"AccountItem"> | number
+  unitCost?: Prisma.FloatFilter<"AccountItem"> | number
   subtotal?: Prisma.FloatFilter<"AccountItem"> | number
   createdAt?: Prisma.DateTimeFilter<"AccountItem"> | Date | string
 }
@@ -637,6 +668,7 @@ export type AccountItemCreateWithoutAccountInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
   productVariant: Prisma.ProductVariantCreateNestedOneWithoutAccountItemsInput
@@ -649,6 +681,7 @@ export type AccountItemUncheckedCreateWithoutAccountInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
   kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedCreateNestedManyWithoutAccountItemInput
@@ -684,6 +717,7 @@ export type AccountItemCreateWithoutKitchenTicketItemsInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutAccountItemsInput
@@ -697,6 +731,7 @@ export type AccountItemUncheckedCreateWithoutKitchenTicketItemsInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
 }
@@ -721,6 +756,7 @@ export type AccountItemUpdateWithoutKitchenTicketItemsInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutAccountItemsNestedInput
@@ -734,6 +770,7 @@ export type AccountItemUncheckedUpdateWithoutKitchenTicketItemsInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -744,6 +781,7 @@ export type AccountItemCreateManyProductVariantInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
 }
@@ -752,6 +790,7 @@ export type AccountItemUpdateWithoutProductVariantInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutAccountItemsNestedInput
@@ -764,6 +803,7 @@ export type AccountItemUncheckedUpdateWithoutProductVariantInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutAccountItemNestedInput
@@ -775,6 +815,7 @@ export type AccountItemUncheckedUpdateManyWithoutProductVariantInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -785,6 +826,7 @@ export type AccountItemCreateManyAccountInput = {
   productName: string
   quantity?: number
   price: number
+  unitCost?: number
   subtotal: number
   createdAt?: Date | string
 }
@@ -793,6 +835,7 @@ export type AccountItemUpdateWithoutAccountInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutAccountItemsNestedInput
@@ -805,6 +848,7 @@ export type AccountItemUncheckedUpdateWithoutAccountInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   kitchenTicketItems?: Prisma.KitchenTicketItemUncheckedUpdateManyWithoutAccountItemNestedInput
@@ -816,6 +860,7 @@ export type AccountItemUncheckedUpdateManyWithoutAccountInput = {
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.FloatFieldUpdateOperationsInput | number
+  unitCost?: Prisma.FloatFieldUpdateOperationsInput | number
   subtotal?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -858,6 +903,7 @@ export type AccountItemSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   productName?: boolean
   quantity?: boolean
   price?: boolean
+  unitCost?: boolean
   subtotal?: boolean
   createdAt?: boolean
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
@@ -873,6 +919,7 @@ export type AccountItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   productName?: boolean
   quantity?: boolean
   price?: boolean
+  unitCost?: boolean
   subtotal?: boolean
   createdAt?: boolean
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
@@ -886,6 +933,7 @@ export type AccountItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   productName?: boolean
   quantity?: boolean
   price?: boolean
+  unitCost?: boolean
   subtotal?: boolean
   createdAt?: boolean
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
@@ -899,11 +947,12 @@ export type AccountItemSelectScalar = {
   productName?: boolean
   quantity?: boolean
   price?: boolean
+  unitCost?: boolean
   subtotal?: boolean
   createdAt?: boolean
 }
 
-export type AccountItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "accountId" | "productVariantId" | "productName" | "quantity" | "price" | "subtotal" | "createdAt", ExtArgs["result"]["accountItem"]>
+export type AccountItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "accountId" | "productVariantId" | "productName" | "quantity" | "price" | "unitCost" | "subtotal" | "createdAt", ExtArgs["result"]["accountItem"]>
 export type AccountItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
@@ -933,6 +982,7 @@ export type $AccountItemPayload<ExtArgs extends runtime.Types.Extensions.Interna
     productName: string
     quantity: number
     price: number
+    unitCost: number
     subtotal: number
     createdAt: Date
   }, ExtArgs["result"]["accountItem"]>
@@ -1367,6 +1417,7 @@ export interface AccountItemFieldRefs {
   readonly productName: Prisma.FieldRef<"AccountItem", 'String'>
   readonly quantity: Prisma.FieldRef<"AccountItem", 'Int'>
   readonly price: Prisma.FieldRef<"AccountItem", 'Float'>
+  readonly unitCost: Prisma.FieldRef<"AccountItem", 'Float'>
   readonly subtotal: Prisma.FieldRef<"AccountItem", 'Float'>
   readonly createdAt: Prisma.FieldRef<"AccountItem", 'DateTime'>
 }

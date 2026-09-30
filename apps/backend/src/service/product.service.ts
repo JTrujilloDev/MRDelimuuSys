@@ -99,11 +99,17 @@ export const createProductService = async (productData: CreateProductData) => {
   return newProduct;
 };
 
-export const getAllProductsService = async () => {
+export const getAllProductsService = async (includeCost = false) => {
   const products = await prisma.product.findMany({
     include: { variants: { include: { recipeItems: true } }, category: true },
   });
-  return products;
+  return products.map((product) => ({
+    ...product,
+    variants: product.variants.map(({ productCost, ...variant }) => ({
+      ...variant,
+      ...(includeCost && { productCost }),
+    })),
+  }));
 };
 
 export const getAllActiveProductsService = async (storeId: number) => {
@@ -132,7 +138,7 @@ export const getAllActiveProductsService = async (storeId: number) => {
   });
   return activeProducts.map((product) => ({
     ...product,
-    variants: product.variants.map(({ catalogItems, storeInventories, ...variant }) => ({
+    variants: product.variants.map(({ catalogItems, storeInventories, productCost: _productCost, ...variant }) => ({
       ...variant,
       retailPrice: catalogItems[0]?.salePrice ?? 0,
       stock: storeInventories[0]?.stock ?? 0,
@@ -143,12 +149,19 @@ export const getAllActiveProductsService = async (storeId: number) => {
   }));
 };
 
-export const getProductByIdService = async (id: number) => {
+export const getProductByIdService = async (id: number, includeCost = false) => {
   const product = await prisma.product.findUnique({
     where: { id },
     include: { variants: true },
   });
-  return product;
+  if (!product) return null;
+  return {
+    ...product,
+    variants: product.variants.map(({ productCost, ...variant }) => ({
+      ...variant,
+      ...(includeCost && { productCost }),
+    })),
+  };
 };
 
 export const deleteProductService = async (id: number) => {
@@ -286,7 +299,7 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
   });
   return products.map((product) => ({
     ...product,
-    variants: product.variants.map(({ catalogItems, storeInventories, ...variant }) => ({
+    variants: product.variants.map(({ catalogItems, storeInventories, productCost: _productCost, ...variant }) => ({
       ...variant,
       retailPrice: catalogItems[0]!.salePrice,
       stock: storeInventories[0]?.stock ?? 0,
@@ -295,7 +308,9 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
       recipeItems: variant.recipeItems.map((recipeItem) => ({
         ...recipeItem,
         ingredientVariant: {
-          ...recipeItem.ingredientVariant,
+          ...Object.fromEntries(
+            Object.entries(recipeItem.ingredientVariant).filter(([key]) => key !== "productCost"),
+          ),
           stock: recipeItem.ingredientVariant.storeInventories[0]?.stock ?? 0,
           storeInventories: undefined,
         },

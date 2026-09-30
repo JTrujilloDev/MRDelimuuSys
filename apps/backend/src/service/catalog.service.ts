@@ -1,16 +1,24 @@
 import { prisma } from "../../lib/prisma";
 import { requirePositiveId } from "./organization.validation";
+import { requireCatalogPrice } from "./catalog.rules";
 
-const requireSalePrice = (value: unknown) => {
-  const price = Number(value);
-  if (!Number.isFinite(price) || price < 0) throw new Error("Valid sale price is required");
-  return price;
-};
-
-export const getGroupCatalogService = async (groupIdValue: unknown) => {
+export const getGroupCatalogService = async (
+  groupIdValue: unknown,
+  access: { isGlobalAdmin: boolean; activeStoreId?: number | null; storeRole?: string | null },
+) => {
   const groupId = requirePositiveId(groupIdValue, "groupId");
   const group = await prisma.storeGroup.findUnique({ where: { id: groupId } });
   if (!group) throw new Error("Store group not found");
+  if (!access.isGlobalAdmin) {
+    if (access.storeRole !== "ADMIN" || !access.activeStoreId) {
+      throw new Error("Catalog manager access required");
+    }
+    const activeStore = await prisma.store.findUnique({
+      where: { id: access.activeStoreId },
+      select: { groupId: true },
+    });
+    if (activeStore?.groupId !== groupId) throw new Error("Catalog belongs to another group");
+  }
 
   const products = await prisma.product.findMany({
     include: {
@@ -27,9 +35,15 @@ export const getGroupCatalogService = async (groupIdValue: unknown) => {
     group,
     products: products.map((product) => ({
       ...product,
-      variants: product.variants.map(({ catalogItems, ...variant }) => ({
+      variants: product.variants.map(({ catalogItems, productCost, ...variant }) => ({
         ...variant,
-        catalog: catalogItems[0] ?? null,
+        ...(access.isGlobalAdmin && { productCost }),
+        catalog: catalogItems[0]
+          ? {
+              ...catalogItems[0],
+              ...(!access.isGlobalAdmin && { costPrice: undefined }),
+            }
+          : null,
       })),
     })),
   };
@@ -38,7 +52,7 @@ export const getGroupCatalogService = async (groupIdValue: unknown) => {
 export const updateGroupCatalogItemService = async (
   groupIdValue: unknown,
   variantIdValue: unknown,
-  data: { salePrice?: unknown; isActive?: unknown },
+  data: { salePrice?: unknown; costPrice?: unknown; isActive?: unknown },
 ) => {
   const groupId = requirePositiveId(groupIdValue, "groupId");
   const productVariantId = requirePositiveId(variantIdValue, "productVariantId");
@@ -66,9 +80,13 @@ export const updateGroupCatalogItemService = async (
     where: { groupId_productVariantId: { groupId, productVariantId } },
   });
   if (data.salePrice === undefined && !current) throw new Error("Sale price is required");
+  if (data.costPrice === undefined && !current) throw new Error("Group cost is required");
   const salePrice = data.salePrice === undefined
     ? current!.salePrice
-    : requireSalePrice(data.salePrice);
+    : requireCatalogPrice(data.salePrice, "sale price");
+  const costPrice = data.costPrice === undefined
+    ? current!.costPrice
+    : requireCatalogPrice(data.costPrice, "group cost");
 
   return prisma.$transaction(async (tx) => {
     await tx.storeInventory.createMany({
@@ -82,13 +100,39 @@ export const updateGroupCatalogItemService = async (
         groupId,
         productVariantId,
         salePrice,
+        costPrice,
         isActive: isActive ?? true,
       },
       update: {
         salePrice,
+        costPrice,
         isActive,
       },
       include: { productVariant: { include: { product: true } } },
     });
+  });
+};
+
+export const deleteGroupCatalogItemService = async (
+  groupIdValue: unknown,
+  variantIdValue: unknown,
+) => {
+  const groupId = requirePositiveId(groupIdValue, "groupId");
+  const productVariantId = requirePositiveId(variantIdValue, "productVariantId");
+  const current = await prisma.groupCatalogItem.findUnique({
+    where: { groupId_productVariantId: { groupId, productVariantId } },
+  });
+  if (!current) throw new Error("Product is not part of this catalog");
+
+  const inventoryWithStock = await prisma.storeInventory.findFirst({
+    where: { productVariantId, store: { groupId }, stock: { not: 0 } },
+    include: { store: { select: { name: true } } },
+  });
+  if (inventoryWithStock) {
+    throw new Error(`Cannot remove a product with inventory in ${inventoryWithStock.store.name}`);
+  }
+
+  return prisma.groupCatalogItem.delete({
+    where: { groupId_productVariantId: { groupId, productVariantId } },
   });
 };

@@ -31,6 +31,7 @@ export type GroupCatalogItemAvgAggregateOutputType = {
   groupId: number | null
   productVariantId: number | null
   salePrice: number | null
+  costPrice: number | null
 }
 
 export type GroupCatalogItemSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type GroupCatalogItemSumAggregateOutputType = {
   groupId: number | null
   productVariantId: number | null
   salePrice: number | null
+  costPrice: number | null
 }
 
 export type GroupCatalogItemMinAggregateOutputType = {
@@ -45,6 +47,7 @@ export type GroupCatalogItemMinAggregateOutputType = {
   groupId: number | null
   productVariantId: number | null
   salePrice: number | null
+  costPrice: number | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,6 +58,7 @@ export type GroupCatalogItemMaxAggregateOutputType = {
   groupId: number | null
   productVariantId: number | null
   salePrice: number | null
+  costPrice: number | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -65,6 +69,7 @@ export type GroupCatalogItemCountAggregateOutputType = {
   groupId: number
   productVariantId: number
   salePrice: number
+  costPrice: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -77,6 +82,7 @@ export type GroupCatalogItemAvgAggregateInputType = {
   groupId?: true
   productVariantId?: true
   salePrice?: true
+  costPrice?: true
 }
 
 export type GroupCatalogItemSumAggregateInputType = {
@@ -84,6 +90,7 @@ export type GroupCatalogItemSumAggregateInputType = {
   groupId?: true
   productVariantId?: true
   salePrice?: true
+  costPrice?: true
 }
 
 export type GroupCatalogItemMinAggregateInputType = {
@@ -91,6 +98,7 @@ export type GroupCatalogItemMinAggregateInputType = {
   groupId?: true
   productVariantId?: true
   salePrice?: true
+  costPrice?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -101,6 +109,7 @@ export type GroupCatalogItemMaxAggregateInputType = {
   groupId?: true
   productVariantId?: true
   salePrice?: true
+  costPrice?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -111,6 +120,7 @@ export type GroupCatalogItemCountAggregateInputType = {
   groupId?: true
   productVariantId?: true
   salePrice?: true
+  costPrice?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -208,6 +218,7 @@ export type GroupCatalogItemGroupByOutputType = {
   groupId: number
   productVariantId: number
   salePrice: number
+  costPrice: number
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -241,6 +252,7 @@ export type GroupCatalogItemWhereInput = {
   groupId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   productVariantId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   salePrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
+  costPrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
   isActive?: Prisma.BoolFilter<"GroupCatalogItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
@@ -253,6 +265,7 @@ export type GroupCatalogItemOrderByWithRelationInput = {
   groupId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  costPrice?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -269,6 +282,7 @@ export type GroupCatalogItemWhereUniqueInput = Prisma.AtLeast<{
   groupId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   productVariantId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   salePrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
+  costPrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
   isActive?: Prisma.BoolFilter<"GroupCatalogItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
@@ -281,6 +295,7 @@ export type GroupCatalogItemOrderByWithAggregationInput = {
   groupId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  costPrice?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -299,6 +314,7 @@ export type GroupCatalogItemScalarWhereWithAggregatesInput = {
   groupId?: Prisma.IntWithAggregatesFilter<"GroupCatalogItem"> | number
   productVariantId?: Prisma.IntWithAggregatesFilter<"GroupCatalogItem"> | number
   salePrice?: Prisma.FloatWithAggregatesFilter<"GroupCatalogItem"> | number
+  costPrice?: Prisma.FloatWithAggregatesFilter<"GroupCatalogItem"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"GroupCatalogItem"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"GroupCatalogItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"GroupCatalogItem"> | Date | string
@@ -306,6 +322,7 @@ export type GroupCatalogItemScalarWhereWithAggregatesInput = {
 
 export type GroupCatalogItemCreateInput = {
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -318,6 +335,7 @@ export type GroupCatalogItemUncheckedCreateInput = {
   groupId: number
   productVariantId: number
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -325,6 +343,7 @@ export type GroupCatalogItemUncheckedCreateInput = {
 
 export type GroupCatalogItemUpdateInput = {
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -337,6 +356,7 @@ export type GroupCatalogItemUncheckedUpdateInput = {
   groupId?: Prisma.IntFieldUpdateOperationsInput | number
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -347,6 +367,7 @@ export type GroupCatalogItemCreateManyInput = {
   groupId: number
   productVariantId: number
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -354,6 +375,7 @@ export type GroupCatalogItemCreateManyInput = {
 
 export type GroupCatalogItemUpdateManyMutationInput = {
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -364,6 +386,7 @@ export type GroupCatalogItemUncheckedUpdateManyInput = {
   groupId?: Prisma.IntFieldUpdateOperationsInput | number
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -389,6 +412,7 @@ export type GroupCatalogItemCountOrderByAggregateInput = {
   groupId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  costPrice?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -399,6 +423,7 @@ export type GroupCatalogItemAvgOrderByAggregateInput = {
   groupId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  costPrice?: Prisma.SortOrder
 }
 
 export type GroupCatalogItemMaxOrderByAggregateInput = {
@@ -406,6 +431,7 @@ export type GroupCatalogItemMaxOrderByAggregateInput = {
   groupId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  costPrice?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -416,6 +442,7 @@ export type GroupCatalogItemMinOrderByAggregateInput = {
   groupId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  costPrice?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -426,6 +453,7 @@ export type GroupCatalogItemSumOrderByAggregateInput = {
   groupId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  costPrice?: Prisma.SortOrder
 }
 
 export type GroupCatalogItemCreateNestedManyWithoutProductVariantInput = {
@@ -514,6 +542,7 @@ export type GroupCatalogItemUncheckedUpdateManyWithoutGroupNestedInput = {
 
 export type GroupCatalogItemCreateWithoutProductVariantInput = {
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -524,6 +553,7 @@ export type GroupCatalogItemUncheckedCreateWithoutProductVariantInput = {
   id?: number
   groupId: number
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -563,6 +593,7 @@ export type GroupCatalogItemScalarWhereInput = {
   groupId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   productVariantId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   salePrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
+  costPrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
   isActive?: Prisma.BoolFilter<"GroupCatalogItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
@@ -570,6 +601,7 @@ export type GroupCatalogItemScalarWhereInput = {
 
 export type GroupCatalogItemCreateWithoutGroupInput = {
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -580,6 +612,7 @@ export type GroupCatalogItemUncheckedCreateWithoutGroupInput = {
   id?: number
   productVariantId: number
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -615,6 +648,7 @@ export type GroupCatalogItemCreateManyProductVariantInput = {
   id?: number
   groupId: number
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -622,6 +656,7 @@ export type GroupCatalogItemCreateManyProductVariantInput = {
 
 export type GroupCatalogItemUpdateWithoutProductVariantInput = {
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -632,6 +667,7 @@ export type GroupCatalogItemUncheckedUpdateWithoutProductVariantInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   groupId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -641,6 +677,7 @@ export type GroupCatalogItemUncheckedUpdateManyWithoutProductVariantInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   groupId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -650,6 +687,7 @@ export type GroupCatalogItemCreateManyGroupInput = {
   id?: number
   productVariantId: number
   salePrice: number
+  costPrice: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -657,6 +695,7 @@ export type GroupCatalogItemCreateManyGroupInput = {
 
 export type GroupCatalogItemUpdateWithoutGroupInput = {
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -667,6 +706,7 @@ export type GroupCatalogItemUncheckedUpdateWithoutGroupInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -676,6 +716,7 @@ export type GroupCatalogItemUncheckedUpdateManyWithoutGroupInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -688,6 +729,7 @@ export type GroupCatalogItemSelect<ExtArgs extends runtime.Types.Extensions.Inte
   groupId?: boolean
   productVariantId?: boolean
   salePrice?: boolean
+  costPrice?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -700,6 +742,7 @@ export type GroupCatalogItemSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   groupId?: boolean
   productVariantId?: boolean
   salePrice?: boolean
+  costPrice?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -712,6 +755,7 @@ export type GroupCatalogItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   groupId?: boolean
   productVariantId?: boolean
   salePrice?: boolean
+  costPrice?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -724,12 +768,13 @@ export type GroupCatalogItemSelectScalar = {
   groupId?: boolean
   productVariantId?: boolean
   salePrice?: boolean
+  costPrice?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type GroupCatalogItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "productVariantId" | "salePrice" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["groupCatalogItem"]>
+export type GroupCatalogItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "productVariantId" | "salePrice" | "costPrice" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["groupCatalogItem"]>
 export type GroupCatalogItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
@@ -754,6 +799,7 @@ export type $GroupCatalogItemPayload<ExtArgs extends runtime.Types.Extensions.In
     groupId: number
     productVariantId: number
     salePrice: number
+    costPrice: number
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1186,6 +1232,7 @@ export interface GroupCatalogItemFieldRefs {
   readonly groupId: Prisma.FieldRef<"GroupCatalogItem", 'Int'>
   readonly productVariantId: Prisma.FieldRef<"GroupCatalogItem", 'Int'>
   readonly salePrice: Prisma.FieldRef<"GroupCatalogItem", 'Float'>
+  readonly costPrice: Prisma.FieldRef<"GroupCatalogItem", 'Float'>
   readonly isActive: Prisma.FieldRef<"GroupCatalogItem", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"GroupCatalogItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"GroupCatalogItem", 'DateTime'>

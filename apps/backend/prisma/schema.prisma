@@ -182,6 +182,7 @@ model AccountItem {
   productName      String
   quantity         Int            @default(1)
   price            Float
+  unitCost         Float          @default(0)
   subtotal         Float
 
   createdAt          DateTime            @default(now())
@@ -326,6 +327,7 @@ model GroupCatalogItem {
   productVariantId Int
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
   salePrice        Float
+  costPrice        Float
   isActive         Boolean        @default(true)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
