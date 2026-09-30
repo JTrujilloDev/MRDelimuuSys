@@ -79,6 +79,14 @@ type CashRegister = {
   accounts: Sale[];
   soldVariants: SoldVariant[];
   soldVariantUnits: number;
+  transactions: Array<{
+    id: number;
+    type: "EXPENSE" | "ADJUSTMENT";
+    amount: number;
+    description: string | null;
+    adjustmentJustification: string | null;
+    createdAt: string;
+  }>;
 };
 
 const money = (value: number | null | undefined) =>
@@ -408,6 +416,7 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
           <Detail label="Gastos" value={money(register.totalExpenses)} />
           <Detail label="Diferencia de caja" value={money(register.difference)} />
         </div>
+        <RegisterFinancialNotes register={register} />
       </div>
       <div>
         <h4 className="mb-3 text-sm font-semibold text-foreground">Variantes vendidas</h4>
@@ -444,6 +453,37 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
 
 const Metric = ({ label, value }: { label: string; value: string }) => <div className="min-w-[85px] text-right"><p className="text-xs text-muted-foreground">{label}</p><p className="font-bold text-foreground">{value}</p></div>;
 const Detail = ({ label, value }: { label: string; value: string }) => <div className="rounded-xl bg-pos-surface p-3"><p className="text-xs text-muted-foreground">{label}</p><p className="mt-1 font-semibold text-foreground">{value}</p></div>;
+const RegisterFinancialNotes = ({ register }: { register: CashRegister }) => {
+  const expenses = register.transactions.filter((transaction) => transaction.type === "EXPENSE");
+  const closingAdjustment = register.transactions.find(
+    (transaction) =>
+      transaction.type === "ADJUSTMENT" && transaction.adjustmentJustification,
+  );
+
+  if (expenses.length === 0 && !closingAdjustment) return null;
+
+  return (
+    <div className="mt-3 space-y-2">
+      {expenses.map((expense) => (
+        <div key={expense.id} className="rounded-xl border border-border bg-pos-surface p-3 text-xs">
+          <div className="flex justify-between gap-3">
+            <span className="font-semibold text-foreground">{expense.description}</span>
+            <span className="font-bold text-destructive">-{money(Math.abs(expense.amount))}</span>
+          </div>
+          <p className="mt-1 text-muted-foreground">{expense.adjustmentJustification}</p>
+        </div>
+      ))}
+      {closingAdjustment && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs">
+          <p className="font-semibold text-foreground">Justificación del descuadre</p>
+          <p className="mt-1 text-muted-foreground">
+            {closingAdjustment.adjustmentJustification}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
 const EmptyState = ({ message }: { message: string }) => <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-pos-surface p-12 text-muted-foreground"><SearchX className="mb-3 h-9 w-9 opacity-40" /><p className="text-sm">{message}</p></div>;
 
 export default CashRegisterHistory;

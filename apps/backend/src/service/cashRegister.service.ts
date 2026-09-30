@@ -223,6 +223,18 @@ export const getCashRegisterHistoryService = async (
     include: {
       user: { select: { id: true, name: true } },
       terminal: { select: { id: true, name: true } },
+      transactions: {
+        where: { type: { in: ["EXPENSE", "ADJUSTMENT"] } },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          type: true,
+          amount: true,
+          description: true,
+          adjustmentJustification: true,
+          createdAt: true,
+        },
+      },
       accounts: {
         where: { status: { in: ["CLOSED", "CANCELLED"] } },
         orderBy: { closedAt: "desc" },
