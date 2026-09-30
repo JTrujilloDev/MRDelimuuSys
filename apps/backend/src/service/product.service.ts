@@ -149,6 +149,55 @@ export const getAllActiveProductsService = async (storeId: number) => {
   }));
 };
 
+export const getInventoryProductsService = async (storeId: number) => {
+  const store = await prisma.store.findUnique({
+    where: { id: storeId },
+    select: { groupId: true },
+  });
+  if (!store) throw new Error("Store not found");
+
+  const products = await prisma.product.findMany({
+    where: {
+      variants: {
+        some: {
+          isActive: true,
+          catalogItems: { some: { groupId: store.groupId } },
+        },
+      },
+    },
+    include: {
+      category: true,
+      variants: {
+        where: {
+          isActive: true,
+          catalogItems: { some: { groupId: store.groupId } },
+        },
+        include: {
+          catalogItems: { where: { groupId: store.groupId } },
+          storeInventories: { where: { storeId } },
+        },
+      },
+    },
+    orderBy: [{ category: { name: "asc" } }, { name: "asc" }],
+  });
+
+  return products.map((product) => ({
+    ...product,
+    variants: product.variants.map(({
+      catalogItems,
+      storeInventories,
+      productCost: _productCost,
+      ...variant
+    }) => ({
+      ...variant,
+      stock: storeInventories[0]?.stock ?? 0,
+      minStock: storeInventories[0]?.minStock ?? 0,
+      isNew: !(storeInventories[0]?.isInitialized ?? false),
+      isCatalogActive: catalogItems[0]?.isActive ?? false,
+    })),
+  }));
+};
+
 export const getProductByIdService = async (id: number, includeCost = false) => {
   const product = await prisma.product.findUnique({
     where: { id },

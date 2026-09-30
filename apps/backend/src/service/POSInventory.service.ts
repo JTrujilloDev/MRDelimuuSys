@@ -36,17 +36,27 @@ export const createPOSInventoryTransactionService = async (
   userId: number,
 ) => {
   return await prisma.$transaction(async (tx) => {
+    const store = await tx.store.findUnique({
+      where: { id: storeId },
+      select: { groupId: true },
+    });
+    if (!store) throw new Error("Store not found");
+
     // 1. Validar producto
     const product = await tx.productVariant.findUnique({
       where: { id: data.productVariantId },
       include: {
         product: true,
+        catalogItems: { where: { groupId: store.groupId } },
         storeInventories: { where: { storeId } },
       },
     });
 
     if (!product || !product.isActive) {
       throw new Error("Product not found or inactive");
+    }
+    if (product.catalogItems.length === 0) {
+      throw new Error("Product does not belong to the active store group");
     }
 
     // 2. Determinar cantidad según tipo
@@ -144,10 +154,16 @@ export const createBulkPOSInventoryTransactionService = async (
 
   return prisma.$transaction(async (tx) => {
     const operationId = randomUUID();
+    const store = await tx.store.findUnique({
+      where: { id: storeId },
+      select: { groupId: true },
+    });
+    if (!store) throw new Error("Store not found");
     const variants = await tx.productVariant.findMany({
       where: { id: { in: variantIds } },
       include: {
         product: true,
+        catalogItems: { where: { groupId: store.groupId } },
         storeInventories: { where: { storeId } },
       },
     });
@@ -162,6 +178,9 @@ export const createBulkPOSInventoryTransactionService = async (
 
       if (!variant || !variant.isActive) {
         throw new Error("Product not found or inactive");
+      }
+      if (variant.catalogItems.length === 0) {
+        throw new Error(`${variant.product.name} - ${variant.name} does not belong to the active store group`);
       }
 
       const inventory = variant.storeInventories[0];
@@ -257,8 +276,14 @@ export const updateStoreInventorySettingsService = async (
   if (!Number.isInteger(minStock) || minStock < 0) {
     throw new Error("Minimum stock must be a non-negative integer");
   }
-  const variant = await prisma.productVariant.findUnique({ where: { id: productVariantId } });
+  const store = await prisma.store.findUnique({ where: { id: storeId }, select: { groupId: true } });
+  if (!store) throw new Error("Store not found");
+  const variant = await prisma.productVariant.findUnique({
+    where: { id: productVariantId },
+    include: { catalogItems: { where: { groupId: store.groupId } } },
+  });
   if (!variant) throw new Error("Product variant not found");
+  if (variant.catalogItems.length === 0) throw new Error("Product does not belong to the active store group");
 
   return prisma.storeInventory.upsert({
     where: { storeId_productVariantId: { storeId, productVariantId } },

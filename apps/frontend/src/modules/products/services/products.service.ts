@@ -51,3 +51,8 @@ export const getAllActiveProducts = async () => {
   const { data } = await api.get("/products/active");
   return data;
 };
+
+export const getInventoryProducts = async () => {
+  const { data } = await api.get("/products/inventory");
+  return data;
+};

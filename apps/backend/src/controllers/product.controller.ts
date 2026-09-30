@@ -3,6 +3,7 @@ import {
   createProductService,
   deleteProductService,
   getAllActiveProductsService,
+  getInventoryProductsService,
   getAllProductsService,
   getProductByIdService,
   getProductsByCategoryService,
@@ -136,5 +137,18 @@ export const getAllActiveProducts = async (req: Request, res: Response) => {
       success: false,
       message: (error as Error).message,
     });
+  }
+};
+
+export const getInventoryProducts = async (req: Request, res: Response) => {
+  try {
+    const products = await getInventoryProductsService(req.auth!.activeStoreId!);
+    res.status(200).json({
+      success: true,
+      message: "Inventory products fetched successfully",
+      data: products,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
   }
 };

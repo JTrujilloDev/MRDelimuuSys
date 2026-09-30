@@ -13,7 +13,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
-import { useGetAllActiveProducts } from "../../products/hooks/useGetAllActiveProducts";
+import { useGetInventoryProducts } from "../../products/hooks/useGetInventoryProducts";
 import { getReportPDF } from "../services/report.service";
 import { productUnits } from "../../../shared/constants/productUnits";
 import TransactionForm from "../components/TransactionForm";
@@ -47,7 +47,7 @@ const Inventory = () => {
   const { state } = useAuth();
   const queryClient = useQueryClient();
   const { data: categories } = useGetAllProductCategories();
-  const productsQuery = useGetAllActiveProducts();
+  const productsQuery = useGetInventoryProducts();
   const activeProducts = (productsQuery.data?.data ?? []) as InventoryProduct[];
   const inventoryCategories = (categories?.data ?? []) as InventoryCategory[];
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -61,7 +61,7 @@ const Inventory = () => {
     mutationFn: ({ variantId, minStock }: { variantId: number; minStock: number }) =>
       updateStoreInventorySettings(variantId, minStock),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["getAllActiveProducts"] });
+      await queryClient.invalidateQueries({ queryKey: ["getInventoryProducts"] });
       toast("Stock mínimo actualizado", { variant: "success" });
     },
     onError: () => toast("No fue posible actualizar el stock mínimo", { variant: "danger" }),
