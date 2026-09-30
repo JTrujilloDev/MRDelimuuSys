@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/prisma";
 import { requirePositiveId } from "./organization.validation";
 import { requireCatalogPrice } from "./catalog.rules";
+import { calculateRecipeCost } from "./productRecipe.rules";
 
 export const getGroupCatalogService = async (
   groupIdValue: unknown,
@@ -25,26 +26,54 @@ export const getGroupCatalogService = async (
       category: true,
       variants: {
         orderBy: { name: "asc" },
-        include: { catalogItems: { where: { groupId } } },
+        include: {
+          catalogItems: { where: { groupId } },
+          recipeItems: {
+            select: {
+              ingredientVariantId: true,
+              quantity: true,
+              ingredientVariant: {
+                select: { name: true, product: { select: { name: true } } },
+              },
+            },
+          },
+        },
       },
     },
     orderBy: [{ category: { name: "asc" } }, { name: "asc" }],
   });
 
+  const groupCosts = new Map(
+    (await prisma.groupCatalogItem.findMany({
+      where: { groupId },
+      select: { productVariantId: true, costPrice: true },
+    })).map((item) => [item.productVariantId, Number(item.costPrice)]),
+  );
+
   return {
     group,
     products: products.map((product) => ({
       ...product,
-      variants: product.variants.map(({ catalogItems, productCost, ...variant }) => ({
-        ...variant,
-        ...(access.isGlobalAdmin && { productCost }),
-        catalog: catalogItems[0]
-          ? {
-              ...catalogItems[0],
-              ...(!access.isGlobalAdmin && { costPrice: undefined }),
-            }
-          : null,
-      })),
+      variants: product.variants.map(({ catalogItems, productCost, recipeItems, ...variant }) => {
+        const recipeCost = calculateRecipeCost(recipeItems, groupCosts);
+        const missingNames = recipeItems
+          .filter((item) => recipeCost.missingComponentIds.includes(item.ingredientVariantId))
+          .map((item) => `${item.ingredientVariant.product.name} · ${item.ingredientVariant.name}`);
+        return {
+          ...variant,
+          ...(access.isGlobalAdmin && {
+            productCost,
+            calculatedRecipeCost: product.productType === "RECIPE_PRODUCT" ? recipeCost.cost : null,
+            missingRecipeComponents: product.productType === "RECIPE_PRODUCT" ? missingNames : [],
+          }),
+          catalog: catalogItems[0]
+            ? {
+                ...catalogItems[0],
+                ...(!access.isGlobalAdmin && { costPrice: undefined }),
+              }
+            : null,
+        };
+      }),
     })),
   };
 };
@@ -65,7 +94,10 @@ export const updateGroupCatalogItemService = async (
     prisma.storeGroup.findUnique({ where: { id: groupId }, include: { stores: true } }),
     prisma.productVariant.findUnique({
       where: { id: productVariantId },
-      include: { product: { select: { productType: true } } },
+      include: {
+        product: { select: { productType: true } },
+        recipeItems: { select: { ingredientVariantId: true } },
+      },
     }),
   ]);
   if (!group) throw new Error("Store group not found");
@@ -75,6 +107,17 @@ export const updateGroupCatalogItemService = async (
   const isSaleable = ["FINISHED_PRODUCT", "RECIPE_PRODUCT", "THIRD_PARTY_PRODUCT"]
     .includes(variant.product.productType);
   if (!isSaleable && isPosActive) throw new Error("Operational products cannot be enabled in the POS");
+  if (variant.product.productType === "RECIPE_PRODUCT") {
+    const linkedComponents = await prisma.groupCatalogItem.count({
+      where: {
+        groupId,
+        productVariantId: { in: variant.recipeItems.map((item) => item.ingredientVariantId) },
+      },
+    });
+    if (variant.recipeItems.length === 0 || linkedComponents !== variant.recipeItems.length) {
+      throw new Error("Every recipe component must belong to the group catalog first");
+    }
+  }
 
   const current = await prisma.groupCatalogItem.findUnique({
     where: { groupId_productVariantId: { groupId, productVariantId } },

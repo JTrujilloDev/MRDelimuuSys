@@ -244,6 +244,7 @@ function CatalogVariantRow({ productName, productType, variant, isNew = false, i
   const cost = Number(costPrice);
   const isValid = (!isSaleable || (sale !== null && Number.isFinite(sale) && sale >= 0)) && Number.isFinite(cost) && cost >= 0;
   const margin = (sale ?? 0) - cost;
+  const suggestedCost = variant.calculatedRecipeCost ?? variant.productCost ?? 0;
 
   return (
     <div className="grid items-end gap-3 rounded-xl border border-border bg-background p-3 xl:grid-cols-[minmax(180px,1fr)_150px_150px_150px_auto]">
@@ -253,10 +254,17 @@ function CatalogVariantRow({ productName, productType, variant, isNew = false, i
         <button
           type="button"
           className="mt-1 text-xs font-bold text-primary hover:underline"
-          onClick={() => setCostPrice(String(variant.productCost ?? 0))}
+          onClick={() => setCostPrice(String(suggestedCost))}
         >
-          Usar costo base ({numeral(variant.productCost ?? 0).format("$0,0")})
+          {variant.calculatedRecipeCost !== undefined && variant.calculatedRecipeCost !== null
+            ? `Usar costo de receta (${numeral(variant.calculatedRecipeCost).format("$0,0")})`
+            : `Usar costo base (${numeral(variant.productCost ?? 0).format("$0,0")})`}
         </button>
+        {(variant.missingRecipeComponents?.length ?? 0) > 0 && (
+          <p className="mt-1 text-xs text-danger">
+            Vincula primero: {variant.missingRecipeComponents?.join(", ")}
+          </p>
+        )}
       </div>
       <label className="text-sm">
         <span className="mb-1 block text-xs font-bold">Costo del grupo</span>
@@ -293,7 +301,7 @@ function CatalogVariantRow({ productName, productType, variant, isNew = false, i
         <button
           type="button"
           className="flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-black text-primary-foreground disabled:opacity-40"
-          disabled={isPending || !isValid || (isSaleable && salePrice === "")}
+          disabled={isPending || !isValid || (isSaleable && salePrice === "") || (variant.missingRecipeComponents?.length ?? 0) > 0}
           onClick={() => onSave({ salePrice: sale, costPrice: cost, isPosActive: isSaleable ? isPosActive : false })}
         >
           {isNew && <CircleDollarSign className="h-4 w-4" />}

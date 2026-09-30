@@ -12,6 +12,8 @@ export type GroupCatalogVariant = {
   name: string;
   isActive: boolean;
   productCost?: number;
+  calculatedRecipeCost?: number | null;
+  missingRecipeComponents?: string[];
   catalog: {
     id: number;
     salePrice: number | null;
