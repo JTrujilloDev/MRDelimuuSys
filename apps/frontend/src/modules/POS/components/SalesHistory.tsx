@@ -223,14 +223,21 @@ const SaleDetailDialog = ({
   canCancelSales: boolean;
 }) => {
   const [cancellationReason, setCancellationReason] = useState("");
+  const [isConfirmingCancellation, setIsConfirmingCancellation] = useState(false);
   const { mutate: cancelSale, isPending: isCancelling } = useCancelAccount();
   if (!sale) return null;
   const Meta = methodMeta[sale.paymentMethod];
   const Icon = Meta.icon;
+  const closeDetail = () => {
+    setCancellationReason("");
+    setIsConfirmingCancellation(false);
+    onClose();
+  };
 
   return (
-    <Modal>
-      <Modal.Backdrop isOpen={!!sale}>
+    <>
+      <Modal>
+      <Modal.Backdrop isOpen={!!sale && !isConfirmingCancellation}>
         <Modal.Container size="lg">
           <Modal.Dialog className="w-full max-w-2xl rounded-[28px] bg-pos-surface">
             <Modal.Header className="flex border-b border-border px-6 py-4 flex-row justify-between">
@@ -321,57 +328,27 @@ const SaleDetailDialog = ({
                   </div>
                 )}
 
-                {canCancelSales && sale.status === "CLOSED" && (
-                  <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
-                    <p className="text-sm font-bold text-destructive">Anular esta venta</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Se revertirán inventario, venta, descuento y forma de pago. Esta acción queda auditada.
-                    </p>
-                    <Input
-                      className="mt-3"
-                      value={cancellationReason}
-                      onChange={(event) => setCancellationReason(event.target.value)}
-                      placeholder="Motivo obligatorio"
-                    />
-                    <Button
-                      className="mt-3 w-full bg-destructive text-destructive-foreground"
-                      isDisabled={!cancellationReason.trim() || isCancelling}
-                      onClick={() => {
-                        cancelSale(
-                          { accountId: sale.id, reason: cancellationReason.trim() },
-                          {
-                            onSuccess: () => {
-                              toast("Venta anulada correctamente", { variant: "success" });
-                              setCancellationReason("");
-                              onClose();
-                            },
-                            onError: (error) => {
-                              const message = error instanceof Error ? error.message : "No fue posible anular la venta";
-                              toast("No fue posible anular la venta", { variant: "danger", description: message });
-                            },
-                          },
-                        );
-                      }}
-                    >
-                      {isCancelling ? "Anulando…" : "Confirmar anulación"}
-                    </Button>
-                  </div>
-                )}
               </div>
 
-              <div className="flex gap-2 px-6 py-4 border-t border-border bg-secondary/20">
+              <div className="flex flex-wrap gap-2 px-6 py-4 border-t border-border bg-secondary/20">
+                {canCancelSales && sale.status === "CLOSED" && (
+                  <Button
+                    variant="outline"
+                    className="mr-auto gap-2 border-destructive/40 text-destructive hover:bg-destructive/10"
+                    onClick={() => setIsConfirmingCancellation(true)}
+                  >
+                    <Ban className="h-4 w-4" />
+                    Anular venta
+                  </Button>
+                )}
                 <Button
                   variant="outline"
-                  className="flex-1"
-                  onClick={() => {
-                    setCancellationReason("");
-                    onClose();
-                  }}
+                  onClick={closeDetail}
                 >
                   Cerrar
                 </Button>
                 {sale.status === "CLOSED" && <Button
-                  className="flex-1 gap-2"
+                  className="gap-2"
                   onClick={() =>
                     printTicketService("XP-58", {
                       clientName: "",
@@ -399,7 +376,76 @@ const SaleDetailDialog = ({
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>
-    </Modal>
+      </Modal>
+
+      <Modal>
+        <Modal.Backdrop isOpen={isConfirmingCancellation}>
+          <Modal.Container placement="center" size="sm" className="p-4">
+            <Modal.Dialog className="w-full max-w-md overflow-hidden rounded-[28px] bg-pos-surface shadow-2xl">
+              <Modal.Header className="border-b border-destructive/20 bg-destructive/5 px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-destructive/15 text-destructive">
+                    <Ban className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <Modal.Heading className="text-lg font-black text-foreground">
+                      Confirmar anulación
+                    </Modal.Heading>
+                    <p className="text-sm text-muted-foreground">{sale.name}</p>
+                  </div>
+                </div>
+              </Modal.Header>
+              <Modal.Body className="space-y-4 px-6 py-5">
+                <p className="text-sm leading-6 text-muted-foreground">
+                  Se revertirán el inventario, la venta, el descuento y la forma de pago. La acción quedará registrada con el usuario y el motivo.
+                </p>
+                <Input
+                  autoFocus
+                  value={cancellationReason}
+                  onChange={(event) => setCancellationReason(event.target.value)}
+                  placeholder="Escribe el motivo obligatorio"
+                  aria-label="Motivo de la anulación"
+                />
+              </Modal.Body>
+              <Modal.Footer className="flex gap-2 border-t border-border bg-secondary/20 px-6 py-4">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  isDisabled={isCancelling}
+                  onClick={() => {
+                    setCancellationReason("");
+                    setIsConfirmingCancellation(false);
+                  }}
+                >
+                  Volver al detalle
+                </Button>
+                <Button
+                  className="flex-1 bg-destructive text-destructive-foreground"
+                  isDisabled={!cancellationReason.trim() || isCancelling}
+                  onClick={() => {
+                    cancelSale(
+                      { accountId: sale.id, reason: cancellationReason.trim() },
+                      {
+                        onSuccess: () => {
+                          toast("Venta anulada correctamente", { variant: "success" });
+                          closeDetail();
+                        },
+                        onError: (error) => {
+                          const message = error instanceof Error ? error.message : "No fue posible anular la venta";
+                          toast("No fue posible anular la venta", { variant: "danger", description: message });
+                        },
+                      },
+                    );
+                  }}
+                >
+                  {isCancelling ? "Anulando…" : "Confirmar anulación"}
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
+    </>
   );
 };
 
