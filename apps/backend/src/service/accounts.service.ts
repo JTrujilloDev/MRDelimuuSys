@@ -6,7 +6,10 @@ import {
   updateCashRegisterTotalsTx,
 } from "./cashRegister.service";
 import { calculateAccountDiscount } from "./accountDiscount.rules";
-import { requireCancellationReason } from "./saleCancellation.rules";
+import {
+  buildCancellationRegisterReversal,
+  requireCancellationReason,
+} from "./saleCancellation.rules";
 import { randomUUID } from "crypto";
 
 interface CreateAccountItem {
@@ -966,15 +969,13 @@ export const cancelClosedAccountService = async ({
       },
     });
 
-    const registerUpdate: UpdateCashRegisterTotalsInput = {
-      cashRegisterId: account.cashRegister.id,
-      saleAmount: -account.total,
-      discountAmount: -account.discount,
-    };
-    if (account.paymentMethod === "CASH") registerUpdate.cashAmount = -account.total;
-    if (account.paymentMethod === "CARD") registerUpdate.cardAmount = -account.total;
-    if (account.paymentMethod === "QR") registerUpdate.qrAmount = -account.total;
-    if (account.paymentMethod === "CREDIT") registerUpdate.creditAmount = -account.total;
+    const registerUpdate: UpdateCashRegisterTotalsInput =
+      buildCancellationRegisterReversal(
+        account.cashRegister.id,
+        account.total,
+        account.discount,
+        account.paymentMethod,
+      );
     await updateCashRegisterTotalsTx(tx, registerUpdate);
 
     return tx.account.findUniqueOrThrow({
