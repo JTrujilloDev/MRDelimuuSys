@@ -100,6 +100,10 @@ export const updateStoreService = async (
 
   return prisma.$transaction(async (tx) => {
     if (storeData.isActive === false) {
+      await tx.userSession.updateMany({
+        where: { activeStoreId: id },
+        data: { activeStoreId: null, activeTerminalId: null },
+      });
       await tx.terminal.updateMany({ where: { storeId: id }, data: { isActive: false } });
     }
 

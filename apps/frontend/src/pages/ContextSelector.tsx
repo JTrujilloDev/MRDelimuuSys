@@ -13,6 +13,7 @@ export default function ContextSelector() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isChangingContext = searchParams.get("change") === "1";
+  const contextBecameUnavailable = searchParams.get("reason") === "context-unavailable";
   const [storeId, setStoreId] = useState<number | null>(null);
   const [terminalId, setTerminalId] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -58,6 +59,12 @@ export default function ContextSelector() {
         <p className="text-sm text-muted-foreground">Hola, {state.user.name}</p>
         <h1 className="mt-1 text-2xl font-black">Selecciona dónde trabajarás</h1>
       </div>
+
+      {contextBecameUnavailable && (
+        <p className="rounded-xl border border-primary/25 bg-primary/10 p-3 text-sm text-foreground">
+          El punto o la caja que estabas usando ya no está disponible. Tu sesión sigue abierta; selecciona otra opción para continuar.
+        </p>
+      )}
 
       <Select
         aria-label="Punto de venta"

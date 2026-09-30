@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { useAuth } from "../../../app/auth/AuthProvider";
 import type { UserRole } from "../../../app/auth/auth.service";
 import type { AdminStore, AdminUser } from "../admin.service";
@@ -430,6 +430,8 @@ function StoresSection({ groups, isLoading, onChanged }: {
   isLoading: boolean;
   onChanged: () => Promise<unknown>;
 }) {
+  const { state: authState, refresh: refreshAuth } = useAuth();
+  const navigate = useNavigate();
   const stores = useMemo(
     () => groups.flatMap((group) => group.stores.map((storeItem) => ({ ...storeItem, groupName: group.name }))),
     [groups],
@@ -455,11 +457,18 @@ function StoresSection({ groups, isLoading, onChanged }: {
   const toggleStore = async () => {
     if (!selectedStore) return;
     if (selectedStore.isActive && !window.confirm(`¿Desactivar ${selectedStore.name} y todas sus cajas?`)) return;
+    const removesCurrentContext = Boolean(
+      selectedStore.isActive && authState?.activeContext?.store.id === selectedStore.id,
+    );
     setError("");
     setNotice("");
     try {
       await storeMutation.mutateAsync({ id: selectedStore.id, isActive: !selectedStore.isActive });
-      await onChanged();
+      if (removesCurrentContext) {
+        navigate("/select-context?change=1&reason=context-unavailable", { replace: true });
+      }
+      await Promise.all([onChanged(), refreshAuth()]);
+      if (removesCurrentContext) return;
       setNotice(`${selectedStore.name} fue ${selectedStore.isActive ? "desactivado" : "activado"}.`);
     } catch (requestError) {
       setError(errorMessage(requestError));
@@ -467,11 +476,18 @@ function StoresSection({ groups, isLoading, onChanged }: {
   };
 
   const toggleTerminal = async (terminal: AdminStore["terminals"][number]) => {
+    const removesCurrentContext = Boolean(
+      terminal.isActive && authState?.activeContext?.terminal.id === terminal.id,
+    );
     setError("");
     setNotice("");
     try {
       await terminalMutation.mutateAsync({ id: terminal.id, isActive: !terminal.isActive });
-      await onChanged();
+      if (removesCurrentContext) {
+        navigate("/select-context?change=1&reason=context-unavailable", { replace: true });
+      }
+      await Promise.all([onChanged(), refreshAuth()]);
+      if (removesCurrentContext) return;
       setNotice(`${terminal.name} fue ${terminal.isActive ? "desactivada" : "activada"}.`);
     } catch (requestError) {
       setError(errorMessage(requestError));
@@ -514,7 +530,7 @@ function StoresSection({ groups, isLoading, onChanged }: {
           kitchenMode: String(form.get("edit-store-kitchen-mode") ?? "NONE") as AdminStore["kitchenMode"],
         },
       });
-      await onChanged();
+      await Promise.all([onChanged(), refreshAuth()]);
       setIsEditStoreOpen(false);
       setNotice("Datos del punto actualizados correctamente.");
     } catch (requestError) {

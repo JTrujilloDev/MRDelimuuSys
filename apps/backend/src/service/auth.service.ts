@@ -52,7 +52,9 @@ const getAvailableStores = async (
     orderBy: { store: { name: "asc" } },
   });
 
-  return accesses.map(({ store, role }) => ({ ...store, role }));
+  return accesses
+    .filter(({ store, role }) => role !== Role.KITCHEN || store.kitchenMode === "TICKETS")
+    .map(({ store, role }) => ({ ...store, role }));
 };
 
 export const loginService = async (emailValue: unknown, passwordValue: unknown) => {
@@ -91,7 +93,7 @@ export const loginService = async (emailValue: unknown, passwordValue: unknown) 
 };
 
 export const resolveSessionService = async (rawToken: string) => {
-  const session = await prisma.userSession.findUnique({
+  let session = await prisma.userSession.findUnique({
     where: { tokenHash: hashSessionToken(rawToken) },
     include: {
       user: { select: userSelect },
@@ -104,14 +106,26 @@ export const resolveSessionService = async (rawToken: string) => {
     return null;
   }
 
-  if (
+  const hasStoredContext = session.activeStoreId !== null || session.activeTerminalId !== null;
+  const hasValidStoredContext = Boolean(
     session.activeStoreId &&
-    (!session.activeStore?.isActive ||
-      !session.activeStore.group.isActive ||
-      !session.activeTerminal?.isActive ||
-      session.activeTerminal.storeId !== session.activeStoreId)
-  ) {
-    return null;
+    session.activeTerminalId &&
+    session.activeStore?.isActive &&
+    session.activeStore.group.isActive &&
+    session.activeTerminal.isActive &&
+    session.activeTerminal.storeId === session.activeStoreId,
+  );
+
+  if (hasStoredContext && !hasValidStoredContext) {
+    session = await prisma.userSession.update({
+      where: { id: session.id },
+      data: { activeStoreId: null, activeTerminalId: null, lastSeenAt: new Date() },
+      include: {
+        user: { select: userSelect },
+        activeStore: { include: { group: true } },
+        activeTerminal: true,
+      },
+    });
   }
 
   let storeRole: Role | null = null;
@@ -122,8 +136,22 @@ export const resolveSessionService = async (rawToken: string) => {
       const access = await prisma.userStoreAccess.findUnique({
         where: { userId_storeId: { userId: session.userId, storeId: session.activeStoreId } },
       });
-      if (!access?.isActive) return null;
-      storeRole = access.role;
+      if (
+        !access?.isActive ||
+        (access.role === Role.KITCHEN && session.activeStore?.kitchenMode !== "TICKETS")
+      ) {
+        session = await prisma.userSession.update({
+          where: { id: session.id },
+          data: { activeStoreId: null, activeTerminalId: null, lastSeenAt: new Date() },
+          include: {
+            user: { select: userSelect },
+            activeStore: { include: { group: true } },
+            activeTerminal: true,
+          },
+        });
+      } else {
+        storeRole = access.role;
+      }
     }
   }
 

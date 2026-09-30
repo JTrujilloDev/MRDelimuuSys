@@ -83,12 +83,21 @@ export const updateTerminalService = async (
     }
   }
 
-  return prisma.terminal.update({
-    where: { id },
-    data: {
-      name: terminalData.name === undefined ? undefined : requireName(terminalData.name),
-      isActive: terminalData.isActive as boolean | undefined,
-    },
-    include: { store: { include: { group: true } } },
+  return prisma.$transaction(async (tx) => {
+    if (terminalData.isActive === false) {
+      await tx.userSession.updateMany({
+        where: { activeTerminalId: id },
+        data: { activeStoreId: null, activeTerminalId: null },
+      });
+    }
+
+    return tx.terminal.update({
+      where: { id },
+      data: {
+        name: terminalData.name === undefined ? undefined : requireName(terminalData.name),
+        isActive: terminalData.isActive as boolean | undefined,
+      },
+      include: { store: { include: { group: true } } },
+    });
   });
 };
