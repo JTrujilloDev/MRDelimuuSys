@@ -4,6 +4,11 @@ import {
 } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { randomUUID } from "crypto";
+import {
+  initializesInventory,
+  isManualInventoryTransactionAllowed,
+  normalizeInventoryQuantity,
+} from "./POSInventory.rules";
 
 interface BulkInventoryTransactionItem {
   productVariantId: number;
@@ -24,56 +29,6 @@ interface CreateInventoryTransactionData {
   type: InventoryTransactionType;
   observation?: string | null;
 }
-
-const manualTransactionsByProductType: Record<string, InventoryTransactionType[]> = {
-  INGREDIENT: ["PURCHASE", "ADJUSTMENT", "WASTE", "INTERNAL_CONSUMPTION"],
-  PACKAGING: ["PURCHASE", "ADJUSTMENT", "WASTE", "INTERNAL_CONSUMPTION"],
-  PREPARED_BASE: [
-    "ADJUSTMENT",
-    "WASTE",
-    "RECEIPT",
-    "INTERNAL_CONSUMPTION",
-  ],
-  FINISHED_PRODUCT: [
-    "ADJUSTMENT",
-    "RETURN",
-    "WASTE",
-    "RECEIPT",
-    "INTERNAL_CONSUMPTION",
-  ],
-  THIRD_PARTY_PRODUCT: [
-    "PURCHASE",
-    "ADJUSTMENT",
-    "RETURN",
-    "WASTE",
-    "INTERNAL_CONSUMPTION",
-  ],
-  RECIPE_PRODUCT: [],
-};
-
-const normalizeQuantity = (
-  type: InventoryTransactionType,
-  quantity: number,
-) => {
-  if (!Number.isInteger(quantity) || quantity === 0) {
-    throw new Error("Quantity must be a non-zero integer");
-  }
-
-  switch (type) {
-    case "PURCHASE":
-    case "RETURN":
-    case "RECEIPT":
-    case "INITIAL":
-      return Math.abs(quantity);
-    case "WASTE":
-    case "INTERNAL_CONSUMPTION":
-      return -Math.abs(quantity);
-    case "ADJUSTMENT":
-      return quantity;
-    default:
-      throw new Error("Invalid manual transaction type");
-  }
-};
 
 export const createPOSInventoryTransactionService = async (
   data: CreateInventoryTransactionData,
@@ -103,13 +58,14 @@ export const createPOSInventoryTransactionService = async (
         throw new Error("Product is not available for initial inventory");
       }
     } else {
-      const availableTypes = manualTransactionsByProductType[product.product.productType] ?? [];
-      if (!availableTypes.includes(data.type)) throw new Error("Invalid transaction type for product");
-      if (!inventory.isInitialized && !["RECEIPT", "PURCHASE"].includes(data.type)) {
+      if (!isManualInventoryTransactionAllowed(product.product.productType, data.type)) {
+        throw new Error("Invalid transaction type for product");
+      }
+      if (!inventory.isInitialized && !initializesInventory(data.type)) {
         throw new Error("Product requires initial inventory first");
       }
     }
-    const quantity = normalizeQuantity(data.type, Number(data.quantity));
+    const quantity = normalizeInventoryQuantity(data.type, Number(data.quantity));
 
     // 3. Validar stock (solo para salidas)
     if (quantity < 0) {
@@ -148,7 +104,7 @@ export const createPOSInventoryTransactionService = async (
       where: { id: inventory.id },
       data: {
         stock: inventory.stock + quantity,
-        ...(["INITIAL", "RECEIPT", "PURCHASE"].includes(data.type) && { isInitialized: true }),
+        ...(initializesInventory(data.type) && { isInitialized: true }),
       },
     });
     return transaction;
@@ -215,19 +171,16 @@ export const createBulkPOSInventoryTransactionService = async (
           throw new Error(`${variant.product.name} - ${variant.name} is not available for initial inventory`);
         }
       } else {
-        if (!inventory?.isInitialized && !["RECEIPT", "PURCHASE"].includes(data.type)) {
+        if (!inventory?.isInitialized && !initializesInventory(data.type)) {
           throw new Error(`${variant.product.name} - ${variant.name} requires initial inventory first`);
         }
 
-        const availableTypes =
-          manualTransactionsByProductType[variant.product.productType] ?? [];
-
-        if (!availableTypes.includes(data.type)) {
+        if (!isManualInventoryTransactionAllowed(variant.product.productType, data.type)) {
           throw new Error(`${variant.product.name} - ${variant.name} is not available for this transaction type`);
         }
       }
 
-      const quantity = normalizeQuantity(data.type, Number(item.quantity));
+      const quantity = normalizeInventoryQuantity(data.type, Number(item.quantity));
 
       const currentStock = inventory?.stock ?? 0;
       if (currentStock + quantity < 0) {
@@ -266,11 +219,11 @@ export const createBulkPOSInventoryTransactionService = async (
           storeId,
           productVariantId: item.variant.id,
           stock: item.quantity,
-          isInitialized: ["INITIAL", "RECEIPT", "PURCHASE"].includes(data.type),
+          isInitialized: initializesInventory(data.type),
         },
         update: {
           stock: { increment: item.quantity },
-          ...(["INITIAL", "RECEIPT", "PURCHASE"].includes(data.type) && { isInitialized: true }),
+          ...(initializesInventory(data.type) && { isInitialized: true }),
         },
       });
 
