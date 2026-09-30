@@ -2,6 +2,7 @@ import { CashRegister } from "../../generated/prisma/client";
 import { CashRegisterStatus } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { validateCashRegisterClosing } from "./cashRegister.rules";
+import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
 
 export interface UpdateCashRegisterTotalsInput {
   cashRegisterId: number;
@@ -344,6 +345,7 @@ export const getCashRegisterHistoryService = async (
 
     return {
       ...cashRegister,
+      ...buildShiftSalesSummary(cashRegister.accounts),
       soldVariants: Array.from(variants.values()).sort(
         (a, b) => b.quantity - a.quantity,
       ),
@@ -385,7 +387,11 @@ export const getOpenCashRegisterService = async (terminalId: number) => {
       } 
     }
   });
-  return cashRegister;
+  if (!cashRegister) return null;
+  return {
+    ...cashRegister,
+    ...buildShiftSalesSummary(cashRegister.accounts),
+  };
 };
 
 //FUNCION INTERNA PARA ACTUALIZAR LOS TOTALES DE LA CAJA EN CADA TRANSACCION

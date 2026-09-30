@@ -71,10 +71,17 @@ const SalesHistory = ({
     [sales, filter, search],
   );
 
-  const total = useMemo(
-    () => filtered.reduce((sum, sale) => sum + (sale.status === "CLOSED" ? sale.total : 0), 0),
+  const summary = useMemo(
+    () => filtered.reduce((totals, sale) => {
+      if (sale.status !== "CLOSED") return totals;
+      totals.net += sale.total;
+      totals.discounts += sale.discount;
+      totals.count += 1;
+      return totals;
+    }, { net: 0, discounts: 0, count: 0 }),
     [filtered],
   );
+  const gross = summary.net + summary.discounts;
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -120,15 +127,11 @@ const SalesHistory = ({
             </button>
           ))}
         </div>
-        <div className="ml-auto text-sm">
-          <span className="text-muted-foreground">Total: </span>
-          <span className="font-bold text-foreground">
-            {numeral(total).format("$ 0,0")}
-          </span>
-          <span className="text-muted-foreground">
-            {" "}
-            · {filtered.length} ventas
-          </span>
+        <div className="ml-auto flex items-center gap-4 text-sm">
+          <span><span className="text-muted-foreground">Bruta: </span><b>{numeral(gross).format("$0,0")}</b></span>
+          <span><span className="text-muted-foreground">Descuentos: </span><b className="text-orange-500">-{numeral(summary.discounts).format("$0,0")}</b></span>
+          <span><span className="text-muted-foreground">Neta: </span><b>{numeral(summary.net).format("$0,0")}</b></span>
+          <span className="text-muted-foreground">· {summary.count} ventas</span>
         </div>
       </div>
 
@@ -283,6 +286,10 @@ const SaleDetailDialog = ({
 
                 {/* Totals */}
                 <div className="space-y-1.5 ">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Subtotal</span>
+                    <span>{numeral(sale.total + sale.discount).format("$0,0")}</span>
+                  </div>
                   {sale.discount > 0 && (
                     <div className="rounded-xl bg-orange-500/10 p-3 text-sm text-orange-600 dark:text-orange-300">
                       <div className="flex justify-between">
