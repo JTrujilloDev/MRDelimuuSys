@@ -106,14 +106,24 @@ const paymentLabels: Record<string, string> = {
   CREDIT: "Crédito",
 };
 
+const toIsoBoundary = (value: string, boundary: "start" | "end") => {
+  const date = dayjs(value);
+  if (!value || !date.isValid()) return "";
+  return date[boundary === "start" ? "startOf" : "endOf"]("day").toISOString();
+};
+
 const CashRegisterHistory = () => {
   const [from, setFrom] = useState(dayjs().subtract(6, "day").format("YYYY-MM-DD"));
   const [to, setTo] = useState(dayjs().format("YYYY-MM-DD"));
   const [productSearch, setProductSearch] = useState("");
-  const fromIso = dayjs(from).startOf("day").toISOString();
-  const toIso = dayjs(to).endOf("day").toISOString();
-  const invalidRange = dayjs(from).isAfter(dayjs(to), "day");
-  const { data, isLoading, isError } = useCashRegisterHistory(fromIso, toIso, !invalidRange);
+  const fromIso = toIsoBoundary(from, "start");
+  const toIso = toIsoBoundary(to, "end");
+  const invalidRange = !fromIso || !toIso || dayjs(from).isAfter(dayjs(to), "day");
+  const { data, isLoading, isError } = useCashRegisterHistory(
+    fromIso,
+    toIso,
+    !invalidRange,
+  );
   const registers = useMemo<CashRegister[]>(
     () => (invalidRange ? [] : (data?.data ?? [])),
     [data?.data, invalidRange],

@@ -14,7 +14,12 @@ export const getCashRegisterHistory = async (from: string, to: string) => {
   const { data } = await api.get("cash-register/history", {
     params: { from, to },
   });
-  return data;
+
+  return {
+    ...data,
+    data: Array.isArray(data?.data) ? data.data : [],
+    soldProducts: Array.isArray(data?.soldProducts) ? data.soldProducts : [],
+  };
 };
 
 export const closeCashRegister = async ({
