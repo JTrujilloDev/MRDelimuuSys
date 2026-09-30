@@ -1,7 +1,10 @@
 import { CashRegister } from "../../generated/prisma/client";
 import { CashRegisterStatus } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
-import { validateCashRegisterClosing } from "./cashRegister.rules";
+import {
+  calculateExpectedCash,
+  validateCashRegisterClosing,
+} from "./cashRegister.rules";
 import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
 
 export interface UpdateCashRegisterTotalsInput {
@@ -109,44 +112,25 @@ export const closeCashRegisterService = async (
     // 3. Calcular totales
     let totalSales = 0;
     let totalExpenses = 0;
-    let cashIn = 0;
 
     for (const t of transactions) {
       if (t.type === "SALE") {
         totalSales += t.amount;
 
-        // solo efectivo entra a caja física
-        if (t.paymentMethod === "CASH") {
-          cashIn += t.amount;
-        }
       }
 
       if (t.type === "REFUND") {
         totalSales += t.amount;
-        if (t.paymentMethod === "CASH") cashIn += t.amount;
       }
 
       if (t.type === "EXPENSE") {
         totalExpenses += Math.abs(t.amount);
 
-        if (t.paymentMethod === "CASH") {
-          cashIn -= Math.abs(t.amount);
-        }
-      }
-
-      if (t.type === "ADJUSTMENT") {
-        if (t.paymentMethod === "CASH") {
-          cashIn += t.amount;
-        }
-      }
-
-      if (t.type === "OPENING") {
-        cashIn += t.amount;
       }
     }
 
     // 4. Efectivo esperado
-    const expectedCash = cashIn;
+    const expectedCash = calculateExpectedCash(transactions);
 
     // 5. Diferencia y justificación
     const closing = validateCashRegisterClosing(

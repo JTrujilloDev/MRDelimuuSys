@@ -7,6 +7,7 @@
           description: expenseData.description,
           adjustmentJustification: expenseData.observation,
           amount: expenseData.amount,
+          paymentMethod: "CASH",
         });
         return data;
       };

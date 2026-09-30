@@ -1,3 +1,29 @@
+type CashMovement = {
+  type: string;
+  amount: number;
+  paymentMethod: string | null;
+};
+
+export const calculateExpectedCash = (transactions: CashMovement[]) =>
+  transactions.reduce((cash, transaction) => {
+    if (transaction.type === "OPENING") return cash + transaction.amount;
+    if (
+      (transaction.type === "SALE" || transaction.type === "REFUND") &&
+      transaction.paymentMethod === "CASH"
+    ) {
+      return cash + transaction.amount;
+    }
+    // Los gastos registrados por el POS siempre salen de la caja física.
+    // También cubre registros anteriores que no guardaron paymentMethod.
+    if (transaction.type === "EXPENSE") {
+      return cash - Math.abs(transaction.amount);
+    }
+    if (transaction.type === "ADJUSTMENT" && transaction.paymentMethod === "CASH") {
+      return cash + transaction.amount;
+    }
+    return cash;
+  }, 0);
+
 export const validateCashRegisterClosing = (
   closingAmountValue: unknown,
   expectedCashValue: unknown,

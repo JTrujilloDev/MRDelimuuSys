@@ -71,7 +71,7 @@ export const createFinancialTransactionService = async (
         description: data.description?.trim(),
         relatedAccountId: data.relatedAccountId,
         relatedCashRegisterId: data.relatedCashRegisterId,
-        paymentMethod: data.paymentMethod,
+        paymentMethod: data.type === "EXPENSE" ? "CASH" : data.paymentMethod,
         adjustmentJustification: data.adjustmentJustification?.trim(),
       },
     });

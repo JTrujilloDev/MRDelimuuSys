@@ -1,6 +1,25 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { validateCashRegisterClosing } from "./cashRegister.rules";
+import {
+  calculateExpectedCash,
+  validateCashRegisterClosing,
+} from "./cashRegister.rules";
+
+test("matches the displayed cash after sales, refunds, and legacy expenses", () => {
+  assert.equal(
+    calculateExpectedCash([
+      { type: "OPENING", amount: 50_000, paymentMethod: null },
+      { type: "SALE", amount: 28_000, paymentMethod: "CASH" },
+      { type: "SALE", amount: 72_000, paymentMethod: "CASH" },
+      { type: "REFUND", amount: -72_000, paymentMethod: "CASH" },
+      { type: "SALE", amount: 28_000, paymentMethod: "CASH" },
+      { type: "SALE", amount: 56_000, paymentMethod: "CARD" },
+      { type: "EXPENSE", amount: -5_000, paymentMethod: null },
+      { type: "SALE", amount: 47_000, paymentMethod: "CASH" },
+    ]),
+    148_000,
+  );
+});
 
 test("closes a balanced register without justification", () => {
   assert.deepEqual(validateCashRegisterClosing(120_000, 120_000, ""), {
