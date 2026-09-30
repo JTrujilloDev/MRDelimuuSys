@@ -117,7 +117,9 @@ export const getAllProductsService = async () => {
   return products;
 };
 
-export const getAllActiveProductsService = async () => {
+export const getAllActiveProductsService = async (storeId: number) => {
+  const store = await prisma.store.findUnique({ where: { id: storeId } });
+  if (!store) throw new Error("Store not found");
   const activeProducts = await prisma.product.findMany({
     where: {
       variants: {
@@ -131,11 +133,25 @@ export const getAllActiveProductsService = async () => {
         where: {
           isActive: true,
         },
+        include: {
+          catalogItems: { where: { groupId: store.groupId, isActive: true } },
+          storeInventories: { where: { storeId } },
+        },
       },
       category: true, // opcional si también necesitas categoría
     },
   });
-  return activeProducts;
+  return activeProducts.map((product) => ({
+    ...product,
+    variants: product.variants.map(({ catalogItems, storeInventories, ...variant }) => ({
+      ...variant,
+      retailPrice: catalogItems[0]?.salePrice ?? variant.retailPrice,
+      stock: storeInventories[0]?.stock ?? 0,
+      minStock: storeInventories[0]?.minStock ?? 0,
+      isNew: !(storeInventories[0]?.isInitialized ?? false),
+      isInCatalog: Boolean(catalogItems[0]),
+    })),
+  }));
 };
 
 export const getProductByIdService = async (id: number) => {
@@ -260,13 +276,16 @@ export const updateProductService = async (id: number, productData: any) => {
   });
 };
 
-export const getProductsByCategoryService = async (categoryId: number) => {
+export const getProductsByCategoryService = async (categoryId: number, storeId: number) => {
+  const store = await prisma.store.findUnique({ where: { id: storeId } });
+  if (!store) throw new Error("Store not found");
   const products = await prisma.product.findMany({
     where: {
       categoryId,
       variants: {
         some: {
           isActive: true,
+          catalogItems: { some: { groupId: store.groupId, isActive: true } },
         },
       },
     },
@@ -274,13 +293,17 @@ export const getProductsByCategoryService = async (categoryId: number) => {
       variants: {
         where: {
           isActive: true,
+          catalogItems: { some: { groupId: store.groupId, isActive: true } },
         },
         include: {
+          catalogItems: { where: { groupId: store.groupId, isActive: true } },
+          storeInventories: { where: { storeId } },
           recipeItems: {
             include: {
               ingredientVariant: {
                 include: {
                   product: true,
+                  storeInventories: { where: { storeId } },
                 },
               },
             },
@@ -289,8 +312,24 @@ export const getProductsByCategoryService = async (categoryId: number) => {
       },
     },
   });
-
-  return products;
+  return products.map((product) => ({
+    ...product,
+    variants: product.variants.map(({ catalogItems, storeInventories, ...variant }) => ({
+      ...variant,
+      retailPrice: catalogItems[0]!.salePrice,
+      stock: storeInventories[0]?.stock ?? 0,
+      minStock: storeInventories[0]?.minStock ?? 0,
+      isNew: !(storeInventories[0]?.isInitialized ?? false),
+      recipeItems: variant.recipeItems.map((recipeItem) => ({
+        ...recipeItem,
+        ingredientVariant: {
+          ...recipeItem.ingredientVariant,
+          stock: recipeItem.ingredientVariant.storeInventories[0]?.stock ?? 0,
+          storeInventories: undefined,
+        },
+      })),
+    })),
+  }));
 };
 
 

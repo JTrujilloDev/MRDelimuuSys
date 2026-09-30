@@ -106,7 +106,10 @@ export const updateProduct = async (req: Request, res: Response) => {
 export const getProductsByCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const productByCategory = await getProductsByCategoryService(Number(id));
+    const productByCategory = await getProductsByCategoryService(
+      Number(id),
+      req.auth!.activeStoreId!,
+    );
     res.status(200).json({
       success: true,
       message: "Products fetched successfully",
@@ -122,7 +125,7 @@ export const getProductsByCategory = async (req: Request, res: Response) => {
 
 export const getAllActiveProducts = async (req: Request, res: Response) => {
   try {
-    const products = await getAllActiveProductsService();
+    const products = await getAllActiveProductsService(req.auth!.activeStoreId!);
     res.status(200).json({
       success: true,
       message: "Products fetched successfully",

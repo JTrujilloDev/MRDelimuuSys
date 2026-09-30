@@ -59,3 +59,15 @@ export const requireActiveContext = (
   next();
 };
 
+export const requireInventoryManager = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!req.auth?.isGlobalAdmin && req.auth?.storeRole !== "ADMIN") {
+    res.status(403).json({ success: false, message: "Inventory manager access required" });
+    return;
+  }
+  next();
+};
+

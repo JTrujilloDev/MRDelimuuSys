@@ -15,8 +15,8 @@ export interface CategoryGroup {
   items: StockReportItem[];
 }
 
-export const getStockReportData = async (): Promise<CategoryGroup[]> => {
-  const products = await getAllActiveProductsService();
+export const getStockReportData = async (storeId: number): Promise<CategoryGroup[]> => {
+  const products = await getAllActiveProductsService(storeId);
 
   const items = products.flatMap((product) =>
     product.variants.map((variant) => ({
@@ -53,8 +53,8 @@ export const getStockReportData = async (): Promise<CategoryGroup[]> => {
 
 
 
-export const generateStockReportPDF = async (): Promise<Buffer> => {
-  const categories = await getStockReportData();
+export const generateStockReportPDF = async (storeId: number): Promise<Buffer> => {
+  const categories = await getStockReportData(storeId);
   const html = POSInventoryReport(categories);
 
   const browser = await puppeteer.launch({

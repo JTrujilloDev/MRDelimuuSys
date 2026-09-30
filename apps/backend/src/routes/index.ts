@@ -13,6 +13,7 @@ import POSInventoryRoutes from "./POSInventory.routes";
 import reportGenerationRoutes from "./reportGeneration.routes";
 import qzRoutes from "./qz.routes";
 import kitchenTicketRoutes from "./kitchenTicket.routes";
+import catalogRoutes from "./catalog.routes";
 import { requireActiveContext, requireAuth } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -22,6 +23,7 @@ router.use("/store", storeRoutes);
 router.use("/store-groups", storeGroupRoutes);
 router.use("/terminal", terminalRoutes);
 router.use("/users", usersRoutes);
+router.use("/catalog", catalogRoutes);
 
 router.use(requireAuth, requireActiveContext);
 

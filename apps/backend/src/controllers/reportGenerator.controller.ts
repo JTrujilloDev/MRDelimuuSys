@@ -3,7 +3,7 @@ import { getStockReportData, generateStockReportPDF } from "../service/reportGen
 
 export const getStockReport = async (req: Request, res: Response) => {
   try {
-    const reportData = await getStockReportData();
+    const reportData = await getStockReportData(req.auth!.activeStoreId!);
     return res.json(reportData);
   } catch (error) {
     console.error("Error generando reporte de stock:", error);
@@ -13,7 +13,7 @@ export const getStockReport = async (req: Request, res: Response) => {
 
 export const getStockReportPdf = async (req: Request, res: Response) => {
   try {
-    const pdfBuffer = await generateStockReportPDF();
+    const pdfBuffer = await generateStockReportPDF(req.auth!.activeStoreId!);
 
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
