@@ -5,6 +5,7 @@ import {
   UpdateCashRegisterTotalsInput,
   updateCashRegisterTotalsTx,
 } from "./cashRegister.service";
+import { calculateAccountDiscount } from "./accountDiscount.rules";
 
 interface CreateAccountItem {
   productVariantId: number;
@@ -192,42 +193,33 @@ export const updateAccountService = async (
       throw new Error("Cannot update a closed account");
     }
 
+    const grossTotal = account.accountItems.reduce(
+      (sum, item) => sum + item.subtotal,
+      0,
+    );
+    const discountResult = calculateAccountDiscount(
+      grossTotal,
+      data.discount ?? account.discount,
+      data.discountObservation ?? account.discountObservation,
+    );
+
     // 3. Campos permitidos (whitelist)
     const allowedData: Partial<AccountUpdateData> = {
       name: data.name?.trim(),
       customerId: data.customerId,
       tableNumber: data.tableNumber,
       terminalId: data.terminalId,
-      discount: data.discount,
-      discountObservation: data.discountObservation,
+      discount: discountResult.discount,
+      discountObservation: discountResult.discountObservation ?? undefined,
     };
-
-    // 4. Recalcular total si hay descuento
-    let total = account.accountItems.reduce(
-      (sum, item) => sum + item.subtotal,
-      0,
-    );
-
-    const previousDiscount = account.discount || 0;
-    const newDiscount =
-      allowedData.discount !== undefined
-        ? allowedData.discount
-        : previousDiscount;
-
-    if (newDiscount > 0) {
-      if (newDiscount > total) {
-        throw new Error("Discount cannot be greater than total");
-      }
-
-      total = total - newDiscount;
-    }
 
     // 5. Actualizar cuenta
     const updatedAccount = await tx.account.update({
       where: { id: accountId },
       data: {
         ...allowedData,
-        total,
+        discountObservation: discountResult.discountObservation,
+        total: discountResult.netTotal,
       },
       include: {
         accountItems: true,
@@ -383,12 +375,16 @@ export const addAccountItemService = async (
       where: { accountId },
     });
 
-    const total = items.reduce((sum, i) => sum + i.subtotal, 0);
+    const discountResult = calculateAccountDiscount(
+      items.reduce((sum, i) => sum + i.subtotal, 0),
+      account.discount,
+      account.discountObservation,
+    );
 
     // 7. Actualizar cuenta
     const updatedAccount = await tx.account.update({
       where: { id: accountId },
-      data: { total },
+      data: { total: discountResult.netTotal },
       include: { accountItems: true },
     });
 
@@ -431,12 +427,16 @@ export const removeAccountItemService = async (accountItemId: number) => {
       (i) => i.id !== accountItemId,
     );
 
-    const total = remainingItems.reduce((sum, i) => sum + i.subtotal, 0);
+    const discountResult = calculateAccountDiscount(
+      remainingItems.reduce((sum, i) => sum + i.subtotal, 0),
+      account.discount,
+      account.discountObservation,
+    );
 
     // 5. Actualizar cuenta
     const updatedAccount = await tx.account.update({
       where: { id: account.id },
-      data: { total },
+      data: { total: discountResult.netTotal },
       include: { accountItems: true },
     });
 
@@ -498,12 +498,16 @@ export const adjustAccountItemQuantityService = async ({
       where: { accountId: item.accountId },
     });
 
-    const total = remainingItems.reduce((sum, i) => sum + i.subtotal, 0);
+    const discountResult = calculateAccountDiscount(
+      remainingItems.reduce((sum, i) => sum + i.subtotal, 0),
+      item.account.discount,
+      item.account.discountObservation,
+    );
 
     // 5. Actualizar cuenta
     const updatedAccount = await tx.account.update({
       where: { id: item.accountId },
-      data: { total },
+      data: { total: discountResult.netTotal },
       include: { accountItems: true },
     });
 
@@ -515,10 +519,14 @@ export const closeAccountService = async ({
   accountId,
   paymentMethod,
   cashRegisterId,
+  discount,
+  discountObservation,
 }: {
   accountId: number;
   paymentMethod: PaymentMethod;
   cashRegisterId: number;
+  discount?: unknown;
+  discountObservation?: unknown;
 }) => {
   return await prisma.$transaction(async (tx) => {
     if (!Object.values(PaymentMethod).includes(paymentMethod)) {
@@ -597,11 +605,13 @@ export const closeAccountService = async ({
       );
     }
 
-    // 2. Calcular total
-    const total = account.accountItems.reduce(
-      (sum, item) => sum + item.subtotal,
-      0,
+    // 2. Calcular subtotal, descuento y total neto
+    const discountResult = calculateAccountDiscount(
+      account.accountItems.reduce((sum, item) => sum + item.subtotal, 0),
+      discount ?? account.discount,
+      discountObservation ?? account.discountObservation,
     );
+    const total = discountResult.netTotal;
 
     // 3.1 Validar stock de FINISHED_PRODUCT y THIRD_PARTY_PRODUCT
     const finishedProductIds = account.accountItems
@@ -814,7 +824,7 @@ export const closeAccountService = async ({
     const cashRegisterUpdate: UpdateCashRegisterTotalsInput = {
       cashRegisterId,
       saleAmount: total,
-      discountAmount: account.discount || 0,
+      discountAmount: discountResult.discount,
     };
 
     if (paymentMethod === "CASH") {
@@ -843,6 +853,8 @@ export const closeAccountService = async ({
         closedAt: new Date(),
         paymentMethod,
         total,
+        discount: discountResult.discount,
+        discountObservation: discountResult.discountObservation,
         financialTransactionId: financialTransaction.id,
         cashRegisterId,
       },

@@ -212,7 +212,13 @@ export const adjustAccountItemQuantity = async (
 };
 
 export const closeAccount = async (req: Request, res: Response) => {
-  const { accountId, paymentMethod, cashRegisterId } = req.body;
+  const {
+    accountId,
+    paymentMethod,
+    cashRegisterId,
+    discount,
+    discountObservation,
+  } = req.body;
 
   try {
     const closedAccount = await closeAccountService(
@@ -220,6 +226,8 @@ export const closeAccount = async (req: Request, res: Response) => {
         accountId: Number(accountId),
         paymentMethod,
         cashRegisterId: Number(cashRegisterId),
+        discount,
+        discountObservation,
       }
     );
     getIO().emit("inventory:updated");
