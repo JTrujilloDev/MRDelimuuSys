@@ -106,7 +106,8 @@ model User {
 
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
-  Accounts              Account[]
+  Accounts              Account[]              @relation("AccountCreatedBy")
+  cancelledAccounts     Account[]              @relation("AccountCancelledBy")
   CashRegisters         CashRegister[]
   storeAccesses         UserStoreAccess[]
   sessions              UserSession[]
@@ -124,7 +125,7 @@ enum Role {
 model Account {
   id             Int           @id @default(autoincrement())
   userId         Int
-  user           User          @relation(fields: [userId], references: [id])
+  user           User          @relation("AccountCreatedBy", fields: [userId], references: [id])
   name           String
   terminalId     Int
   terminal       Terminal      @relation(fields: [terminalId], references: [id])
@@ -142,6 +143,10 @@ model Account {
   discount            Float          @default(0)
   discountObservation String?
   closedAt            DateTime?
+  cancelledAt         DateTime?
+  cancellationReason  String?
+  cancelledByUserId   Int?
+  cancelledByUser     User?          @relation("AccountCancelledBy", fields: [cancelledByUserId], references: [id], onDelete: SetNull)
   paymentMethod       PaymentMethod?
   customerId          Int?
   customer            Customer?      @relation(fields: [customerId], references: [id])
@@ -149,6 +154,8 @@ model Account {
   financialTransactions FinancialTransaction[] @relation("AccountFinancialTransactions")
 
   financialTransactionId Int?
+
+  @@index([cancelledByUserId])
 }
 
 enum AccountStatus {

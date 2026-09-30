@@ -120,6 +120,11 @@ export const closeCashRegisterService = async (
         }
       }
 
+      if (t.type === "REFUND") {
+        totalSales += t.amount;
+        if (t.paymentMethod === "CASH") cashIn += t.amount;
+      }
+
       if (t.type === "EXPENSE") {
         totalExpenses += Math.abs(t.amount);
 
@@ -222,6 +227,7 @@ export const getCashRegisterHistoryService = async (
         where: { status: { in: ["CLOSED", "CANCELLED"] } },
         orderBy: { closedAt: "desc" },
         include: {
+          cancelledByUser: { select: { id: true, name: true } },
           accountItems: {
             include: {
               productVariant: {
@@ -362,6 +368,7 @@ export const getOpenCashRegisterService = async (terminalId: number) => {
       accounts: {
         include: {
           accountItems: true,
+          cancelledByUser: { select: { id: true, name: true } },
         }
       } 
     }

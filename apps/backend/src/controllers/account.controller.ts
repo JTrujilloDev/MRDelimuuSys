@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   addAccountItemService,
+  cancelClosedAccountService,
   adjustAccountItemQuantityService,
   closeAccountService,
   createAccountService,
@@ -241,5 +242,24 @@ export const closeAccount = async (req: Request, res: Response) => {
       success: false,
       message: (error as Error).message,
     });
+  }
+};
+
+export const cancelAccount = async (req: Request, res: Response) => {
+  try {
+    const account = await cancelClosedAccountService({
+      accountId: Number(req.params.id),
+      reason: req.body.reason,
+      cancelledByUserId: req.auth!.userId,
+      activeTerminalId: req.auth!.activeTerminalId!,
+    });
+    getIO().emit("inventory:updated");
+    res.status(200).json({
+      success: true,
+      message: "Sale cancelled successfully",
+      data: account,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
   }
 };

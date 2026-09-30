@@ -6,6 +6,8 @@ import {
   updateCashRegisterTotalsTx,
 } from "./cashRegister.service";
 import { calculateAccountDiscount } from "./accountDiscount.rules";
+import { requireCancellationReason } from "./saleCancellation.rules";
+import { randomUUID } from "crypto";
 
 interface CreateAccountItem {
   productVariantId: number;
@@ -864,5 +866,123 @@ export const closeAccountService = async ({
     });
 
     return updatedAccount;
+  });
+};
+
+export const cancelClosedAccountService = async ({
+  accountId,
+  reason: reasonValue,
+  cancelledByUserId,
+  activeTerminalId,
+}: {
+  accountId: number;
+  reason: unknown;
+  cancelledByUserId: number;
+  activeTerminalId: number;
+}) => {
+  const reason = requireCancellationReason(reasonValue);
+
+  return prisma.$transaction(async (tx) => {
+    const account = await tx.account.findUnique({
+      where: { id: accountId },
+      include: {
+        cashRegister: true,
+      },
+    });
+
+    if (!account) throw new Error("Account not found");
+    if (account.status !== "CLOSED") throw new Error("Only a closed sale can be cancelled");
+    if (!account.cashRegister || account.cashRegister.status !== "OPEN") {
+      throw new Error("Sales can only be cancelled before their original shift is closed");
+    }
+    if (account.terminalId !== activeTerminalId) {
+      throw new Error("Sale belongs to another terminal");
+    }
+
+    const claimed = await tx.account.updateMany({
+      where: { id: accountId, status: "CLOSED" },
+      data: {
+        status: "CANCELLED",
+        cancelledAt: new Date(),
+        cancellationReason: reason,
+        cancelledByUserId,
+      },
+    });
+    if (claimed.count === 0) throw new Error("Sale was already cancelled");
+
+    const saleMovements = await tx.inventoryTransaction.findMany({
+      where: { relatedAccountId: accountId, type: "SALE" },
+      select: { productVariantId: true, quantity: true, unit: true, storeId: true },
+    });
+
+    const returnedByVariant = new Map<
+      number,
+      { quantity: number; unit: (typeof saleMovements)[number]["unit"]; storeId: number }
+    >();
+    for (const movement of saleMovements) {
+      if (movement.quantity >= 0) continue;
+      const current = returnedByVariant.get(movement.productVariantId);
+      returnedByVariant.set(movement.productVariantId, {
+        quantity: (current?.quantity ?? 0) + Math.abs(movement.quantity),
+        unit: movement.unit,
+        storeId: movement.storeId,
+      });
+    }
+
+    const operationId = randomUUID();
+    for (const [productVariantId, returned] of returnedByVariant) {
+      await tx.inventoryTransaction.create({
+        data: {
+          operationId,
+          storeId: returned.storeId,
+          createdByUserId: cancelledByUserId,
+          productVariantId,
+          relatedAccountId: accountId,
+          quantity: returned.quantity,
+          unit: returned.unit,
+          type: "RETURN",
+          observation: `Anulación de venta: ${reason}`,
+        },
+      });
+      await tx.storeInventory.update({
+        where: {
+          storeId_productVariantId: {
+            storeId: returned.storeId,
+            productVariantId,
+          },
+        },
+        data: { stock: { increment: returned.quantity } },
+      });
+    }
+
+    await tx.financialTransaction.create({
+      data: {
+        type: "REFUND",
+        amount: -account.total,
+        description: `Anulación de venta: ${reason}`,
+        paymentMethod: account.paymentMethod,
+        relatedAccountId: accountId,
+        relatedCashRegisterId: account.cashRegister.id,
+      },
+    });
+
+    const registerUpdate: UpdateCashRegisterTotalsInput = {
+      cashRegisterId: account.cashRegister.id,
+      saleAmount: -account.total,
+      discountAmount: -account.discount,
+    };
+    if (account.paymentMethod === "CASH") registerUpdate.cashAmount = -account.total;
+    if (account.paymentMethod === "CARD") registerUpdate.cardAmount = -account.total;
+    if (account.paymentMethod === "QR") registerUpdate.qrAmount = -account.total;
+    if (account.paymentMethod === "CREDIT") registerUpdate.creditAmount = -account.total;
+    await updateCashRegisterTotalsTx(tx, registerUpdate);
+
+    return tx.account.findUniqueOrThrow({
+      where: { id: accountId },
+      include: {
+        accountItems: true,
+        cancelledByUser: { select: { id: true, name: true } },
+      },
+    });
   });
 };

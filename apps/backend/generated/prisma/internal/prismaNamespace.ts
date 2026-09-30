@@ -2098,6 +2098,9 @@ export const AccountScalarFieldEnum = {
   discount: 'discount',
   discountObservation: 'discountObservation',
   closedAt: 'closedAt',
+  cancelledAt: 'cancelledAt',
+  cancellationReason: 'cancellationReason',
+  cancelledByUserId: 'cancelledByUserId',
   paymentMethod: 'paymentMethod',
   customerId: 'customerId',
   financialTransactionId: 'financialTransactionId'
