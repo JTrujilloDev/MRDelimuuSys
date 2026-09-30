@@ -315,6 +315,8 @@ export type ProductVariantWhereInput = {
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   accountItems?: Prisma.AccountItemListRelationFilter
   InventoryTransactions?: Prisma.InventoryTransactionListRelationFilter
+  catalogItems?: Prisma.GroupCatalogItemListRelationFilter
+  storeInventories?: Prisma.StoreInventoryListRelationFilter
   recipeItems?: Prisma.RecipeItemListRelationFilter
   ingredientInRecipes?: Prisma.RecipeItemListRelationFilter
 }
@@ -337,6 +339,8 @@ export type ProductVariantOrderByWithRelationInput = {
   product?: Prisma.ProductOrderByWithRelationInput
   accountItems?: Prisma.AccountItemOrderByRelationAggregateInput
   InventoryTransactions?: Prisma.InventoryTransactionOrderByRelationAggregateInput
+  catalogItems?: Prisma.GroupCatalogItemOrderByRelationAggregateInput
+  storeInventories?: Prisma.StoreInventoryOrderByRelationAggregateInput
   recipeItems?: Prisma.RecipeItemOrderByRelationAggregateInput
   ingredientInRecipes?: Prisma.RecipeItemOrderByRelationAggregateInput
 }
@@ -362,6 +366,8 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   accountItems?: Prisma.AccountItemListRelationFilter
   InventoryTransactions?: Prisma.InventoryTransactionListRelationFilter
+  catalogItems?: Prisma.GroupCatalogItemListRelationFilter
+  storeInventories?: Prisma.StoreInventoryListRelationFilter
   recipeItems?: Prisma.RecipeItemListRelationFilter
   ingredientInRecipes?: Prisma.RecipeItemListRelationFilter
 }, "id">
@@ -424,6 +430,8 @@ export type ProductVariantCreateInput = {
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
   ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
@@ -445,6 +453,8 @@ export type ProductVariantUncheckedCreateInput = {
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryUncheckedCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
@@ -465,6 +475,8 @@ export type ProductVariantUpdateInput = {
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
@@ -486,6 +498,8 @@ export type ProductVariantUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUncheckedUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
@@ -747,6 +761,34 @@ export type ProductVariantUpdateOneRequiredWithoutInventoryTransactionsNestedInp
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutInventoryTransactionsInput, Prisma.ProductVariantUpdateWithoutInventoryTransactionsInput>, Prisma.ProductVariantUncheckedUpdateWithoutInventoryTransactionsInput>
 }
 
+export type ProductVariantCreateNestedOneWithoutCatalogItemsInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutCatalogItemsInput, Prisma.ProductVariantUncheckedCreateWithoutCatalogItemsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutCatalogItemsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutCatalogItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutCatalogItemsInput, Prisma.ProductVariantUncheckedCreateWithoutCatalogItemsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutCatalogItemsInput
+  upsert?: Prisma.ProductVariantUpsertWithoutCatalogItemsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutCatalogItemsInput, Prisma.ProductVariantUpdateWithoutCatalogItemsInput>, Prisma.ProductVariantUncheckedUpdateWithoutCatalogItemsInput>
+}
+
+export type ProductVariantCreateNestedOneWithoutStoreInventoriesInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutStoreInventoriesInput, Prisma.ProductVariantUncheckedCreateWithoutStoreInventoriesInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutStoreInventoriesInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutStoreInventoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutStoreInventoriesInput, Prisma.ProductVariantUncheckedCreateWithoutStoreInventoriesInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutStoreInventoriesInput
+  upsert?: Prisma.ProductVariantUpsertWithoutStoreInventoriesInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutStoreInventoriesInput, Prisma.ProductVariantUpdateWithoutStoreInventoriesInput>, Prisma.ProductVariantUncheckedUpdateWithoutStoreInventoriesInput>
+}
+
 export type ProductVariantCreateWithoutProductInput = {
   name: string
   retailPrice?: number
@@ -762,6 +804,8 @@ export type ProductVariantCreateWithoutProductInput = {
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
   ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
@@ -782,6 +826,8 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryUncheckedCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
@@ -848,6 +894,8 @@ export type ProductVariantCreateWithoutRecipeItemsInput = {
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryCreateNestedManyWithoutProductVariantInput
   ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
 
@@ -868,6 +916,8 @@ export type ProductVariantUncheckedCreateWithoutRecipeItemsInput = {
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryUncheckedCreateNestedManyWithoutProductVariantInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
 
@@ -892,6 +942,8 @@ export type ProductVariantCreateWithoutIngredientInRecipesInput = {
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
 }
 
@@ -912,6 +964,8 @@ export type ProductVariantUncheckedCreateWithoutIngredientInRecipesInput = {
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryUncheckedCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
 }
 
@@ -947,6 +1001,8 @@ export type ProductVariantUpdateWithoutRecipeItemsInput = {
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUpdateManyWithoutProductVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
 
@@ -967,6 +1023,8 @@ export type ProductVariantUncheckedUpdateWithoutRecipeItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUncheckedUpdateManyWithoutProductVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
 
@@ -997,6 +1055,8 @@ export type ProductVariantUpdateWithoutIngredientInRecipesInput = {
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
 }
 
@@ -1017,6 +1077,8 @@ export type ProductVariantUncheckedUpdateWithoutIngredientInRecipesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUncheckedUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
 }
 
@@ -1035,6 +1097,8 @@ export type ProductVariantCreateWithoutAccountItemsInput = {
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
   ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
@@ -1055,6 +1119,8 @@ export type ProductVariantUncheckedCreateWithoutAccountItemsInput = {
   isNew?: boolean
   createdAt?: Date | string
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryUncheckedCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
@@ -1090,6 +1156,8 @@ export type ProductVariantUpdateWithoutAccountItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
@@ -1110,6 +1178,8 @@ export type ProductVariantUncheckedUpdateWithoutAccountItemsInput = {
   isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUncheckedUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
@@ -1129,6 +1199,8 @@ export type ProductVariantCreateWithoutInventoryTransactionsInput = {
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
   ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
 }
@@ -1149,6 +1221,8 @@ export type ProductVariantUncheckedCreateWithoutInventoryTransactionsInput = {
   isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryUncheckedCreateNestedManyWithoutProductVariantInput
   recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
 }
@@ -1184,6 +1258,8 @@ export type ProductVariantUpdateWithoutInventoryTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
@@ -1204,6 +1280,212 @@ export type ProductVariantUncheckedUpdateWithoutInventoryTransactionsInput = {
   isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUncheckedUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutCatalogItemsInput = {
+  name: string
+  retailPrice?: number
+  wholesalePrice?: number | null
+  stock?: number
+  minStock?: number
+  isActive?: boolean
+  requirePreparation?: boolean
+  preparationArea?: $Enums.PreparationArea
+  productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
+  createdAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
+  InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutCatalogItemsInput = {
+  id?: number
+  name: string
+  retailPrice?: number
+  wholesalePrice?: number | null
+  stock?: number
+  minStock?: number
+  isActive?: boolean
+  requirePreparation?: boolean
+  preparationArea?: $Enums.PreparationArea
+  productCost?: number
+  productId: number
+  unit?: $Enums.Unit
+  isNew?: boolean
+  createdAt?: Date | string
+  accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
+  InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  storeInventories?: Prisma.StoreInventoryUncheckedCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutCatalogItemsInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutCatalogItemsInput, Prisma.ProductVariantUncheckedCreateWithoutCatalogItemsInput>
+}
+
+export type ProductVariantUpsertWithoutCatalogItemsInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutCatalogItemsInput, Prisma.ProductVariantUncheckedUpdateWithoutCatalogItemsInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutCatalogItemsInput, Prisma.ProductVariantUncheckedCreateWithoutCatalogItemsInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutCatalogItemsInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutCatalogItemsInput, Prisma.ProductVariantUncheckedUpdateWithoutCatalogItemsInput>
+}
+
+export type ProductVariantUpdateWithoutCatalogItemsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  minStock?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
+  productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
+  InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutCatalogItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  minStock?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
+  productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  productId?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUncheckedUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutStoreInventoriesInput = {
+  name: string
+  retailPrice?: number
+  wholesalePrice?: number | null
+  stock?: number
+  minStock?: number
+  isActive?: boolean
+  requirePreparation?: boolean
+  preparationArea?: $Enums.PreparationArea
+  productCost?: number
+  unit?: $Enums.Unit
+  isNew?: boolean
+  createdAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
+  InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemCreateNestedManyWithoutIngredientVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutStoreInventoriesInput = {
+  id?: number
+  name: string
+  retailPrice?: number
+  wholesalePrice?: number | null
+  stock?: number
+  minStock?: number
+  isActive?: boolean
+  requirePreparation?: boolean
+  preparationArea?: $Enums.PreparationArea
+  productCost?: number
+  productId: number
+  unit?: $Enums.Unit
+  isNew?: boolean
+  createdAt?: Date | string
+  accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
+  InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
+  recipeItems?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutRecipeVariantInput
+  ingredientInRecipes?: Prisma.RecipeItemUncheckedCreateNestedManyWithoutIngredientVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutStoreInventoriesInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutStoreInventoriesInput, Prisma.ProductVariantUncheckedCreateWithoutStoreInventoriesInput>
+}
+
+export type ProductVariantUpsertWithoutStoreInventoriesInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutStoreInventoriesInput, Prisma.ProductVariantUncheckedUpdateWithoutStoreInventoriesInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutStoreInventoriesInput, Prisma.ProductVariantUncheckedCreateWithoutStoreInventoriesInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutStoreInventoriesInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutStoreInventoriesInput, Prisma.ProductVariantUncheckedUpdateWithoutStoreInventoriesInput>
+}
+
+export type ProductVariantUpdateWithoutStoreInventoriesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  minStock?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
+  productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
+  InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutProductVariantNestedInput
+  recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
+  ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutStoreInventoriesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  minStock?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
+  productCost?: Prisma.FloatFieldUpdateOperationsInput | number
+  productId?: Prisma.IntFieldUpdateOperationsInput | number
+  unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
+  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
@@ -1239,6 +1521,8 @@ export type ProductVariantUpdateWithoutProductInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUpdateManyWithoutRecipeVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUpdateManyWithoutIngredientVariantNestedInput
 }
@@ -1259,6 +1543,8 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
+  storeInventories?: Prisma.StoreInventoryUncheckedUpdateManyWithoutProductVariantNestedInput
   recipeItems?: Prisma.RecipeItemUncheckedUpdateManyWithoutRecipeVariantNestedInput
   ingredientInRecipes?: Prisma.RecipeItemUncheckedUpdateManyWithoutIngredientVariantNestedInput
 }
@@ -1287,6 +1573,8 @@ export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
 export type ProductVariantCountOutputType = {
   accountItems: number
   InventoryTransactions: number
+  catalogItems: number
+  storeInventories: number
   recipeItems: number
   ingredientInRecipes: number
 }
@@ -1294,6 +1582,8 @@ export type ProductVariantCountOutputType = {
 export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accountItems?: boolean | ProductVariantCountOutputTypeCountAccountItemsArgs
   InventoryTransactions?: boolean | ProductVariantCountOutputTypeCountInventoryTransactionsArgs
+  catalogItems?: boolean | ProductVariantCountOutputTypeCountCatalogItemsArgs
+  storeInventories?: boolean | ProductVariantCountOutputTypeCountStoreInventoriesArgs
   recipeItems?: boolean | ProductVariantCountOutputTypeCountRecipeItemsArgs
   ingredientInRecipes?: boolean | ProductVariantCountOutputTypeCountIngredientInRecipesArgs
 }
@@ -1320,6 +1610,20 @@ export type ProductVariantCountOutputTypeCountAccountItemsArgs<ExtArgs extends r
  */
 export type ProductVariantCountOutputTypeCountInventoryTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.InventoryTransactionWhereInput
+}
+
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountCatalogItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GroupCatalogItemWhereInput
+}
+
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountStoreInventoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StoreInventoryWhereInput
 }
 
 /**
@@ -1355,6 +1659,8 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   accountItems?: boolean | Prisma.ProductVariant$accountItemsArgs<ExtArgs>
   InventoryTransactions?: boolean | Prisma.ProductVariant$InventoryTransactionsArgs<ExtArgs>
+  catalogItems?: boolean | Prisma.ProductVariant$catalogItemsArgs<ExtArgs>
+  storeInventories?: boolean | Prisma.ProductVariant$storeInventoriesArgs<ExtArgs>
   recipeItems?: boolean | Prisma.ProductVariant$recipeItemsArgs<ExtArgs>
   ingredientInRecipes?: boolean | Prisma.ProductVariant$ingredientInRecipesArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
@@ -1418,6 +1724,8 @@ export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.Inter
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   accountItems?: boolean | Prisma.ProductVariant$accountItemsArgs<ExtArgs>
   InventoryTransactions?: boolean | Prisma.ProductVariant$InventoryTransactionsArgs<ExtArgs>
+  catalogItems?: boolean | Prisma.ProductVariant$catalogItemsArgs<ExtArgs>
+  storeInventories?: boolean | Prisma.ProductVariant$storeInventoriesArgs<ExtArgs>
   recipeItems?: boolean | Prisma.ProductVariant$recipeItemsArgs<ExtArgs>
   ingredientInRecipes?: boolean | Prisma.ProductVariant$ingredientInRecipesArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
@@ -1435,6 +1743,8 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     product: Prisma.$ProductPayload<ExtArgs>
     accountItems: Prisma.$AccountItemPayload<ExtArgs>[]
     InventoryTransactions: Prisma.$InventoryTransactionPayload<ExtArgs>[]
+    catalogItems: Prisma.$GroupCatalogItemPayload<ExtArgs>[]
+    storeInventories: Prisma.$StoreInventoryPayload<ExtArgs>[]
     recipeItems: Prisma.$RecipeItemPayload<ExtArgs>[]
     ingredientInRecipes: Prisma.$RecipeItemPayload<ExtArgs>[]
   }
@@ -1850,6 +2160,8 @@ export interface Prisma__ProductVariantClient<T, Null = never, ExtArgs extends r
   product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   accountItems<T extends Prisma.ProductVariant$accountItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$accountItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   InventoryTransactions<T extends Prisma.ProductVariant$InventoryTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$InventoryTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  catalogItems<T extends Prisma.ProductVariant$catalogItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$catalogItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupCatalogItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  storeInventories<T extends Prisma.ProductVariant$storeInventoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$storeInventoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StoreInventoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recipeItems<T extends Prisma.ProductVariant$recipeItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$recipeItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecipeItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ingredientInRecipes<T extends Prisma.ProductVariant$ingredientInRecipesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$ingredientInRecipesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecipeItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2341,6 +2653,54 @@ export type ProductVariant$InventoryTransactionsArgs<ExtArgs extends runtime.Typ
   take?: number
   skip?: number
   distinct?: Prisma.InventoryTransactionScalarFieldEnum | Prisma.InventoryTransactionScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.catalogItems
+ */
+export type ProductVariant$catalogItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GroupCatalogItem
+   */
+  select?: Prisma.GroupCatalogItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GroupCatalogItem
+   */
+  omit?: Prisma.GroupCatalogItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GroupCatalogItemInclude<ExtArgs> | null
+  where?: Prisma.GroupCatalogItemWhereInput
+  orderBy?: Prisma.GroupCatalogItemOrderByWithRelationInput | Prisma.GroupCatalogItemOrderByWithRelationInput[]
+  cursor?: Prisma.GroupCatalogItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GroupCatalogItemScalarFieldEnum | Prisma.GroupCatalogItemScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.storeInventories
+ */
+export type ProductVariant$storeInventoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StoreInventory
+   */
+  select?: Prisma.StoreInventorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StoreInventory
+   */
+  omit?: Prisma.StoreInventoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StoreInventoryInclude<ExtArgs> | null
+  where?: Prisma.StoreInventoryWhereInput
+  orderBy?: Prisma.StoreInventoryOrderByWithRelationInput | Prisma.StoreInventoryOrderByWithRelationInput[]
+  cursor?: Prisma.StoreInventoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StoreInventoryScalarFieldEnum | Prisma.StoreInventoryScalarFieldEnum[]
 }
 
 /**

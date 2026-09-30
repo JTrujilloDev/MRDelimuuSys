@@ -25,6 +25,13 @@ const validateRecipeAvailabilityForAccount = async (
   tx: Prisma.TransactionClient,
   accountId: number,
 ) => {
+  const accountContext = await tx.account.findUnique({
+    where: { id: accountId },
+    select: { terminal: { select: { storeId: true } } },
+  });
+  if (!accountContext) throw new Error("Account not found");
+  const storeId = accountContext.terminal.storeId;
+
   const recipeAccountItems = await tx.accountItem.findMany({
     where: {
       accountId,
@@ -46,7 +53,10 @@ const validateRecipeAvailabilityForAccount = async (
               ingredientVariant: {
                 select: {
                   name: true,
-                  stock: true,
+                  storeInventories: {
+                    where: { storeId },
+                    select: { stock: true },
+                  },
                   product: { select: { name: true } },
                 },
               },
@@ -89,7 +99,7 @@ const validateRecipeAvailabilityForAccount = async (
       ingredientConsumption.set(recipeItem.ingredientVariantId, {
         productName: recipeItem.ingredientVariant.product.name,
         variantName: recipeItem.ingredientVariant.name,
-        stock: recipeItem.ingredientVariant.stock,
+        stock: recipeItem.ingredientVariant.storeInventories[0]?.stock ?? 0,
         requiredQuantity:
           (current?.requiredQuantity ?? 0) +
           recipeItem.quantity * accountItem.quantity,
@@ -290,6 +300,7 @@ export const addAccountItemService = async (
     // 1. Validar cuenta
     const account = await tx.account.findUnique({
       where: { id: accountId },
+      include: { terminal: { include: { store: true } } },
     });
 
     if (!account) {
@@ -318,7 +329,18 @@ export const addAccountItemService = async (
     }
 
     // 4. Precio desde backend
-    const price = Number(product.retailPrice);
+    const catalogItem = await tx.groupCatalogItem.findUnique({
+      where: {
+        groupId_productVariantId: {
+          groupId: account.terminal.store.groupId,
+          productVariantId: product.id,
+        },
+      },
+    });
+    if (!catalogItem?.isActive) {
+      throw new Error("Product is not available in this store catalog");
+    }
+    const price = Number(catalogItem.salePrice);
 
     // 5. Buscar si ya existe el item en la cuenta
     const existingItem = await tx.accountItem.findFirst({
@@ -528,6 +550,7 @@ export const closeAccountService = async ({
     const account = await tx.account.findUnique({
       where: { id: accountId },
       include: {
+        terminal: { select: { storeId: true } },
         accountItems: {
           include: {
             productVariant: {
@@ -545,6 +568,7 @@ export const closeAccountService = async ({
     if (!account.accountItems.length) {
       throw new Error("Cannot close empty account");
     }
+    const storeId = account.terminal.storeId;
 
     const cashRegister = await tx.cashRegister.findUnique({
       where: { id: cashRegisterId },
@@ -590,6 +614,7 @@ export const closeAccountService = async ({
       where: {
         id: { in: finishedProductIds },
       },
+      include: { storeInventories: { where: { storeId } } },
     });
 
     const finishedProductMap = new Map(products.map((p) => [p.id, p]));
@@ -605,9 +630,10 @@ export const closeAccountService = async ({
         throw new Error("Product not found");
       }
 
-      if (product.stock < item.quantity) {
+      const stock = product.storeInventories[0]?.stock ?? 0;
+      if (stock < item.quantity) {
         throw new Error(
-          `Stock insuficiente: ${item.productVariant.product.name} · ${item.productVariant.name}. Disponible: ${product.stock}; requerido: ${item.quantity}`,
+          `Stock insuficiente: ${item.productVariant.product.name} · ${item.productVariant.name}. Disponible: ${stock}; requerido: ${item.quantity}`,
         );
       }
     }
@@ -627,7 +653,9 @@ export const closeAccountService = async ({
       include: {
         recipeItems: {
           include: {
-            ingredientVariant: true,
+            ingredientVariant: {
+              include: { storeInventories: { where: { storeId } } },
+            },
           },
         },
       },
@@ -678,6 +706,7 @@ export const closeAccountService = async ({
       },
       include: {
         product: { select: { name: true } },
+        storeInventories: { where: { storeId } },
       },
     });
 
@@ -690,9 +719,10 @@ export const closeAccountService = async ({
         throw new Error("Ingredient not found");
       }
 
-      if (ingredient.stock < requiredQuantity) {
+      const stock = ingredient.storeInventories[0]?.stock ?? 0;
+      if (stock < requiredQuantity) {
         throw new Error(
-          `Stock insuficiente: ${ingredient.product.name} · ${ingredient.name}. Disponible: ${ingredient.stock}; requerido: ${requiredQuantity}`,
+          `Stock insuficiente: ${ingredient.product.name} · ${ingredient.name}. Disponible: ${stock}; requerido: ${requiredQuantity}`,
         );
       }
     }
@@ -707,6 +737,8 @@ export const closeAccountService = async ({
         await tx.inventoryTransaction.create({
           data: {
             productVariantId: product.id,
+            storeId,
+            createdByUserId: account.userId,
             relatedAccountId: accountId,
             quantity: -item.quantity,
             unit: product.unit,
@@ -714,8 +746,10 @@ export const closeAccountService = async ({
           },
         });
 
-        await tx.productVariant.update({
-          where: { id: product.id },
+        await tx.storeInventory.update({
+          where: {
+            storeId_productVariantId: { storeId, productVariantId: product.id },
+          },
           data: {
             stock: {
               decrement: item.quantity,
@@ -739,6 +773,8 @@ export const closeAccountService = async ({
           await tx.inventoryTransaction.create({
             data: {
               productVariantId: recipeItem.ingredientVariantId,
+              storeId,
+              createdByUserId: account.userId,
               relatedAccountId: accountId,
               quantity: -consumedQuantity,
               unit: recipeItem.ingredientVariant.unit,
@@ -746,9 +782,12 @@ export const closeAccountService = async ({
             },
           });
 
-          await tx.productVariant.update({
+          await tx.storeInventory.update({
             where: {
-              id: recipeItem.ingredientVariantId,
+              storeId_productVariantId: {
+                storeId,
+                productVariantId: recipeItem.ingredientVariantId,
+              },
             },
             data: {
               stock: {

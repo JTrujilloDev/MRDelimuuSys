@@ -1,5 +1,4 @@
 import {
-  InventoryTransaction,
   InventoryTransactionType,
   Prisma,
 } from "../../generated/prisma/client";
@@ -18,22 +17,28 @@ interface CreateBulkInventoryTransactionData {
   items: BulkInventoryTransactionItem[];
 }
 
+interface CreateInventoryTransactionData {
+  productVariantId: number;
+  relatedAccountId?: number | null;
+  quantity: number;
+  type: InventoryTransactionType;
+  observation?: string | null;
+}
+
 const manualTransactionsByProductType: Record<string, InventoryTransactionType[]> = {
   INGREDIENT: ["PURCHASE", "ADJUSTMENT", "WASTE", "INTERNAL_CONSUMPTION"],
   PACKAGING: ["PURCHASE", "ADJUSTMENT", "WASTE", "INTERNAL_CONSUMPTION"],
   PREPARED_BASE: [
     "ADJUSTMENT",
     "WASTE",
-    "PRODUCTION",
-    "WHOLESALE",
+    "RECEIPT",
     "INTERNAL_CONSUMPTION",
   ],
   FINISHED_PRODUCT: [
     "ADJUSTMENT",
     "RETURN",
     "WASTE",
-    "PRODUCTION",
-    "WHOLESALE",
+    "RECEIPT",
     "INTERNAL_CONSUMPTION",
   ],
   THIRD_PARTY_PRODUCT: [
@@ -57,11 +62,10 @@ const normalizeQuantity = (
   switch (type) {
     case "PURCHASE":
     case "RETURN":
-    case "PRODUCTION":
+    case "RECEIPT":
     case "INITIAL":
       return Math.abs(quantity);
     case "WASTE":
-    case "WHOLESALE":
     case "INTERNAL_CONSUMPTION":
       return -Math.abs(quantity);
     case "ADJUSTMENT":
@@ -72,12 +76,18 @@ const normalizeQuantity = (
 };
 
 export const createPOSInventoryTransactionService = async (
-  data: InventoryTransaction,
+  data: CreateInventoryTransactionData,
+  storeId: number,
+  userId: number,
 ) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Validar producto
     const product = await tx.productVariant.findUnique({
       where: { id: data.productVariantId },
+      include: {
+        product: true,
+        storeInventories: { where: { storeId } },
+      },
     });
 
     if (!product || !product.isActive) {
@@ -85,6 +95,9 @@ export const createPOSInventoryTransactionService = async (
     }
 
     // 2. Determinar cantidad según tipo
+    const inventory = product.storeInventories[0] ?? await tx.storeInventory.create({
+      data: { storeId, productVariantId: product.id },
+    });
     let quantity = data.quantity;
 
     if (!quantity || quantity === 0) {
@@ -112,16 +125,12 @@ export const createPOSInventoryTransactionService = async (
         quantity = -Math.abs(quantity);
         break;
 
-      case "PRODUCTION":
+      case "RECEIPT":
         quantity = Math.abs(quantity);
         break;
 
       case "INITIAL":
         quantity = Math.abs(quantity);
-        break;
-
-      case "WHOLESALE":
-        quantity = -Math.abs(quantity);
         break;
 
       case "INTERNAL_CONSUMPTION":
@@ -134,7 +143,7 @@ export const createPOSInventoryTransactionService = async (
 
     // 3. Validar stock (solo para salidas)
     if (quantity < 0) {
-      const newStock = product.stock + quantity;
+      const newStock = inventory.stock + quantity;
 
       if (newStock < 0) {
         throw new Error("Insufficient stock");
@@ -154,6 +163,8 @@ export const createPOSInventoryTransactionService = async (
     const transaction = await tx.inventoryTransaction.create({
       data: {
         productVariantId: product.id,
+        storeId,
+        createdByUserId: userId,
         relatedAccountId: data.relatedAccountId,
         quantity,
         unit: product.unit,
@@ -163,27 +174,21 @@ export const createPOSInventoryTransactionService = async (
     });
 
     // 5. Actualizar stock
-    await tx.productVariant.update({
-      where: { id: product.id },
+    await tx.storeInventory.update({
+      where: { id: inventory.id },
       data: {
-        stock: product.stock + quantity,
+        stock: inventory.stock + quantity,
+        ...(data.type === "INITIAL" && { isInitialized: true }),
       },
     });
-
-    if (data.type === "INITIAL") {
-      await tx.productVariant.update({
-        where: { id: product.id },
-        data: {
-          isNew: false,
-        },
-      });
-    }
     return transaction;
   });
 };
 
 export const createBulkPOSInventoryTransactionService = async (
   data: CreateBulkInventoryTransactionData,
+  storeId: number,
+  userId: number,
 ) => {
   if (!data.type) {
     throw new Error("Transaction type is required");
@@ -215,7 +220,10 @@ export const createBulkPOSInventoryTransactionService = async (
     const operationId = randomUUID();
     const variants = await tx.productVariant.findMany({
       where: { id: { in: variantIds } },
-      include: { product: true },
+      include: {
+        product: true,
+        storeInventories: { where: { storeId } },
+      },
     });
 
     if (variants.length !== variantIds.length) {
@@ -230,12 +238,14 @@ export const createBulkPOSInventoryTransactionService = async (
         throw new Error("Product not found or inactive");
       }
 
+      const inventory = variant.storeInventories[0];
+
       if (data.type === "INITIAL") {
-        if (!variant.isNew || variant.product.productType === "RECIPE_PRODUCT") {
+        if (inventory?.isInitialized || variant.product.productType === "RECIPE_PRODUCT") {
           throw new Error(`${variant.product.name} - ${variant.name} is not available for initial inventory`);
         }
       } else {
-        if (variant.isNew) {
+        if (!inventory?.isInitialized) {
           throw new Error(`${variant.product.name} - ${variant.name} requires initial inventory first`);
         }
 
@@ -249,12 +259,14 @@ export const createBulkPOSInventoryTransactionService = async (
 
       const quantity = normalizeQuantity(data.type, Number(item.quantity));
 
-      if (variant.stock + quantity < 0) {
+      const currentStock = inventory?.stock ?? 0;
+      if (currentStock + quantity < 0) {
         throw new Error(`Insufficient stock for ${variant.product.name} - ${variant.name}`);
       }
 
       return {
         variant,
+        inventory,
         quantity,
         observation: item.observation?.trim() || data.observation?.trim() || undefined,
       };
@@ -266,6 +278,8 @@ export const createBulkPOSInventoryTransactionService = async (
       const transaction = await tx.inventoryTransaction.create({
         data: {
           operationId,
+          storeId,
+          createdByUserId: userId,
           productVariantId: item.variant.id,
           quantity: item.quantity,
           unit: item.variant.unit,
@@ -274,11 +288,19 @@ export const createBulkPOSInventoryTransactionService = async (
         },
       });
 
-      await tx.productVariant.update({
-        where: { id: item.variant.id },
-        data: {
+      await tx.storeInventory.upsert({
+        where: {
+          storeId_productVariantId: { storeId, productVariantId: item.variant.id },
+        },
+        create: {
+          storeId,
+          productVariantId: item.variant.id,
+          stock: item.quantity,
+          isInitialized: data.type === "INITIAL",
+        },
+        update: {
           stock: { increment: item.quantity },
-          ...(data.type === "INITIAL" && { isNew: false }),
+          ...(data.type === "INITIAL" && { isInitialized: true }),
         },
       });
 
@@ -300,6 +322,7 @@ interface InventoryTransactionFilters {
 }
 
 export const getPOSInventoryTransactionsService = async (
+  storeId: number,
   filters: InventoryTransactionFilters = {},
 ) => {
   const requestedPage = Math.max(1, Number(filters.page) || 1);
@@ -314,6 +337,7 @@ export const getPOSInventoryTransactionsService = async (
       : undefined;
 
   const where: Prisma.InventoryTransactionWhereInput = {
+    storeId,
     type: validType,
     AND:
       filters.origin === "POS"

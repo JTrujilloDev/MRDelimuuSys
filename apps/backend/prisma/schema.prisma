@@ -62,6 +62,8 @@ model ProductVariant {
 
   accountItems          AccountItem[]
   InventoryTransactions InventoryTransaction[]
+  catalogItems          GroupCatalogItem[]
+  storeInventories      StoreInventory[]
   recipeItems           RecipeItem[]           @relation("RecipeOwner")
   ingredientInRecipes   RecipeItem[]           @relation("RecipeIngredient")
 }
@@ -107,12 +109,13 @@ model User {
   isGlobalAdmin Boolean   @default(false)
   lastLoginAt   DateTime?
 
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  Accounts      Account[]
-  CashRegisters CashRegister[]
-  storeAccesses UserStoreAccess[]
-  sessions      UserSession[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  Accounts              Account[]
+  CashRegisters         CashRegister[]
+  storeAccesses         UserStoreAccess[]
+  sessions              UserSession[]
+  inventoryTransactions InventoryTransaction[] @relation("InventoryTransactionCreatedBy")
 }
 
 enum Role {
@@ -188,6 +191,10 @@ model AccountItem {
 model InventoryTransaction {
   id               Int                      @id @default(autoincrement())
   operationId      String?
+  storeId          Int
+  store            Store                    @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  createdByUserId  Int?
+  createdByUser    User?                    @relation("InventoryTransactionCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
   productVariantId Int
   relatedAccountId Int?
   productVariant   ProductVariant           @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
@@ -199,6 +206,8 @@ model InventoryTransaction {
   createdAt DateTime @default(now())
 
   @@index([operationId])
+  @@index([storeId, createdAt])
+  @@index([createdByUserId])
   @@index([createdAt])
   @@index([type])
 }
@@ -207,6 +216,7 @@ enum InventoryTransactionType {
   SALE
   PURCHASE
   PRODUCTION
+  RECEIPT
   ADJUSTMENT
   WASTE
   RETURN
@@ -303,7 +313,23 @@ model StoreGroup {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  stores Store[]
+  stores       Store[]
+  catalogItems GroupCatalogItem[]
+}
+
+model GroupCatalogItem {
+  id               Int            @id @default(autoincrement())
+  groupId          Int
+  group            StoreGroup     @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  productVariantId Int
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  salePrice        Float
+  isActive         Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([groupId, productVariantId])
+  @@index([groupId, isActive])
 }
 
 enum KitchenMode {
@@ -323,11 +349,29 @@ model Store {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  terminals      Terminal[]
-  userAccesses   UserStoreAccess[]
-  activeSessions UserSession[]     @relation("ActiveStoreSessions")
+  terminals             Terminal[]
+  userAccesses          UserStoreAccess[]
+  activeSessions        UserSession[]          @relation("ActiveStoreSessions")
+  inventories           StoreInventory[]
+  inventoryTransactions InventoryTransaction[]
 
   @@index([groupId, isActive])
+}
+
+model StoreInventory {
+  id               Int            @id @default(autoincrement())
+  storeId          Int
+  store            Store          @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  productVariantId Int
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  stock            Int            @default(0)
+  minStock         Int            @default(0)
+  isInitialized    Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([storeId, productVariantId])
+  @@index([storeId, stock])
 }
 
 model Terminal {

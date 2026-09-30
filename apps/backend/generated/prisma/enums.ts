@@ -78,6 +78,7 @@ export const InventoryTransactionType = {
   SALE: 'SALE',
   PURCHASE: 'PURCHASE',
   PRODUCTION: 'PRODUCTION',
+  RECEIPT: 'RECEIPT',
   ADJUSTMENT: 'ADJUSTMENT',
   WASTE: 'WASTE',
   RETURN: 'RETURN',

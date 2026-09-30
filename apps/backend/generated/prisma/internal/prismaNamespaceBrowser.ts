@@ -63,7 +63,9 @@ export const ModelName = {
   Customer: 'Customer',
   CashRegister: 'CashRegister',
   StoreGroup: 'StoreGroup',
+  GroupCatalogItem: 'GroupCatalogItem',
   Store: 'Store',
+  StoreInventory: 'StoreInventory',
   Terminal: 'Terminal',
   UserStoreAccess: 'UserStoreAccess',
   UserSession: 'UserSession',
@@ -199,6 +201,8 @@ export type AccountItemScalarFieldEnum = (typeof AccountItemScalarFieldEnum)[key
 export const InventoryTransactionScalarFieldEnum = {
   id: 'id',
   operationId: 'operationId',
+  storeId: 'storeId',
+  createdByUserId: 'createdByUserId',
   productVariantId: 'productVariantId',
   relatedAccountId: 'relatedAccountId',
   quantity: 'quantity',
@@ -272,6 +276,19 @@ export const StoreGroupScalarFieldEnum = {
 export type StoreGroupScalarFieldEnum = (typeof StoreGroupScalarFieldEnum)[keyof typeof StoreGroupScalarFieldEnum]
 
 
+export const GroupCatalogItemScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  productVariantId: 'productVariantId',
+  salePrice: 'salePrice',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GroupCatalogItemScalarFieldEnum = (typeof GroupCatalogItemScalarFieldEnum)[keyof typeof GroupCatalogItemScalarFieldEnum]
+
+
 export const StoreScalarFieldEnum = {
   id: 'id',
   groupId: 'groupId',
@@ -284,6 +301,20 @@ export const StoreScalarFieldEnum = {
 } as const
 
 export type StoreScalarFieldEnum = (typeof StoreScalarFieldEnum)[keyof typeof StoreScalarFieldEnum]
+
+
+export const StoreInventoryScalarFieldEnum = {
+  id: 'id',
+  storeId: 'storeId',
+  productVariantId: 'productVariantId',
+  stock: 'stock',
+  minStock: 'minStock',
+  isInitialized: 'isInitialized',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreInventoryScalarFieldEnum = (typeof StoreInventoryScalarFieldEnum)[keyof typeof StoreInventoryScalarFieldEnum]
 
 
 export const TerminalScalarFieldEnum = {

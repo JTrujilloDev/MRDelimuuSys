@@ -11,7 +11,11 @@ export const createPOSInventoryTransaction = async (
   res: Response,
 ) => {
   try {
-    const transaction = await createPOSInventoryTransactionService(req.body);
+    const transaction = await createPOSInventoryTransactionService(
+      req.body,
+      req.auth!.activeStoreId!,
+      req.auth!.userId,
+    );
     getIO().emit("inventory:updated");
     res.status(201).json({
       success: true,
@@ -31,7 +35,11 @@ export const createBulkPOSInventoryTransaction = async (
   res: Response,
 ) => {
   try {
-    const transactions = await createBulkPOSInventoryTransactionService(req.body);
+    const transactions = await createBulkPOSInventoryTransactionService(
+      req.body,
+      req.auth!.activeStoreId!,
+      req.auth!.userId,
+    );
     getIO().emit("inventory:updated");
     res.status(201).json({
       success: true,
@@ -53,7 +61,7 @@ export const getPOSInventoryTransactions = async (req: Request, res: Response) =
       const date = new Date(value);
       return Number.isNaN(date.getTime()) ? undefined : date;
     };
-    const result = await getPOSInventoryTransactionsService({
+    const result = await getPOSInventoryTransactionsService(req.auth!.activeStoreId!, {
       search: typeof req.query.search === "string" ? req.query.search : undefined,
       type: typeof req.query.type === "string" ? req.query.type : undefined,
       origin:

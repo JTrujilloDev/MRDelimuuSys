@@ -78,10 +78,20 @@ export type CashRegister = Prisma.CashRegisterModel
  */
 export type StoreGroup = Prisma.StoreGroupModel
 /**
+ * Model GroupCatalogItem
+ * 
+ */
+export type GroupCatalogItem = Prisma.GroupCatalogItemModel
+/**
  * Model Store
  * 
  */
 export type Store = Prisma.StoreModel
+/**
+ * Model StoreInventory
+ * 
+ */
+export type StoreInventory = Prisma.StoreInventoryModel
 /**
  * Model Terminal
  * 
