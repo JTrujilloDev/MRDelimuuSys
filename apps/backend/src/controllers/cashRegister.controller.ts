@@ -21,7 +21,13 @@ export const getCashRegisterHistory = async (req: Request, res: Response) => {
       return;
     }
 
-    const result = await getCashRegisterHistoryService(from, to, req.auth!.activeStoreId!);
+    const result = await getCashRegisterHistoryService(
+      from,
+      to,
+      req.auth!.activeStoreId!,
+      req.auth!.userId,
+      req.auth!.isGlobalAdmin || req.auth!.storeRole === "ADMIN",
+    );
     res.status(200).json({
       success: true,
       message: "Cash register history fetched successfully",
@@ -71,10 +77,11 @@ export const getAllCashRegisters = async (req: Request, res: Response) => {
 
 export const closeCashRegister = async (req: Request, res: Response) => {
   try {
-    const { cashRegisterId, closingAmount } = req.body;
+    const { cashRegisterId, closingAmount, differenceJustification } = req.body;
     const closedCashRegister = await closeCashRegisterService(
       cashRegisterId,
       closingAmount,
+      differenceJustification,
     );
     res.status(200).json({
       success: true,

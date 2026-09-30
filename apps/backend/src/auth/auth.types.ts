@@ -7,6 +7,7 @@ export type AuthenticatedRequestContext = {
   activeStoreId: number | null;
   activeTerminalId: number | null;
   storeRole: Role | null;
+  openCashRegisterId?: number;
 };
 
 export type AuthStoreOption = {

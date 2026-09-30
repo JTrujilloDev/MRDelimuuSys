@@ -1,6 +1,7 @@
 import { CashRegister } from "../../generated/prisma/client";
 import { CashRegisterStatus } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
+import { validateCashRegisterClosing } from "./cashRegister.rules";
 
 export interface UpdateCashRegisterTotalsInput {
   cashRegisterId: number;
@@ -72,6 +73,7 @@ export const createCashRegisterService = async (data: CashRegister) => {
 export const closeCashRegisterService = async (
   cashRegisterId: number,
   closingAmount: number, // dinero contado físicamente
+  differenceJustification?: unknown,
 ) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Obtener caja
@@ -85,6 +87,15 @@ export const closeCashRegisterService = async (
 
     if (cashRegister.status !== "OPEN") {
       throw new Error("Cash register already closed");
+    }
+
+    const openAccounts = await tx.account.count({
+      where: { terminalId: cashRegister.terminalId, status: "OPEN" },
+    });
+    if (openAccounts > 0) {
+      throw new Error(
+        `Cannot close the shift with ${openAccounts} open account${openAccounts === 1 ? "" : "s"}`,
+      );
     }
 
     // 2. Obtener movimientos financieros de la caja
@@ -131,29 +142,37 @@ export const closeCashRegisterService = async (
     // 4. Efectivo esperado
     const expectedCash = cashIn;
 
-    // 5. Diferencia
-    const difference = closingAmount - expectedCash;
+    // 5. Diferencia y justificación
+    const closing = validateCashRegisterClosing(
+      closingAmount,
+      expectedCash,
+      differenceJustification,
+    );
 
     // 6. Cerrar caja
-    const closedCashRegister = await tx.cashRegister.update({
-      where: { id: cashRegisterId },
+    const claimedRegister = await tx.cashRegister.updateMany({
+      where: { id: cashRegisterId, status: "OPEN" },
       data: {
         closedAt: new Date(),
-        closingAmount,
-        difference,
+        closingAmount: closing.closingAmount,
+        difference: closing.difference,
         status: "CLOSED",
       },
     });
+    if (claimedRegister.count === 0) throw new Error("Cash register already closed");
+    const closedCashRegister = await tx.cashRegister.findUniqueOrThrow({
+      where: { id: cashRegisterId },
+    });
 
     // 7. Registrar ajuste si hay diferencia
-    if (difference !== 0) {
+    if (Math.abs(closing.difference) >= 0.01) {
       await tx.financialTransaction.create({
         data: {
           type: "ADJUSTMENT",
-          amount: difference,
+          amount: closing.difference,
           relatedCashRegisterId: cashRegisterId,
           paymentMethod: "CASH",
-          adjustmentJustification: "Cash closing difference",
+          adjustmentJustification: closing.differenceJustification,
         },
       });
     }
@@ -164,8 +183,8 @@ export const closeCashRegisterService = async (
         totalSales,
         totalExpenses,
         expectedCash,
-        closingAmount,
-        difference,
+        closingAmount: closing.closingAmount,
+        difference: closing.difference,
       },
     };
   });
@@ -182,10 +201,13 @@ export const getCashRegisterHistoryService = async (
   from: Date,
   to: Date,
   storeId: number,
+  userId: number,
+  canViewAllShifts: boolean,
 ) => {
   const cashRegisters = await prisma.cashRegister.findMany({
     where: {
       terminal: { storeId },
+      ...(!canViewAllShifts && { userId }),
       openedAt: { lte: to },
       OR: [
         { closedAt: { gte: from } },
@@ -197,7 +219,7 @@ export const getCashRegisterHistoryService = async (
       user: { select: { id: true, name: true } },
       terminal: { select: { id: true, name: true } },
       accounts: {
-        where: { status: "CLOSED" },
+        where: { status: { in: ["CLOSED", "CANCELLED"] } },
         orderBy: { closedAt: "desc" },
         include: {
           accountItems: {
@@ -286,6 +308,7 @@ export const getCashRegisterHistoryService = async (
     >();
 
     for (const account of cashRegister.accounts) {
+      if (account.status !== "CLOSED") continue;
       for (const item of account.accountItems) {
         const current = variants.get(item.productVariantId);
         if (current) {
@@ -335,6 +358,7 @@ export const getOpenCashRegisterService = async (terminalId: number) => {
       status: "OPEN",
     },
     include:{
+      user: { select: { id: true, name: true } },
       accounts: {
         include: {
           accountItems: true,
