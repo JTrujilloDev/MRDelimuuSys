@@ -20,9 +20,10 @@ import {
 
 interface ProductsProps {
   embedded?: boolean;
+  readOnly?: boolean;
 }
 
-const Products = ({ embedded = false }: ProductsProps) => {
+const Products = ({ embedded = false, readOnly = false }: ProductsProps) => {
   const { data: productsResponse } = useGetAllProducts();
   const { data: categoriesResponse } = useGetAllProductCategories();
   const [formOpen, setFormOpen] = useState(false);
@@ -86,9 +87,11 @@ const Products = ({ embedded = false }: ProductsProps) => {
             Administra presentaciones, precios, inventario y recetas.
           </p>
         </div>
-        <Button onClick={openCreateForm} size="sm">
-          <Plus className="mr-1 h-4 w-4" /> Nuevo producto
-        </Button>
+        {!readOnly && (
+          <Button onClick={openCreateForm} size="sm">
+            <Plus className="mr-1 h-4 w-4" /> Nuevo producto
+          </Button>
+        )}
       </div>
 
       <div className="relative max-w-md">
@@ -155,15 +158,17 @@ const Products = ({ embedded = false }: ProductsProps) => {
                     </span>
                   </button>
 
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    aria-label={`Editar ${product.name}`}
-                    onClick={() => openEditForm(product)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
+                  {!readOnly && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      aria-label={`Editar ${product.name}`}
+                      onClick={() => openEditForm(product)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
 
                 {isExpanded && (
@@ -174,7 +179,7 @@ const Products = ({ embedded = false }: ProductsProps) => {
                       </p>
                     )}
                     {product.variants.map((variant) => (
-                      <VariantSummary key={variant.id} variant={variant} />
+                      <VariantSummary key={variant.id} variant={variant} showCost={!readOnly} />
                     ))}
                   </div>
                 )}
@@ -213,7 +218,7 @@ const Products = ({ embedded = false }: ProductsProps) => {
   );
 };
 
-function VariantSummary({ variant }: { variant: ProductVariantRecord }) {
+function VariantSummary({ variant, showCost }: { variant: ProductVariantRecord; showCost: boolean }) {
   return (
     <div className="flex flex-col gap-2 rounded-lg bg-muted/50 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap items-center gap-2">
@@ -230,7 +235,7 @@ function VariantSummary({ variant }: { variant: ProductVariantRecord }) {
         )}
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span>Costo: {numeral(variant.productCost).format("$0,0")}</span>
+        {showCost && <span>Costo base: {numeral(variant.productCost).format("$0,0")}</span>}
       </div>
     </div>
   );

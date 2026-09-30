@@ -1,6 +1,5 @@
 import {
   Button,
-  CloseIcon,
   FieldError,
   Form,
   Input,
@@ -20,13 +19,14 @@ import { useState } from "react";
 import { useCreateProductCategory } from "../hooks/useCreateProductCategory";
 import { useDeleteProductCategory } from "../hooks/useDeleteProductCategory";
 import { useUpdateProductCategory } from "../hooks/useUpdateProductCategory";
-import { CheckIcon, SquareCheck, SquareX } from "lucide-react";
+import { SquareCheck, SquareX } from "lucide-react";
 
 interface ProductCategoriesProps {
   embedded?: boolean;
+  readOnly?: boolean;
 }
 
-const Index = ({ embedded = false }: ProductCategoriesProps) => {
+const Index = ({ embedded = false, readOnly = false }: ProductCategoriesProps) => {
   const { data: productCategories } = useGetAllProductCategories();
   const { mutate: createProductCategory } = useCreateProductCategory();
   const { mutate: deleteProductCategory } = useDeleteProductCategory();
@@ -35,7 +35,7 @@ const Index = ({ embedded = false }: ProductCategoriesProps) => {
   const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data: Record<any, any> = {};
+    const data: Record<string, string> = {};
     formData.forEach((value, key) => {
       data[key] = value.toString();
     });
@@ -126,7 +126,7 @@ const Index = ({ embedded = false }: ProductCategoriesProps) => {
             Administra y organiza las categorías del catálogo.
           </p>
         </div>}
-        <div className="flex w-full justify-end">
+        {!readOnly && <div className="flex w-full justify-end">
           <Button
             onClick={() => {
               setSelectedCategory(null);
@@ -135,7 +135,7 @@ const Index = ({ embedded = false }: ProductCategoriesProps) => {
           >
             + Agregar categoría
           </Button>
-        </div>
+        </div>}
         <Table className={`${embedded ? "mt-2" : "mt-10"} w-full overflow-hidden rounded-[24px] border border-border bg-pos-surface shadow-sm`}>
           <Table.ScrollContainer>
             <Table.Content aria-label="Categorias de productos">
@@ -161,12 +161,8 @@ const Index = ({ embedded = false }: ProductCategoriesProps) => {
                 <Table.Column className="bg-pos-order-bg text-white">
                   Última actualización
                 </Table.Column>
-                <Table.Column className="bg-pos-order-bg text-white">
-                  Editar
-                </Table.Column>
-                <Table.Column className="bg-pos-order-bg text-white">
-                  Eliminar
-                </Table.Column>
+                {!readOnly && <Table.Column className="bg-pos-order-bg text-white">Editar</Table.Column>}
+                {!readOnly && <Table.Column className="bg-pos-order-bg text-white">Eliminar</Table.Column>}
               </Table.Header>
               <Table.Body>
                 {productCategories?.data?.map(
@@ -183,12 +179,12 @@ const Index = ({ embedded = false }: ProductCategoriesProps) => {
                       <Table.Cell>{category.name}</Table.Cell>
                       <Table.Cell>{category.description}</Table.Cell>
                       <Table.Cell>{category.posVisible ? <SquareCheck color="#10b981" /> : <SquareX color="#ef4444" />}</Table.Cell>
-                      <Table.Cell>
+                      {!readOnly && <Table.Cell>
                         {dayjs(category.createdAt).format("DD/MM/YYYY")}
-                      </Table.Cell>
-                      <Table.Cell>
+                      </Table.Cell>}
+                      {!readOnly && <Table.Cell>
                         {dayjs(category.updatedAt).format("DD/MM/YYYY")}{" "}
-                      </Table.Cell>
+                      </Table.Cell>}
                       <Table.Cell>
                         <Button
                           className="cursor-pointer"

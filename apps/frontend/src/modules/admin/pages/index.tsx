@@ -10,7 +10,6 @@ import {
   Plus,
   ShieldCheck,
   Store,
-  Tags,
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -18,16 +17,14 @@ import type { FormEvent, ReactNode } from "react";
 import { Navigate, useNavigate } from "react-router";
 import { useAuth } from "../../../app/auth/AuthProvider";
 import type { UserRole } from "../../../app/auth/auth.service";
-import type { AdminStore, AdminUser, GroupCatalogVariant } from "../admin.service";
+import type { AdminStore, AdminUser } from "../admin.service";
 import {
   createTerminal,
   createUser,
   getStoreGroups,
-  getGroupCatalog,
   getUsers,
   updateStore,
   updateTerminal,
-  updateGroupCatalogItem,
   updateUser,
 } from "../admin.service";
 
@@ -59,7 +56,7 @@ const errorMessage = (error: unknown) =>
 export default function AdminPage() {
   const { state } = useAuth();
   const queryClient = useQueryClient();
-  const [section, setSection] = useState<"users" | "stores" | "catalog">("users");
+  const [section, setSection] = useState<"users" | "stores">("users");
   const groupsQuery = useQuery({ queryKey: ["admin", "store-groups"], queryFn: getStoreGroups });
   const usersQuery = useQuery({ queryKey: ["admin", "users"], queryFn: getUsers });
   const stores = useMemo(
@@ -82,7 +79,7 @@ export default function AdminPage() {
           <h1 className="text-3xl font-black">Usuarios, puntos y cajas</h1>
         </div>
 
-        <div className="mb-6 grid max-w-3xl grid-cols-3 gap-2 rounded-2xl border border-border bg-secondary/60 p-2" role="tablist" aria-label="Secciones de administración">
+        <div className="mb-6 grid max-w-2xl grid-cols-2 gap-2 rounded-2xl border border-border bg-secondary/60 p-2" role="tablist" aria-label="Secciones de administración">
           <button
             className={`flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-black transition-all ${
               section === "users"
@@ -107,18 +104,6 @@ export default function AdminPage() {
           >
             <Building2 className="h-5 w-5" /> Puntos y cajas
           </button>
-          <button
-            className={`flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-black transition-all ${
-              section === "catalog"
-                ? "border-primary bg-primary text-primary-foreground shadow-md"
-                : "border-transparent bg-background text-foreground hover:border-primary/40"
-            }`}
-            onClick={() => setSection("catalog")}
-            role="tab"
-            aria-selected={section === "catalog"}
-          >
-            <Tags className="h-5 w-5" /> Catálogos y precios
-          </button>
         </div>
 
         {section === "users" ? (
@@ -129,14 +114,12 @@ export default function AdminPage() {
             isLoading={usersQuery.isLoading || groupsQuery.isLoading}
             onChanged={refresh}
           />
-        ) : section === "stores" ? (
+        ) : (
           <StoresSection
             groups={groupsQuery.data ?? []}
             isLoading={groupsQuery.isLoading}
             onChanged={refresh}
           />
-        ) : (
-          <CatalogSection groups={groupsQuery.data ?? []} />
         )}
       </div>
     </main>
@@ -762,144 +745,6 @@ function StoresSection({ groups, isLoading, onChanged }: {
         </Modal>
       )}
     </section>
-  );
-}
-
-function CatalogSection({ groups }: { groups: Awaited<ReturnType<typeof getStoreGroups>> }) {
-  const queryClient = useQueryClient();
-  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
-  const [search, setSearch] = useState("");
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
-  const selectedGroup = groups.find((group) => group.id === selectedGroupId) ?? groups[0] ?? null;
-  const catalogQuery = useQuery({
-    queryKey: ["admin", "catalog", selectedGroup?.id],
-    queryFn: () => getGroupCatalog(selectedGroup!.id),
-    enabled: Boolean(selectedGroup),
-  });
-  const updateMutation = useMutation({
-    mutationFn: ({ variantId, salePrice, isActive }: { variantId: number; salePrice: number; isActive: boolean }) =>
-      updateGroupCatalogItem(selectedGroup!.id, variantId, { salePrice, isActive }),
-  });
-  const normalizedSearch = search.trim().toLowerCase();
-  const saleableTypes = new Set(["FINISHED_PRODUCT", "RECIPE_PRODUCT", "THIRD_PARTY_PRODUCT"]);
-  const products = (catalogQuery.data?.products ?? []).filter((product) =>
-    saleableTypes.has(product.productType) &&
-    (!normalizedSearch || `${product.name} ${product.category.name}`.toLowerCase().includes(normalizedSearch)),
-  );
-
-  const saveVariant = async (variant: GroupCatalogVariant, salePrice: number, isActive: boolean) => {
-    setError("");
-    setNotice("");
-    try {
-      await updateMutation.mutateAsync({ variantId: variant.id, salePrice, isActive });
-      await queryClient.invalidateQueries({ queryKey: ["admin", "catalog", selectedGroup?.id] });
-      setNotice(`${variant.name} fue actualizado en el catálogo ${selectedGroup?.name}.`);
-    } catch (requestError) {
-      setError(errorMessage(requestError));
-    }
-  };
-
-  if (!selectedGroup) return <p>No hay grupos configurados.</p>;
-
-  return (
-    <section>
-      <div className="mb-5">
-        <h2 className="text-xl font-black">Catálogos y PVP</h2>
-        <p className="text-sm text-muted-foreground">Los puntos de un mismo grupo comparten productos y precios, pero no inventario.</p>
-      </div>
-
-      <div className="mb-5 grid gap-3 rounded-2xl border border-border bg-pos-surface p-4 shadow-sm md:grid-cols-[260px_1fr]">
-        <label className="text-sm">
-          <span className="mb-1 block font-bold">Grupo comercial</span>
-          <select
-            className={inputClass}
-            value={selectedGroup.id}
-            onChange={(event) => {
-              setSelectedGroupId(Number(event.target.value));
-              setError("");
-              setNotice("");
-            }}
-          >
-            {groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}
-          </select>
-        </label>
-        <label className="text-sm">
-          <span className="mb-1 block font-bold">Buscar producto</span>
-          <input className={inputClass} value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Nombre o categoría" />
-        </label>
-      </div>
-
-      {notice && <p className="mb-4 rounded-xl bg-success/10 p-3 text-sm font-semibold text-success">{notice}</p>}
-      {error && <p className="mb-4 rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
-
-      {catalogQuery.isLoading ? <p>Cargando catálogo…</p> : (
-        <div className="space-y-4">
-          {products.map((product) => (
-            <article key={product.id} className="rounded-2xl border border-border bg-pos-surface p-5 shadow-sm">
-              <div className="mb-3">
-                <h3 className="font-black">{product.name}</h3>
-                <p className="text-xs text-muted-foreground">{product.category.name}</p>
-              </div>
-              <div className="space-y-2">
-                {product.variants.map((variant) => (
-                  <CatalogVariantRow
-                    key={`${selectedGroup.id}-${variant.id}-${variant.catalog?.salePrice}-${variant.catalog?.isActive}`}
-                    variant={variant}
-                    isPending={updateMutation.isPending}
-                    onSave={(salePrice, isActive) => void saveVariant(variant, salePrice, isActive)}
-                  />
-                ))}
-              </div>
-            </article>
-          ))}
-          {products.length === 0 && (
-            <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No hay productos que coincidan con la búsqueda.</p>
-          )}
-        </div>
-      )}
-    </section>
-  );
-}
-
-function CatalogVariantRow({ variant, isPending, onSave }: {
-  variant: GroupCatalogVariant;
-  isPending: boolean;
-  onSave: (salePrice: number, isActive: boolean) => void;
-}) {
-  const [salePrice, setSalePrice] = useState(String(variant.catalog?.salePrice ?? 0));
-  const [isActive, setIsActive] = useState(variant.catalog?.isActive ?? false);
-  const numericPrice = Number(salePrice);
-
-  return (
-    <div className="grid items-end gap-3 rounded-xl border border-border bg-background p-3 md:grid-cols-[1fr_180px_150px_auto]">
-      <div>
-        <p className="text-sm font-black">{variant.name}</p>
-        <p className="text-xs text-muted-foreground">{variant.isActive ? "Variante activa" : "Variante desactivada en el catálogo maestro"}</p>
-      </div>
-      <label className="text-sm">
-        <span className="mb-1 block text-xs font-bold">PVP</span>
-        <input
-          className={inputClass}
-          type="number"
-          min="0"
-          step="0.01"
-          value={salePrice}
-          onChange={(event) => setSalePrice(event.target.value)}
-        />
-      </label>
-      <label className="flex h-10 items-center gap-2 rounded-xl border border-border px-3 text-sm font-bold">
-        <input type="checkbox" checked={isActive} onChange={(event) => setIsActive(event.target.checked)} disabled={!variant.isActive} />
-        En este catálogo
-      </label>
-      <button
-        className={buttonClass}
-        disabled={isPending || !variant.isActive || !Number.isFinite(numericPrice) || numericPrice < 0}
-        onClick={() => onSave(numericPrice, isActive)}
-      >
-        Guardar
-      </button>
-    </div>
   );
 }
 

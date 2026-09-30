@@ -71,7 +71,9 @@ const Sidebar = () => {
   const items = [
     { title: "Punto de Venta", url: "pos", icon: ShoppingCart },
     { title: "Historial de cajas", url: "cash-register-history", icon: History },
-    { title: "Catálogo", url: "catalog", icon: BookOpen },
+    ...(state?.user.isGlobalAdmin || activeContext.role === "ADMIN"
+      ? [{ title: "Catálogo", url: "catalog", icon: BookOpen }]
+      : []),
     {title: "Inventario" , url: "inventory", icon: Package},
     ...(activeContext.store.kitchenMode === "TICKETS"
       ? [{ title: "Cocina", url: "kitchen", icon: ChefHat }]
