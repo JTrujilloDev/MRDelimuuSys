@@ -52,14 +52,14 @@ export const getGroupCatalogService = async (
 export const updateGroupCatalogItemService = async (
   groupIdValue: unknown,
   variantIdValue: unknown,
-  data: { salePrice?: unknown; costPrice?: unknown; isActive?: unknown },
+  data: { salePrice?: unknown; costPrice?: unknown; isPosActive?: unknown },
 ) => {
   const groupId = requirePositiveId(groupIdValue, "groupId");
   const productVariantId = requirePositiveId(variantIdValue, "productVariantId");
-  if (data.isActive !== undefined && typeof data.isActive !== "boolean") {
-    throw new Error("isActive must be a boolean");
+  if (data.isPosActive !== undefined && typeof data.isPosActive !== "boolean") {
+    throw new Error("isPosActive must be a boolean");
   }
-  const isActive = data.isActive as boolean | undefined;
+  const isPosActive = data.isPosActive as boolean | undefined;
 
   const [group, variant] = await Promise.all([
     prisma.storeGroup.findUnique({ where: { id: groupId }, include: { stores: true } }),
@@ -72,18 +72,20 @@ export const updateGroupCatalogItemService = async (
   if (!variant) throw new Error("Product variant not found");
   if (!group.isActive) throw new Error("Store group is inactive");
   if (!variant.isActive) throw new Error("Product variant is inactive");
-  if (!["FINISHED_PRODUCT", "RECIPE_PRODUCT", "THIRD_PARTY_PRODUCT"].includes(variant.product.productType)) {
-    throw new Error("Only saleable products can be added to a commercial catalog");
-  }
+  const isSaleable = ["FINISHED_PRODUCT", "RECIPE_PRODUCT", "THIRD_PARTY_PRODUCT"]
+    .includes(variant.product.productType);
+  if (!isSaleable && isPosActive) throw new Error("Operational products cannot be enabled in the POS");
 
   const current = await prisma.groupCatalogItem.findUnique({
     where: { groupId_productVariantId: { groupId, productVariantId } },
   });
-  if (data.salePrice === undefined && !current) throw new Error("Sale price is required");
+  if (isSaleable && data.salePrice === undefined && !current) throw new Error("Sale price is required");
   if (data.costPrice === undefined && !current) throw new Error("Group cost is required");
-  const salePrice = data.salePrice === undefined
-    ? current!.salePrice
-    : requireCatalogPrice(data.salePrice, "sale price");
+  const salePrice = isSaleable
+    ? data.salePrice === undefined
+      ? current!.salePrice
+      : requireCatalogPrice(data.salePrice, "sale price")
+    : null;
   const costPrice = data.costPrice === undefined
     ? current!.costPrice
     : requireCatalogPrice(data.costPrice, "group cost");
@@ -101,12 +103,12 @@ export const updateGroupCatalogItemService = async (
         productVariantId,
         salePrice,
         costPrice,
-        isActive: isActive ?? true,
+        isPosActive: isSaleable ? isPosActive ?? true : false,
       },
       update: {
         salePrice,
         costPrice,
-        isActive,
+        isPosActive: isSaleable ? isPosActive : false,
       },
       include: { productVariant: { include: { product: true } } },
     });

@@ -326,14 +326,14 @@ model GroupCatalogItem {
   group            StoreGroup     @relation(fields: [groupId], references: [id], onDelete: Restrict)
   productVariantId Int
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
-  salePrice        Float
+  salePrice        Float?
   costPrice        Float
-  isActive         Boolean        @default(true)
+  isPosActive      Boolean        @default(false)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
   @@unique([groupId, productVariantId])
-  @@index([groupId, isActive])
+  @@index([groupId, isPosActive])
 }
 
 enum KitchenMode {

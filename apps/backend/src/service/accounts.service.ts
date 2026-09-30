@@ -334,7 +334,7 @@ export const addAccountItemService = async (
         },
       },
     });
-    if (!catalogItem?.isActive) {
+    if (!catalogItem?.isPosActive || catalogItem.salePrice === null) {
       throw new Error("Product is not available in this store catalog");
     }
     const price = Number(catalogItem.salePrice);

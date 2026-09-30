@@ -2208,7 +2208,7 @@ export const GroupCatalogItemScalarFieldEnum = {
   productVariantId: 'productVariantId',
   salePrice: 'salePrice',
   costPrice: 'costPrice',
-  isActive: 'isActive',
+  isPosActive: 'isPosActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

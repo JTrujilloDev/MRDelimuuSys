@@ -129,7 +129,7 @@ export const getAllActiveProductsService = async (storeId: number) => {
           isActive: true,
         },
         include: {
-          catalogItems: { where: { groupId: store.groupId, isActive: true } },
+          catalogItems: { where: { groupId: store.groupId, isPosActive: true } },
           storeInventories: { where: { storeId } },
         },
       },
@@ -193,7 +193,7 @@ export const getInventoryProductsService = async (storeId: number) => {
       stock: storeInventories[0]?.stock ?? 0,
       minStock: storeInventories[0]?.minStock ?? 0,
       isNew: !(storeInventories[0]?.isInitialized ?? false),
-      isCatalogActive: catalogItems[0]?.isActive ?? false,
+      isCatalogActive: catalogItems[0]?.isPosActive ?? false,
     })),
   }));
 };
@@ -319,7 +319,7 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
       variants: {
         some: {
           isActive: true,
-          catalogItems: { some: { groupId: store.groupId, isActive: true } },
+          catalogItems: { some: { groupId: store.groupId, isPosActive: true } },
         },
       },
     },
@@ -327,10 +327,10 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
       variants: {
         where: {
           isActive: true,
-          catalogItems: { some: { groupId: store.groupId, isActive: true } },
+          catalogItems: { some: { groupId: store.groupId, isPosActive: true } },
         },
         include: {
-          catalogItems: { where: { groupId: store.groupId, isActive: true } },
+          catalogItems: { where: { groupId: store.groupId, isPosActive: true } },
           storeInventories: { where: { storeId } },
           recipeItems: {
             include: {

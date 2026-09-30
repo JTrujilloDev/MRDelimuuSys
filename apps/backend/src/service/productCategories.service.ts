@@ -40,7 +40,7 @@ export const getAllCategoriesService = async (storeId?: number) => {
       products: {
         some: {
           variants: {
-            some: { catalogItems: { some: { groupId: store.groupId, isActive: true } } },
+            some: { catalogItems: { some: { groupId: store.groupId, isPosActive: true } } },
           },
         },
       },

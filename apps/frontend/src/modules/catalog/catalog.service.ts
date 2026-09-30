@@ -14,9 +14,9 @@ export type GroupCatalogVariant = {
   productCost?: number;
   catalog: {
     id: number;
-    salePrice: number;
+    salePrice: number | null;
     costPrice?: number;
-    isActive: boolean;
+    isPosActive: boolean;
     updatedAt?: string;
   } | null;
 };
@@ -43,7 +43,7 @@ export const getGroupCatalog = async (groupId: number) =>
 export const updateGroupCatalogItem = async (
   groupId: number,
   variantId: number,
-  payload: { salePrice: number; costPrice: number; isActive: boolean },
+  payload: { salePrice: number | null; costPrice: number; isPosActive: boolean },
 ) => unwrap(await api.patch(`catalog/groups/${groupId}/variants/${variantId}`, payload));
 
 export const deleteGroupCatalogItem = async (groupId: number, variantId: number) =>

@@ -46,12 +46,12 @@ export default function GroupCatalogManager() {
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["catalog", "group", groupId] });
 
   const saveMutation = useMutation({
-    mutationFn: ({ variantId, salePrice, costPrice, isActive }: {
+    mutationFn: ({ variantId, salePrice, costPrice, isPosActive }: {
       variantId: number;
-      salePrice: number;
+      salePrice: number | null;
       costPrice: number;
-      isActive: boolean;
-    }) => updateGroupCatalogItem(groupId!, variantId, { salePrice, costPrice, isActive }),
+      isPosActive: boolean;
+    }) => updateGroupCatalogItem(groupId!, variantId, { salePrice, costPrice, isPosActive }),
   });
   const deleteMutation = useMutation({
     mutationFn: (variantId: number) => deleteGroupCatalogItem(groupId!, variantId),
@@ -65,7 +65,6 @@ export default function GroupCatalogManager() {
   const candidates = useMemo(() => {
     if (!normalizedSearch) return [];
     return products.flatMap((product) => {
-      if (!saleableTypes.has(product.productType)) return [];
       return product.variants
         .filter((variant) => variant.isActive && !variant.catalog)
         .filter((variant) => `${product.name} ${variant.name} ${product.category.name}`
@@ -76,7 +75,7 @@ export default function GroupCatalogManager() {
 
   const save = async (
     variant: GroupCatalogVariant,
-    values: { salePrice: number; costPrice: number; isActive: boolean },
+    values: { salePrice: number | null; costPrice: number; isPosActive: boolean },
     isNew: boolean,
   ) => {
     setError("");
@@ -156,6 +155,7 @@ export default function GroupCatalogManager() {
                 <CatalogVariantRow
                   key={variant.id}
                   productName={product.name}
+                  productType={product.productType}
                   variant={variant}
                   isNew
                   isPending={saveMutation.isPending}
@@ -189,6 +189,7 @@ export default function GroupCatalogManager() {
                     <CatalogVariantRow
                       key={`${variant.id}-${variant.catalog?.updatedAt ?? "catalog"}`}
                       productName={product.name}
+                      productType={product.productType}
                       variant={variant}
                       isPending={saveMutation.isPending || deleteMutation.isPending}
                       onSave={(values) => void save(variant, values, false)}
@@ -198,9 +199,15 @@ export default function GroupCatalogManager() {
                     <div key={variant.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-background p-3">
                       <div>
                         <p className="text-sm font-black">{variant.name}</p>
-                        <p className="text-xs text-muted-foreground">{variant.catalog?.isActive ? "Disponible en el POS" : "Desactivada"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {saleableTypes.has(product.productType)
+                            ? variant.catalog?.isPosActive ? "Disponible en el POS" : "Desactivada en el POS"
+                            : "Insumo operativo"}
+                        </p>
                       </div>
-                      <p className="font-black">{numeral(variant.catalog?.salePrice).format("$0,0")}</p>
+                      {variant.catalog?.salePrice !== null && (
+                        <p className="font-black">{numeral(variant.catalog?.salePrice).format("$0,0")}</p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -220,21 +227,23 @@ export default function GroupCatalogManager() {
   );
 }
 
-function CatalogVariantRow({ productName, variant, isNew = false, isPending, onSave, onDelete }: {
+function CatalogVariantRow({ productName, productType, variant, isNew = false, isPending, onSave, onDelete }: {
   productName: string;
+  productType: string;
   variant: GroupCatalogVariant;
   isNew?: boolean;
   isPending: boolean;
-  onSave: (values: { salePrice: number; costPrice: number; isActive: boolean }) => void;
+  onSave: (values: { salePrice: number | null; costPrice: number; isPosActive: boolean }) => void;
   onDelete?: () => void;
 }) {
+  const isSaleable = saleableTypes.has(productType);
   const [salePrice, setSalePrice] = useState(String(variant.catalog?.salePrice ?? ""));
   const [costPrice, setCostPrice] = useState(String(variant.catalog?.costPrice ?? variant.productCost ?? 0));
-  const [isActive, setIsActive] = useState(variant.catalog?.isActive ?? true);
-  const sale = Number(salePrice);
+  const [isPosActive, setIsPosActive] = useState(variant.catalog?.isPosActive ?? isSaleable);
+  const sale = isSaleable ? Number(salePrice) : null;
   const cost = Number(costPrice);
-  const isValid = Number.isFinite(sale) && sale >= 0 && Number.isFinite(cost) && cost >= 0;
-  const margin = sale - cost;
+  const isValid = (!isSaleable || (sale !== null && Number.isFinite(sale) && sale >= 0)) && Number.isFinite(cost) && cost >= 0;
+  const margin = (sale ?? 0) - cost;
 
   return (
     <div className="grid items-end gap-3 rounded-xl border border-border bg-background p-3 xl:grid-cols-[minmax(180px,1fr)_150px_150px_150px_auto]">
@@ -253,31 +262,39 @@ function CatalogVariantRow({ productName, variant, isNew = false, isPending, onS
         <span className="mb-1 block text-xs font-bold">Costo del grupo</span>
         <input className={inputClass} type="number" min="0" step="0.01" value={costPrice} onChange={(event) => setCostPrice(event.target.value)} />
       </label>
-      <label className="text-sm">
-        <span className="mb-1 block text-xs font-bold">PVP</span>
-        <input className={inputClass} type="number" min="0" step="0.01" value={salePrice} onChange={(event) => setSalePrice(event.target.value)} />
-      </label>
-      <div className="h-10 rounded-xl border border-border px-3 py-2 text-sm">
-        <span className="mr-2 text-xs text-muted-foreground">Margen</span>
-        <span className={`font-black ${margin < 0 ? "text-danger" : "text-success"}`}>
-          {isValid ? numeral(margin).format("$0,0") : "—"}
-        </span>
-      </div>
+      {isSaleable ? (
+        <>
+          <label className="text-sm">
+            <span className="mb-1 block text-xs font-bold">PVP</span>
+            <input className={inputClass} type="number" min="0" step="0.01" value={salePrice} onChange={(event) => setSalePrice(event.target.value)} />
+          </label>
+          <div className="h-10 rounded-xl border border-border px-3 py-2 text-sm">
+            <span className="mr-2 text-xs text-muted-foreground">Margen</span>
+            <span className={`font-black ${margin < 0 ? "text-danger" : "text-success"}`}>
+              {isValid ? numeral(margin).format("$0,0") : "—"}
+            </span>
+          </div>
+        </>
+      ) : (
+        <div className="xl:col-span-2 flex h-10 items-center rounded-xl border border-border bg-secondary/50 px-3 text-sm font-bold text-muted-foreground">
+          Insumo operativo · no se vende directamente
+        </div>
+      )}
       <div className="flex items-center justify-end gap-2">
-        {!isNew && (
+        {!isNew && isSaleable && (
           <button
             type="button"
-            className={`h-10 rounded-xl border px-3 text-xs font-black ${isActive ? "border-success/30 bg-success/10 text-success" : "border-border bg-secondary text-muted-foreground"}`}
-            onClick={() => setIsActive((active) => !active)}
+            className={`h-10 rounded-xl border px-3 text-xs font-black ${isPosActive ? "border-success/30 bg-success/10 text-success" : "border-border bg-secondary text-muted-foreground"}`}
+            onClick={() => setIsPosActive((active) => !active)}
           >
-            {isActive ? "Activa" : "Inactiva"}
+            {isPosActive ? "Activa" : "Inactiva"}
           </button>
         )}
         <button
           type="button"
           className="flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-black text-primary-foreground disabled:opacity-40"
-          disabled={isPending || !isValid || salePrice === ""}
-          onClick={() => onSave({ salePrice: sale, costPrice: cost, isActive })}
+          disabled={isPending || !isValid || (isSaleable && salePrice === "")}
+          onClick={() => onSave({ salePrice: sale, costPrice: cost, isPosActive: isSaleable ? isPosActive : false })}
         >
           {isNew && <CircleDollarSign className="h-4 w-4" />}
           {isNew ? "Agregar" : "Guardar"}
