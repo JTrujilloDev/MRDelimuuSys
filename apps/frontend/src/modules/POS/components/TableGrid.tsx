@@ -21,6 +21,7 @@ interface AccountItem {
 }
 
 interface TableGridProps {
+  storeName: string;
   accounts: Account[];
   onSelect: (id:  number) => void;
   onAdd: (name: string) => void;
@@ -30,6 +31,7 @@ interface TableGridProps {
 }
 
 const TableGrid = ({
+  storeName,
   accounts : tables,
   onSelect,
   onAdd,
@@ -73,8 +75,11 @@ const TableGrid = ({
   return (
     <div className="flex h-full min-h-0 flex-col bg-background px-4 py-5 sm:px-6">
       <div className="mb-6 rounded-[28px] border border-border/80 bg-pos-surface/95 p-5 shadow-[0_18px_40px_-32px_rgba(98,68,38,0.45)] sm:p-6">
-        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-          Delimuu POS
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">
+          Punto de venta
+        </p>
+        <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
+          {storeName}
         </h1>
         <p className="mt-2 text-base font-medium text-foreground/75">
           Selecciona o crea una cuenta para empezar el servicio
