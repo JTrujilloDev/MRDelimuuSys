@@ -28,20 +28,12 @@ export type AggregateProductVariant = {
 
 export type ProductVariantAvgAggregateOutputType = {
   id: number | null
-  retailPrice: number | null
-  wholesalePrice: number | null
-  stock: number | null
-  minStock: number | null
   productCost: number | null
   productId: number | null
 }
 
 export type ProductVariantSumAggregateOutputType = {
   id: number | null
-  retailPrice: number | null
-  wholesalePrice: number | null
-  stock: number | null
-  minStock: number | null
   productCost: number | null
   productId: number | null
 }
@@ -49,51 +41,36 @@ export type ProductVariantSumAggregateOutputType = {
 export type ProductVariantMinAggregateOutputType = {
   id: number | null
   name: string | null
-  retailPrice: number | null
-  wholesalePrice: number | null
-  stock: number | null
-  minStock: number | null
   isActive: boolean | null
   requirePreparation: boolean | null
   preparationArea: $Enums.PreparationArea | null
   productCost: number | null
   productId: number | null
   unit: $Enums.Unit | null
-  isNew: boolean | null
   createdAt: Date | null
 }
 
 export type ProductVariantMaxAggregateOutputType = {
   id: number | null
   name: string | null
-  retailPrice: number | null
-  wholesalePrice: number | null
-  stock: number | null
-  minStock: number | null
   isActive: boolean | null
   requirePreparation: boolean | null
   preparationArea: $Enums.PreparationArea | null
   productCost: number | null
   productId: number | null
   unit: $Enums.Unit | null
-  isNew: boolean | null
   createdAt: Date | null
 }
 
 export type ProductVariantCountAggregateOutputType = {
   id: number
   name: number
-  retailPrice: number
-  wholesalePrice: number
-  stock: number
-  minStock: number
   isActive: number
   requirePreparation: number
   preparationArea: number
   productCost: number
   productId: number
   unit: number
-  isNew: number
   createdAt: number
   _all: number
 }
@@ -101,20 +78,12 @@ export type ProductVariantCountAggregateOutputType = {
 
 export type ProductVariantAvgAggregateInputType = {
   id?: true
-  retailPrice?: true
-  wholesalePrice?: true
-  stock?: true
-  minStock?: true
   productCost?: true
   productId?: true
 }
 
 export type ProductVariantSumAggregateInputType = {
   id?: true
-  retailPrice?: true
-  wholesalePrice?: true
-  stock?: true
-  minStock?: true
   productCost?: true
   productId?: true
 }
@@ -122,51 +91,36 @@ export type ProductVariantSumAggregateInputType = {
 export type ProductVariantMinAggregateInputType = {
   id?: true
   name?: true
-  retailPrice?: true
-  wholesalePrice?: true
-  stock?: true
-  minStock?: true
   isActive?: true
   requirePreparation?: true
   preparationArea?: true
   productCost?: true
   productId?: true
   unit?: true
-  isNew?: true
   createdAt?: true
 }
 
 export type ProductVariantMaxAggregateInputType = {
   id?: true
   name?: true
-  retailPrice?: true
-  wholesalePrice?: true
-  stock?: true
-  minStock?: true
   isActive?: true
   requirePreparation?: true
   preparationArea?: true
   productCost?: true
   productId?: true
   unit?: true
-  isNew?: true
   createdAt?: true
 }
 
 export type ProductVariantCountAggregateInputType = {
   id?: true
   name?: true
-  retailPrice?: true
-  wholesalePrice?: true
-  stock?: true
-  minStock?: true
   isActive?: true
   requirePreparation?: true
   preparationArea?: true
   productCost?: true
   productId?: true
   unit?: true
-  isNew?: true
   createdAt?: true
   _all?: true
 }
@@ -260,17 +214,12 @@ export type ProductVariantGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 export type ProductVariantGroupByOutputType = {
   id: number
   name: string
-  retailPrice: number
-  wholesalePrice: number | null
-  stock: number
-  minStock: number
   isActive: boolean
   requirePreparation: boolean
   preparationArea: $Enums.PreparationArea
   productCost: number
   productId: number
   unit: $Enums.Unit
-  isNew: boolean
   createdAt: Date
   _count: ProductVariantCountAggregateOutputType | null
   _avg: ProductVariantAvgAggregateOutputType | null
@@ -300,17 +249,12 @@ export type ProductVariantWhereInput = {
   NOT?: Prisma.ProductVariantWhereInput | Prisma.ProductVariantWhereInput[]
   id?: Prisma.IntFilter<"ProductVariant"> | number
   name?: Prisma.StringFilter<"ProductVariant"> | string
-  retailPrice?: Prisma.FloatFilter<"ProductVariant"> | number
-  wholesalePrice?: Prisma.FloatNullableFilter<"ProductVariant"> | number | null
-  stock?: Prisma.IntFilter<"ProductVariant"> | number
-  minStock?: Prisma.IntFilter<"ProductVariant"> | number
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
   requirePreparation?: Prisma.BoolFilter<"ProductVariant"> | boolean
   preparationArea?: Prisma.EnumPreparationAreaFilter<"ProductVariant"> | $Enums.PreparationArea
   productCost?: Prisma.FloatFilter<"ProductVariant"> | number
   productId?: Prisma.IntFilter<"ProductVariant"> | number
   unit?: Prisma.EnumUnitFilter<"ProductVariant"> | $Enums.Unit
-  isNew?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   accountItems?: Prisma.AccountItemListRelationFilter
@@ -324,17 +268,12 @@ export type ProductVariantWhereInput = {
 export type ProductVariantOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  retailPrice?: Prisma.SortOrder
-  wholesalePrice?: Prisma.SortOrderInput | Prisma.SortOrder
-  stock?: Prisma.SortOrder
-  minStock?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   requirePreparation?: Prisma.SortOrder
   preparationArea?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
   unit?: Prisma.SortOrder
-  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
   accountItems?: Prisma.AccountItemOrderByRelationAggregateInput
@@ -351,17 +290,12 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ProductVariantWhereInput[]
   NOT?: Prisma.ProductVariantWhereInput | Prisma.ProductVariantWhereInput[]
   name?: Prisma.StringFilter<"ProductVariant"> | string
-  retailPrice?: Prisma.FloatFilter<"ProductVariant"> | number
-  wholesalePrice?: Prisma.FloatNullableFilter<"ProductVariant"> | number | null
-  stock?: Prisma.IntFilter<"ProductVariant"> | number
-  minStock?: Prisma.IntFilter<"ProductVariant"> | number
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
   requirePreparation?: Prisma.BoolFilter<"ProductVariant"> | boolean
   preparationArea?: Prisma.EnumPreparationAreaFilter<"ProductVariant"> | $Enums.PreparationArea
   productCost?: Prisma.FloatFilter<"ProductVariant"> | number
   productId?: Prisma.IntFilter<"ProductVariant"> | number
   unit?: Prisma.EnumUnitFilter<"ProductVariant"> | $Enums.Unit
-  isNew?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   accountItems?: Prisma.AccountItemListRelationFilter
@@ -375,17 +309,12 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
 export type ProductVariantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  retailPrice?: Prisma.SortOrder
-  wholesalePrice?: Prisma.SortOrderInput | Prisma.SortOrder
-  stock?: Prisma.SortOrder
-  minStock?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   requirePreparation?: Prisma.SortOrder
   preparationArea?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
   unit?: Prisma.SortOrder
-  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ProductVariantCountOrderByAggregateInput
   _avg?: Prisma.ProductVariantAvgOrderByAggregateInput
@@ -400,32 +329,22 @@ export type ProductVariantScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ProductVariantScalarWhereWithAggregatesInput | Prisma.ProductVariantScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ProductVariant"> | number
   name?: Prisma.StringWithAggregatesFilter<"ProductVariant"> | string
-  retailPrice?: Prisma.FloatWithAggregatesFilter<"ProductVariant"> | number
-  wholesalePrice?: Prisma.FloatNullableWithAggregatesFilter<"ProductVariant"> | number | null
-  stock?: Prisma.IntWithAggregatesFilter<"ProductVariant"> | number
-  minStock?: Prisma.IntWithAggregatesFilter<"ProductVariant"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
   requirePreparation?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
   preparationArea?: Prisma.EnumPreparationAreaWithAggregatesFilter<"ProductVariant"> | $Enums.PreparationArea
   productCost?: Prisma.FloatWithAggregatesFilter<"ProductVariant"> | number
   productId?: Prisma.IntWithAggregatesFilter<"ProductVariant"> | number
   unit?: Prisma.EnumUnitWithAggregatesFilter<"ProductVariant"> | $Enums.Unit
-  isNew?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
 }
 
 export type ProductVariantCreateInput = {
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
@@ -439,17 +358,12 @@ export type ProductVariantCreateInput = {
 export type ProductVariantUncheckedCreateInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   productId: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
@@ -461,16 +375,11 @@ export type ProductVariantUncheckedCreateInput = {
 
 export type ProductVariantUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
@@ -484,17 +393,12 @@ export type ProductVariantUpdateInput = {
 export type ProductVariantUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
@@ -507,49 +411,34 @@ export type ProductVariantUncheckedUpdateInput = {
 export type ProductVariantCreateManyInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   productId: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
 }
 
 export type ProductVariantUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ProductVariantUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -566,26 +455,17 @@ export type ProductVariantOrderByRelationAggregateInput = {
 export type ProductVariantCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  retailPrice?: Prisma.SortOrder
-  wholesalePrice?: Prisma.SortOrder
-  stock?: Prisma.SortOrder
-  minStock?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   requirePreparation?: Prisma.SortOrder
   preparationArea?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
   unit?: Prisma.SortOrder
-  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ProductVariantAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  retailPrice?: Prisma.SortOrder
-  wholesalePrice?: Prisma.SortOrder
-  stock?: Prisma.SortOrder
-  minStock?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
 }
@@ -593,43 +473,29 @@ export type ProductVariantAvgOrderByAggregateInput = {
 export type ProductVariantMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  retailPrice?: Prisma.SortOrder
-  wholesalePrice?: Prisma.SortOrder
-  stock?: Prisma.SortOrder
-  minStock?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   requirePreparation?: Prisma.SortOrder
   preparationArea?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
   unit?: Prisma.SortOrder
-  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ProductVariantMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  retailPrice?: Prisma.SortOrder
-  wholesalePrice?: Prisma.SortOrder
-  stock?: Prisma.SortOrder
-  minStock?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   requirePreparation?: Prisma.SortOrder
   preparationArea?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
   unit?: Prisma.SortOrder
-  isNew?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ProductVariantSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  retailPrice?: Prisma.SortOrder
-  wholesalePrice?: Prisma.SortOrder
-  stock?: Prisma.SortOrder
-  minStock?: Prisma.SortOrder
   productCost?: Prisma.SortOrder
   productId?: Prisma.SortOrder
 }
@@ -681,24 +547,16 @@ export type ProductVariantUncheckedUpdateManyWithoutProductNestedInput = {
   deleteMany?: Prisma.ProductVariantScalarWhereInput | Prisma.ProductVariantScalarWhereInput[]
 }
 
+export type EnumPreparationAreaFieldUpdateOperationsInput = {
+  set?: $Enums.PreparationArea
+}
+
 export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
   multiply?: number
   divide?: number
-}
-
-export type NullableFloatFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
-export type EnumPreparationAreaFieldUpdateOperationsInput = {
-  set?: $Enums.PreparationArea
 }
 
 export type EnumUnitFieldUpdateOperationsInput = {
@@ -791,16 +649,11 @@ export type ProductVariantUpdateOneRequiredWithoutStoreInventoriesNestedInput = 
 
 export type ProductVariantCreateWithoutProductInput = {
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
@@ -813,16 +666,11 @@ export type ProductVariantCreateWithoutProductInput = {
 export type ProductVariantUncheckedCreateWithoutProductInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
@@ -864,32 +712,22 @@ export type ProductVariantScalarWhereInput = {
   NOT?: Prisma.ProductVariantScalarWhereInput | Prisma.ProductVariantScalarWhereInput[]
   id?: Prisma.IntFilter<"ProductVariant"> | number
   name?: Prisma.StringFilter<"ProductVariant"> | string
-  retailPrice?: Prisma.FloatFilter<"ProductVariant"> | number
-  wholesalePrice?: Prisma.FloatNullableFilter<"ProductVariant"> | number | null
-  stock?: Prisma.IntFilter<"ProductVariant"> | number
-  minStock?: Prisma.IntFilter<"ProductVariant"> | number
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
   requirePreparation?: Prisma.BoolFilter<"ProductVariant"> | boolean
   preparationArea?: Prisma.EnumPreparationAreaFilter<"ProductVariant"> | $Enums.PreparationArea
   productCost?: Prisma.FloatFilter<"ProductVariant"> | number
   productId?: Prisma.IntFilter<"ProductVariant"> | number
   unit?: Prisma.EnumUnitFilter<"ProductVariant"> | $Enums.Unit
-  isNew?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
 }
 
 export type ProductVariantCreateWithoutRecipeItemsInput = {
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
@@ -902,17 +740,12 @@ export type ProductVariantCreateWithoutRecipeItemsInput = {
 export type ProductVariantUncheckedCreateWithoutRecipeItemsInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   productId: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
@@ -928,16 +761,11 @@ export type ProductVariantCreateOrConnectWithoutRecipeItemsInput = {
 
 export type ProductVariantCreateWithoutIngredientInRecipesInput = {
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
@@ -950,17 +778,12 @@ export type ProductVariantCreateWithoutIngredientInRecipesInput = {
 export type ProductVariantUncheckedCreateWithoutIngredientInRecipesInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   productId: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
@@ -987,16 +810,11 @@ export type ProductVariantUpdateToOneWithWhereWithoutRecipeItemsInput = {
 
 export type ProductVariantUpdateWithoutRecipeItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
@@ -1009,17 +827,12 @@ export type ProductVariantUpdateWithoutRecipeItemsInput = {
 export type ProductVariantUncheckedUpdateWithoutRecipeItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
@@ -1041,16 +854,11 @@ export type ProductVariantUpdateToOneWithWhereWithoutIngredientInRecipesInput = 
 
 export type ProductVariantUpdateWithoutIngredientInRecipesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
@@ -1063,17 +871,12 @@ export type ProductVariantUpdateWithoutIngredientInRecipesInput = {
 export type ProductVariantUncheckedUpdateWithoutIngredientInRecipesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
@@ -1084,16 +887,11 @@ export type ProductVariantUncheckedUpdateWithoutIngredientInRecipesInput = {
 
 export type ProductVariantCreateWithoutAccountItemsInput = {
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   InventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutProductVariantInput
@@ -1106,17 +904,12 @@ export type ProductVariantCreateWithoutAccountItemsInput = {
 export type ProductVariantUncheckedCreateWithoutAccountItemsInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   productId: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
   catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
@@ -1143,16 +936,11 @@ export type ProductVariantUpdateToOneWithWhereWithoutAccountItemsInput = {
 
 export type ProductVariantUpdateWithoutAccountItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
@@ -1165,17 +953,12 @@ export type ProductVariantUpdateWithoutAccountItemsInput = {
 export type ProductVariantUncheckedUpdateWithoutAccountItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
   catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
@@ -1186,16 +969,11 @@ export type ProductVariantUncheckedUpdateWithoutAccountItemsInput = {
 
 export type ProductVariantCreateWithoutInventoryTransactionsInput = {
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
@@ -1208,17 +986,12 @@ export type ProductVariantCreateWithoutInventoryTransactionsInput = {
 export type ProductVariantUncheckedCreateWithoutInventoryTransactionsInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   productId: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutProductVariantInput
@@ -1245,16 +1018,11 @@ export type ProductVariantUpdateToOneWithWhereWithoutInventoryTransactionsInput 
 
 export type ProductVariantUpdateWithoutInventoryTransactionsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
@@ -1267,17 +1035,12 @@ export type ProductVariantUpdateWithoutInventoryTransactionsInput = {
 export type ProductVariantUncheckedUpdateWithoutInventoryTransactionsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutProductVariantNestedInput
@@ -1288,16 +1051,11 @@ export type ProductVariantUncheckedUpdateWithoutInventoryTransactionsInput = {
 
 export type ProductVariantCreateWithoutCatalogItemsInput = {
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
@@ -1310,17 +1068,12 @@ export type ProductVariantCreateWithoutCatalogItemsInput = {
 export type ProductVariantUncheckedCreateWithoutCatalogItemsInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   productId: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
@@ -1347,16 +1100,11 @@ export type ProductVariantUpdateToOneWithWhereWithoutCatalogItemsInput = {
 
 export type ProductVariantUpdateWithoutCatalogItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
@@ -1369,17 +1117,12 @@ export type ProductVariantUpdateWithoutCatalogItemsInput = {
 export type ProductVariantUncheckedUpdateWithoutCatalogItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
@@ -1390,16 +1133,11 @@ export type ProductVariantUncheckedUpdateWithoutCatalogItemsInput = {
 
 export type ProductVariantCreateWithoutStoreInventoriesInput = {
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
   accountItems?: Prisma.AccountItemCreateNestedManyWithoutProductVariantInput
@@ -1412,17 +1150,12 @@ export type ProductVariantCreateWithoutStoreInventoriesInput = {
 export type ProductVariantUncheckedCreateWithoutStoreInventoriesInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   productId: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutProductVariantInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutProductVariantInput
@@ -1449,16 +1182,11 @@ export type ProductVariantUpdateToOneWithWhereWithoutStoreInventoriesInput = {
 
 export type ProductVariantUpdateWithoutStoreInventoriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
@@ -1471,17 +1199,12 @@ export type ProductVariantUpdateWithoutStoreInventoriesInput = {
 export type ProductVariantUncheckedUpdateWithoutStoreInventoriesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   productId?: Prisma.IntFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
@@ -1493,31 +1216,21 @@ export type ProductVariantUncheckedUpdateWithoutStoreInventoriesInput = {
 export type ProductVariantCreateManyProductInput = {
   id?: number
   name: string
-  retailPrice?: number
-  wholesalePrice?: number | null
-  stock?: number
-  minStock?: number
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: $Enums.PreparationArea
   productCost?: number
   unit?: $Enums.Unit
-  isNew?: boolean
   createdAt?: Date | string
 }
 
 export type ProductVariantUpdateWithoutProductInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutProductVariantNestedInput
@@ -1530,16 +1243,11 @@ export type ProductVariantUpdateWithoutProductInput = {
 export type ProductVariantUncheckedUpdateWithoutProductInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutProductVariantNestedInput
   InventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutProductVariantNestedInput
@@ -1552,16 +1260,11 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
 export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  retailPrice?: Prisma.FloatFieldUpdateOperationsInput | number
-  wholesalePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  stock?: Prisma.IntFieldUpdateOperationsInput | number
-  minStock?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   requirePreparation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preparationArea?: Prisma.EnumPreparationAreaFieldUpdateOperationsInput | $Enums.PreparationArea
   productCost?: Prisma.FloatFieldUpdateOperationsInput | number
   unit?: Prisma.EnumUnitFieldUpdateOperationsInput | $Enums.Unit
-  isNew?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1644,17 +1347,12 @@ export type ProductVariantCountOutputTypeCountIngredientInRecipesArgs<ExtArgs ex
 export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  retailPrice?: boolean
-  wholesalePrice?: boolean
-  stock?: boolean
-  minStock?: boolean
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: boolean
   productCost?: boolean
   productId?: boolean
   unit?: boolean
-  isNew?: boolean
   createdAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   accountItems?: boolean | Prisma.ProductVariant$accountItemsArgs<ExtArgs>
@@ -1669,17 +1367,12 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
 export type ProductVariantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  retailPrice?: boolean
-  wholesalePrice?: boolean
-  stock?: boolean
-  minStock?: boolean
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: boolean
   productCost?: boolean
   productId?: boolean
   unit?: boolean
-  isNew?: boolean
   createdAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
@@ -1687,17 +1380,12 @@ export type ProductVariantSelectCreateManyAndReturn<ExtArgs extends runtime.Type
 export type ProductVariantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  retailPrice?: boolean
-  wholesalePrice?: boolean
-  stock?: boolean
-  minStock?: boolean
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: boolean
   productCost?: boolean
   productId?: boolean
   unit?: boolean
-  isNew?: boolean
   createdAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
@@ -1705,21 +1393,16 @@ export type ProductVariantSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
 export type ProductVariantSelectScalar = {
   id?: boolean
   name?: boolean
-  retailPrice?: boolean
-  wholesalePrice?: boolean
-  stock?: boolean
-  minStock?: boolean
   isActive?: boolean
   requirePreparation?: boolean
   preparationArea?: boolean
   productCost?: boolean
   productId?: boolean
   unit?: boolean
-  isNew?: boolean
   createdAt?: boolean
 }
 
-export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "retailPrice" | "wholesalePrice" | "stock" | "minStock" | "isActive" | "requirePreparation" | "preparationArea" | "productCost" | "productId" | "unit" | "isNew" | "createdAt", ExtArgs["result"]["productVariant"]>
+export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "requirePreparation" | "preparationArea" | "productCost" | "productId" | "unit" | "createdAt", ExtArgs["result"]["productVariant"]>
 export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   accountItems?: boolean | Prisma.ProductVariant$accountItemsArgs<ExtArgs>
@@ -1751,17 +1434,12 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
-    retailPrice: number
-    wholesalePrice: number | null
-    stock: number
-    minStock: number
     isActive: boolean
     requirePreparation: boolean
     preparationArea: $Enums.PreparationArea
     productCost: number
     productId: number
     unit: $Enums.Unit
-    isNew: boolean
     createdAt: Date
   }, ExtArgs["result"]["productVariant"]>
   composites: {}
@@ -2195,17 +1873,12 @@ export interface Prisma__ProductVariantClient<T, Null = never, ExtArgs extends r
 export interface ProductVariantFieldRefs {
   readonly id: Prisma.FieldRef<"ProductVariant", 'Int'>
   readonly name: Prisma.FieldRef<"ProductVariant", 'String'>
-  readonly retailPrice: Prisma.FieldRef<"ProductVariant", 'Float'>
-  readonly wholesalePrice: Prisma.FieldRef<"ProductVariant", 'Float'>
-  readonly stock: Prisma.FieldRef<"ProductVariant", 'Int'>
-  readonly minStock: Prisma.FieldRef<"ProductVariant", 'Int'>
   readonly isActive: Prisma.FieldRef<"ProductVariant", 'Boolean'>
   readonly requirePreparation: Prisma.FieldRef<"ProductVariant", 'Boolean'>
   readonly preparationArea: Prisma.FieldRef<"ProductVariant", 'PreparationArea'>
   readonly productCost: Prisma.FieldRef<"ProductVariant", 'Float'>
   readonly productId: Prisma.FieldRef<"ProductVariant", 'Int'>
   readonly unit: Prisma.FieldRef<"ProductVariant", 'Unit'>
-  readonly isNew: Prisma.FieldRef<"ProductVariant", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ProductVariant", 'DateTime'>
 }
     

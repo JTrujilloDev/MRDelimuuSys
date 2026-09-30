@@ -65,8 +65,9 @@ export const updateGroupCatalogItemService = async (
   const current = await prisma.groupCatalogItem.findUnique({
     where: { groupId_productVariantId: { groupId, productVariantId } },
   });
+  if (data.salePrice === undefined && !current) throw new Error("Sale price is required");
   const salePrice = data.salePrice === undefined
-    ? current?.salePrice ?? variant.retailPrice
+    ? current!.salePrice
     : requireSalePrice(data.salePrice);
 
   return prisma.$transaction(async (tx) => {

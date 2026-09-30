@@ -46,10 +46,6 @@ enum ProductType {
 model ProductVariant {
   id                 Int             @id @default(autoincrement())
   name               String
-  retailPrice        Float           @default(0)
-  wholesalePrice     Float?          @default(0)
-  stock              Int             @default(0)
-  minStock           Int             @default(0)
   isActive           Boolean         @default(true)
   requirePreparation Boolean         @default(false)
   preparationArea    PreparationArea @default(KITCHEN)
@@ -57,7 +53,6 @@ model ProductVariant {
   productId          Int
   unit               Unit            @default(UNIT)
   product            Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  isNew              Boolean         @default(true)
   createdAt          DateTime        @default(now())
 
   accountItems          AccountItem[]

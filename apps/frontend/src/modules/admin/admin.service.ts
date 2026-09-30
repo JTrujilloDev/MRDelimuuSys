@@ -53,7 +53,6 @@ export type GroupCatalogVariant = {
   id: number;
   name: string;
   isActive: boolean;
-  retailPrice: number;
   catalog: {
     id: number;
     salePrice: number;

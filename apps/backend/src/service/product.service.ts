@@ -1,6 +1,5 @@
 import {
   ProductType,
-  ProductVariant,
   Unit,
 } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
@@ -11,9 +10,6 @@ interface RecipeItem {
 }
 interface ProductVariantDTO {
   name: string;
-  retailPrice?: number;
-  stock: number;
-  minStock?: number;
   isActive: boolean;
   requirePreparation: boolean;
   productCost: number;
@@ -72,8 +68,6 @@ export const createProductService = async (productData: CreateProductData) => {
       variants: {
         create: productData.variants.map((variant) => ({
           name: variant.name,
-          retailPrice: variant.retailPrice ?? 0,
-          minStock: 0,
           productCost: variant.productCost,
           isActive: variant.isActive ?? true,
           requirePreparation: variant.requirePreparation ?? false,
@@ -140,7 +134,7 @@ export const getAllActiveProductsService = async (storeId: number) => {
     ...product,
     variants: product.variants.map(({ catalogItems, storeInventories, ...variant }) => ({
       ...variant,
-      retailPrice: catalogItems[0]?.salePrice ?? variant.retailPrice,
+      retailPrice: catalogItems[0]?.salePrice ?? 0,
       stock: storeInventories[0]?.stock ?? 0,
       minStock: storeInventories[0]?.minStock ?? 0,
       isNew: !(storeInventories[0]?.isInitialized ?? false),
@@ -197,8 +191,6 @@ export const updateProductService = async (id: number, productData: any) => {
         variants: {
           create: variantsToCreate.map((v: any) => ({
             name: v.name,
-            retailPrice: v.retailPrice ?? 0,
-            minStock: 0,
             productCost: v.productCost,
             isActive: v.isActive ?? true,
             requirePreparation: v.requirePreparation ?? false,

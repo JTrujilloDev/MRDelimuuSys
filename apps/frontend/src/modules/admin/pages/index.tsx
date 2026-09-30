@@ -844,7 +844,7 @@ function CatalogSection({ groups }: { groups: Awaited<ReturnType<typeof getStore
               <div className="space-y-2">
                 {product.variants.map((variant) => (
                   <CatalogVariantRow
-                    key={`${variant.id}-${variant.catalog?.salePrice}-${variant.catalog?.isActive}`}
+                    key={`${selectedGroup.id}-${variant.id}-${variant.catalog?.salePrice}-${variant.catalog?.isActive}`}
                     variant={variant}
                     isPending={updateMutation.isPending}
                     onSave={(salePrice, isActive) => void saveVariant(variant, salePrice, isActive)}
@@ -867,7 +867,7 @@ function CatalogVariantRow({ variant, isPending, onSave }: {
   isPending: boolean;
   onSave: (salePrice: number, isActive: boolean) => void;
 }) {
-  const [salePrice, setSalePrice] = useState(String(variant.catalog?.salePrice ?? variant.retailPrice ?? 0));
+  const [salePrice, setSalePrice] = useState(String(variant.catalog?.salePrice ?? 0));
   const [isActive, setIsActive] = useState(variant.catalog?.isActive ?? false);
   const numericPrice = Number(salePrice);
 
