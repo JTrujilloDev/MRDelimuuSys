@@ -10,6 +10,7 @@ import {
   Search,
   SearchX,
   Store,
+  Tag,
   UserRound,
 } from "lucide-react";
 import numeral from "numeral";
@@ -48,6 +49,7 @@ type Sale = {
   name: string;
   total: number;
   discount: number;
+  discountObservation: string | null;
   paymentMethod: "CASH" | "CARD" | "QR" | "CREDIT" | null;
   closedAt: string | null;
   accountItems: AccountItem[];
@@ -62,6 +64,7 @@ type CashRegister = {
   closingAmount: number | null;
   difference: number | null;
   totalSales: number;
+  totalDiscounts: number;
   totalExpenses: number;
   cashAmount: number;
   cardAmount: number;
@@ -99,10 +102,14 @@ const CashRegisterHistory = () => {
   const toIso = dayjs(to).endOf("day").toISOString();
   const invalidRange = dayjs(from).isAfter(dayjs(to), "day");
   const { data, isLoading, isError } = useCashRegisterHistory(fromIso, toIso, !invalidRange);
-  const registers: CashRegister[] = invalidRange ? [] : (data?.data ?? []);
-  const soldProducts: SoldProduct[] = invalidRange
-    ? []
-    : (data?.soldProducts ?? []);
+  const registers = useMemo<CashRegister[]>(
+    () => (invalidRange ? [] : (data?.data ?? [])),
+    [data?.data, invalidRange],
+  );
+  const soldProducts = useMemo<SoldProduct[]>(
+    () => (invalidRange ? [] : (data?.soldProducts ?? [])),
+    [data?.soldProducts, invalidRange],
+  );
 
   const filteredSoldProducts = useMemo(() => {
     const search = productSearch.trim().toLowerCase();
@@ -119,7 +126,8 @@ const CashRegisterHistory = () => {
 
   const summary = useMemo(
     () => ({
-      sales: registers.reduce((total, register) => total + register.totalSales, 0),
+      netSales: registers.reduce((total, register) => total + register.totalSales, 0),
+      discounts: registers.reduce((total, register) => total + register.totalDiscounts, 0),
       tickets: registers.reduce((total, register) => total + register.accounts.length, 0),
       units:
         soldProducts.length > 0
@@ -221,10 +229,11 @@ const CashRegisterHistory = () => {
           </p>
         )}
 
-        <section className="grid gap-4 sm:grid-cols-3">
-          <SummaryCard icon={Banknote} label="Ventas del período" value={money(summary.sales)} />
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <SummaryCard icon={Banknote} label="Ventas brutas" value={money(summary.netSales + summary.discounts)} />
+          <SummaryCard icon={Banknote} label="Ventas netas" value={money(summary.netSales)} />
+          <SummaryCard icon={Tag} label="Descuentos" value={money(summary.discounts)} />
           <SummaryCard icon={ReceiptText} label="Ventas realizadas" value={String(summary.tickets)} />
-          <SummaryCard icon={PackageCheck} label="Unidades vendidas" value={String(summary.units)} />
         </section>
 
         <section className="overflow-hidden rounded-2xl border border-border bg-pos-surface shadow-sm">
@@ -372,7 +381,7 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
           <span className="flex items-center gap-1"><Store className="h-3.5 w-3.5" />{register.terminal.name}</span>
         </div>
       </div>
-      <Metric label="Ventas" value={money(register.totalSales)} />
+      <Metric label="Ventas netas" value={money(register.totalSales)} />
       <Metric label="Facturas" value={String(register.accounts.length)} />
       <Metric label="Unidades" value={String(register.soldVariantUnits)} />
       <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform group-open:rotate-180" />
@@ -386,6 +395,8 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
           <Detail label="Tarjeta" value={money(register.cardAmount)} />
           <Detail label="QR" value={money(register.qrAmount)} />
           <Detail label="Crédito" value={money(register.creditAmount)} />
+          <Detail label="Venta bruta" value={money(register.totalSales + register.totalDiscounts)} />
+          <Detail label="Descuentos" value={money(register.totalDiscounts)} />
           <Detail label="Gastos" value={money(register.totalExpenses)} />
           <Detail label="Diferencia de caja" value={money(register.difference)} />
         </div>
@@ -409,12 +420,12 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
         <h4 className="mb-3 text-sm font-semibold text-foreground">Ventas del turno</h4>
         <div className="overflow-x-auto rounded-xl border border-border bg-pos-surface">
           <table className="w-full text-left text-sm">
-            <thead className="bg-pos-order-bg text-pos-order-fg"><tr><th className="px-4 py-3">Venta</th><th className="px-4 py-3">Hora</th><th className="px-4 py-3">Método</th><th className="px-4 py-3 text-center">Productos</th><th className="px-4 py-3 text-right">Total</th></tr></thead>
+            <thead className="bg-pos-order-bg text-pos-order-fg"><tr><th className="px-4 py-3">Venta</th><th className="px-4 py-3">Hora</th><th className="px-4 py-3">Método</th><th className="px-4 py-3 text-center">Productos</th><th className="px-4 py-3 text-right">Descuento</th><th className="px-4 py-3 text-right">Total neto</th></tr></thead>
             <tbody className="divide-y divide-border">
               {register.accounts.map((sale) => (
-                <tr key={sale.id}><td className="px-4 py-3 font-medium text-foreground">{sale.name}</td><td className="px-4 py-3 text-muted-foreground">{sale.closedAt ? dayjs(sale.closedAt).format("HH:mm") : "—"}</td><td className="px-4 py-3 text-muted-foreground">{paymentLabels[sale.paymentMethod ?? ""] ?? "—"}</td><td className="px-4 py-3 text-center text-foreground">{sale.accountItems.reduce((sum, item) => sum + item.quantity, 0)}</td><td className="px-4 py-3 text-right font-semibold text-foreground">{money(sale.total)}</td></tr>
+                <tr key={sale.id}><td className="px-4 py-3 font-medium text-foreground"><p>{sale.name}</p>{sale.discount > 0 && <p className="mt-1 max-w-xs text-xs font-normal text-muted-foreground">{sale.discountObservation}</p>}</td><td className="px-4 py-3 text-muted-foreground">{sale.closedAt ? dayjs(sale.closedAt).format("HH:mm") : "—"}</td><td className="px-4 py-3 text-muted-foreground">{paymentLabels[sale.paymentMethod ?? ""] ?? "—"}</td><td className="px-4 py-3 text-center text-foreground">{sale.accountItems.reduce((sum, item) => sum + item.quantity, 0)}</td><td className="px-4 py-3 text-right text-orange-500">{sale.discount > 0 ? `-${money(sale.discount)}` : "—"}</td><td className="px-4 py-3 text-right font-semibold text-foreground">{money(sale.total)}</td></tr>
               ))}
-              {register.accounts.length === 0 && <tr><td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">No hay ventas cerradas.</td></tr>}
+              {register.accounts.length === 0 && <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">No hay ventas cerradas.</td></tr>}
             </tbody>
           </table>
         </div>

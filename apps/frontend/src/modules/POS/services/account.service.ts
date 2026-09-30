@@ -74,15 +74,21 @@ export const closeAccount = async ({
   accountId,
   paymentMethod,
   cashRegisterId,
+  discount,
+  discountObservation,
 }: {
   accountId: number;
   paymentMethod: string;
   cashRegisterId: number;
+  discount: number;
+  discountObservation: string;
 }) => {
   const { data } = await api.put("accounts/close", {
     accountId,
     paymentMethod,
     cashRegisterId,
+    discount,
+    discountObservation,
   });
   return data;
 };

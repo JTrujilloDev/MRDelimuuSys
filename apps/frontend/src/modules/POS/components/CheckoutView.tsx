@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Button, Input, Label } from "@heroui/react";
 import { BsArrowLeft, BsBank, BsQrCode } from "react-icons/bs";
 import { BiCreditCard } from "react-icons/bi";
+import { FiFileText, FiTag } from "react-icons/fi";
 import type { OrderItem } from "./OrderPanel";
 import numeral from "numeral";
 import { Printer } from "lucide-react";
@@ -16,6 +17,9 @@ export interface OrderInfo {
   phone: string;
   date: string;
   items: OrderItem[];
+  subtotal: number;
+  discount: number;
+  discountObservation: string;
   total: number;
 }
 
@@ -29,6 +33,8 @@ export interface CloseAccountParams {
   accountId: number;
   paymentMethod: string;
   cashRegisterId: number;
+  discount: number;
+  discountObservation: string;
   order: OrderInfo | PrinterCommand;
   printTicket: boolean;
 }
@@ -53,7 +59,8 @@ const CheckoutView = ({
   isProcessing,
   accountInfo,
 }: CheckoutViewProps) => {
-  const [discount] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [discountReason, setDiscountReason] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [cashReceived, setCashReceived] = useState("");
   const [qrGenerated, setQrGenerated] = useState(false);
@@ -63,8 +70,12 @@ const CheckoutView = ({
     () => items.reduce((s, i) => s + i.price * i.quantity, 0),
     [items],
   );
-  const discountAmount = parseFloat(discount) || 0;
-  const total = Math.max(0, subtotal - discountAmount);
+  const parsedDiscount = discount.trim() ? Number(discount) : 0;
+  const discountAmount = Number.isFinite(parsedDiscount) ? parsedDiscount : 0;
+  const discountIsValid =
+    Number.isFinite(parsedDiscount) && parsedDiscount >= 0 && parsedDiscount <= subtotal;
+  const discountHasReason = discountAmount === 0 || Boolean(discountReason.trim());
+  const total = discountIsValid ? subtotal - discountAmount : subtotal;
 
   const cashValue = parseFloat(cashReceived) || 0;
   const change = Math.max(0, cashValue - total);
@@ -88,6 +99,8 @@ const CheckoutView = ({
 
   const canConfirm =
     items.length > 0 &&
+    discountIsValid &&
+    discountHasReason &&
     (paymentMethod === "CARD" ||
       (paymentMethod === "CASH" && cashValue >= total) ||
       (paymentMethod === "QR" && qrGenerated));
@@ -137,6 +150,10 @@ const CheckoutView = ({
 
           {/* Totals */}
           <div className="space-y-3 bg-background/70 p-4 mb-6 border border-border/70">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>Subtotal</span>
+              <span>{numeral(subtotal).format("$ 0,0")}</span>
+            </div>
             {discountAmount > 0 && (
               <div className="flex justify-between text-sm text-emerald-500">
                 <span>Descuento</span>
@@ -150,7 +167,7 @@ const CheckoutView = ({
           </div>
 
           {/* Discount fields */}
-          {/* <div className="space-y-4 bg-secondary/60 p-5">
+          <div className="space-y-4 bg-secondary/60 p-5">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
               <FiTag className="h-4 w-4 text-primary" />
               Descuento
@@ -162,12 +179,18 @@ const CheckoutView = ({
                 </Label>
                 <Input
                   id="discount"
+                  type="number"
                   min="0"
                   step="0.01"
                   placeholder="0.00"
                   value={discount}
                   onChange={(e) => setDiscount(e.target.value)}
                 />
+                {!discountIsValid && (
+                  <p className="text-xs text-destructive">
+                    El descuento debe estar entre $0 y el subtotal de la cuenta.
+                  </p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label
@@ -184,9 +207,14 @@ const CheckoutView = ({
                   value={discountReason}
                   onChange={(e) => setDiscountReason(e.target.value)}
                 />
+                {!discountHasReason && (
+                  <p className="text-xs text-destructive">
+                    Debes justificar el descuento antes de cobrar.
+                  </p>
+                )}
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
 
         {/* Right — Payment method */}
@@ -396,6 +424,8 @@ const CheckoutView = ({
                     accountId: accountInfo.accountId,
                     paymentMethod,
                     cashRegisterId: accountInfo.cashRegisterId,
+                    discount: discountAmount,
+                    discountObservation: discountReason.trim(),
                     order: {
                       clientName: "",
                       idType: "",
@@ -404,6 +434,9 @@ const CheckoutView = ({
                       phone: "",
                       date: dayjs().format("DD/MM/YYYY HH:mm"),
                       items,
+                      subtotal,
+                      discount: discountAmount,
+                      discountObservation: discountReason.trim(),
                       total,
                     },
                     printTicket,

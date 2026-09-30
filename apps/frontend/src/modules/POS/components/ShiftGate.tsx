@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Clock, LogOut, History, DollarSign } from "lucide-react";
-import { Button, Input, Label } from "@heroui/react";
+import { Button, Label } from "@heroui/react";
 import DenominationCounter, { BILL_DENOMINATIONS, COIN_DENOMINATIONS } from "./DenominationCounter";
 import dayjs from "dayjs";
 
@@ -21,6 +21,14 @@ export interface Shift {
   cardAmount: number;
   qrAmount: number;
   creditAmount: number;
+  accounts: Array<{
+    id: number;
+    name: string;
+    total: number;
+    discount: number;
+    discountObservation: string | null;
+    closedAt: string | null;
+  }>;
 }
 
 interface ShiftGateProps {

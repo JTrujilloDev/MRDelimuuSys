@@ -31,6 +31,7 @@ export interface Sale {
   name: string;
   total: number;
   discount: number;
+  discountObservation: string | null;
   paymentMethod: "CASH" | "CARD" | "QR";
   closedAt: Dayjs | null;
   tableLabel: string;
@@ -265,12 +266,15 @@ const SaleDetailDialog = ({
                 {/* Totals */}
                 <div className="space-y-1.5 ">
                   {sale.discount > 0 && (
-                    <div className="flex justify-between text-sm text-orange-500">
-                      <span className="flex items-center gap-1.5">
-                        <Tag className="h-3.5 w-3.5" />
-                        Descuento
-                      </span>
-                      <span>{numeral(sale.discount).format("$0,0")}</span>
+                    <div className="rounded-xl bg-orange-500/10 p-3 text-sm text-orange-600 dark:text-orange-300">
+                      <div className="flex justify-between">
+                        <span className="flex items-center gap-1.5 font-semibold">
+                          <Tag className="h-3.5 w-3.5" />
+                          Descuento
+                        </span>
+                        <span>{numeral(sale.discount).format("$0,0")}</span>
+                      </div>
+                      <p className="mt-1 text-xs">{sale.discountObservation}</p>
                     </div>
                   )}
                   <div className="flex justify-between text-lg font-bold text-foreground pt-2 border-t border-border">
@@ -289,6 +293,12 @@ const SaleDetailDialog = ({
                   onClick={() =>
                     printTicketService("XP-58", {
                       clientName: "",
+                      subtotal: sale.accountItems.reduce(
+                        (sum, item) => sum + item.price * item.quantity,
+                        0,
+                      ),
+                      discount: sale.discount,
+                      discountObservation: sale.discountObservation ?? "",
                       total: sale.total,
                       idType: "",
                       idNumber: "",

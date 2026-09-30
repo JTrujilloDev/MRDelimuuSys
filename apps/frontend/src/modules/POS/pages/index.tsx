@@ -603,6 +603,8 @@ const Index = () => {
     accountId,
     paymentMethod,
     cashRegisterId,
+    discount,
+    discountObservation,
     order,
     printTicket,
   }: CloseAccountParams) => {
@@ -614,6 +616,8 @@ const Index = () => {
         accountId: accountId,
         paymentMethod,
         cashRegisterId: cashRegisterId,
+        discount,
+        discountObservation,
       },
       {
         onSuccess: async () => {

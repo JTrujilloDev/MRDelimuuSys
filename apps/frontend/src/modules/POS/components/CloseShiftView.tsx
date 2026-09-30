@@ -60,11 +60,15 @@ const CloseShiftView = ({
 
   // Sales breakdown
   const totalSales = shift.totalSales;
+  const grossSales = totalSales + shift.totalDiscounts;
   const cashSales = shift.cashAmount;
   const cardSales = shift.cardAmount;
   const qrSales = shift.qrAmount;
   const totalDiscounts = shift.totalDiscounts;
   const totalExpenses = shift.totalExpenses;
+  const discountedSales = (shift.accounts ?? []).filter(
+    (account) => account.discount > 0,
+  );
 
   // Expected cash = initial + cash sales - expenses
   const expectedCash = shift.openingAmount + cashSales - totalExpenses;
@@ -116,9 +120,15 @@ const CloseShiftView = ({
             <div className="grid grid-cols-2 gap-3">
               <SummaryCard
                 icon={Receipt}
-                label="Ventas totales"
-                value={totalSales}
+                label="Ventas brutas"
+                value={grossSales}
                 color="text-primary"
+              />
+              <SummaryCard
+                icon={TrendingUp}
+                label="Ventas netas"
+                value={totalSales}
+                color="text-success"
               />
               <SummaryCard
                 icon={Banknote}
@@ -152,6 +162,35 @@ const CloseShiftView = ({
                 color="text-destructive"
                 negative
               />
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              Descuentos justificados
+            </h2>
+            <div className="space-y-2">
+              {discountedSales.length === 0 && (
+                <p className="text-sm italic text-muted-foreground">
+                  Sin descuentos registrados
+                </p>
+              )}
+              {discountedSales.map((account) => (
+                <div
+                  key={account.id}
+                  className="flex items-start justify-between gap-4 rounded-lg bg-secondary/50 px-3 py-2"
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{account.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {account.discountObservation}
+                    </p>
+                  </div>
+                  <span className="text-sm font-medium text-orange-500">
+                    -{numeral(account.discount).format("$ 0,0")}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -264,7 +303,6 @@ const CloseShiftView = ({
                   },
                   {
                     onSuccess: () => {
-                      onConfirmClose();
                       onConfirmClose();
                     },
                   },

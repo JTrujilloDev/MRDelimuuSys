@@ -1,8 +1,6 @@
 import type { OrderInfo } from "../../modules/POS/components/CheckoutView";
 import type { OrderItem } from "../../modules/POS/components/OrderPanel";
 
-const LINE_WIDTH = 32;
-
 const COLS = {
   name: 20,
   qty: 4,
@@ -73,8 +71,16 @@ export const getBase64Logo = async () => {
   });
 };
 
+type TicketImageCommand = {
+  type: "raw";
+  format: "image";
+  flavor: "file";
+  data: string;
+  options: { language: "ESCPOS"; dotDensity: "double" };
+};
+
 export const buildTicket = (order: OrderInfo) => {
-  const lines: any[] = [];
+  const lines: Array<string | TicketImageCommand> = [];
 
   // INIT
   lines.push("\x1B\x40");
@@ -131,7 +137,20 @@ export const buildTicket = (order: OrderInfo) => {
     lines.push(...formatItem(item.productName, item.quantity, item.price * item.quantity));
   });
 
-  lines.push("\n"); // más aire después del logo
+  lines.push("\n");
+  lines.push(
+    padRight("SUBTOTAL", COLS.name + COLS.qty) +
+      padLeft(order.subtotal.toLocaleString(), COLS.price) +
+      "\n",
+  );
+  if (order.discount > 0) {
+    lines.push(
+      padRight("DESCUENTO", COLS.name + COLS.qty) +
+        padLeft(`-${order.discount.toLocaleString()}`, COLS.price) +
+        "\n",
+    );
+    lines.push(`Motivo: ${order.discountObservation}\n`);
+  }
   lines.push("\n");
 
   // 💰 TOTAL DESTACADO
