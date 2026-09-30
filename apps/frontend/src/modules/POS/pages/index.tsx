@@ -56,6 +56,8 @@ const Index = () => {
   const { state } = useAuth();
   const userId = state!.user.id;
   const terminalId = state!.activeContext!.terminal.id;
+  const canManageAnyShift =
+    state!.user.isGlobalAdmin || state!.activeContext!.role === "ADMIN";
   const kitchenEnabled = state!.activeContext!.store.kitchenMode === "TICKETS";
   const queryClient = useQueryClient();
   const { mutate: openCashRegister } = useOpenCashRegister();
@@ -675,6 +677,24 @@ const Index = () => {
   };
 
   // ── Shift gate ──
+  if (
+    openCashRegisterData?.data &&
+    openCashRegisterData.data.userId !== userId &&
+    !canManageAnyShift
+  ) {
+    return (
+      <div className="flex h-full items-center justify-center bg-background p-6">
+        <div className="max-w-md rounded-3xl border border-border bg-pos-surface p-8 text-center shadow-sm">
+          <h1 className="text-xl font-black text-foreground">Terminal en uso</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            {openCashRegisterData.data.user?.name ?? "Otro usuario"} tiene un turno abierto en esta terminal.
+            Debe cerrar y entregar su turno antes de que puedas operar el POS.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!openCashRegisterData?.data) {
     return (
       <ShiftGate

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Plus, Trash2, Receipt } from "lucide-react";
+import { ArrowLeft, Plus, Receipt } from "lucide-react";
 import type { Expense } from "./CloseShiftView";
 import { Button, Input, Label, toast } from "@heroui/react";
 import { useCreateExpense } from "../hooks/financialTransaction/useCreateExpense";
@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import numeral from "numeral";
 
 export interface ExpenseFull extends Expense {
-  observations: string;
+  adjustmentJustification: string;
   timestamp: Date;
 }
 
@@ -19,20 +19,22 @@ interface ExpensesViewProps {
 
 const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
   const { mutate: createExpense } = useCreateExpense();
-  const { data: { data: { data: expenses = [], meta } = {} } = {} } =
+  const { data: { data: { data: expenses = [] } = {} } = {} } =
     useGetExpenses(cashRegisterId);
 
   const [description, setDescription] = useState("");
+  const [observation, setObservation] = useState("");
   const [amount, setAmount] = useState("");
   
-  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalExpenses = expenses.reduce((sum, e) => sum + Math.abs(e.amount), 0);
 
   const handleSubmit = () => {
     const parsedAmount = parseFloat(amount);
-    if (!description.trim() || isNaN(parsedAmount) || parsedAmount <= 0) return;
+    if (!description.trim() || !observation.trim() || isNaN(parsedAmount) || parsedAmount <= 0) return;
     createExpense(
       {
         description,
+        observation,
         amount: parsedAmount,
         cashRegisterId,
       },
@@ -40,6 +42,7 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
         onSuccess: () => {
           toast("Gasto registrado exitosamente", { variant: "success" });
           setDescription("");
+          setObservation("");
           setAmount("");
         },
         onError: () => {
@@ -86,6 +89,16 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
 
           <div className="space-y-4">
             <div className="space-y-2 flex flex-col">
+              <Label htmlFor="expense-observation">Observación</Label>
+              <Input
+                id="expense-observation"
+                placeholder="Explica por qué fue necesario"
+                value={observation}
+                onChange={(e) => setObservation(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2 flex flex-col">
               <Label htmlFor="expense-desc">Motivo</Label>
               <Input
                 id="expense-desc"
@@ -109,7 +122,12 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
             </div>
           </div>
 
-          <Button onClick={handleSubmit} className="w-full mt-auto" size="lg">
+          <Button
+            onClick={handleSubmit}
+            className="w-full mt-auto"
+            size="lg"
+            isDisabled={!description.trim() || !observation.trim() || !(Number(amount) > 0)}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Registrar Gasto
           </Button>
@@ -137,9 +155,9 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
                     <p className="text-sm font-medium text-foreground">
                       {exp.description}
                     </p>
-                    {exp.observations && (
+                    {exp.adjustmentJustification && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        {exp.observations}
+                        {exp.adjustmentJustification}
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground mt-1">
@@ -149,14 +167,8 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-base font-bold text-destructive whitespace-nowrap">
-                      {numeral(exp.amount).format("$ 0,0")}
+                      {numeral(Math.abs(exp.amount)).format("$ 0,0")}
                     </span>
-                    <button
-                      onClick={() => {}}
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
                   </div>
                 </div>
               ))}

@@ -20,13 +20,16 @@ export const getCashRegisterHistory = async (from: string, to: string) => {
 export const closeCashRegister = async ({
   cashRegisterId,
   closingAmount,
+  differenceJustification,
 }: {
   cashRegisterId: number;
   closingAmount: number;
+  differenceJustification?: string;
 }) => {
   const { data } = await api.post("cash-register/close", {
     cashRegisterId,
     closingAmount,
+    differenceJustification,
   });
   return data;
 };

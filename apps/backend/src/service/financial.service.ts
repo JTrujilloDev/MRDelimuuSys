@@ -21,6 +21,12 @@ export const createFinancialTransactionService = async (
         break;
 
       case "EXPENSE":
+        if (!data.description?.trim()) {
+          throw new Error("Expense description is required");
+        }
+        if (!data.adjustmentJustification?.trim()) {
+          throw new Error("Expense observation is required");
+        }
         amount = -Math.abs(amount);
         break;
 
@@ -62,11 +68,11 @@ export const createFinancialTransactionService = async (
       data: {
         type: data.type,
         amount,
-        description: data.description,
+        description: data.description?.trim(),
         relatedAccountId: data.relatedAccountId,
         relatedCashRegisterId: data.relatedCashRegisterId,
         paymentMethod: data.paymentMethod,
-        adjustmentJustification: data.adjustmentJustification,
+        adjustmentJustification: data.adjustmentJustification?.trim(),
       },
     });
 

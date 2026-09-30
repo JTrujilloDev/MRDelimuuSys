@@ -11,7 +11,7 @@ import {
   Minus,
 } from "lucide-react";
 
-import { Button } from "@heroui/react";
+import { Button, Input, Label } from "@heroui/react";
 import DenominationCounter, {
   BILL_DENOMINATIONS,
   COIN_DENOMINATIONS,
@@ -34,7 +34,7 @@ export interface Expense {
   id: string;
   description: string;
   amount: number;
-  observations?: string;
+  adjustmentJustification?: string;
   timestamp?: Date;
 }
 
@@ -57,6 +57,7 @@ const CloseShiftView = ({
   const { data: { data: { data: expenses = [] } = {} } = {} } =
     useGetExpenses(cashRegisterId);
   const [billCounts, setBillCounts] = useState<Record<number, string>>({});
+  const [differenceJustification, setDifferenceJustification] = useState("");
 
   // Sales breakdown
   const totalSales = shift.totalSales;
@@ -214,9 +215,9 @@ const CloseShiftView = ({
                     <span className="text-sm text-foreground">
                       {exp.description}
                     </span>
-                    {exp.observations && (
+                    {exp.adjustmentJustification && (
                       <p className="text-xs text-muted-foreground">
-                        {exp.observations}
+                        {exp.adjustmentJustification}
                       </p>
                     )}
                   </div>
@@ -293,6 +294,25 @@ const CloseShiftView = ({
             setBillCounts={setBillCounts}
           />
 
+          {Math.abs(difference) >= 0.01 && (
+            <div className="mt-5 flex flex-col gap-2">
+              <Label htmlFor="cash-difference-justification">
+                Justificación del descuadre
+              </Label>
+              <Input
+                id="cash-difference-justification"
+                value={differenceJustification}
+                onChange={(event) => setDifferenceJustification(event.target.value)}
+                placeholder="Explica el faltante o sobrante"
+              />
+              {!differenceJustification.trim() && (
+                <p className="text-xs text-destructive">
+                  La justificación es obligatoria para cerrar el turno.
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="mt-auto">
             <Button
               onClick={() => {
@@ -300,6 +320,7 @@ const CloseShiftView = ({
                   {
                     cashRegisterId: shift.id,
                     closingAmount: countedCash,
+                    differenceJustification: differenceJustification.trim(),
                   },
                   {
                     onSuccess: () => {
@@ -310,6 +331,9 @@ const CloseShiftView = ({
               }}
               className="w-full py-6 text-base font-bold"
               size="lg"
+              isDisabled={
+                Math.abs(difference) >= 0.01 && !differenceJustification.trim()
+              }
             >
               Confirmar Cierre de Turno
             </Button>
