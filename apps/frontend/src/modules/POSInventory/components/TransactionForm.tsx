@@ -102,10 +102,12 @@ const TransactionForm = ({
         .filter((variant) => {
           if (product.productType === "RECIPE_PRODUCT") return false;
           if (transactionType === "INITIAL") return variant.isNew;
-          if (variant.isNew) return false;
-          return allowedTransactions.some(
+          const isAllowed = allowedTransactions.some(
             (transaction) => transaction.value === transactionType,
           );
+          if (!isAllowed) return false;
+          if (variant.isNew) return ["RECEIPT", "PURCHASE"].includes(transactionType);
+          return true;
         })
         .map((variant) => ({
           ...variant,

@@ -103,9 +103,11 @@ export const createPOSInventoryTransactionService = async (
         throw new Error("Product is not available for initial inventory");
       }
     } else {
-      if (!inventory.isInitialized) throw new Error("Product requires initial inventory first");
       const availableTypes = manualTransactionsByProductType[product.product.productType] ?? [];
       if (!availableTypes.includes(data.type)) throw new Error("Invalid transaction type for product");
+      if (!inventory.isInitialized && !["RECEIPT", "PURCHASE"].includes(data.type)) {
+        throw new Error("Product requires initial inventory first");
+      }
     }
     const quantity = normalizeQuantity(data.type, Number(data.quantity));
 
@@ -146,7 +148,7 @@ export const createPOSInventoryTransactionService = async (
       where: { id: inventory.id },
       data: {
         stock: inventory.stock + quantity,
-        ...(data.type === "INITIAL" && { isInitialized: true }),
+        ...(["INITIAL", "RECEIPT", "PURCHASE"].includes(data.type) && { isInitialized: true }),
       },
     });
     return transaction;
@@ -213,7 +215,7 @@ export const createBulkPOSInventoryTransactionService = async (
           throw new Error(`${variant.product.name} - ${variant.name} is not available for initial inventory`);
         }
       } else {
-        if (!inventory?.isInitialized) {
+        if (!inventory?.isInitialized && !["RECEIPT", "PURCHASE"].includes(data.type)) {
           throw new Error(`${variant.product.name} - ${variant.name} requires initial inventory first`);
         }
 
@@ -264,11 +266,11 @@ export const createBulkPOSInventoryTransactionService = async (
           storeId,
           productVariantId: item.variant.id,
           stock: item.quantity,
-          isInitialized: data.type === "INITIAL",
+          isInitialized: ["INITIAL", "RECEIPT", "PURCHASE"].includes(data.type),
         },
         update: {
           stock: { increment: item.quantity },
-          ...(data.type === "INITIAL" && { isInitialized: true }),
+          ...(["INITIAL", "RECEIPT", "PURCHASE"].includes(data.type) && { isInitialized: true }),
         },
       });
 
