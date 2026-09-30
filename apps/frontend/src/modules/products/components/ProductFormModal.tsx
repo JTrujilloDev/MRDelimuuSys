@@ -98,11 +98,12 @@ interface IngredientOption {
   label: string;
 }
 
-const materialProductTypes = new Set(["INGREDIENT", "PREPARED_BASE"]);
+const materialProductTypes = new Set(["INGREDIENT", "PREPARED_BASE", "PACKAGING"]);
 
 const productTypeHelp: Record<string, string> = {
   INGREDIENT: "Materia prima que se compra y controla por peso, volumen o unidad.",
   PREPARED_BASE: "Preparación interna que se utiliza como ingrediente de otras recetas.",
+  PACKAGING: "Empaque consumido al preparar o entregar una venta.",
   FINISHED_PRODUCT: "Producto listo para vender cuyo inventario se controla directamente.",
   RECIPE_PRODUCT: "Producto preparado al venderse; consume los ingredientes de su receta.",
   THIRD_PARTY_PRODUCT: "Producto comprado a un proveedor y vendido sin transformación.",
@@ -942,9 +943,9 @@ function RecipeEditor({
                 <Input
                   aria-label="Cantidad del ingrediente"
                   type="number"
-                  inputMode="decimal"
-                  min="0.01"
-                  step="0.01"
+                  inputMode="numeric"
+                  min="1"
+                  step="1"
                   placeholder="Cantidad"
                   className={fieldClassName}
                   {...register(
@@ -952,9 +953,11 @@ function RecipeEditor({
                     {
                       required: "Indica la cantidad.",
                       min: {
-                        value: 0.01,
+                        value: 1,
                         message: "Debe ser mayor que cero.",
                       },
+                      validate: (value) =>
+                        Number.isInteger(Number(value)) || "Usa la unidad mínima sin decimales.",
                     },
                   )}
                 />

@@ -3,6 +3,7 @@ import {
   Unit,
 } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+import { isRecipeComponentType, requireRecipeQuantity } from "./productRecipe.rules";
 
 interface RecipeItem {
   ingredientVariantId: number;
@@ -23,6 +24,21 @@ interface CreateProductData {
   productType: ProductType;
   variants: ProductVariantDTO[];
 }
+
+const validateRecipeComponents = async (variants: ProductVariantDTO[]) => {
+  const recipeItems = variants.flatMap((variant) => variant.recipeItems ?? []);
+  if (recipeItems.length === 0) return;
+  recipeItems.forEach((item) => requireRecipeQuantity(item.quantity));
+  const componentIds = [...new Set(recipeItems.map((item) => Number(item.ingredientVariantId)))];
+  const components = await prisma.productVariant.findMany({
+    where: { id: { in: componentIds }, isActive: true },
+    select: { id: true, product: { select: { productType: true } } },
+  });
+  if (components.length !== componentIds.length) throw new Error("One or more recipe components are invalid");
+  if (components.some((component) => !isRecipeComponentType(component.product.productType))) {
+    throw new Error("Recipes only accept ingredients, prepared bases, and packaging");
+  }
+};
 
 export const createProductService = async (productData: CreateProductData) => {
   console.log(productData);
@@ -46,6 +62,9 @@ export const createProductService = async (productData: CreateProductData) => {
     if (!variant.name) {
       throw new Error("Each variant must have a name");
     }
+  }
+  if (productData.productType === ProductType.RECIPE_PRODUCT) {
+    await validateRecipeComponents(productData.variants);
   }
 
   const existingProduct = await prisma.product.findFirst({
@@ -231,6 +250,10 @@ export const updateProductService = async (id: number, productData: any) => {
   }
 
   const variants = productData.variants || [];
+  const nextProductType = productData.productType ?? currentProduct.productType;
+  if (nextProductType === ProductType.RECIPE_PRODUCT) {
+    await validateRecipeComponents(variants);
+  }
   const variantsToCreate = variants.filter((v: any) => !v.id);
   const variantsToUpdate = variants.filter((v: any) => v.id);
   await prisma.product.update({
