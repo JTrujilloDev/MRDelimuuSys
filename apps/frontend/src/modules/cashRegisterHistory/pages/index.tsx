@@ -50,6 +50,10 @@ type Sale = {
   total: number;
   discount: number;
   discountObservation: string | null;
+  status: "CLOSED" | "CANCELLED";
+  cancellationReason: string | null;
+  cancelledAt: string | null;
+  cancelledByUser: { id: number; name: string } | null;
   paymentMethod: "CASH" | "CARD" | "QR" | "CREDIT" | null;
   closedAt: string | null;
   accountItems: AccountItem[];
@@ -128,7 +132,11 @@ const CashRegisterHistory = () => {
     () => ({
       netSales: registers.reduce((total, register) => total + register.totalSales, 0),
       discounts: registers.reduce((total, register) => total + register.totalDiscounts, 0),
-      tickets: registers.reduce((total, register) => total + register.accounts.length, 0),
+      tickets: registers.reduce(
+        (total, register) =>
+          total + register.accounts.filter((account) => account.status === "CLOSED").length,
+        0,
+      ),
       units:
         soldProducts.length > 0
           ? soldProducts.reduce((total, product) => total + product.quantity, 0)
@@ -382,7 +390,7 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
         </div>
       </div>
       <Metric label="Ventas netas" value={money(register.totalSales)} />
-      <Metric label="Facturas" value={String(register.accounts.length)} />
+      <Metric label="Facturas" value={String(register.accounts.filter((account) => account.status === "CLOSED").length)} />
       <Metric label="Unidades" value={String(register.soldVariantUnits)} />
       <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform group-open:rotate-180" />
     </summary>
@@ -423,7 +431,7 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
             <thead className="bg-pos-order-bg text-pos-order-fg"><tr><th className="px-4 py-3">Venta</th><th className="px-4 py-3">Hora</th><th className="px-4 py-3">Método</th><th className="px-4 py-3 text-center">Productos</th><th className="px-4 py-3 text-right">Descuento</th><th className="px-4 py-3 text-right">Total neto</th></tr></thead>
             <tbody className="divide-y divide-border">
               {register.accounts.map((sale) => (
-                <tr key={sale.id}><td className="px-4 py-3 font-medium text-foreground"><p>{sale.name}</p>{sale.discount > 0 && <p className="mt-1 max-w-xs text-xs font-normal text-muted-foreground">{sale.discountObservation}</p>}</td><td className="px-4 py-3 text-muted-foreground">{sale.closedAt ? dayjs(sale.closedAt).format("HH:mm") : "—"}</td><td className="px-4 py-3 text-muted-foreground">{paymentLabels[sale.paymentMethod ?? ""] ?? "—"}</td><td className="px-4 py-3 text-center text-foreground">{sale.accountItems.reduce((sum, item) => sum + item.quantity, 0)}</td><td className="px-4 py-3 text-right text-orange-500">{sale.discount > 0 ? `-${money(sale.discount)}` : "—"}</td><td className="px-4 py-3 text-right font-semibold text-foreground">{money(sale.total)}</td></tr>
+                <tr key={sale.id} className={sale.status === "CANCELLED" ? "bg-destructive/5 opacity-75" : undefined}><td className="px-4 py-3 font-medium text-foreground"><div className="flex items-center gap-2"><p>{sale.name}</p>{sale.status === "CANCELLED" && <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-bold text-destructive">Anulada</span>}</div>{sale.discount > 0 && <p className="mt-1 max-w-xs text-xs font-normal text-muted-foreground">{sale.discountObservation}</p>}{sale.status === "CANCELLED" && <p className="mt-1 max-w-xs text-xs font-normal text-destructive">{sale.cancellationReason} · {sale.cancelledByUser?.name ?? "Administración"}</p>}</td><td className="px-4 py-3 text-muted-foreground">{sale.closedAt ? dayjs(sale.closedAt).format("HH:mm") : "—"}</td><td className="px-4 py-3 text-muted-foreground">{paymentLabels[sale.paymentMethod ?? ""] ?? "—"}</td><td className="px-4 py-3 text-center text-foreground">{sale.accountItems.reduce((sum, item) => sum + item.quantity, 0)}</td><td className="px-4 py-3 text-right text-orange-500">{sale.discount > 0 ? `-${money(sale.discount)}` : "—"}</td><td className={`px-4 py-3 text-right font-semibold ${sale.status === "CANCELLED" ? "line-through text-muted-foreground" : "text-foreground"}`}>{money(sale.total)}</td></tr>
               ))}
               {register.accounts.length === 0 && <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">No hay ventas cerradas.</td></tr>}
             </tbody>

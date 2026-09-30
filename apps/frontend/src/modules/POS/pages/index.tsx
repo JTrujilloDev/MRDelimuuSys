@@ -735,6 +735,7 @@ const Index = () => {
       <SalesHistory
         onBack={() => setShowSalesHistory(false)}
         sales={openCashRegisterData?.data?.accounts || []}
+        canCancelSales={canManageAnyShift}
       />
     );
   }

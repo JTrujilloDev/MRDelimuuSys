@@ -10,15 +10,17 @@ import {
   Tag,
   Calendar,
   ArrowLeft,
+  Ban,
 } from "lucide-react";
 import { printTicketService } from "../../../shared/services/qz.service";
 import { Input } from "@heroui/react/input";
-import { Button, Modal } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import type { OrderItem } from "./OrderPanel";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import numeral from "numeral";
+import { useCancelAccount } from "../hooks/accounts/useCancelAccount";
 
 const methodMeta = {
   CASH: { label: "Efectivo", icon: Banknote, color: "text-green-500" },
@@ -27,7 +29,7 @@ const methodMeta = {
 } as const;
 
 export interface Sale {
-  id: string;
+  id: number;
   name: string;
   total: number;
   discount: number;
@@ -36,14 +38,20 @@ export interface Sale {
   closedAt: Dayjs | null;
   tableLabel: string;
   accountItems: OrderItem[];
+  status: "CLOSED" | "CANCELLED";
+  cancellationReason: string | null;
+  cancelledAt: string | null;
+  cancelledByUser: { id: number; name: string } | null;
 }
 
 const SalesHistory = ({
   sales,
   onBack,
+  canCancelSales,
 }: {
   sales: Sale[];
   onBack: () => void;
+  canCancelSales: boolean;
 }) => {
   const [filter, setFilter] = useState<"all" | "CASH" | "CARD" | "QR">("all");
   const [search, setSearch] = useState("");
@@ -64,7 +72,7 @@ const SalesHistory = ({
   );
 
   const total = useMemo(
-    () => filtered.reduce((s, x) => s + x.total, 0),
+    () => filtered.reduce((sum, sale) => sum + (sale.status === "CLOSED" ? sale.total : 0), 0),
     [filtered],
   );
 
@@ -139,7 +147,7 @@ const SalesHistory = ({
               return (
                 <div
                   key={s.id}
-                  className="flex items-center gap-4 rounded-xl border border-border bg-secondary/30 p-4"
+                  className={`flex items-center gap-4 rounded-xl border p-4 ${s.status === "CANCELLED" ? "border-destructive/30 bg-destructive/5 opacity-75" : "border-border bg-secondary/30"}`}
                 >
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-full bg-secondary ${Meta.color}`}
@@ -154,6 +162,11 @@ const SalesHistory = ({
                       <span className="text-xs text-muted-foreground">
                         · {Meta.label}
                       </span>
+                      {s.status === "CANCELLED" && (
+                        <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-bold text-destructive">
+                          Anulada
+                        </span>
+                      )}
                       {s.discount > 0 && (
                         <span className="text-xs text-orange-500">
                           · Desc. ${s.discount.toFixed(2)}
@@ -190,6 +203,7 @@ const SalesHistory = ({
 
       <SaleDetailDialog
         sale={selectedSale}
+        canCancelSales={canCancelSales}
         onClose={() => setSelectedSale(null)}
       />
     </div>
@@ -199,10 +213,14 @@ const SalesHistory = ({
 const SaleDetailDialog = ({
   sale,
   onClose,
+  canCancelSales,
 }: {
   sale: Sale | null;
   onClose: () => void;
+  canCancelSales: boolean;
 }) => {
+  const [cancellationReason, setCancellationReason] = useState("");
+  const { mutate: cancelSale, isPending: isCancelling } = useCancelAccount();
   if (!sale) return null;
   const Meta = methodMeta[sale.paymentMethod];
   const Icon = Meta.icon;
@@ -282,13 +300,70 @@ const SaleDetailDialog = ({
                     <span>{numeral(sale.total).format("$0,0")}</span>
                   </div>
                 </div>
+
+                {sale.status === "CANCELLED" && (
+                  <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm">
+                    <p className="flex items-center gap-2 font-bold text-destructive">
+                      <Ban className="h-4 w-4" /> Venta anulada
+                    </p>
+                    <p className="mt-2 text-foreground">{sale.cancellationReason}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Por {sale.cancelledByUser?.name ?? "administración"}
+                      {sale.cancelledAt ? ` · ${dayjs(sale.cancelledAt).format("DD/MM/YYYY HH:mm")}` : ""}
+                    </p>
+                  </div>
+                )}
+
+                {canCancelSales && sale.status === "CLOSED" && (
+                  <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+                    <p className="text-sm font-bold text-destructive">Anular esta venta</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Se revertirán inventario, venta, descuento y forma de pago. Esta acción queda auditada.
+                    </p>
+                    <Input
+                      className="mt-3"
+                      value={cancellationReason}
+                      onChange={(event) => setCancellationReason(event.target.value)}
+                      placeholder="Motivo obligatorio"
+                    />
+                    <Button
+                      className="mt-3 w-full bg-destructive text-destructive-foreground"
+                      isDisabled={!cancellationReason.trim() || isCancelling}
+                      onClick={() => {
+                        cancelSale(
+                          { accountId: sale.id, reason: cancellationReason.trim() },
+                          {
+                            onSuccess: () => {
+                              toast("Venta anulada correctamente", { variant: "success" });
+                              setCancellationReason("");
+                              onClose();
+                            },
+                            onError: (error) => {
+                              const message = error instanceof Error ? error.message : "No fue posible anular la venta";
+                              toast("No fue posible anular la venta", { variant: "danger", description: message });
+                            },
+                          },
+                        );
+                      }}
+                    >
+                      {isCancelling ? "Anulando…" : "Confirmar anulación"}
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2 px-6 py-4 border-t border-border bg-secondary/20">
-                <Button variant="outline" className="flex-1" onClick={onClose}>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => {
+                    setCancellationReason("");
+                    onClose();
+                  }}
+                >
                   Cerrar
                 </Button>
-                <Button
+                {sale.status === "CLOSED" && <Button
                   className="flex-1 gap-2"
                   onClick={() =>
                     printTicketService("XP-58", {
@@ -311,7 +386,7 @@ const SaleDetailDialog = ({
                 >
                   <Printer className="h-4 w-4" />
                   Reimprimir
-                </Button>
+                </Button>}
               </div>
             </Modal.Body>
           </Modal.Dialog>

@@ -92,3 +92,14 @@ export const closeAccount = async ({
   });
   return data;
 };
+
+export const cancelAccount = async ({
+  accountId,
+  reason,
+}: {
+  accountId: number;
+  reason: string;
+}) => {
+  const { data } = await api.put(`accounts/${accountId}/cancel`, { reason });
+  return data;
+};

@@ -68,7 +68,7 @@ const CloseShiftView = ({
   const totalDiscounts = shift.totalDiscounts;
   const totalExpenses = shift.totalExpenses;
   const discountedSales = (shift.accounts ?? []).filter(
-    (account) => account.discount > 0,
+    (account) => account.status === "CLOSED" && account.discount > 0,
   );
 
   // Expected cash = initial + cash sales - expenses

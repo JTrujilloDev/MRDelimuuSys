@@ -28,6 +28,7 @@ export interface Shift {
     discount: number;
     discountObservation: string | null;
     closedAt: string | null;
+    status: "OPEN" | "CLOSED" | "CANCELLED";
   }>;
 }
 
