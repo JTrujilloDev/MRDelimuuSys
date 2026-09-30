@@ -21,7 +21,9 @@ export const createCategory = async (req : Request, res : Response) => {
 
 export const getAllCategories = async (req : Request, res : Response) => {
   try {
-    const categories = await getAllCategoriesService();
+    const categories = await getAllCategoriesService(
+      req.query.catalogOnly === "true" ? req.auth!.activeStoreId! : undefined,
+    );
     res.status(200).json({
         success: true,
         message: "Categories fetched successfully",

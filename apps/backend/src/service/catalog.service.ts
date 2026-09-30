@@ -49,10 +49,18 @@ export const updateGroupCatalogItemService = async (
 
   const [group, variant] = await Promise.all([
     prisma.storeGroup.findUnique({ where: { id: groupId }, include: { stores: true } }),
-    prisma.productVariant.findUnique({ where: { id: productVariantId } }),
+    prisma.productVariant.findUnique({
+      where: { id: productVariantId },
+      include: { product: { select: { productType: true } } },
+    }),
   ]);
   if (!group) throw new Error("Store group not found");
   if (!variant) throw new Error("Product variant not found");
+  if (!group.isActive) throw new Error("Store group is inactive");
+  if (!variant.isActive) throw new Error("Product variant is inactive");
+  if (!["FINISHED_PRODUCT", "RECIPE_PRODUCT", "THIRD_PARTY_PRODUCT"].includes(variant.product.productType)) {
+    throw new Error("Only saleable products can be added to a commercial catalog");
+  }
 
   const current = await prisma.groupCatalogItem.findUnique({
     where: { groupId_productVariantId: { groupId, productVariantId } },

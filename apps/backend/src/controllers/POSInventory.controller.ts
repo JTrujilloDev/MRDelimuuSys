@@ -3,6 +3,7 @@ import {
   createBulkPOSInventoryTransactionService,
   createPOSInventoryTransactionService,
   getPOSInventoryTransactionsService,
+  updateStoreInventorySettingsService,
 } from "../service/POSInventory.service";
 import { getIO } from "../socket";
 
@@ -27,6 +28,19 @@ export const createPOSInventoryTransaction = async (
       success: false,
       message: (error as Error).message,
     });
+  }
+};
+
+export const updateStoreInventorySettings = async (req: Request, res: Response) => {
+  try {
+    const inventory = await updateStoreInventorySettingsService(
+      req.auth!.activeStoreId!,
+      req.params.variantId,
+      req.body.minStock,
+    );
+    res.status(200).json({ success: true, data: inventory });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
   }
 };
 

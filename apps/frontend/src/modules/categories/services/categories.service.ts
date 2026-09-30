@@ -1,7 +1,7 @@
 import { api } from "../../../shared/services/api";
 
-export const getAllProductCategories = async () => {
-  const { data } = await api.get("/product-categories");
+export const getAllProductCategories = async (catalogOnly = false) => {
+  const { data } = await api.get("/product-categories", { params: { catalogOnly } });
   return data;
 };
 

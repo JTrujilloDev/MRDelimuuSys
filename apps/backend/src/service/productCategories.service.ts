@@ -30,8 +30,22 @@ export const createCategoryService = async (data: CreateCategoryDTO) => {
   return newCategory;
 };
 
-export const getAllCategoriesService = async () => {
-  const categories = await prisma.category.findMany();
+export const getAllCategoriesService = async (storeId?: number) => {
+  const store = storeId
+    ? await prisma.store.findUnique({ where: { id: storeId }, select: { groupId: true } })
+    : null;
+  const categories = await prisma.category.findMany({
+    where: store ? {
+      posVisible: true,
+      products: {
+        some: {
+          variants: {
+            some: { catalogItems: { some: { groupId: store.groupId, isActive: true } } },
+          },
+        },
+      },
+    } : undefined,
+  });
   return categories;
 };
 

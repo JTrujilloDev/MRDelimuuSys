@@ -49,6 +49,29 @@ export type UserPayload = {
   accesses?: Array<{ storeId: number; role: UserRole }>;
 };
 
+export type GroupCatalogVariant = {
+  id: number;
+  name: string;
+  isActive: boolean;
+  retailPrice: number;
+  catalog: {
+    id: number;
+    salePrice: number;
+    isActive: boolean;
+  } | null;
+};
+
+export type GroupCatalog = {
+  group: Pick<StoreGroup, "id" | "code" | "name" | "isActive">;
+  products: Array<{
+    id: number;
+    name: string;
+    productType: string;
+    category: { id: number; name: string };
+    variants: GroupCatalogVariant[];
+  }>;
+};
+
 const unwrap = <T,>(response: { data: { data: T } }) => response.data.data;
 
 export const getUsers = async () => unwrap<AdminUser[]>(await api.get("users"));
@@ -65,4 +88,12 @@ export const createTerminal = async (payload: { storeId: number; code: string; n
   unwrap<AdminTerminal>(await api.post("terminal", payload));
 export const updateTerminal = async (id: number, payload: Partial<Pick<AdminTerminal, "name" | "isActive">>) =>
   unwrap<AdminTerminal>(await api.patch(`terminal/${id}`, payload));
+
+export const getGroupCatalog = async (groupId: number) =>
+  unwrap<GroupCatalog>(await api.get(`catalog/groups/${groupId}`));
+export const updateGroupCatalogItem = async (
+  groupId: number,
+  variantId: number,
+  payload: { salePrice: number; isActive: boolean },
+) => unwrap(await api.patch(`catalog/groups/${groupId}/variants/${variantId}`, payload));
 

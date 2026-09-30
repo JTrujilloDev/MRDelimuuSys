@@ -98,48 +98,16 @@ export const createPOSInventoryTransactionService = async (
     const inventory = product.storeInventories[0] ?? await tx.storeInventory.create({
       data: { storeId, productVariantId: product.id },
     });
-    let quantity = data.quantity;
-
-    if (!quantity || quantity === 0) {
-      throw new Error("Invalid quantity");
+    if (data.type === "INITIAL") {
+      if (inventory.isInitialized || product.product.productType === "RECIPE_PRODUCT") {
+        throw new Error("Product is not available for initial inventory");
+      }
+    } else {
+      if (!inventory.isInitialized) throw new Error("Product requires initial inventory first");
+      const availableTypes = manualTransactionsByProductType[product.product.productType] ?? [];
+      if (!availableTypes.includes(data.type)) throw new Error("Invalid transaction type for product");
     }
-
-    switch (data.type) {
-      case "SALE":
-        quantity = -Math.abs(quantity);
-        break;
-
-      case "PURCHASE":
-        quantity = Math.abs(quantity);
-        break;
-
-      case "ADJUSTMENT":
-        quantity = quantity;
-        break;
-
-      case "RETURN":
-        quantity = Math.abs(quantity);
-        break;
-
-      case "WASTE":
-        quantity = -Math.abs(quantity);
-        break;
-
-      case "RECEIPT":
-        quantity = Math.abs(quantity);
-        break;
-
-      case "INITIAL":
-        quantity = Math.abs(quantity);
-        break;
-
-      case "INTERNAL_CONSUMPTION":
-        quantity = -Math.abs(quantity);
-        break;
-
-      default:
-        throw new Error("Invalid transaction type");
-    }
+    const quantity = normalizeQuantity(data.type, Number(data.quantity));
 
     // 3. Validar stock (solo para salidas)
     if (quantity < 0) {
@@ -320,6 +288,29 @@ interface InventoryTransactionFilters {
   page?: number;
   pageSize?: number;
 }
+
+export const updateStoreInventorySettingsService = async (
+  storeId: number,
+  productVariantIdValue: unknown,
+  minStockValue: unknown,
+) => {
+  const productVariantId = Number(productVariantIdValue);
+  const minStock = Number(minStockValue);
+  if (!Number.isInteger(productVariantId) || productVariantId <= 0) {
+    throw new Error("Invalid product variant");
+  }
+  if (!Number.isInteger(minStock) || minStock < 0) {
+    throw new Error("Minimum stock must be a non-negative integer");
+  }
+  const variant = await prisma.productVariant.findUnique({ where: { id: productVariantId } });
+  if (!variant) throw new Error("Product variant not found");
+
+  return prisma.storeInventory.upsert({
+    where: { storeId_productVariantId: { storeId, productVariantId } },
+    create: { storeId, productVariantId, minStock },
+    update: { minStock },
+  });
+};
 
 export const getPOSInventoryTransactionsService = async (
   storeId: number,

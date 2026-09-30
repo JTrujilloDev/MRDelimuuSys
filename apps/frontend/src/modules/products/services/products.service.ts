@@ -9,9 +9,6 @@ export interface ProductPayload {
   variants: Array<{
     id?: number;
     name: string;
-    retailPrice: number;
-    wholesalePrice: number;
-    minStock: number;
     productCost: number;
     isActive: boolean;
     requirePreparation: boolean;

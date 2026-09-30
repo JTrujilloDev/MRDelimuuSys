@@ -48,9 +48,9 @@ interface TransactionFormProps {
 }
 
 const manualTransactionTypes = Object.values(transactionTypes).filter(
-  (transaction) => transaction.value !== "SALE",
+  (transaction) => !["SALE", "WHOLESALE", "PRODUCTION"].includes(transaction.value),
 );
-const outputTypes = new Set(["WASTE", "WHOLESALE", "INTERNAL_CONSUMPTION"]);
+const outputTypes = new Set(["WASTE", "INTERNAL_CONSUMPTION"]);
 const observationRequiredTypes = new Set([
   "WASTE",
   "ADJUSTMENT",
@@ -66,8 +66,8 @@ const getResultingStock = (item: CartItem, type: string) => {
 
 const getQuantityLabel = (type: string) => {
   switch (type) {
-    case "PRODUCTION":
-      return "Unidades producidas";
+    case "RECEIPT":
+      return "Unidades recibidas desde planta";
     case "PURCHASE":
       return "Unidades recibidas";
     case "WASTE":
@@ -82,7 +82,7 @@ const TransactionForm = ({
   activeProducts,
   setDialogOpen,
 }: TransactionFormProps) => {
-  const [transactionType, setTransactionType] = useState("PRODUCTION");
+  const [transactionType, setTransactionType] = useState("RECEIPT");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const [observation, setObservation] = useState("");
@@ -129,7 +129,7 @@ const TransactionForm = ({
   }, [cartItems, eligibleVariants, searchTerm]);
 
   const resetForm = () => {
-    setTransactionType("PRODUCTION");
+    setTransactionType("RECEIPT");
     setSearchTerm("");
     setObservation("");
     setCartItems([]);

@@ -11,10 +11,9 @@ interface RecipeItem {
 }
 interface ProductVariantDTO {
   name: string;
-  retailPrice: number;
-  wholesalePrice: number | null;
+  retailPrice?: number;
   stock: number;
-  minStock: number;
+  minStock?: number;
   isActive: boolean;
   requirePreparation: boolean;
   productCost: number;
@@ -48,8 +47,8 @@ export const createProductService = async (productData: CreateProductData) => {
   }
 
   for (const variant of productData.variants) {
-    if (!variant.name || variant.retailPrice == null) {
-      throw new Error("Each variant must have a name and retail price");
+    if (!variant.name) {
+      throw new Error("Each variant must have a name");
     }
   }
 
@@ -73,12 +72,8 @@ export const createProductService = async (productData: CreateProductData) => {
       variants: {
         create: productData.variants.map((variant) => ({
           name: variant.name,
-          retailPrice: variant.retailPrice,
-          wholesalePrice: variant.wholesalePrice,
-          minStock:
-            productData.productType === "RECIPE_PRODUCT"
-              ? 0
-              : variant.minStock,
+          retailPrice: variant.retailPrice ?? 0,
+          minStock: 0,
           productCost: variant.productCost,
           isActive: variant.isActive ?? true,
           requirePreparation: variant.requirePreparation ?? false,
@@ -179,8 +174,6 @@ export const updateProductService = async (id: number, productData: any) => {
     throw new Error("Product not found");
   }
 
-  const resultingProductType =
-    productData.productType ?? currentProduct.productType;
   const variants = productData.variants || [];
   const variantsToCreate = variants.filter((v: any) => !v.id);
   const variantsToUpdate = variants.filter((v: any) => v.id);
@@ -204,10 +197,8 @@ export const updateProductService = async (id: number, productData: any) => {
         variants: {
           create: variantsToCreate.map((v: any) => ({
             name: v.name,
-            retailPrice: v.retailPrice,
-            wholesalePrice: v.wholesalePrice,
-            minStock:
-              resultingProductType === "RECIPE_PRODUCT" ? 0 : v.minStock,
+            retailPrice: v.retailPrice ?? 0,
+            minStock: 0,
             productCost: v.productCost,
             isActive: v.isActive ?? true,
             requirePreparation: v.requirePreparation ?? false,
@@ -226,17 +217,6 @@ export const updateProductService = async (id: number, productData: any) => {
             where: { id: v.id },
             data: {
               ...(v.name !== undefined && { name: v.name }),
-              ...(v.retailPrice !== undefined && {
-                retailPrice: v.retailPrice,
-              }),
-              ...(v.wholesalePrice !== undefined && {
-                wholesalePrice: v.wholesalePrice,
-              }),
-              ...(resultingProductType === "RECIPE_PRODUCT"
-                ? { minStock: 0 }
-                : v.minStock !== undefined
-                  ? { minStock: v.minStock }
-                  : {}),
               ...(v.productCost !== undefined && {
                 productCost: v.productCost,
               }),

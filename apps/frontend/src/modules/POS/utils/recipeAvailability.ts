@@ -23,7 +23,6 @@ export interface Variant {
   productId: number;
   retailPrice: number;
   stock: number;
-  wholesalePrice: number;
   requirePreparation?: boolean;
   recipeItems?: RecipeItem[];
 }

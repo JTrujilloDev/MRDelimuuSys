@@ -93,3 +93,8 @@ export const createBulkPOSInventoryTransaction = async (data: {
   const { data: response } = await api.post("pos-inventory/bulk", data);
   return response;
 };
+
+export const updateStoreInventorySettings = async (variantId: number, minStock: number) => {
+  const { data } = await api.patch(`pos-inventory/variants/${variantId}/settings`, { minStock });
+  return data;
+};

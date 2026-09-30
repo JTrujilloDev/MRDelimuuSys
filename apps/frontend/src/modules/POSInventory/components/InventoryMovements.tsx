@@ -30,6 +30,7 @@ import type {
 
 interface InventoryMovementsProps {
   onCreate: () => void;
+  canCreate: boolean;
 }
 
 const getTransactionPresentation = (type: string) =>
@@ -87,7 +88,7 @@ const getProductSummary = (items: InventoryTransactionItem[]) => {
   };
 };
 
-const InventoryMovements = ({ onCreate }: InventoryMovementsProps) => {
+const InventoryMovements = ({ onCreate, canCreate }: InventoryMovementsProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearch = useDeferredValue(searchTerm);
   const [type, setType] = useState("");
@@ -154,9 +155,11 @@ const InventoryMovements = ({ onCreate }: InventoryMovementsProps) => {
             Consulta entradas, salidas y operaciones registradas.
           </p>
         </div>
-        <Button onClick={onCreate} size="sm">
-          <PackagePlus className="mr-1 h-4 w-4" /> Registrar movimientos
-        </Button>
+        {canCreate && (
+          <Button onClick={onCreate} size="sm">
+            <PackagePlus className="mr-1 h-4 w-4" /> Registrar movimientos
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">

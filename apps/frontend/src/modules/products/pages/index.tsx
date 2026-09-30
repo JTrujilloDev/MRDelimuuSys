@@ -230,10 +230,6 @@ function VariantSummary({ variant }: { variant: ProductVariantRecord }) {
         )}
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span>Público: {numeral(variant.retailPrice).format("$0,0")}</span>
-        <span>
-          Mayorista: {numeral(variant.wholesalePrice).format("$0,0")}
-        </span>
         <span>Costo: {numeral(variant.productCost).format("$0,0")}</span>
       </div>
     </div>

@@ -71,7 +71,7 @@ const Index = () => {
   const { mutate: updateAccount } = useUpdateAccount();
   const { mutate: closeAccount, isPending: isClosingAccount } = useCloseAccount();
   const closingAccountRef = useRef(false);
-  const { data: categories } = useGetAllProductCategories();
+  const { data: categories } = useGetAllProductCategories(true);
   const { data: openCashRegisterData } = useGetOpenCashRegister(terminalId);
   const { data: accounts } = useGetAllAccounts();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(

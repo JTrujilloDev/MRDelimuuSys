@@ -43,9 +43,6 @@ export interface RecipeItemRecord {
 export interface ProductVariantRecord {
   id?: number;
   name: string;
-  retailPrice: number | string;
-  wholesalePrice: number | string | null;
-  minStock: number | string;
   productCost: number | string;
   isActive: boolean;
   requirePreparation: boolean;
@@ -80,9 +77,6 @@ interface ProductFormModalProps {
 interface ProductFormVariant {
   id?: number;
   name: string;
-  retailPrice: string;
-  wholesalePrice: string;
-  minStock: string;
   productCost: string;
   isActive: boolean;
   requirePreparation: boolean;
@@ -116,9 +110,6 @@ const productTypeHelp: Record<string, string> = {
 
 const emptyVariant = (productType = ""): ProductFormVariant => ({
   name: "",
-  retailPrice: materialProductTypes.has(productType) ? "0" : "",
-  wholesalePrice: materialProductTypes.has(productType) ? "0" : "",
-  minStock: "0",
   productCost: materialProductTypes.has(productType) ? "0" : "",
   isActive: true,
   requirePreparation: productType === "RECIPE_PRODUCT",
@@ -143,9 +134,6 @@ const toFormValues = (product: ProductRecord): ProductFormValues => ({
   variants: product.variants.map((variant) => ({
     id: variant.id,
     name: variant.name,
-    retailPrice: String(variant.retailPrice ?? 0),
-    wholesalePrice: String(variant.wholesalePrice ?? 0),
-    minStock: String(variant.minStock ?? 0),
     productCost: String(variant.productCost ?? 0),
     isActive: variant.isActive ?? true,
     requirePreparation: variant.requirePreparation ?? false,
@@ -247,16 +235,9 @@ export function ProductFormModal({
 
     const nextVariants = getValues("variants").map((variant) => ({
       ...variant,
-      retailPrice: materialProductTypes.has(nextType)
-        ? "0"
-        : variant.retailPrice,
-      wholesalePrice: materialProductTypes.has(nextType)
-        ? "0"
-        : variant.wholesalePrice,
       productCost: materialProductTypes.has(nextType)
         ? "0"
         : variant.productCost,
-      minStock: nextType === "RECIPE_PRODUCT" ? "0" : variant.minStock,
       unit: materialProductTypes.has(nextType)
         ? variant.unit === "UNIT"
           ? "GRAM"
@@ -332,9 +313,6 @@ export function ProductFormModal({
       variants: values.variants.map((variant) => ({
         id: variant.id,
         name: variant.name.trim(),
-        retailPrice: Number(variant.retailPrice),
-        wholesalePrice: Number(variant.wholesalePrice || 0),
-        minStock: values.productType === "RECIPE_PRODUCT" ? 0 : Number(variant.minStock),
         productCost: Number(variant.productCost),
         isActive: variant.isActive,
         requirePreparation: variant.requirePreparation,
@@ -766,24 +744,10 @@ function VariantEditor({
         <div className="mb-3 flex items-center gap-2">
           <CircleDollarSign className="h-4 w-4 text-primary" />
           <h5 className="text-sm font-semibold text-foreground">
-            Valores e inventario
+            Costo del producto
           </h5>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <NumericField
-            label="Precio público"
-            name={`variants.${index}.retailPrice`}
-            register={register}
-            error={errors?.retailPrice}
-            disabled={isMaterial}
-          />
-          <NumericField
-            label="Precio mayorista"
-            name={`variants.${index}.wholesalePrice`}
-            register={register}
-            error={errors?.wholesalePrice}
-            disabled={isMaterial}
-          />
+        <div className="grid gap-4 sm:grid-cols-1">
           <NumericField
             label="Costo"
             name={`variants.${index}.productCost`}
@@ -791,19 +755,10 @@ function VariantEditor({
             error={errors?.productCost}
             disabled={isMaterial}
           />
-          {!isRecipeProduct && (
-            <NumericField
-              label="Stock mínimo"
-              name={`variants.${index}.minStock`}
-              register={register}
-              error={errors?.minStock}
-              integer
-            />
-          )}
         </div>
         {isMaterial && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Los ingredientes y bases no se venden directamente; sus valores comerciales se guardan en cero.
+            Los ingredientes y bases no se agregan al catálogo comercial del POS.
           </p>
         )}
         {isRecipeProduct && (
@@ -850,10 +805,7 @@ function VariantEditor({
 interface NumericFieldProps {
   label: string;
   name:
-    | `variants.${number}.retailPrice`
-    | `variants.${number}.wholesalePrice`
-    | `variants.${number}.productCost`
-    | `variants.${number}.minStock`;
+    | `variants.${number}.productCost`;
   register: UseFormRegister<ProductFormValues>;
   error?: { message?: string };
   disabled?: boolean;

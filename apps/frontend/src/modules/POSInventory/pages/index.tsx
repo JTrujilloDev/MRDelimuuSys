@@ -6,27 +6,81 @@ import {
   Select,
   Table,
   Tabs,
+  toast,
 } from "@heroui/react";
 import { FileText, Search } from "lucide-react";
 import { useState } from "react";
+import type { FormEvent } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
 import { useGetAllActiveProducts } from "../../products/hooks/useGetAllActiveProducts";
 import { getReportPDF } from "../services/report.service";
 import { productUnits } from "../../../shared/constants/productUnits";
 import TransactionForm from "../components/TransactionForm";
 import InventoryMovements from "../components/InventoryMovements";
+import { useAuth } from "../../../app/auth/AuthProvider";
+import { updateStoreInventorySettings } from "../services/POSInventory.service";
+
+interface InventoryVariant {
+  id: number;
+  name: string;
+  stock: number;
+  minStock: number;
+  unit: string;
+  isNew: boolean;
+}
+
+interface InventoryProduct {
+  id: number;
+  name: string;
+  productType: string;
+  category: { id: number; name: string };
+  variants: InventoryVariant[];
+}
+
+interface InventoryCategory {
+  id: number;
+  name: string;
+}
+
 const Inventory = () => {
+  const { state } = useAuth();
+  const queryClient = useQueryClient();
   const { data: categories } = useGetAllProductCategories();
-  const { data: { data: activeProducts = [] } = ({} = {}) } =
-    useGetAllActiveProducts();
+  const productsQuery = useGetAllActiveProducts();
+  const activeProducts = (productsQuery.data?.data ?? []) as InventoryProduct[];
+  const inventoryCategories = (categories?.data ?? []) as InventoryCategory[];
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterCategory, setFilterCategory] = useState<string>("");
+  const canManageInventory = Boolean(
+    state?.user.isGlobalAdmin || state?.activeContext?.role === "ADMIN",
+  );
+  const settingsMutation = useMutation({
+    mutationFn: ({ variantId, minStock }: { variantId: number; minStock: number }) =>
+      updateStoreInventorySettings(variantId, minStock),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["getAllActiveProducts"] });
+      toast("Stock mínimo actualizado", { variant: "success" });
+    },
+    onError: () => toast("No fue posible actualizar el stock mínimo", { variant: "danger" }),
+  });
+
+  const updateMinimumStock = (event: FormEvent<HTMLFormElement>, variantId: number) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const minStock = Number(form.get("minStock"));
+    if (!Number.isInteger(minStock) || minStock < 0) return;
+    settingsMutation.mutate({ variantId, minStock });
+  };
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-6">
-      <h1 className="text-2xl font-bold text-foreground">Inventario</h1>
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Inventario</h1>
+        <p className="text-sm text-muted-foreground">Punto: {state?.activeContext?.store.name}</p>
+      </div>
       <Tabs className="w-full">
         <Tabs.ListContainer className="w-sm rounded-md bg-card border border-border">
           <Tabs.List
@@ -50,7 +104,7 @@ const Inventory = () => {
           </Tabs.List>
         </Tabs.ListContainer>
         <Tabs.Panel className="pt-4 w-full" id="movements">
-          <InventoryMovements onCreate={() => setDialogOpen(true)} />
+          <InventoryMovements canCreate={canManageInventory} onCreate={() => setDialogOpen(true)} />
         </Tabs.Panel>
         <Tabs.Panel className="pt-4 flex flex-col gap-4" id="current-stock">
           <div className="flex items-center justify-between gap-3 flex-wrap w-full ">
@@ -86,7 +140,7 @@ const Inventory = () => {
                       Todas las categorías
                       <ListBox.ItemIndicator />
                     </ListBox.Item>
-                    {categories?.data?.map((c : any) => (
+                    {inventoryCategories.map((c) => (
                       <ListBox.Item
                         id={c.id.toString()}
                         textValue={c.name}
@@ -120,16 +174,16 @@ const Inventory = () => {
               <p className="text-xs text-muted-foreground mb-1">Variantes</p>
               <p className="text-2xl font-bold text-foreground">
                 {activeProducts
-                  .filter((p : any) => p.productType !== "RECIPE_PRODUCT")
-                  .reduce((sum : any, product : any ) => sum + product.variants.length, 0)}
+                  .filter((product) => product.productType !== "RECIPE_PRODUCT")
+                  .reduce((sum, product) => sum + product.variants.length, 0)}
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">
               <p className="text-xs text-muted-foreground mb-1">Stock bajo</p>
               <p className="text-2xl font-bold text-amber-600">
-                {activeProducts.reduce((sum : any, product : any   ) => {
+                {activeProducts.reduce((sum, product) => {
                   const lowStockVariants = product.variants.filter(
-                    (variant :any) =>
+                    (variant) =>
                       variant.stock > 0 &&
                       variant.stock <= variant.minStock &&
                       product.productType !== "RECIPE_PRODUCT",
@@ -141,9 +195,9 @@ const Inventory = () => {
             <div className="rounded-xl border border-border bg-card p-4">
               <p className="text-xs text-muted-foreground mb-1">Sin stock</p>
               <p className="text-2xl font-bold text-destructive">
-                {activeProducts.reduce((sum : any, product : any) => {
+                {activeProducts.reduce((sum, product) => {
                   const outOfStockVariants = product.variants.filter(
-                    (variant :any) =>
+                    (variant) =>
                       variant.stock === 0 &&
                       product.productType !== "RECIPE_PRODUCT",
                   );
@@ -174,6 +228,9 @@ const Inventory = () => {
                       Stock actual
                     </Table.Column>
                     <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
+                      Stock mínimo
+                    </Table.Column>
+                    <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
                       Unidad
                     </Table.Column>
                     <Table.Column className="bg-pos-order-bg text-white text font-extrabold">
@@ -182,7 +239,7 @@ const Inventory = () => {
                   </Table.Header>
                   <Table.Body>
                     {activeProducts
-                      .filter((product : any ) => {
+                      .filter((product) => {
                         // Filtro por categoría
                         if (filterCategory && filterCategory !== "all") {
                           const categoryId = parseInt(filterCategory);
@@ -193,22 +250,22 @@ const Inventory = () => {
                           const matchesProduct = product.name
                             .toLowerCase()
                             .includes(searchTerm);
-                          const matchesVariant = product.variants.some((v : any) =>
-                            v.name.toLowerCase().includes(searchTerm),
+                          const matchesVariant = product.variants.some((variant) =>
+                            variant.name.toLowerCase().includes(searchTerm),
                           );
                           return matchesProduct || matchesVariant;
                         }
                         return true;
                       })
                       .filter(
-                        (product : any) => product.productType !== "RECIPE_PRODUCT",
+                        (product) => product.productType !== "RECIPE_PRODUCT",
                       )
-                      .flatMap((product : any) => {
+                      .flatMap((product) => {
                         const matchesProduct = product.name
                           .toLowerCase()
                           .includes(searchTerm);
                         return product.variants
-                          .filter((variant : any) => {
+                          .filter((variant) => {
                             if (searchTerm) {
                               // Si el producto coincide, mostrar todas sus variantes
                               if (matchesProduct) return true;
@@ -219,12 +276,28 @@ const Inventory = () => {
                             }
                             return true;
                           })
-                          .map((variant : any) => (
+                          .map((variant) => (
                             <Table.Row key={variant.id}>
                               <Table.Cell>{product.category.name}</Table.Cell>
                               <Table.Cell>{product.name}</Table.Cell>
                               <Table.Cell>{variant.name}</Table.Cell>
                               <Table.Cell>{variant.stock}</Table.Cell>
+                              <Table.Cell>
+                                {canManageInventory ? (
+                                  <form className="flex min-w-32 items-center gap-2" onSubmit={(event) => updateMinimumStock(event, variant.id)}>
+                                    <Input
+                                      className="w-20"
+                                      name="minStock"
+                                      type="number"
+                                      min="0"
+                                      step="1"
+                                      defaultValue={String(variant.minStock)}
+                                      aria-label={`Stock mínimo de ${product.name} ${variant.name}`}
+                                    />
+                                    <Button type="submit" size="sm" isDisabled={settingsMutation.isPending}>Guardar</Button>
+                                  </form>
+                                ) : variant.minStock}
+                              </Table.Cell>
                               <Table.Cell>
                                 {
                                   productUnits.find(
@@ -262,11 +335,13 @@ const Inventory = () => {
 
       {/* Dialog */}
 
-      <TransactionForm
-        dialogOpen={dialogOpen}
-        activeProducts={activeProducts}
-        setDialogOpen={setDialogOpen}
-      />
+      {canManageInventory && (
+        <TransactionForm
+          dialogOpen={dialogOpen}
+          activeProducts={activeProducts}
+          setDialogOpen={setDialogOpen}
+        />
+      )}
     </div>
   );
 };

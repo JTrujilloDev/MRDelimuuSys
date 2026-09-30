@@ -24,6 +24,11 @@ export const transactionTypes = {
     value: "PRODUCTION",
     className: "bg-[#06b6d4]/20 text-[#0891b2]",
   },
+  RECEIPT: {
+    label: "Ingreso desde planta",
+    value: "RECEIPT",
+    className: "bg-[#06b6d4]/20 text-[#0891b2]",
+  },
   INITIAL: {
     label: "Inventario inicial",
     value: "INITIAL",
@@ -58,8 +63,7 @@ export const inventoryTransactionsByProductType = {
     transactionTypes.ADJUSTMENT,
     transactionTypes.RETURN,
     transactionTypes.WASTE,
-    transactionTypes.PRODUCTION,
-    transactionTypes.WHOLESALE,
+    transactionTypes.RECEIPT,
     transactionTypes.INTERNAL_CONSUMPTION,
   ],
   THIRD_PARTY_PRODUCT: [
@@ -72,8 +76,7 @@ export const inventoryTransactionsByProductType = {
   PREPARED_BASE: [
     transactionTypes.ADJUSTMENT,
     transactionTypes.WASTE,
-    transactionTypes.PRODUCTION,
-    transactionTypes.WHOLESALE,
+    transactionTypes.RECEIPT,
     transactionTypes.INTERNAL_CONSUMPTION,
   ],
   NEW_VARIANT: [transactionTypes.INITIAL],
