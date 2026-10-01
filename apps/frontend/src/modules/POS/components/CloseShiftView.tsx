@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import axios from "axios";
 import {
   ArrowLeft,
   Banknote,
@@ -11,7 +12,7 @@ import {
   Minus,
 } from "lucide-react";
 
-import { Button, Input, Label } from "@heroui/react";
+import { Button, Input, Label, toast } from "@heroui/react";
 import DenominationCounter, {
   BILL_DENOMINATIONS,
   COIN_DENOMINATIONS,
@@ -45,6 +46,24 @@ interface CloseShiftViewProps {
   onBack: () => void;
 }
 
+const getCloseShiftErrorMessage = (error: unknown) => {
+  const serverMessage = axios.isAxiosError<{ message?: string }>(error)
+    ? error.response?.data?.message
+    : undefined;
+  const openAccountsMatch = serverMessage?.match(
+    /Cannot close the shift with (\d+) open account/i,
+  );
+
+  if (openAccountsMatch) {
+    const openAccounts = Number(openAccountsMatch[1]);
+    return openAccounts === 1
+      ? "No puedes cerrar el turno porque hay una cuenta abierta. Ciérrala o anúlala antes de continuar."
+      : `No puedes cerrar el turno porque hay ${openAccounts} cuentas abiertas. Ciérralas o anúlalas antes de continuar.`;
+  }
+
+  return serverMessage ?? "No fue posible cerrar el turno. Inténtalo nuevamente.";
+};
+
 // Denominations imported from DenominationCounter
 
 const CloseShiftView = ({
@@ -53,11 +72,13 @@ const CloseShiftView = ({
   onConfirmClose,
   onBack,
 }: CloseShiftViewProps) => {
-  const { mutate: closeCashRegister } = useCloseCashRegister();
+  const { mutate: closeCashRegister, isPending: isClosingShift } =
+    useCloseCashRegister();
   const { data: { data: { data: expenses = [] } = {} } = {} } =
     useGetExpenses(cashRegisterId);
   const [billCounts, setBillCounts] = useState<Record<number, string>>({});
   const [differenceJustification, setDifferenceJustification] = useState("");
+  const [closeError, setCloseError] = useState<string | null>(null);
 
   // Sales breakdown
   const totalSales = shift.totalSales;
@@ -314,8 +335,18 @@ const CloseShiftView = ({
           )}
 
           <div className="mt-auto">
+            {closeError && (
+              <div
+                role="alert"
+                className="mb-3 flex items-start gap-2 rounded-xl border border-destructive/35 bg-destructive/10 p-3 text-sm text-destructive"
+              >
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <p>{closeError}</p>
+              </div>
+            )}
             <Button
               onClick={() => {
+                setCloseError(null);
                 closeCashRegister(
                   {
                     cashRegisterId: shift.id,
@@ -326,16 +357,25 @@ const CloseShiftView = ({
                     onSuccess: () => {
                       onConfirmClose();
                     },
+                    onError: (error) => {
+                      const message = getCloseShiftErrorMessage(error);
+                      setCloseError(message);
+                      toast("No se pudo cerrar el turno", {
+                        variant: "danger",
+                        description: message,
+                      });
+                    },
                   },
                 );
               }}
               className="w-full py-6 text-base font-bold"
               size="lg"
               isDisabled={
-                Math.abs(difference) >= 0.01 && !differenceJustification.trim()
+                isClosingShift ||
+                (Math.abs(difference) >= 0.01 && !differenceJustification.trim())
               }
             >
-              Confirmar Cierre de Turno
+              {isClosingShift ? "Cerrando turno..." : "Confirmar Cierre de Turno"}
             </Button>
           </div>
         </div>
