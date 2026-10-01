@@ -244,20 +244,213 @@ const InventoryTransfersPage = () => {
         })}
       </div>
 
-      <Modal><Modal.Backdrop isOpen={dispatchOpen}><Modal.Container size="2xl"><Modal.Dialog className="bg-pos-surface text-foreground">
-        <Modal.Header><div><h2 className="text-xl font-bold">Nuevo traslado</h2><p className="text-sm text-muted-foreground">El inventario saldrá del punto al confirmar el despacho.</p></div></Modal.Header>
-        <Modal.Body className="space-y-4">
-          <Select value={destinationStoreId || null} onChange={(value) => setDestinationStoreId(String(value))}>
-            <Label>Punto de destino</Label><Select.Trigger className="border border-border bg-background"><Select.Value placeholder="Selecciona el destino" /><Select.Indicator /></Select.Trigger>
-            <Select.Popover className="bg-pos-surface"><ListBox>{(destinationsQuery.data ?? []).map((store) => <ListBox.Item id={String(store.id)} key={store.id} textValue={store.name}>{store.name}</ListBox.Item>)}</ListBox></Select.Popover>
-          </Select>
-          <div className="relative"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input className="pl-9" placeholder="Buscar producto o variante" value={search} onChange={(event) => setSearch(event.target.value)} /></div>
-          {search && <div className="max-h-48 overflow-auto rounded-lg border border-border">{searchResults.map((variant) => <button key={variant.id} type="button" className="flex w-full justify-between border-b border-border p-3 text-left last:border-0 hover:bg-muted" onClick={() => { setDispatchItems((items) => [...items, { productVariantId: variant.id, productName: variant.productName, variantName: variant.name, stock: variant.stock, quantity: "" }]); setSearch(""); }}><span>{variant.productName} · {variant.name}</span><span>Stock: {variant.stock}</span></button>)}</div>}
-          <div className="space-y-2">{dispatchItems.map((item) => <div key={item.productVariantId} className="grid grid-cols-[1fr_9rem_2.5rem] items-center gap-3 rounded-lg border border-border p-3"><div><p className="font-semibold">{item.productName} · {item.variantName}</p><p className="text-xs text-muted-foreground">Disponible: {item.stock}</p></div><Input aria-label={`Cantidad de ${item.productName}`} type="number" min="1" max={String(item.stock)} step="1" value={item.quantity} onChange={(event) => setDispatchItems((items) => items.map((current) => current.productVariantId === item.productVariantId ? { ...current, quantity: event.target.value } : current))} /><Button isIconOnly variant="ghost" aria-label={`Quitar ${item.productName}`} onClick={() => setDispatchItems((items) => items.filter((current) => current.productVariantId !== item.productVariantId))}><Trash2 className="h-4 w-4 text-destructive" /></Button></div>)}</div>
-          <TextArea aria-label="Observación de despacho" placeholder="Observación opcional del despacho" value={dispatchObservation} onChange={(event) => setDispatchObservation(event.target.value)} />
-        </Modal.Body>
-        <Modal.Footer><Button variant="outline" onClick={closeDispatch}>Cancelar</Button><Button className="bg-primary text-primary-foreground" isDisabled={!dispatchIsValid || dispatchMutation.isPending} onClick={() => dispatchMutation.mutate({ destinationStoreId: Number(destinationStoreId), observation: dispatchObservation.trim() || undefined, items: dispatchItems.map((item) => ({ productVariantId: item.productVariantId, quantity: Number(item.quantity) })) })}>{dispatchMutation.isPending ? "Despachando..." : "Confirmar despacho"}</Button></Modal.Footer>
-      </Modal.Dialog></Modal.Container></Modal.Backdrop></Modal>
+      <Modal>
+        <Modal.Backdrop isOpen={dispatchOpen}>
+          <Modal.Container size="lg">
+            <Modal.Dialog className="flex max-h-[calc(100vh-2rem)] flex-col overflow-hidden rounded-2xl border border-border bg-pos-surface text-foreground shadow-2xl">
+              <Modal.Header className="shrink-0 border-b border-border bg-pos-surface px-4 py-3 text-foreground sm:px-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                    <Truck className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground">Nuevo traslado</h2>
+                    <p className="text-xs text-foreground/65 sm:text-sm">
+                      El inventario saldrá del punto al confirmar el despacho.
+                    </p>
+                  </div>
+                </div>
+              </Modal.Header>
+              <Modal.Body className="min-h-0 space-y-3 overflow-y-auto bg-pos-surface px-4 py-3 text-foreground sm:px-5">
+                <section className="rounded-xl border border-border bg-pos-surface-soft p-3">
+                  <div className="mb-2">
+                    <p className="text-sm font-bold text-foreground">Destino</p>
+                  </div>
+                  <Select
+                    value={destinationStoreId || null}
+                    onChange={(value) => setDestinationStoreId(String(value))}
+                  >
+                    <Label className="sr-only">Punto de destino</Label>
+                    <Select.Trigger className="h-10 border border-border bg-background text-foreground shadow-sm">
+                      <Select.Value placeholder="Selecciona el punto de destino" />
+                      <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.Popover className="border border-border bg-pos-surface text-foreground">
+                      <ListBox>
+                        {(destinationsQuery.data ?? []).map((store) => (
+                          <ListBox.Item
+                            id={String(store.id)}
+                            key={store.id}
+                            textValue={store.name}
+                          >
+                            {store.name}
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
+                </section>
+
+                <section className="rounded-xl border border-border bg-pos-surface-soft p-3">
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <p className="text-sm font-bold text-foreground">Productos</p>
+                    <span className="rounded-full bg-background px-2 py-0.5 text-xs font-semibold text-foreground/70 ring-1 ring-border">
+                      {dispatchItems.length} {dispatchItems.length === 1 ? "agregado" : "agregados"}
+                    </span>
+                  </div>
+
+                  <div className="relative">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-foreground/60" />
+                    <Input
+                      className="h-10 w-full border border-border bg-background pl-9 text-foreground shadow-sm placeholder:text-foreground/55"
+                      placeholder="Buscar y agregar producto"
+                      value={search}
+                      onChange={(event) => setSearch(event.target.value)}
+                    />
+                  </div>
+
+                  {search && (
+                    <div className="mt-2 max-h-40 overflow-auto rounded-lg border border-border bg-pos-surface text-foreground shadow-md">
+                      {searchResults.map((variant) => (
+                        <button
+                          key={variant.id}
+                          type="button"
+                          className="flex w-full items-center justify-between gap-3 border-b border-border px-3 py-2 text-left text-foreground last:border-0 hover:bg-pos-surface-soft"
+                          onClick={() => {
+                            setDispatchItems((items) => [
+                              ...items,
+                              {
+                                productVariantId: variant.id,
+                                productName: variant.productName,
+                                variantName: variant.name,
+                                stock: variant.stock,
+                                quantity: "",
+                              },
+                            ]);
+                            setSearch("");
+                          }}
+                        >
+                          <span className="truncate text-sm font-semibold text-foreground">
+                            {variant.productName} · {variant.name}
+                          </span>
+                          <span className="shrink-0 text-xs font-semibold text-foreground/70">
+                            Stock {variant.stock}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="mt-3 min-h-40 space-y-2">
+                    {dispatchItems.length === 0 ? (
+                      <p className="flex min-h-40 items-center justify-center rounded-lg border border-dashed border-border bg-background/60 px-3 py-4 text-center text-xs text-foreground/60">
+                        Busca un producto para agregarlo al traslado.
+                      </p>
+                    ) : dispatchItems.map((item) => (
+                      <div
+                        key={item.productVariantId}
+                        className="grid grid-cols-[minmax(0,1fr)_6.5rem_2.25rem] items-center gap-2 rounded-lg border border-border bg-background p-2.5 shadow-sm"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-foreground">
+                            {item.productName} · {item.variantName}
+                          </p>
+                          <p className="text-[11px] font-medium text-foreground/65">
+                            Disponible: {item.stock}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="mb-1 block text-[11px] font-bold text-foreground/75">
+                            Cantidad
+                          </Label>
+                          <Input
+                            aria-label={`Cantidad de ${item.productName}`}
+                            className="h-9 w-full border border-border bg-pos-surface text-center font-semibold text-foreground shadow-sm"
+                            type="number"
+                            min="1"
+                            max={String(item.stock)}
+                            step="1"
+                            value={item.quantity}
+                            onChange={(event) =>
+                              setDispatchItems((items) =>
+                                items.map((current) =>
+                                  current.productVariantId === item.productVariantId
+                                    ? { ...current, quantity: event.target.value }
+                                    : current,
+                                ),
+                              )
+                            }
+                          />
+                        </div>
+                        <Button
+                          isIconOnly
+                          className="h-9 min-h-9 w-9 min-w-9 border border-border bg-pos-surface text-destructive"
+                          variant="ghost"
+                          aria-label={`Quitar ${item.productName}`}
+                          onClick={() =>
+                            setDispatchItems((items) =>
+                              items.filter(
+                                (current) =>
+                                  current.productVariantId !== item.productVariantId,
+                              ),
+                            )
+                          }
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                <section className="rounded-xl border border-border bg-pos-surface-soft p-3">
+                  <div className="mb-2 flex items-center gap-2">
+                    <p className="text-sm font-bold text-foreground">Observación</p>
+                    <span className="text-xs text-foreground/55">Opcional</span>
+                  </div>
+                  <div className="w-full min-w-0 overflow-hidden">
+                    <TextArea
+                      aria-label="Observación de despacho"
+                      className="block min-h-20 w-full min-w-0 max-w-full resize-none border border-border bg-background text-foreground placeholder:text-foreground/55"
+                      rows={3}
+                      placeholder="Agrega una nota sobre el traslado"
+                      value={dispatchObservation}
+                      onChange={(event) => setDispatchObservation(event.target.value)}
+                    />
+                  </div>
+                </section>
+              </Modal.Body>
+              <Modal.Footer className="shrink-0 gap-2 border-t border-border bg-pos-surface px-4 py-3 text-foreground sm:px-5">
+                <Button
+                  className="border-border bg-background text-foreground"
+                  variant="outline"
+                  onClick={closeDispatch}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  className="min-w-40 bg-primary text-primary-foreground"
+                  isDisabled={!dispatchIsValid || dispatchMutation.isPending}
+                  onClick={() =>
+                    dispatchMutation.mutate({
+                      destinationStoreId: Number(destinationStoreId),
+                      observation: dispatchObservation.trim() || undefined,
+                      items: dispatchItems.map((item) => ({
+                        productVariantId: item.productVariantId,
+                        quantity: Number(item.quantity),
+                      })),
+                    })
+                  }
+                >
+                  {dispatchMutation.isPending
+                    ? "Despachando..."
+                    : "Confirmar despacho"}
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
 
       <Modal><Modal.Backdrop isOpen={Boolean(receiveTransfer)}><Modal.Container size="2xl"><Modal.Dialog className="bg-pos-surface text-foreground">
         <Modal.Header><div><h2 className="text-xl font-bold">Recibir traslado #{receiveTransfer?.id}</h2><p className="text-sm text-muted-foreground">Confirma la cantidad física recibida de cada lote.</p></div></Modal.Header>
