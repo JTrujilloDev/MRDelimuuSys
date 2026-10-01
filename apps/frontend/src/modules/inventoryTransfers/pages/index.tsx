@@ -549,15 +549,142 @@ const InventoryTransfersPage = () => {
         </Modal.Backdrop>
       </Modal>
 
-      <Modal><Modal.Backdrop isOpen={Boolean(receiveTransfer)}><Modal.Container size="2xl"><Modal.Dialog className="bg-pos-surface text-foreground">
-        <Modal.Header><div><h2 className="text-xl font-bold">Recibir traslado #{receiveTransfer?.id}</h2><p className="text-sm text-muted-foreground">Confirma la cantidad física recibida de cada lote.</p></div></Modal.Header>
-        <Modal.Body className="space-y-4">
-          <div className="space-y-2">{receiveTransfer?.items.map((item) => <div key={item.id} className="grid grid-cols-[1fr_8rem] items-center gap-3 rounded-lg border border-border p-3"><div><p className="font-semibold">{item.productVariant.product.name} · {item.productVariant.name}</p><p className="text-xs text-muted-foreground">Lote {item.inventoryLot.code} · Enviado: {item.quantitySent}</p></div><Input aria-label={`Cantidad recibida del lote ${item.inventoryLot.code}`} type="number" min="0" step="1" value={receivedQuantities[item.id] ?? ""} onChange={(event) => setReceivedQuantities((values) => ({ ...values, [item.id]: event.target.value }))} /></div>)}</div>
-          {hasDiscrepancy && <TextArea aria-label="Justificación de diferencia" placeholder="Explica el faltante o sobrante encontrado" value={discrepancyReason} onChange={(event) => setDiscrepancyReason(event.target.value)} />}
-          <TextArea aria-label="Observación de recepción" placeholder="Observación opcional de la recepción" value={receptionObservation} onChange={(event) => setReceptionObservation(event.target.value)} />
-        </Modal.Body>
-        <Modal.Footer><Button variant="outline" onClick={closeReception}>Cancelar</Button><Button className="bg-primary text-primary-foreground" isDisabled={receptionHasInvalidQuantity || (hasDiscrepancy && !discrepancyReason.trim()) || receiveMutation.isPending} onClick={() => receiveTransfer && receiveMutation.mutate({ transferId: receiveTransfer.id, data: { items: receptionItems, observation: receptionObservation.trim() || undefined, discrepancyReason: discrepancyReason.trim() || undefined } })}>{receiveMutation.isPending ? "Recibiendo..." : "Confirmar recepción"}</Button></Modal.Footer>
-      </Modal.Dialog></Modal.Container></Modal.Backdrop></Modal>
+      <Modal>
+        <Modal.Backdrop isOpen={Boolean(receiveTransfer)}>
+          <Modal.Container size="lg">
+            <Modal.Dialog className="flex max-h-[calc(100vh-2rem)] flex-col overflow-hidden rounded-2xl border border-border bg-pos-surface text-foreground shadow-2xl">
+              <Modal.Header className="shrink-0 border-b border-border bg-pos-surface px-4 py-3 text-foreground sm:px-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                    <PackageCheck className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <h2 className="text-lg font-bold text-foreground">
+                      Recibir traslado #{receiveTransfer?.id}
+                    </h2>
+                    <p className="text-xs font-medium text-foreground/70 sm:text-sm">
+                      Confirma las cantidades que llegaron físicamente a este punto.
+                    </p>
+                  </div>
+                </div>
+              </Modal.Header>
+
+              <Modal.Body className="min-h-0 space-y-3 overflow-y-auto bg-pos-surface px-4 py-3 text-foreground sm:px-5">
+                <section className="rounded-xl border border-border bg-pos-surface-soft p-3">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-foreground">Productos recibidos</p>
+                      <p className="text-xs font-medium text-foreground/65">
+                        Compara cada cantidad con lo enviado.
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-background px-2 py-0.5 text-xs font-semibold text-foreground/75 ring-1 ring-border">
+                      {receiveTransfer?.items.length ?? 0}{" "}
+                      {receiveTransfer?.items.length === 1 ? "producto" : "productos"}
+                    </span>
+                  </div>
+
+                  <div className="min-h-36 space-y-2">
+                    {receiveTransfer?.items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="grid grid-cols-1 gap-3 rounded-lg border border-border bg-background p-3 shadow-sm sm:grid-cols-[minmax(0,1fr)_8rem] sm:items-center"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-foreground">
+                            {item.productVariant.product.name} · {item.productVariant.name}
+                          </p>
+                          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs font-medium text-foreground/70">
+                            <span>Lote: <strong className="text-foreground">{item.inventoryLot.code}</strong></span>
+                            <span>Enviado: <strong className="text-foreground">{item.quantitySent}</strong></span>
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="mb-1 block text-[11px] font-bold text-foreground/80">
+                            Cantidad recibida
+                          </Label>
+                          <Input
+                            aria-label={`Cantidad recibida del lote ${item.inventoryLot.code}`}
+                            className="h-10 w-full border border-border bg-pos-surface text-center font-bold text-foreground shadow-sm"
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={receivedQuantities[item.id] ?? ""}
+                            onChange={(event) =>
+                              setReceivedQuantities((values) => ({
+                                ...values,
+                                [item.id]: event.target.value,
+                              }))
+                            }
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {hasDiscrepancy && (
+                  <section className="rounded-xl border border-amber-500/35 bg-amber-500/10 p-3 text-foreground">
+                    <div className="mb-2">
+                      <p className="text-sm font-bold text-foreground">Justificación de la diferencia</p>
+                      <p className="text-xs font-medium text-foreground/70">
+                        Es obligatoria cuando la cantidad recibida no coincide con la enviada.
+                      </p>
+                    </div>
+                    <TextArea
+                      aria-label="Justificación de diferencia"
+                      className="block min-h-20 w-full resize-none border border-amber-500/40 bg-background text-foreground placeholder:text-foreground/55"
+                      rows={3}
+                      placeholder="Explica el faltante o sobrante encontrado"
+                      value={discrepancyReason}
+                      onChange={(event) => setDiscrepancyReason(event.target.value)}
+                    />
+                  </section>
+                )}
+
+                <section className="rounded-xl border border-border bg-pos-surface-soft p-3">
+                  <div className="mb-2 flex items-center gap-2">
+                    <p className="text-sm font-bold text-foreground">Observación</p>
+                    <span className="text-xs font-medium text-foreground/60">Opcional</span>
+                  </div>
+                  <TextArea
+                    aria-label="Observación de recepción"
+                    className="block min-h-20 w-full resize-none border border-border bg-background text-foreground placeholder:text-foreground/55"
+                    rows={3}
+                    placeholder="Agrega una nota sobre la recepción"
+                    value={receptionObservation}
+                    onChange={(event) => setReceptionObservation(event.target.value)}
+                  />
+                </section>
+              </Modal.Body>
+
+              <Modal.Footer className="shrink-0 gap-2 border-t border-border bg-pos-surface px-4 py-3 text-foreground sm:px-5">
+                <Button
+                  className="border-border bg-background text-foreground"
+                  variant="outline"
+                  onClick={closeReception}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  className="min-w-40 bg-primary text-primary-foreground"
+                  isDisabled={receptionHasInvalidQuantity || (hasDiscrepancy && !discrepancyReason.trim()) || receiveMutation.isPending}
+                  onClick={() => receiveTransfer && receiveMutation.mutate({
+                    transferId: receiveTransfer.id,
+                    data: {
+                      items: receptionItems,
+                      observation: receptionObservation.trim() || undefined,
+                      discrepancyReason: discrepancyReason.trim() || undefined,
+                    },
+                  })}
+                >
+                  {receiveMutation.isPending ? "Recibiendo..." : "Confirmar recepción"}
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
     </div>
   );
 };
