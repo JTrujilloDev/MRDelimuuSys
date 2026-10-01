@@ -262,6 +262,8 @@ export type UserWhereInput = {
   storeAccesses?: Prisma.UserStoreAccessListRelationFilter
   sessions?: Prisma.UserSessionListRelationFilter
   inventoryTransactions?: Prisma.InventoryTransactionListRelationFilter
+  dispatchedTransfers?: Prisma.InventoryTransferListRelationFilter
+  receivedTransfers?: Prisma.InventoryTransferListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -281,6 +283,8 @@ export type UserOrderByWithRelationInput = {
   storeAccesses?: Prisma.UserStoreAccessOrderByRelationAggregateInput
   sessions?: Prisma.UserSessionOrderByRelationAggregateInput
   inventoryTransactions?: Prisma.InventoryTransactionOrderByRelationAggregateInput
+  dispatchedTransfers?: Prisma.InventoryTransferOrderByRelationAggregateInput
+  receivedTransfers?: Prisma.InventoryTransferOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -303,6 +307,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   storeAccesses?: Prisma.UserStoreAccessListRelationFilter
   sessions?: Prisma.UserSessionListRelationFilter
   inventoryTransactions?: Prisma.InventoryTransactionListRelationFilter
+  dispatchedTransfers?: Prisma.InventoryTransferListRelationFilter
+  receivedTransfers?: Prisma.InventoryTransferListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -355,6 +361,8 @@ export type UserCreateInput = {
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -374,6 +382,8 @@ export type UserUncheckedCreateInput = {
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserUpdateInput = {
@@ -392,6 +402,8 @@ export type UserUpdateInput = {
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -411,6 +423,8 @@ export type UserUncheckedUpdateInput = {
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -576,6 +590,36 @@ export type UserUpdateOneRequiredWithoutCashRegistersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCashRegistersInput, Prisma.UserUpdateWithoutCashRegistersInput>, Prisma.UserUncheckedUpdateWithoutCashRegistersInput>
 }
 
+export type UserCreateNestedOneWithoutDispatchedTransfersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDispatchedTransfersInput, Prisma.UserUncheckedCreateWithoutDispatchedTransfersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDispatchedTransfersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutReceivedTransfersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReceivedTransfersInput, Prisma.UserUncheckedCreateWithoutReceivedTransfersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReceivedTransfersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDispatchedTransfersInput, Prisma.UserUncheckedCreateWithoutDispatchedTransfersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDispatchedTransfersInput
+  upsert?: Prisma.UserUpsertWithoutDispatchedTransfersInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDispatchedTransfersInput, Prisma.UserUpdateWithoutDispatchedTransfersInput>, Prisma.UserUncheckedUpdateWithoutDispatchedTransfersInput>
+}
+
+export type UserUpdateOneWithoutReceivedTransfersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReceivedTransfersInput, Prisma.UserUncheckedCreateWithoutReceivedTransfersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReceivedTransfersInput
+  upsert?: Prisma.UserUpsertWithoutReceivedTransfersInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReceivedTransfersInput, Prisma.UserUpdateWithoutReceivedTransfersInput>, Prisma.UserUncheckedUpdateWithoutReceivedTransfersInput>
+}
+
 export type UserCreateNestedOneWithoutStoreAccessesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutStoreAccessesInput, Prisma.UserUncheckedCreateWithoutStoreAccessesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutStoreAccessesInput
@@ -619,6 +663,8 @@ export type UserCreateWithoutAccountsInput = {
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -637,6 +683,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -659,6 +707,8 @@ export type UserCreateWithoutCancelledAccountsInput = {
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserUncheckedCreateWithoutCancelledAccountsInput = {
@@ -677,6 +727,8 @@ export type UserUncheckedCreateWithoutCancelledAccountsInput = {
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserCreateOrConnectWithoutCancelledAccountsInput = {
@@ -710,6 +762,8 @@ export type UserUpdateWithoutAccountsInput = {
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -728,6 +782,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserUpsertWithoutCancelledAccountsInput = {
@@ -756,6 +812,8 @@ export type UserUpdateWithoutCancelledAccountsInput = {
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCancelledAccountsInput = {
@@ -774,6 +832,8 @@ export type UserUncheckedUpdateWithoutCancelledAccountsInput = {
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserCreateWithoutInventoryTransactionsInput = {
@@ -791,6 +851,8 @@ export type UserCreateWithoutInventoryTransactionsInput = {
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserUncheckedCreateWithoutInventoryTransactionsInput = {
@@ -809,6 +871,8 @@ export type UserUncheckedCreateWithoutInventoryTransactionsInput = {
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserCreateOrConnectWithoutInventoryTransactionsInput = {
@@ -842,6 +906,8 @@ export type UserUpdateWithoutInventoryTransactionsInput = {
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInventoryTransactionsInput = {
@@ -860,6 +926,8 @@ export type UserUncheckedUpdateWithoutInventoryTransactionsInput = {
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserCreateWithoutCashRegistersInput = {
@@ -877,6 +945,8 @@ export type UserCreateWithoutCashRegistersInput = {
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserUncheckedCreateWithoutCashRegistersInput = {
@@ -895,6 +965,8 @@ export type UserUncheckedCreateWithoutCashRegistersInput = {
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserCreateOrConnectWithoutCashRegistersInput = {
@@ -928,6 +1000,8 @@ export type UserUpdateWithoutCashRegistersInput = {
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCashRegistersInput = {
@@ -946,6 +1020,196 @@ export type UserUncheckedUpdateWithoutCashRegistersInput = {
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+}
+
+export type UserCreateWithoutDispatchedTransfersInput = {
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
+  CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+}
+
+export type UserUncheckedCreateWithoutDispatchedTransfersInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
+  CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+}
+
+export type UserCreateOrConnectWithoutDispatchedTransfersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDispatchedTransfersInput, Prisma.UserUncheckedCreateWithoutDispatchedTransfersInput>
+}
+
+export type UserCreateWithoutReceivedTransfersInput = {
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
+  CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+}
+
+export type UserUncheckedCreateWithoutReceivedTransfersInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
+  CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+}
+
+export type UserCreateOrConnectWithoutReceivedTransfersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReceivedTransfersInput, Prisma.UserUncheckedCreateWithoutReceivedTransfersInput>
+}
+
+export type UserUpsertWithoutDispatchedTransfersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDispatchedTransfersInput, Prisma.UserUncheckedUpdateWithoutDispatchedTransfersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDispatchedTransfersInput, Prisma.UserUncheckedCreateWithoutDispatchedTransfersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDispatchedTransfersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDispatchedTransfersInput, Prisma.UserUncheckedUpdateWithoutDispatchedTransfersInput>
+}
+
+export type UserUpdateWithoutDispatchedTransfersInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDispatchedTransfersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+}
+
+export type UserUpsertWithoutReceivedTransfersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReceivedTransfersInput, Prisma.UserUncheckedUpdateWithoutReceivedTransfersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReceivedTransfersInput, Prisma.UserUncheckedCreateWithoutReceivedTransfersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReceivedTransfersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReceivedTransfersInput, Prisma.UserUncheckedUpdateWithoutReceivedTransfersInput>
+}
+
+export type UserUpdateWithoutReceivedTransfersInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReceivedTransfersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
 }
 
 export type UserCreateWithoutStoreAccessesInput = {
@@ -963,6 +1227,8 @@ export type UserCreateWithoutStoreAccessesInput = {
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserUncheckedCreateWithoutStoreAccessesInput = {
@@ -981,6 +1247,8 @@ export type UserUncheckedCreateWithoutStoreAccessesInput = {
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserCreateOrConnectWithoutStoreAccessesInput = {
@@ -1014,6 +1282,8 @@ export type UserUpdateWithoutStoreAccessesInput = {
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStoreAccessesInput = {
@@ -1032,6 +1302,8 @@ export type UserUncheckedUpdateWithoutStoreAccessesInput = {
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1049,6 +1321,8 @@ export type UserCreateWithoutSessionsInput = {
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1067,6 +1341,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1100,6 +1376,8 @@ export type UserUpdateWithoutSessionsInput = {
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1118,6 +1396,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
 }
 
 
@@ -1132,6 +1412,8 @@ export type UserCountOutputType = {
   storeAccesses: number
   sessions: number
   inventoryTransactions: number
+  dispatchedTransfers: number
+  receivedTransfers: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1141,6 +1423,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   storeAccesses?: boolean | UserCountOutputTypeCountStoreAccessesArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   inventoryTransactions?: boolean | UserCountOutputTypeCountInventoryTransactionsArgs
+  dispatchedTransfers?: boolean | UserCountOutputTypeCountDispatchedTransfersArgs
+  receivedTransfers?: boolean | UserCountOutputTypeCountReceivedTransfersArgs
 }
 
 /**
@@ -1195,6 +1479,20 @@ export type UserCountOutputTypeCountInventoryTransactionsArgs<ExtArgs extends ru
   where?: Prisma.InventoryTransactionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDispatchedTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryTransferWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReceivedTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryTransferWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1213,6 +1511,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   storeAccesses?: boolean | Prisma.User$storeAccessesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   inventoryTransactions?: boolean | Prisma.User$inventoryTransactionsArgs<ExtArgs>
+  dispatchedTransfers?: boolean | Prisma.User$dispatchedTransfersArgs<ExtArgs>
+  receivedTransfers?: boolean | Prisma.User$receivedTransfersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1263,6 +1563,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   storeAccesses?: boolean | Prisma.User$storeAccessesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   inventoryTransactions?: boolean | Prisma.User$inventoryTransactionsArgs<ExtArgs>
+  dispatchedTransfers?: boolean | Prisma.User$dispatchedTransfersArgs<ExtArgs>
+  receivedTransfers?: boolean | Prisma.User$receivedTransfersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1277,6 +1579,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     storeAccesses: Prisma.$UserStoreAccessPayload<ExtArgs>[]
     sessions: Prisma.$UserSessionPayload<ExtArgs>[]
     inventoryTransactions: Prisma.$InventoryTransactionPayload<ExtArgs>[]
+    dispatchedTransfers: Prisma.$InventoryTransferPayload<ExtArgs>[]
+    receivedTransfers: Prisma.$InventoryTransferPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1689,6 +1993,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   storeAccesses<T extends Prisma.User$storeAccessesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$storeAccessesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserStoreAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   inventoryTransactions<T extends Prisma.User$inventoryTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inventoryTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  dispatchedTransfers<T extends Prisma.User$dispatchedTransfersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dispatchedTransfersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  receivedTransfers<T extends Prisma.User$receivedTransfersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$receivedTransfersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2262,6 +2568,54 @@ export type User$inventoryTransactionsArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.InventoryTransactionScalarFieldEnum | Prisma.InventoryTransactionScalarFieldEnum[]
+}
+
+/**
+ * User.dispatchedTransfers
+ */
+export type User$dispatchedTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryTransfer
+   */
+  select?: Prisma.InventoryTransferSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryTransfer
+   */
+  omit?: Prisma.InventoryTransferOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryTransferInclude<ExtArgs> | null
+  where?: Prisma.InventoryTransferWhereInput
+  orderBy?: Prisma.InventoryTransferOrderByWithRelationInput | Prisma.InventoryTransferOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryTransferWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryTransferScalarFieldEnum | Prisma.InventoryTransferScalarFieldEnum[]
+}
+
+/**
+ * User.receivedTransfers
+ */
+export type User$receivedTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryTransfer
+   */
+  select?: Prisma.InventoryTransferSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryTransfer
+   */
+  omit?: Prisma.InventoryTransferOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryTransferInclude<ExtArgs> | null
+  where?: Prisma.InventoryTransferWhereInput
+  orderBy?: Prisma.InventoryTransferOrderByWithRelationInput | Prisma.InventoryTransferOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryTransferWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryTransferScalarFieldEnum | Prisma.InventoryTransferScalarFieldEnum[]
 }
 
 /**

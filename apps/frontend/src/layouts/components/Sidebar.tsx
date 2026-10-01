@@ -79,6 +79,7 @@ const Sidebar = () => {
         ]
       : []),
     {title: "Inventario" , url: "inventory", icon: Package},
+    {title: "Traslados" , url: "inventory-transfers", icon: Repeat2},
     ...(activeContext.store.kitchenMode === "TICKETS"
       ? [{ title: "Cocina", url: "kitchen", icon: ChefHat }]
       : []),

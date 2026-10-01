@@ -13,6 +13,7 @@ import SecurityCameras from "../../modules/securityCameras/pages";
 import ContextSelector from "../../pages/ContextSelector";
 import AdminPage from "../../modules/admin/pages";
 import ReportsPage from "../../modules/reports/pages";
+import InventoryTransfersPage from "../../modules/inventoryTransfers/pages";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
       { path: "product-categories", element: <Navigate to="../catalog?tab=categories" replace /> },
       { path: "products", element: <Navigate to="../catalog?tab=products" replace /> },
       { path: "inventory", element: <Inventory /> },
+      { path: "inventory-transfers", element: <InventoryTransfersPage /> },
       { path: "fundation-tags", element: <FundationTags /> },
       { path: "kitchen", element: <KitchenView /> },
       { path: "cash-register-history", element: <CashRegisterHistory /> },

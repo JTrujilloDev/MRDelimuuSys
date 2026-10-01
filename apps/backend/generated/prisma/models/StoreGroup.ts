@@ -226,6 +226,7 @@ export type StoreGroupWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"StoreGroup"> | Date | string
   stores?: Prisma.StoreListRelationFilter
   catalogItems?: Prisma.GroupCatalogItemListRelationFilter
+  transfers?: Prisma.InventoryTransferListRelationFilter
 }
 
 export type StoreGroupOrderByWithRelationInput = {
@@ -237,6 +238,7 @@ export type StoreGroupOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   stores?: Prisma.StoreOrderByRelationAggregateInput
   catalogItems?: Prisma.GroupCatalogItemOrderByRelationAggregateInput
+  transfers?: Prisma.InventoryTransferOrderByRelationAggregateInput
 }
 
 export type StoreGroupWhereUniqueInput = Prisma.AtLeast<{
@@ -251,6 +253,7 @@ export type StoreGroupWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"StoreGroup"> | Date | string
   stores?: Prisma.StoreListRelationFilter
   catalogItems?: Prisma.GroupCatalogItemListRelationFilter
+  transfers?: Prisma.InventoryTransferListRelationFilter
 }, "id" | "code">
 
 export type StoreGroupOrderByWithAggregationInput = {
@@ -287,6 +290,7 @@ export type StoreGroupCreateInput = {
   updatedAt?: Date | string
   stores?: Prisma.StoreCreateNestedManyWithoutGroupInput
   catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutGroupInput
+  transfers?: Prisma.InventoryTransferCreateNestedManyWithoutGroupInput
 }
 
 export type StoreGroupUncheckedCreateInput = {
@@ -298,6 +302,7 @@ export type StoreGroupUncheckedCreateInput = {
   updatedAt?: Date | string
   stores?: Prisma.StoreUncheckedCreateNestedManyWithoutGroupInput
   catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutGroupInput
+  transfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type StoreGroupUpdateInput = {
@@ -308,6 +313,7 @@ export type StoreGroupUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stores?: Prisma.StoreUpdateManyWithoutGroupNestedInput
   catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutGroupNestedInput
+  transfers?: Prisma.InventoryTransferUpdateManyWithoutGroupNestedInput
 }
 
 export type StoreGroupUncheckedUpdateInput = {
@@ -319,6 +325,7 @@ export type StoreGroupUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stores?: Prisma.StoreUncheckedUpdateManyWithoutGroupNestedInput
   catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutGroupNestedInput
+  transfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type StoreGroupCreateManyInput = {
@@ -415,6 +422,20 @@ export type StoreGroupUpdateOneRequiredWithoutStoresNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StoreGroupUpdateToOneWithWhereWithoutStoresInput, Prisma.StoreGroupUpdateWithoutStoresInput>, Prisma.StoreGroupUncheckedUpdateWithoutStoresInput>
 }
 
+export type StoreGroupCreateNestedOneWithoutTransfersInput = {
+  create?: Prisma.XOR<Prisma.StoreGroupCreateWithoutTransfersInput, Prisma.StoreGroupUncheckedCreateWithoutTransfersInput>
+  connectOrCreate?: Prisma.StoreGroupCreateOrConnectWithoutTransfersInput
+  connect?: Prisma.StoreGroupWhereUniqueInput
+}
+
+export type StoreGroupUpdateOneRequiredWithoutTransfersNestedInput = {
+  create?: Prisma.XOR<Prisma.StoreGroupCreateWithoutTransfersInput, Prisma.StoreGroupUncheckedCreateWithoutTransfersInput>
+  connectOrCreate?: Prisma.StoreGroupCreateOrConnectWithoutTransfersInput
+  upsert?: Prisma.StoreGroupUpsertWithoutTransfersInput
+  connect?: Prisma.StoreGroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StoreGroupUpdateToOneWithWhereWithoutTransfersInput, Prisma.StoreGroupUpdateWithoutTransfersInput>, Prisma.StoreGroupUncheckedUpdateWithoutTransfersInput>
+}
+
 export type StoreGroupCreateWithoutCatalogItemsInput = {
   code: string
   name: string
@@ -422,6 +443,7 @@ export type StoreGroupCreateWithoutCatalogItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   stores?: Prisma.StoreCreateNestedManyWithoutGroupInput
+  transfers?: Prisma.InventoryTransferCreateNestedManyWithoutGroupInput
 }
 
 export type StoreGroupUncheckedCreateWithoutCatalogItemsInput = {
@@ -432,6 +454,7 @@ export type StoreGroupUncheckedCreateWithoutCatalogItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   stores?: Prisma.StoreUncheckedCreateNestedManyWithoutGroupInput
+  transfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type StoreGroupCreateOrConnectWithoutCatalogItemsInput = {
@@ -457,6 +480,7 @@ export type StoreGroupUpdateWithoutCatalogItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stores?: Prisma.StoreUpdateManyWithoutGroupNestedInput
+  transfers?: Prisma.InventoryTransferUpdateManyWithoutGroupNestedInput
 }
 
 export type StoreGroupUncheckedUpdateWithoutCatalogItemsInput = {
@@ -467,6 +491,7 @@ export type StoreGroupUncheckedUpdateWithoutCatalogItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stores?: Prisma.StoreUncheckedUpdateManyWithoutGroupNestedInput
+  transfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type StoreGroupCreateWithoutStoresInput = {
@@ -476,6 +501,7 @@ export type StoreGroupCreateWithoutStoresInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutGroupInput
+  transfers?: Prisma.InventoryTransferCreateNestedManyWithoutGroupInput
 }
 
 export type StoreGroupUncheckedCreateWithoutStoresInput = {
@@ -486,6 +512,7 @@ export type StoreGroupUncheckedCreateWithoutStoresInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutGroupInput
+  transfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type StoreGroupCreateOrConnectWithoutStoresInput = {
@@ -511,6 +538,7 @@ export type StoreGroupUpdateWithoutStoresInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutGroupNestedInput
+  transfers?: Prisma.InventoryTransferUpdateManyWithoutGroupNestedInput
 }
 
 export type StoreGroupUncheckedUpdateWithoutStoresInput = {
@@ -520,6 +548,65 @@ export type StoreGroupUncheckedUpdateWithoutStoresInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutGroupNestedInput
+  transfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutGroupNestedInput
+}
+
+export type StoreGroupCreateWithoutTransfersInput = {
+  code: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  stores?: Prisma.StoreCreateNestedManyWithoutGroupInput
+  catalogItems?: Prisma.GroupCatalogItemCreateNestedManyWithoutGroupInput
+}
+
+export type StoreGroupUncheckedCreateWithoutTransfersInput = {
+  id?: number
+  code: string
+  name: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  stores?: Prisma.StoreUncheckedCreateNestedManyWithoutGroupInput
+  catalogItems?: Prisma.GroupCatalogItemUncheckedCreateNestedManyWithoutGroupInput
+}
+
+export type StoreGroupCreateOrConnectWithoutTransfersInput = {
+  where: Prisma.StoreGroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.StoreGroupCreateWithoutTransfersInput, Prisma.StoreGroupUncheckedCreateWithoutTransfersInput>
+}
+
+export type StoreGroupUpsertWithoutTransfersInput = {
+  update: Prisma.XOR<Prisma.StoreGroupUpdateWithoutTransfersInput, Prisma.StoreGroupUncheckedUpdateWithoutTransfersInput>
+  create: Prisma.XOR<Prisma.StoreGroupCreateWithoutTransfersInput, Prisma.StoreGroupUncheckedCreateWithoutTransfersInput>
+  where?: Prisma.StoreGroupWhereInput
+}
+
+export type StoreGroupUpdateToOneWithWhereWithoutTransfersInput = {
+  where?: Prisma.StoreGroupWhereInput
+  data: Prisma.XOR<Prisma.StoreGroupUpdateWithoutTransfersInput, Prisma.StoreGroupUncheckedUpdateWithoutTransfersInput>
+}
+
+export type StoreGroupUpdateWithoutTransfersInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stores?: Prisma.StoreUpdateManyWithoutGroupNestedInput
+  catalogItems?: Prisma.GroupCatalogItemUpdateManyWithoutGroupNestedInput
+}
+
+export type StoreGroupUncheckedUpdateWithoutTransfersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stores?: Prisma.StoreUncheckedUpdateManyWithoutGroupNestedInput
   catalogItems?: Prisma.GroupCatalogItemUncheckedUpdateManyWithoutGroupNestedInput
 }
 
@@ -531,11 +618,13 @@ export type StoreGroupUncheckedUpdateWithoutStoresInput = {
 export type StoreGroupCountOutputType = {
   stores: number
   catalogItems: number
+  transfers: number
 }
 
 export type StoreGroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stores?: boolean | StoreGroupCountOutputTypeCountStoresArgs
   catalogItems?: boolean | StoreGroupCountOutputTypeCountCatalogItemsArgs
+  transfers?: boolean | StoreGroupCountOutputTypeCountTransfersArgs
 }
 
 /**
@@ -562,6 +651,13 @@ export type StoreGroupCountOutputTypeCountCatalogItemsArgs<ExtArgs extends runti
   where?: Prisma.GroupCatalogItemWhereInput
 }
 
+/**
+ * StoreGroupCountOutputType without action
+ */
+export type StoreGroupCountOutputTypeCountTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryTransferWhereInput
+}
+
 
 export type StoreGroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -572,6 +668,7 @@ export type StoreGroupSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   updatedAt?: boolean
   stores?: boolean | Prisma.StoreGroup$storesArgs<ExtArgs>
   catalogItems?: boolean | Prisma.StoreGroup$catalogItemsArgs<ExtArgs>
+  transfers?: boolean | Prisma.StoreGroup$transfersArgs<ExtArgs>
   _count?: boolean | Prisma.StoreGroupCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["storeGroup"]>
 
@@ -606,6 +703,7 @@ export type StoreGroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type StoreGroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stores?: boolean | Prisma.StoreGroup$storesArgs<ExtArgs>
   catalogItems?: boolean | Prisma.StoreGroup$catalogItemsArgs<ExtArgs>
+  transfers?: boolean | Prisma.StoreGroup$transfersArgs<ExtArgs>
   _count?: boolean | Prisma.StoreGroupCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StoreGroupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -616,6 +714,7 @@ export type $StoreGroupPayload<ExtArgs extends runtime.Types.Extensions.Internal
   objects: {
     stores: Prisma.$StorePayload<ExtArgs>[]
     catalogItems: Prisma.$GroupCatalogItemPayload<ExtArgs>[]
+    transfers: Prisma.$InventoryTransferPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1020,6 +1119,7 @@ export interface Prisma__StoreGroupClient<T, Null = never, ExtArgs extends runti
   readonly [Symbol.toStringTag]: "PrismaPromise"
   stores<T extends Prisma.StoreGroup$storesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreGroup$storesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   catalogItems<T extends Prisma.StoreGroup$catalogItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreGroup$catalogItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupCatalogItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transfers<T extends Prisma.StoreGroup$transfersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreGroup$transfersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1493,6 +1593,30 @@ export type StoreGroup$catalogItemsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.GroupCatalogItemScalarFieldEnum | Prisma.GroupCatalogItemScalarFieldEnum[]
+}
+
+/**
+ * StoreGroup.transfers
+ */
+export type StoreGroup$transfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryTransfer
+   */
+  select?: Prisma.InventoryTransferSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryTransfer
+   */
+  omit?: Prisma.InventoryTransferOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryTransferInclude<ExtArgs> | null
+  where?: Prisma.InventoryTransferWhereInput
+  orderBy?: Prisma.InventoryTransferOrderByWithRelationInput | Prisma.InventoryTransferOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryTransferWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryTransferScalarFieldEnum | Prisma.InventoryTransferScalarFieldEnum[]
 }
 
 /**

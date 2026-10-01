@@ -49,6 +49,16 @@ export const transactionTypes = {
     value: "INTERNAL_CONSUMPTION",
     className: "bg-[#ef4410]/20 text-[#ef4410]",
   },
+  TRANSFER_OUT: {
+    label: "Traslado enviado",
+    value: "TRANSFER_OUT",
+    className: "bg-amber-500/20 text-amber-700",
+  },
+  TRANSFER_IN: {
+    label: "Traslado recibido",
+    value: "TRANSFER_IN",
+    className: "bg-[#10b981]/20 text-[#047857]",
+  },
 };
 
 export const inventoryTransactionsByProductType = {

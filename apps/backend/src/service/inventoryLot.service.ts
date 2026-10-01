@@ -222,15 +222,17 @@ export const applyInventoryMovementTx = async (
       data.allowExpiredLots ?? data.type !== "SALE",
     );
     for (const allocation of allocations) {
-      await tx.storeLotInventory.update({
+      const updatedLot = await tx.storeLotInventory.updateMany({
         where: {
-          storeId_inventoryLotId: {
-            storeId: data.storeId,
-            inventoryLotId: allocation.inventoryLotId,
-          },
+          storeId: data.storeId,
+          inventoryLotId: allocation.inventoryLotId,
+          stock: { gte: allocation.quantity },
         },
         data: { stock: { decrement: allocation.quantity } },
       });
+      if (updatedLot.count === 0) {
+        throw new Error("Inventory changed while processing the movement; please retry");
+      }
       transactions.push(await tx.inventoryTransaction.create({
         data: {
           ...commonTransactionData,

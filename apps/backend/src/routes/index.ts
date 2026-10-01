@@ -14,6 +14,7 @@ import reportGenerationRoutes from "./reportGeneration.routes";
 import qzRoutes from "./qz.routes";
 import kitchenTicketRoutes from "./kitchenTicket.routes";
 import catalogRoutes from "./catalog.routes";
+import inventoryTransferRoutes from "./inventoryTransfer.routes";
 import { requireActiveContext, requireAuth } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -33,6 +34,7 @@ router.use("/products", productsRoutes);
 router.use("/cash-register", cashRegisterRoutes);
 router.use("/financial-transactions", financialTransactionRoutes);
 router.use("/pos-inventory", POSInventoryRoutes);
+router.use("/inventory-transfers", inventoryTransferRoutes);
 router.use("/reports", reportGenerationRoutes);
 router.use("/qz", qzRoutes);
 router.use("/kitchen-tickets", kitchenTicketRoutes);

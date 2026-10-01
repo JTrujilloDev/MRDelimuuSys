@@ -55,7 +55,13 @@ interface TransactionFormProps {
 }
 
 const manualTransactionTypes = Object.values(transactionTypes).filter(
-  (transaction) => !["SALE", "WHOLESALE", "PRODUCTION"].includes(transaction.value),
+  (transaction) => ![
+    "SALE",
+    "WHOLESALE",
+    "PRODUCTION",
+    "TRANSFER_OUT",
+    "TRANSFER_IN",
+  ].includes(transaction.value),
 );
 const outputTypes = new Set(["WASTE", "INTERNAL_CONSUMPTION"]);
 const observationRequiredTypes = new Set([

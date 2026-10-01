@@ -68,6 +68,8 @@ export const ModelName = {
   StoreInventory: 'StoreInventory',
   InventoryLot: 'InventoryLot',
   StoreLotInventory: 'StoreLotInventory',
+  InventoryTransfer: 'InventoryTransfer',
+  InventoryTransferItem: 'InventoryTransferItem',
   Terminal: 'Terminal',
   UserStoreAccess: 'UserStoreAccess',
   UserSession: 'UserSession',
@@ -346,6 +348,40 @@ export const StoreLotInventoryScalarFieldEnum = {
 } as const
 
 export type StoreLotInventoryScalarFieldEnum = (typeof StoreLotInventoryScalarFieldEnum)[keyof typeof StoreLotInventoryScalarFieldEnum]
+
+
+export const InventoryTransferScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  originStoreId: 'originStoreId',
+  destinationStoreId: 'destinationStoreId',
+  status: 'status',
+  dispatchedByUserId: 'dispatchedByUserId',
+  receivedByUserId: 'receivedByUserId',
+  dispatchObservation: 'dispatchObservation',
+  receptionObservation: 'receptionObservation',
+  discrepancyReason: 'discrepancyReason',
+  dispatchedAt: 'dispatchedAt',
+  receivedAt: 'receivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InventoryTransferScalarFieldEnum = (typeof InventoryTransferScalarFieldEnum)[keyof typeof InventoryTransferScalarFieldEnum]
+
+
+export const InventoryTransferItemScalarFieldEnum = {
+  id: 'id',
+  transferId: 'transferId',
+  productVariantId: 'productVariantId',
+  inventoryLotId: 'inventoryLotId',
+  quantitySent: 'quantitySent',
+  quantityReceived: 'quantityReceived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InventoryTransferItemScalarFieldEnum = (typeof InventoryTransferItemScalarFieldEnum)[keyof typeof InventoryTransferItemScalarFieldEnum]
 
 
 export const TerminalScalarFieldEnum = {

@@ -85,7 +85,9 @@ export const InventoryTransactionType = {
   INITIAL: 'INITIAL',
   WHOLESALE: 'WHOLESALE',
   INTERNAL_CONSUMPTION: 'INTERNAL_CONSUMPTION',
-  DONATION: 'DONATION'
+  DONATION: 'DONATION',
+  TRANSFER_OUT: 'TRANSFER_OUT',
+  TRANSFER_IN: 'TRANSFER_IN'
 } as const
 
 export type InventoryTransactionType = (typeof InventoryTransactionType)[keyof typeof InventoryTransactionType]
@@ -138,6 +140,14 @@ export const KitchenMode = {
 } as const
 
 export type KitchenMode = (typeof KitchenMode)[keyof typeof KitchenMode]
+
+
+export const InventoryTransferStatus = {
+  DISPATCHED: 'DISPATCHED',
+  RECEIVED: 'RECEIVED'
+} as const
+
+export type InventoryTransferStatus = (typeof InventoryTransferStatus)[keyof typeof InventoryTransferStatus]
 
 
 export const KitchenTicketStatus = {

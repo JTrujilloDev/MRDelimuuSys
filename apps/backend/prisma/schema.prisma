@@ -60,6 +60,7 @@ model ProductVariant {
   catalogItems          GroupCatalogItem[]
   storeInventories      StoreInventory[]
   inventoryLots         InventoryLot[]
+  transferItems          InventoryTransferItem[]
   recipeItems           RecipeItem[]           @relation("RecipeOwner")
   ingredientInRecipes   RecipeItem[]           @relation("RecipeIngredient")
 }
@@ -113,6 +114,8 @@ model User {
   storeAccesses         UserStoreAccess[]
   sessions              UserSession[]
   inventoryTransactions InventoryTransaction[] @relation("InventoryTransactionCreatedBy")
+  dispatchedTransfers   InventoryTransfer[]    @relation("TransferDispatchedBy")
+  receivedTransfers     InventoryTransfer[]    @relation("TransferReceivedBy")
 }
 
 enum Role {
@@ -234,6 +237,8 @@ enum InventoryTransactionType {
   WHOLESALE
   INTERNAL_CONSUMPTION
   DONATION
+  TRANSFER_OUT
+  TRANSFER_IN
 }
 
 enum InventoryLossReason {
@@ -333,6 +338,7 @@ model StoreGroup {
 
   stores       Store[]
   catalogItems GroupCatalogItem[]
+  transfers    InventoryTransfer[]
 }
 
 model GroupCatalogItem {
@@ -374,6 +380,8 @@ model Store {
   inventories           StoreInventory[]
   inventoryTransactions InventoryTransaction[]
   lotInventories        StoreLotInventory[]
+  outgoingTransfers     InventoryTransfer[]    @relation("TransferOrigin")
+  incomingTransfers     InventoryTransfer[]    @relation("TransferDestination")
 
   @@index([groupId, isActive])
 }
@@ -407,6 +415,7 @@ model InventoryLot {
 
   storeInventories      StoreLotInventory[]
   inventoryTransactions InventoryTransaction[]
+  transferItems          InventoryTransferItem[]
 
   @@unique([productVariantId, code])
   @@index([expiresAt])
@@ -424,6 +433,59 @@ model StoreLotInventory {
 
   @@unique([storeId, inventoryLotId])
   @@index([storeId, stock])
+  @@index([inventoryLotId])
+}
+
+enum InventoryTransferStatus {
+  DISPATCHED
+  RECEIVED
+}
+
+model InventoryTransfer {
+  id                   Int                     @id @default(autoincrement())
+  groupId              Int
+  group                StoreGroup              @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  originStoreId        Int
+  originStore          Store                   @relation("TransferOrigin", fields: [originStoreId], references: [id], onDelete: Restrict)
+  destinationStoreId   Int
+  destinationStore     Store                   @relation("TransferDestination", fields: [destinationStoreId], references: [id], onDelete: Restrict)
+  status               InventoryTransferStatus @default(DISPATCHED)
+  dispatchedByUserId   Int
+  dispatchedByUser     User                    @relation("TransferDispatchedBy", fields: [dispatchedByUserId], references: [id], onDelete: Restrict)
+  receivedByUserId     Int?
+  receivedByUser       User?                   @relation("TransferReceivedBy", fields: [receivedByUserId], references: [id], onDelete: Restrict)
+  dispatchObservation  String?
+  receptionObservation String?
+  discrepancyReason    String?
+  dispatchedAt         DateTime                @default(now())
+  receivedAt           DateTime?
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  items InventoryTransferItem[]
+
+  @@index([groupId, status])
+  @@index([originStoreId, dispatchedAt])
+  @@index([destinationStoreId, status, dispatchedAt])
+  @@index([dispatchedByUserId])
+  @@index([receivedByUserId])
+}
+
+model InventoryTransferItem {
+  id               Int               @id @default(autoincrement())
+  transferId       Int
+  transfer         InventoryTransfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+  productVariantId Int
+  productVariant   ProductVariant    @relation(fields: [productVariantId], references: [id], onDelete: Restrict)
+  inventoryLotId   Int
+  inventoryLot     InventoryLot      @relation(fields: [inventoryLotId], references: [id], onDelete: Restrict)
+  quantitySent     Int
+  quantityReceived Int?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([transferId, productVariantId, inventoryLotId])
+  @@index([productVariantId])
   @@index([inventoryLotId])
 }
 

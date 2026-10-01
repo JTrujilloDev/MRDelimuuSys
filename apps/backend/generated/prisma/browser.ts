@@ -6,7 +6,7 @@
 /*
  * This file should be your main import to use Prisma-related types and utilities in a browser. 
  * Use it to get access to models, enums, and input types.
- * 
+ *
  * This file does not contain a `PrismaClient` class, nor several other helpers that are intended as server-side only.
  * See `client.ts` for the standard, server-side entry point.
  *
@@ -19,7 +19,7 @@ export * as $Enums from './enums'
 export * from './enums';
 /**
  * Model Category
- * 
+ *
  */
 export type Category = Prisma.CategoryModel
 /**
@@ -102,6 +102,16 @@ export type InventoryLot = Prisma.InventoryLotModel
  * 
  */
 export type StoreLotInventory = Prisma.StoreLotInventoryModel
+/**
+ * Model InventoryTransfer
+ *
+ */
+export type InventoryTransfer = Prisma.InventoryTransferModel
+/**
+ * Model InventoryTransferItem
+ *
+ */
+export type InventoryTransferItem = Prisma.InventoryTransferItemModel
 /**
  * Model Terminal
  * 

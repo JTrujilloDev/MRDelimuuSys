@@ -401,6 +401,8 @@ export const ModelName = {
   StoreInventory: 'StoreInventory',
   InventoryLot: 'InventoryLot',
   StoreLotInventory: 'StoreLotInventory',
+  InventoryTransfer: 'InventoryTransfer',
+  InventoryTransferItem: 'InventoryTransferItem',
   Terminal: 'Terminal',
   UserStoreAccess: 'UserStoreAccess',
   UserSession: 'UserSession',
@@ -422,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "storeGroup" | "groupCatalogItem" | "store" | "storeInventory" | "inventoryLot" | "storeLotInventory" | "terminal" | "userStoreAccess" | "userSession" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
+    modelProps: "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "storeGroup" | "groupCatalogItem" | "store" | "storeInventory" | "inventoryLot" | "storeLotInventory" | "inventoryTransfer" | "inventoryTransferItem" | "terminal" | "userStoreAccess" | "userSession" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1684,6 +1686,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    InventoryTransfer: {
+      payload: Prisma.$InventoryTransferPayload<ExtArgs>
+      fields: Prisma.InventoryTransferFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InventoryTransferFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InventoryTransferFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>
+        }
+        findFirst: {
+          args: Prisma.InventoryTransferFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InventoryTransferFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>
+        }
+        findMany: {
+          args: Prisma.InventoryTransferFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>[]
+        }
+        create: {
+          args: Prisma.InventoryTransferCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>
+        }
+        createMany: {
+          args: Prisma.InventoryTransferCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InventoryTransferCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>[]
+        }
+        delete: {
+          args: Prisma.InventoryTransferDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>
+        }
+        update: {
+          args: Prisma.InventoryTransferUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>
+        }
+        deleteMany: {
+          args: Prisma.InventoryTransferDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InventoryTransferUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InventoryTransferUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>[]
+        }
+        upsert: {
+          args: Prisma.InventoryTransferUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferPayload>
+        }
+        aggregate: {
+          args: Prisma.InventoryTransferAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInventoryTransfer>
+        }
+        groupBy: {
+          args: Prisma.InventoryTransferGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InventoryTransferGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InventoryTransferCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InventoryTransferCountAggregateOutputType> | number
+        }
+      }
+    }
+    InventoryTransferItem: {
+      payload: Prisma.$InventoryTransferItemPayload<ExtArgs>
+      fields: Prisma.InventoryTransferItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InventoryTransferItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InventoryTransferItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>
+        }
+        findFirst: {
+          args: Prisma.InventoryTransferItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InventoryTransferItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>
+        }
+        findMany: {
+          args: Prisma.InventoryTransferItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>[]
+        }
+        create: {
+          args: Prisma.InventoryTransferItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>
+        }
+        createMany: {
+          args: Prisma.InventoryTransferItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InventoryTransferItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>[]
+        }
+        delete: {
+          args: Prisma.InventoryTransferItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>
+        }
+        update: {
+          args: Prisma.InventoryTransferItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.InventoryTransferItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InventoryTransferItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InventoryTransferItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.InventoryTransferItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransferItemPayload>
+        }
+        aggregate: {
+          args: Prisma.InventoryTransferItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInventoryTransferItem>
+        }
+        groupBy: {
+          args: Prisma.InventoryTransferItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InventoryTransferItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InventoryTransferItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InventoryTransferItemCountAggregateOutputType> | number
+        }
+      }
+    }
     Terminal: {
       payload: Prisma.$TerminalPayload<ExtArgs>
       fields: Prisma.TerminalFieldRefs
@@ -2423,6 +2573,40 @@ export const StoreLotInventoryScalarFieldEnum = {
 export type StoreLotInventoryScalarFieldEnum = (typeof StoreLotInventoryScalarFieldEnum)[keyof typeof StoreLotInventoryScalarFieldEnum]
 
 
+export const InventoryTransferScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  originStoreId: 'originStoreId',
+  destinationStoreId: 'destinationStoreId',
+  status: 'status',
+  dispatchedByUserId: 'dispatchedByUserId',
+  receivedByUserId: 'receivedByUserId',
+  dispatchObservation: 'dispatchObservation',
+  receptionObservation: 'receptionObservation',
+  discrepancyReason: 'discrepancyReason',
+  dispatchedAt: 'dispatchedAt',
+  receivedAt: 'receivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InventoryTransferScalarFieldEnum = (typeof InventoryTransferScalarFieldEnum)[keyof typeof InventoryTransferScalarFieldEnum]
+
+
+export const InventoryTransferItemScalarFieldEnum = {
+  id: 'id',
+  transferId: 'transferId',
+  productVariantId: 'productVariantId',
+  inventoryLotId: 'inventoryLotId',
+  quantitySent: 'quantitySent',
+  quantityReceived: 'quantityReceived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InventoryTransferItemScalarFieldEnum = (typeof InventoryTransferItemScalarFieldEnum)[keyof typeof InventoryTransferItemScalarFieldEnum]
+
+
 export const TerminalScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -2538,14 +2722,14 @@ export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
+
 
 
 /**
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
+
 
 
 /**
@@ -2766,6 +2950,20 @@ export type ListEnumKitchenModeFieldRefInput<$PrismaModel> = FieldRefInputType<$
 
 
 /**
+ * Reference to a field of type 'InventoryTransferStatus'
+ */
+export type EnumInventoryTransferStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryTransferStatus'>
+
+
+
+/**
+ * Reference to a field of type 'InventoryTransferStatus[]'
+ */
+export type ListEnumInventoryTransferStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryTransferStatus[]'>
+
+
+
+/**
  * Reference to a field of type 'KitchenTicketStatus'
  */
 export type EnumKitchenTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitchenTicketStatus'>
@@ -2919,6 +3117,8 @@ export type GlobalOmitConfig = {
   storeInventory?: Prisma.StoreInventoryOmit
   inventoryLot?: Prisma.InventoryLotOmit
   storeLotInventory?: Prisma.StoreLotInventoryOmit
+  inventoryTransfer?: Prisma.InventoryTransferOmit
+  inventoryTransferItem?: Prisma.InventoryTransferItemOmit
   terminal?: Prisma.TerminalOmit
   userStoreAccess?: Prisma.UserStoreAccessOmit
   userSession?: Prisma.UserSessionOmit
