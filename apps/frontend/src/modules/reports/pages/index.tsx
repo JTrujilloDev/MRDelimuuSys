@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { useAuth } from "../../../app/auth/AuthProvider";
 import { getInventoryLossReasonLabel } from "../../../shared/constants/inventoryLossReasons";
 import { getOperationsReport } from "../reports.service";
+import ReportHistoryCharts from "../components/ReportHistoryCharts";
 
 const money = (value?: number) => numeral(value ?? 0).format("$ 0,0");
 
@@ -16,14 +17,17 @@ const ReportsPage = () => {
   const [to, setTo] = useState(dayjs().format("YYYY-MM-DD"));
   const [groupId, setGroupId] = useState("");
   const [storeId, setStoreId] = useState("");
+  const [granularity, setGranularity] = useState<"DAY" | "WEEK" | "MONTH">("DAY");
+  const [activeTab, setActiveTab] = useState<"SUMMARY" | "HISTORY">("SUMMARY");
   const invalidRange = dayjs(from).isAfter(dayjs(to), "day");
   const query = useQuery({
-    queryKey: ["operations-report", from, to, groupId, storeId],
+    queryKey: ["operations-report", from, to, groupId, storeId, granularity],
     queryFn: () => getOperationsReport({
       from: dayjs(from).startOf("day").toISOString(),
       to: dayjs(to).endOf("day").toISOString(),
       groupId: groupId ? Number(groupId) : undefined,
       storeId: storeId ? Number(storeId) : undefined,
+      granularity,
     }),
     enabled: !invalidRange,
   });
@@ -46,7 +50,7 @@ const ReportsPage = () => {
           </p>
         </header>
 
-        <section className="grid gap-3 rounded-2xl border border-border bg-pos-surface p-4 md:grid-cols-2 lg:grid-cols-4">
+        <section className="grid gap-3 rounded-2xl border border-border bg-pos-surface p-4 md:grid-cols-2 lg:grid-cols-5">
           <DateField label="Desde" value={from} max={to} onChange={setFrom} />
           <DateField label="Hasta" value={to} min={from} onChange={setTo} />
           {isGlobalAdmin && <>
@@ -63,12 +67,24 @@ const ReportsPage = () => {
               </select>
             </label>
           </>}
+          <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Agrupación
+            <select className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-foreground" value={granularity} onChange={(event) => setGranularity(event.target.value as "DAY" | "WEEK" | "MONTH")}>
+              <option value="DAY">Por día</option>
+              <option value="WEEK">Por semana</option>
+              <option value="MONTH">Por mes</option>
+            </select>
+          </label>
         </section>
 
         {invalidRange ? <Notice text="La fecha inicial no puede ser posterior a la final." />
           : query.isLoading ? <Notice text="Calculando el reporte…" />
           : query.isError || !report ? <Notice text="No fue posible cargar el reporte." />
           : <>
+            <nav className="flex w-fit gap-1 rounded-xl bg-secondary p-1" aria-label="Secciones del reporte">
+              <button type="button" onClick={() => setActiveTab("SUMMARY")} className={`rounded-lg px-4 py-2 text-sm font-bold transition-colors ${activeTab === "SUMMARY" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-background"}`}>Resumen</button>
+              <button type="button" onClick={() => setActiveTab("HISTORY")} className={`rounded-lg px-4 py-2 text-sm font-bold transition-colors ${activeTab === "HISTORY" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-background"}`}>Historial y tendencias</button>
+            </nav>
+            {activeTab === "SUMMARY" ? <>
             <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <Metric icon={Banknote} label="Venta bruta" value={money(report.summary.grossSales)} />
               <Metric icon={Tag} label="Descuentos" value={money(report.summary.discounts)} />
@@ -105,6 +121,7 @@ const ReportsPage = () => {
                 <div className="max-h-[460px] overflow-auto"><table className="w-full min-w-[720px] text-sm"><thead className="sticky top-0 bg-pos-order-bg text-pos-order-fg"><tr><th className="px-4 py-3 text-left">Producto</th><th className="px-4 py-3 text-right">Unidades</th><th className="px-4 py-3 text-right">Venta neta</th>{report.canViewCosts && <><th className="px-4 py-3 text-right">Costo</th><th className="px-4 py-3 text-right">Margen</th></>}</tr></thead><tbody className="divide-y divide-border">{report.products.map((product) => <tr key={product.productVariantId}><td className="px-4 py-3"><b>{product.productName}</b><span className="block text-xs text-muted-foreground">{product.variantName}</span></td><td className="px-4 py-3 text-right">{product.units}</td><td className="px-4 py-3 text-right">{money(product.netSales)}</td>{report.canViewCosts && <><td className="px-4 py-3 text-right">{money(product.costOfSales)}</td><td className="px-4 py-3 text-right font-bold">{money(product.estimatedMargin)}</td></>}</tr>)}{report.products.length === 0 && <tr><td colSpan={report.canViewCosts ? 5 : 3} className="px-4 py-10 text-center text-muted-foreground">Sin ventas en este período.</td></tr>}</tbody></table></div>
               </section>
             </div>
+            </> : <ReportHistoryCharts report={report} />}
           </>}
       </div>
     </main>
