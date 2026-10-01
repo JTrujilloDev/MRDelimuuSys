@@ -14,6 +14,13 @@ import ContextSelector from "../../pages/ContextSelector";
 import AdminPage from "../../modules/admin/pages";
 import ReportsPage from "../../modules/reports/pages";
 import InventoryTransfersPage from "../../modules/inventoryTransfers/pages";
+import { useAuth } from "../auth/AuthProvider";
+
+const GlobalAdminOnly = ({ children }: { children: React.ReactNode }) => {
+  const { state } = useAuth();
+
+  return state?.user.isGlobalAdmin ? children : <Navigate to="/app/pos" replace />;
+};
 
 export const router = createBrowserRouter([
   {
@@ -36,10 +43,24 @@ export const router = createBrowserRouter([
       { path: "products", element: <Navigate to="../catalog?tab=products" replace /> },
       { path: "inventory", element: <Inventory /> },
       { path: "inventory-transfers", element: <InventoryTransfersPage /> },
-      { path: "fundation-tags", element: <FundationTags /> },
+      {
+        path: "fundation-tags",
+        element: (
+          <GlobalAdminOnly>
+            <FundationTags />
+          </GlobalAdminOnly>
+        ),
+      },
       { path: "kitchen", element: <KitchenView /> },
       { path: "cash-register-history", element: <CashRegisterHistory /> },
-      { path: "security-cameras", element: <SecurityCameras /> },
+      {
+        path: "security-cameras",
+        element: (
+          <GlobalAdminOnly>
+            <SecurityCameras />
+          </GlobalAdminOnly>
+        ),
+      },
       { path: "admin", element: <AdminPage /> },
       { path: "reports", element: <ReportsPage /> },
 

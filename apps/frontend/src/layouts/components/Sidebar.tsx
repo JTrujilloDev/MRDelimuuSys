@@ -84,10 +84,12 @@ const Sidebar = () => {
       ? [{ title: "Cocina", url: "kitchen", icon: ChefHat }]
       : []),
     ...(state?.user.isGlobalAdmin
-      ? [{ title: "Administración", url: "admin", icon: UserCog }]
+      ? [
+          { title: "Administración", url: "admin", icon: UserCog },
+          { title: "Cámaras", url: "security-cameras", icon: Camera },
+          { title: "Etiquetas", url: "fundation-tags", icon: Tag },
+        ]
       : []),
-    { title: "Cámaras", url: "security-cameras", icon: Camera },
-    {title : "Etiquetas", url: "fundation-tags", icon: Tag}
   ];
   return (
     <div className="flex h-full w-24 flex-col items-center gap-4 rounded-tr-[24px] rounded-br-[24px] border-r border-border/70 bg-pos-surface/95 py-4 shadow-[0_18px_40px_-30px_rgba(84,56,32,0.45)]">
