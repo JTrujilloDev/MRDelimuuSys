@@ -13,6 +13,10 @@ export const getOperationsReport = async (req: Request, res: Response) => {
       const id = Number(value);
       return Number.isInteger(id) && id > 0 ? id : undefined;
     };
+    const granularity =
+      req.query.granularity === "WEEK" || req.query.granularity === "MONTH"
+        ? req.query.granularity
+        : "DAY";
     const data = await getOperationsReportService({
       from,
       to,
@@ -20,6 +24,7 @@ export const getOperationsReport = async (req: Request, res: Response) => {
       requestedGroupId: parseId(req.query.groupId),
       activeStoreId: req.auth!.activeStoreId!,
       isGlobalAdmin: req.auth!.isGlobalAdmin,
+      granularity,
     });
     res.json({ success: true, data });
   } catch (error) {

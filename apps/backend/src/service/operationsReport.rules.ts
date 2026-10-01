@@ -1,3 +1,38 @@
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+export type ReportGranularity = "DAY" | "WEEK" | "MONTH";
+
+export const getReportPeriodKey = (
+  value: Date | string,
+  granularity: ReportGranularity,
+) => {
+  const date = dayjs(value).tz("America/Bogota");
+  if (granularity === "MONTH") return date.startOf("month").format("YYYY-MM-DD");
+  if (granularity === "WEEK") return date.startOf("week").format("YYYY-MM-DD");
+  return date.startOf("day").format("YYYY-MM-DD");
+};
+
+export const listReportPeriods = (
+  from: Date,
+  to: Date,
+  granularity: ReportGranularity,
+) => {
+  const unit = granularity === "MONTH" ? "month" : granularity === "WEEK" ? "week" : "day";
+  const periods: string[] = [];
+  let cursor = dayjs(getReportPeriodKey(from, granularity));
+  const last = dayjs(getReportPeriodKey(to, granularity));
+  while (!cursor.isAfter(last)) {
+    periods.push(cursor.format("YYYY-MM-DD"));
+    cursor = cursor.add(1, unit);
+  }
+  return periods;
+};
+
 type ReportSale = {
   total: number;
   discount: number;
