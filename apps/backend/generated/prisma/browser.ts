@@ -93,6 +93,16 @@ export type Store = Prisma.StoreModel
  */
 export type StoreInventory = Prisma.StoreInventoryModel
 /**
+ * Model InventoryLot
+ * 
+ */
+export type InventoryLot = Prisma.InventoryLotModel
+/**
+ * Model StoreLotInventory
+ * 
+ */
+export type StoreLotInventory = Prisma.StoreLotInventoryModel
+/**
  * Model Terminal
  * 
  */

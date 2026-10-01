@@ -59,6 +59,7 @@ model ProductVariant {
   InventoryTransactions InventoryTransaction[]
   catalogItems          GroupCatalogItem[]
   storeInventories      StoreInventory[]
+  inventoryLots         InventoryLot[]
   recipeItems           RecipeItem[]           @relation("RecipeOwner")
   ingredientInRecipes   RecipeItem[]           @relation("RecipeIngredient")
 }
@@ -199,8 +200,10 @@ model InventoryTransaction {
   createdByUserId  Int?
   createdByUser    User?                    @relation("InventoryTransactionCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
   productVariantId Int
+  inventoryLotId   Int?
   relatedAccountId Int?
   productVariant   ProductVariant           @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  inventoryLot     InventoryLot?             @relation(fields: [inventoryLotId], references: [id], onDelete: Restrict)
   quantity         Int
   unit             Unit                     @default(UNIT)
   type             InventoryTransactionType
@@ -213,6 +216,7 @@ model InventoryTransaction {
   @@index([operationId])
   @@index([storeId, createdAt])
   @@index([createdByUserId])
+  @@index([inventoryLotId])
   @@index([createdAt])
   @@index([type])
   @@index([lossReason])
@@ -369,6 +373,7 @@ model Store {
   activeSessions        UserSession[]          @relation("ActiveStoreSessions")
   inventories           StoreInventory[]
   inventoryTransactions InventoryTransaction[]
+  lotInventories        StoreLotInventory[]
 
   @@index([groupId, isActive])
 }
@@ -387,6 +392,39 @@ model StoreInventory {
 
   @@unique([storeId, productVariantId])
   @@index([storeId, stock])
+}
+
+model InventoryLot {
+  id               Int            @id @default(autoincrement())
+  productVariantId Int
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  code             String
+  manufacturedAt   DateTime?      @db.Date
+  expiresAt        DateTime?      @db.Date
+  isLegacy         Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  storeInventories      StoreLotInventory[]
+  inventoryTransactions InventoryTransaction[]
+
+  @@unique([productVariantId, code])
+  @@index([expiresAt])
+}
+
+model StoreLotInventory {
+  id             Int          @id @default(autoincrement())
+  storeId        Int
+  store          Store        @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  inventoryLotId Int
+  inventoryLot   InventoryLot @relation(fields: [inventoryLotId], references: [id], onDelete: Restrict)
+  stock          Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([storeId, inventoryLotId])
+  @@index([storeId, stock])
+  @@index([inventoryLotId])
 }
 
 model Terminal {
