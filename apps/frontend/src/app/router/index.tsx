@@ -12,6 +12,7 @@ import CashRegisterHistory from "../../modules/cashRegisterHistory/pages";
 import SecurityCameras from "../../modules/securityCameras/pages";
 import ContextSelector from "../../pages/ContextSelector";
 import AdminPage from "../../modules/admin/pages";
+import ReportsPage from "../../modules/reports/pages";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
       { path: "cash-register-history", element: <CashRegisterHistory /> },
       { path: "security-cameras", element: <SecurityCameras /> },
       { path: "admin", element: <AdminPage /> },
+      { path: "reports", element: <ReportsPage /> },
 
     ],
   },

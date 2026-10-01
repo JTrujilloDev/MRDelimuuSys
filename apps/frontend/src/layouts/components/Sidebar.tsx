@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router";
 import { Tooltip } from "@heroui/react";
 import {
   BookOpen,
+  ChartNoAxesCombined,
   Camera,
   ChefHat,
   History,
@@ -72,7 +73,10 @@ const Sidebar = () => {
     { title: "Punto de Venta", url: "pos", icon: ShoppingCart },
     { title: "Historial de cajas", url: "cash-register-history", icon: History },
     ...(state?.user.isGlobalAdmin || activeContext.role === "ADMIN"
-      ? [{ title: "Catálogo", url: "catalog", icon: BookOpen }]
+      ? [
+          { title: "Reportes", url: "reports", icon: ChartNoAxesCombined },
+          { title: "Catálogo", url: "catalog", icon: BookOpen },
+        ]
       : []),
     {title: "Inventario" , url: "inventory", icon: Package},
     ...(activeContext.store.kitchenMode === "TICKETS"
