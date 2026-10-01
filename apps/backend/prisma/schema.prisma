@@ -205,6 +205,7 @@ model InventoryTransaction {
   unit             Unit                     @default(UNIT)
   type             InventoryTransactionType
   lossReason       InventoryLossReason?
+  unitCost         Float?
   observation      String?
 
   createdAt DateTime @default(now())

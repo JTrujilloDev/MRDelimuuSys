@@ -92,6 +92,11 @@ const ReportsPage = () => {
               <section className="rounded-2xl border border-border bg-pos-surface p-5">
                 <h2 className="font-bold text-foreground">Mermas por motivo</h2>
                 <p className="mb-4 text-xs text-muted-foreground">{report.losses.movements} movimientos en el período</p>
+                {report.losses.unvaluedMovements > 0 && (
+                  <p className="mb-3 rounded-xl bg-secondary px-3 py-2 text-xs text-muted-foreground">
+                    {report.losses.unvaluedMovements} movimiento{report.losses.unvaluedMovements === 1 ? "" : "s"} histórico{report.losses.unvaluedMovements === 1 ? "" : "s"} sin costo disponible.
+                  </p>
+                )}
                 {Object.keys(report.losses.unitsByReason).length === 0 ? <p className="text-sm text-muted-foreground">Sin mermas registradas.</p> :
                   Object.entries(report.losses.unitsByReason).map(([reason, units]) => <div key={reason} className="flex justify-between border-t border-border py-2 text-sm"><span>{reason === "UNCLASSIFIED" ? "Histórico sin clasificar" : getInventoryLossReasonLabel(reason)}</span><b>{units}</b></div>)}
               </section>

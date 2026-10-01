@@ -89,12 +89,7 @@ export const getOperationsReportService = async ({
       select: {
         quantity: true,
         lossReason: true,
-        store: { select: { groupId: true } },
-        productVariant: {
-          select: {
-            catalogItems: { select: { groupId: true, costPrice: true } },
-          },
-        },
+        unitCost: true,
       },
     }),
     prisma.storeInventory.findMany({
@@ -123,8 +118,11 @@ export const getOperationsReportService = async ({
     })),
   })));
   const totalExpenses = expenses.reduce((sum, expense) => sum + Math.abs(Number(expense.amount)), 0);
-  const lossCost = losses.reduce((sum, loss) =>
-    sum + Math.abs(loss.quantity) * catalogCost(loss.productVariant.catalogItems, loss.store.groupId), 0);
+  const lossCost = losses.reduce(
+    (sum, loss) => sum + (loss.unitCost === null ? 0 : Math.abs(loss.quantity) * Number(loss.unitCost)),
+    0,
+  );
+  const unvaluedLossMovements = losses.filter((loss) => loss.unitCost === null).length;
   const lossesByReason = losses.reduce<Record<string, number>>((result, loss) => {
     const reason = loss.lossReason ?? "UNCLASSIFIED";
     result[reason] = (result[reason] ?? 0) + Math.abs(loss.quantity);
@@ -164,6 +162,7 @@ export const getOperationsReportService = async ({
     products: isGlobalAdmin ? sales.products : sales.products.map(({ costOfSales: _cost, estimatedMargin: _margin, ...product }) => product),
     losses: {
       movements: losses.length,
+      unvaluedMovements: unvaluedLossMovements,
       unitsByReason: lossesByReason,
       ...(isGlobalAdmin && { estimatedCost: lossCost }),
     },

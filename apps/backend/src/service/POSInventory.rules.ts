@@ -84,3 +84,15 @@ export const normalizeInventoryLossDetails = (
 
   return { lossReason, observation };
 };
+
+export const snapshotInventoryLossUnitCost = (
+  type: InventoryTransactionType,
+  costValue: unknown,
+) => {
+  if (type !== "WASTE") return null;
+  const cost = Number(costValue);
+  if (!Number.isFinite(cost) || cost < 0) {
+    throw new Error("A valid group cost is required for waste transactions");
+  }
+  return cost;
+};

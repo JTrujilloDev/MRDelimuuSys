@@ -34,6 +34,7 @@ export interface OperationsReport {
   }>;
   losses: {
     movements: number;
+    unvaluedMovements: number;
     unitsByReason: Record<string, number>;
     estimatedCost?: number;
   };

@@ -9,6 +9,7 @@ import {
   isManualInventoryTransactionAllowed,
   normalizeInventoryLossDetails,
   normalizeInventoryQuantity,
+  snapshotInventoryLossUnitCost,
 } from "./POSInventory.rules";
 
 interface BulkInventoryTransactionItem {
@@ -84,6 +85,10 @@ export const createPOSInventoryTransactionService = async (
       data.lossReason,
       data.observation,
     );
+    const unitCost = snapshotInventoryLossUnitCost(
+      data.type,
+      product.catalogItems[0]?.costPrice,
+    );
 
     // 3. Validar stock (solo para salidas)
     if (quantity < 0) {
@@ -114,6 +119,7 @@ export const createPOSInventoryTransactionService = async (
         unit: product.unit,
         type: data.type,
         lossReason: lossDetails.lossReason,
+        unitCost,
         observation: lossDetails.observation,
       },
     });
@@ -225,6 +231,10 @@ export const createBulkPOSInventoryTransactionService = async (
         variant,
         inventory,
         quantity,
+        unitCost: snapshotInventoryLossUnitCost(
+          data.type,
+          variant.catalogItems[0]?.costPrice,
+        ),
         observation: item.observation?.trim() || data.observation?.trim() || undefined,
       };
     });
@@ -242,6 +252,7 @@ export const createBulkPOSInventoryTransactionService = async (
           unit: item.variant.unit,
           type: data.type,
           lossReason: lossDetails.lossReason,
+          unitCost: item.unitCost,
           observation: item.observation,
         },
       });

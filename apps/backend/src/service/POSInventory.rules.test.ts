@@ -5,6 +5,7 @@ import {
   isManualInventoryTransactionAllowed,
   normalizeInventoryLossDetails,
   normalizeInventoryQuantity,
+  snapshotInventoryLossUnitCost,
 } from "./POSInventory.rules";
 
 test("allows each point to initialize stock from its first receipt or purchase", () => {
@@ -51,4 +52,10 @@ test("requires a structured reason for waste and observation only for other", ()
     normalizeInventoryLossDetails("ADJUSTMENT", "DAMAGED", "  Conteo físico  "),
     { lossReason: null, observation: "Conteo físico" },
   );
+});
+
+test("snapshots cost only for waste transactions", () => {
+  assert.equal(snapshotInventoryLossUnitCost("WASTE", 3_200), 3_200);
+  assert.equal(snapshotInventoryLossUnitCost("ADJUSTMENT", 3_200), null);
+  assert.throws(() => snapshotInventoryLossUnitCost("WASTE", -1), /group cost/);
 });
