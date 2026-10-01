@@ -8,8 +8,8 @@ import {
   Tabs,
   toast,
 } from "@heroui/react";
-import { FileText, Search } from "lucide-react";
-import { useState } from "react";
+import { CalendarClock, FileText, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
@@ -28,6 +28,16 @@ interface InventoryVariant {
   minStock: number;
   unit: string;
   isNew: boolean;
+  lots: InventoryLot[];
+}
+
+interface InventoryLot {
+  id: number;
+  code: string;
+  manufacturedAt: string | null;
+  expiresAt: string | null;
+  isLegacy: boolean;
+  stock: number;
 }
 
 interface InventoryProduct {
@@ -43,6 +53,34 @@ interface InventoryCategory {
   name: string;
 }
 
+const dateFormatter = new Intl.DateTimeFormat("es-CO", {
+  timeZone: "UTC",
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+});
+
+const formatLotDate = (value: string | null) =>
+  value ? dateFormatter.format(new Date(value)) : "Sin fecha";
+
+const getDaysUntilExpiration = (value: string | null) => {
+  if (!value) return null;
+  const expiration = new Date(value.slice(0, 10) + "T00:00:00.000Z");
+  const now = new Date();
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  return Math.ceil((expiration.getTime() - today) / 86_400_000);
+};
+
+const getExpirationStatus = (expiresAt: string | null) => {
+  const days = getDaysUntilExpiration(expiresAt);
+  if (days === null) return { label: "Sin vencimiento", className: "bg-muted text-foreground/75" };
+  if (days < 0) return { label: `Vencido hace ${Math.abs(days)} d`, className: "bg-danger-soft-hover text-destructive" };
+  if (days === 0) return { label: "Vence hoy", className: "bg-danger-soft-hover text-destructive" };
+  if (days <= 3) return { label: `Vence en ${days} d`, className: "bg-orange-500/20 text-orange-700" };
+  if (days <= 7) return { label: `Vence en ${days} d`, className: "bg-amber-500/20 text-amber-700" };
+  return { label: "Vigente", className: "bg-[#10b981]/20 text-[#047857]" };
+};
+
 const Inventory = () => {
   const { state } = useAuth();
   const queryClient = useQueryClient();
@@ -54,6 +92,28 @@ const Inventory = () => {
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterCategory, setFilterCategory] = useState<string>("");
+  const lotRows = useMemo(
+    () => activeProducts
+      .filter((product) => product.productType !== "RECIPE_PRODUCT")
+      .flatMap((product) => product.variants.flatMap((variant) =>
+        (variant.lots ?? []).map((lot) => ({ product, variant, lot })),
+      ))
+      .sort((left, right) => {
+        const leftExpiry = left.lot.expiresAt ?? "9999-12-31";
+        const rightExpiry = right.lot.expiresAt ?? "9999-12-31";
+        return leftExpiry.localeCompare(rightExpiry) || left.product.name.localeCompare(right.product.name);
+      }),
+    [activeProducts],
+  );
+  const expiredLots = lotRows.filter(({ lot }) => {
+    const days = getDaysUntilExpiration(lot.expiresAt);
+    return days !== null && days < 0;
+  }).length;
+  const expiringSoonLots = lotRows.filter(({ lot }) => {
+    const days = getDaysUntilExpiration(lot.expiresAt);
+    return days !== null && days >= 0 && days <= 7;
+  }).length;
+  const historicalLots = lotRows.filter(({ lot }) => lot.isLegacy).length;
   const canManageInventory = Boolean(
     state?.user.isGlobalAdmin || state?.activeContext?.role === "ADMIN",
   );
@@ -82,10 +142,10 @@ const Inventory = () => {
         <p className="text-sm text-muted-foreground">Punto: {state?.activeContext?.store.name}</p>
       </div>
       <Tabs className="w-full">
-        <Tabs.ListContainer className="w-sm rounded-md bg-card border border-border">
+        <Tabs.ListContainer className="w-full max-w-2xl rounded-md bg-card border border-border">
           <Tabs.List
             aria-label="Options"
-            className="grid grid-cols-2 gap-1 rounded-md overflow-hidden bg-background"
+            className="grid grid-cols-3 gap-1 rounded-md overflow-hidden bg-background"
           >
             <Tabs.Tab
               id="movements"
@@ -99,6 +159,13 @@ const Inventory = () => {
               className="rounded-md px-4 py-2 text-sm font-medium text-foreground transition-colors data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-foreground"
             >
               Estado de Inventario
+              <Tabs.Indicator className="bg-primary" />
+            </Tabs.Tab>
+            <Tabs.Tab
+              id="lots"
+              className="rounded-md px-4 py-2 text-sm font-medium text-foreground transition-colors data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-foreground"
+            >
+              Lotes y vencimientos
               <Tabs.Indicator className="bg-primary" />
             </Tabs.Tab>
           </Tabs.List>
@@ -330,6 +397,73 @@ const Inventory = () => {
               <Table.Footer>{/* Optional footer content */}</Table.Footer>
             </Table>
           </div>
+        </Tabs.Panel>
+        <Tabs.Panel className="pt-4 flex flex-col gap-4" id="lots">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-xs text-muted-foreground">Lotes vencidos con existencias</p>
+              <p className="mt-1 text-2xl font-bold text-destructive">{expiredLots}</p>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-xs text-muted-foreground">Vencen en los próximos 7 días</p>
+              <p className="mt-1 text-2xl font-bold text-amber-600">{expiringSoonLots}</p>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-xs text-muted-foreground">Lotes históricos sin fecha</p>
+              <p className="mt-1 text-2xl font-bold text-foreground">{historicalLots}</p>
+            </div>
+          </div>
+
+          {lotRows.length === 0 ? (
+            <div className="flex min-h-56 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-card p-8 text-center">
+              <CalendarClock className="h-10 w-10 text-muted-foreground" />
+              <div>
+                <p className="font-semibold text-foreground">No hay lotes con existencias</p>
+                <p className="text-sm text-muted-foreground">
+                  Los lotes aparecerán al registrar una recepción desde planta.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-border bg-card">
+              <Table className="w-full overflow-hidden bg-pos-surface shadow-sm">
+                <Table.ScrollContainer className="max-h-[62vh] overflow-auto">
+                  <Table.Content aria-label="Lotes y fechas de vencimiento">
+                    <Table.Header>
+                      <Table.Column className="bg-pos-order-bg font-extrabold text-white" isRowHeader>Producto</Table.Column>
+                      <Table.Column className="bg-pos-order-bg font-extrabold text-white">Variante</Table.Column>
+                      <Table.Column className="bg-pos-order-bg font-extrabold text-white">Lote</Table.Column>
+                      <Table.Column className="bg-pos-order-bg font-extrabold text-white">Existencias</Table.Column>
+                      <Table.Column className="bg-pos-order-bg font-extrabold text-white">Fabricación</Table.Column>
+                      <Table.Column className="bg-pos-order-bg font-extrabold text-white">Vencimiento</Table.Column>
+                      <Table.Column className="bg-pos-order-bg font-extrabold text-white">Estado</Table.Column>
+                    </Table.Header>
+                    <Table.Body>
+                      {lotRows.map(({ product, variant, lot }) => {
+                        const status = getExpirationStatus(lot.expiresAt);
+                        return (
+                          <Table.Row key={`${variant.id}-${lot.id}`}>
+                            <Table.Cell>{product.name}</Table.Cell>
+                            <Table.Cell>{variant.name}</Table.Cell>
+                            <Table.Cell>
+                              <span className="font-mono text-sm font-semibold">{lot.code}</span>
+                              {lot.isLegacy && (
+                                <span className="mt-1 block text-xs text-muted-foreground">Inventario anterior</span>
+                              )}
+                            </Table.Cell>
+                            <Table.Cell>{lot.stock}</Table.Cell>
+                            <Table.Cell>{formatLotDate(lot.manufacturedAt)}</Table.Cell>
+                            <Table.Cell>{formatLotDate(lot.expiresAt)}</Table.Cell>
+                            <Table.Cell><Chip className={status.className}>{status.label}</Chip></Table.Cell>
+                          </Table.Row>
+                        );
+                      })}
+                    </Table.Body>
+                  </Table.Content>
+                </Table.ScrollContainer>
+              </Table>
+            </div>
+          )}
         </Tabs.Panel>
       </Tabs>
 
