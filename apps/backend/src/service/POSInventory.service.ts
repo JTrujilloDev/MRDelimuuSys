@@ -11,11 +11,18 @@ import {
   normalizeInventoryQuantity,
   snapshotInventoryLossUnitCost,
 } from "./POSInventory.rules";
+import {
+  applyInventoryMovementTx,
+  normalizeReceiptLotDetails,
+} from "./inventoryLot.service";
 
 interface BulkInventoryTransactionItem {
   productVariantId: number;
   quantity: number;
   observation?: string;
+  lotCode?: string;
+  manufacturedAt?: string;
+  expiresAt?: string;
 }
 
 interface CreateBulkInventoryTransactionData {
@@ -32,6 +39,9 @@ interface CreateInventoryTransactionData {
   type: InventoryTransactionType;
   lossReason?: unknown;
   observation?: string | null;
+  lotCode?: string;
+  manufacturedAt?: string;
+  expiresAt?: string;
 }
 
 export const createPOSInventoryTransactionService = async (
@@ -108,31 +118,21 @@ export const createPOSInventoryTransactionService = async (
       );
     }
 
-    // 4. Crear movimiento
-    const transaction = await tx.inventoryTransaction.create({
-      data: {
-        productVariantId: product.id,
-        storeId,
-        createdByUserId: userId,
-        relatedAccountId: data.relatedAccountId,
-        quantity,
-        unit: product.unit,
-        type: data.type,
-        lossReason: lossDetails.lossReason,
-        unitCost,
-        observation: lossDetails.observation,
-      },
+    const transactions = await applyInventoryMovementTx(tx, {
+      storeId,
+      createdByUserId: userId,
+      productVariantId: product.id,
+      relatedAccountId: data.relatedAccountId,
+      quantity,
+      unit: product.unit,
+      type: data.type,
+      lossReason: lossDetails.lossReason,
+      unitCost,
+      observation: lossDetails.observation,
+      lotDetails: normalizeReceiptLotDetails(data.type, data),
+      initializesInventory: initializesInventory(data.type),
     });
-
-    // 5. Actualizar stock
-    await tx.storeInventory.update({
-      where: { id: inventory.id },
-      data: {
-        stock: inventory.stock + quantity,
-        ...(initializesInventory(data.type) && { isInitialized: true }),
-      },
-    });
-    return transaction;
+    return transactions[0];
   });
 };
 
@@ -236,44 +236,28 @@ export const createBulkPOSInventoryTransactionService = async (
           variant.catalogItems[0]?.costPrice,
         ),
         observation: item.observation?.trim() || data.observation?.trim() || undefined,
+        lotDetails: normalizeReceiptLotDetails(data.type, item),
       };
     });
 
     const transactions = [];
 
     for (const item of normalizedItems) {
-      const transaction = await tx.inventoryTransaction.create({
-        data: {
-          operationId,
-          storeId,
-          createdByUserId: userId,
-          productVariantId: item.variant.id,
-          quantity: item.quantity,
-          unit: item.variant.unit,
-          type: data.type,
-          lossReason: lossDetails.lossReason,
-          unitCost: item.unitCost,
-          observation: item.observation,
-        },
+      const itemTransactions = await applyInventoryMovementTx(tx, {
+        operationId,
+        storeId,
+        createdByUserId: userId,
+        productVariantId: item.variant.id,
+        quantity: item.quantity,
+        unit: item.variant.unit,
+        type: data.type,
+        lossReason: lossDetails.lossReason,
+        unitCost: item.unitCost,
+        observation: item.observation,
+        lotDetails: item.lotDetails,
+        initializesInventory: initializesInventory(data.type),
       });
-
-      await tx.storeInventory.upsert({
-        where: {
-          storeId_productVariantId: { storeId, productVariantId: item.variant.id },
-        },
-        create: {
-          storeId,
-          productVariantId: item.variant.id,
-          stock: item.quantity,
-          isInitialized: initializesInventory(data.type),
-        },
-        update: {
-          stock: { increment: item.quantity },
-          ...(initializesInventory(data.type) && { isInitialized: true }),
-        },
-      });
-
-      transactions.push(transaction);
+      transactions.push(...itemTransactions);
     }
 
     return transactions;

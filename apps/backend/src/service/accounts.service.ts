@@ -11,6 +11,7 @@ import {
   requireCancellationReason,
 } from "./saleCancellation.rules";
 import { randomUUID } from "crypto";
+import { applyInventoryMovementTx } from "./inventoryLot.service";
 
 interface CreateAccountItem {
   productVariantId: number;
@@ -753,27 +754,14 @@ export const closeAccountService = async ({
       if (productType === "FINISHED_PRODUCT" || productType === "THIRD_PARTY_PRODUCT") {
         const product = finishedProductMap.get(item.productVariantId)!;
 
-        await tx.inventoryTransaction.create({
-          data: {
-            productVariantId: product.id,
-            storeId,
-            createdByUserId: account.userId,
-            relatedAccountId: accountId,
-            quantity: -item.quantity,
-            unit: product.unit,
-            type: "SALE",
-          },
-        });
-
-        await tx.storeInventory.update({
-          where: {
-            storeId_productVariantId: { storeId, productVariantId: product.id },
-          },
-          data: {
-            stock: {
-              decrement: item.quantity,
-            },
-          },
+        await applyInventoryMovementTx(tx, {
+          productVariantId: product.id,
+          storeId,
+          createdByUserId: account.userId,
+          relatedAccountId: accountId,
+          quantity: -item.quantity,
+          unit: product.unit,
+          type: "SALE",
         });
 
         continue;
@@ -789,30 +777,14 @@ export const closeAccountService = async ({
         for (const recipeItem of recipeProduct.recipeItems) {
           const consumedQuantity = recipeItem.quantity * item.quantity;
 
-          await tx.inventoryTransaction.create({
-            data: {
-              productVariantId: recipeItem.ingredientVariantId,
-              storeId,
-              createdByUserId: account.userId,
-              relatedAccountId: accountId,
-              quantity: -consumedQuantity,
-              unit: recipeItem.ingredientVariant.unit,
-              type: "SALE",
-            },
-          });
-
-          await tx.storeInventory.update({
-            where: {
-              storeId_productVariantId: {
-                storeId,
-                productVariantId: recipeItem.ingredientVariantId,
-              },
-            },
-            data: {
-              stock: {
-                decrement: consumedQuantity,
-              },
-            },
+          await applyInventoryMovementTx(tx, {
+            productVariantId: recipeItem.ingredientVariantId,
+            storeId,
+            createdByUserId: account.userId,
+            relatedAccountId: accountId,
+            quantity: -consumedQuantity,
+            unit: recipeItem.ingredientVariant.unit,
+            type: "SALE",
           });
         }
       }
@@ -919,46 +891,29 @@ export const cancelClosedAccountService = async ({
 
     const saleMovements = await tx.inventoryTransaction.findMany({
       where: { relatedAccountId: accountId, type: "SALE" },
-      select: { productVariantId: true, quantity: true, unit: true, storeId: true },
+      select: {
+        productVariantId: true,
+        inventoryLotId: true,
+        quantity: true,
+        unit: true,
+        storeId: true,
+      },
     });
 
-    const returnedByVariant = new Map<
-      number,
-      { quantity: number; unit: (typeof saleMovements)[number]["unit"]; storeId: number }
-    >();
+    const operationId = randomUUID();
     for (const movement of saleMovements) {
       if (movement.quantity >= 0) continue;
-      const current = returnedByVariant.get(movement.productVariantId);
-      returnedByVariant.set(movement.productVariantId, {
-        quantity: (current?.quantity ?? 0) + Math.abs(movement.quantity),
-        unit: movement.unit,
+      await applyInventoryMovementTx(tx, {
+        operationId,
         storeId: movement.storeId,
-      });
-    }
-
-    const operationId = randomUUID();
-    for (const [productVariantId, returned] of returnedByVariant) {
-      await tx.inventoryTransaction.create({
-        data: {
-          operationId,
-          storeId: returned.storeId,
-          createdByUserId: cancelledByUserId,
-          productVariantId,
-          relatedAccountId: accountId,
-          quantity: returned.quantity,
-          unit: returned.unit,
-          type: "RETURN",
-          observation: `Anulación de venta: ${reason}`,
-        },
-      });
-      await tx.storeInventory.update({
-        where: {
-          storeId_productVariantId: {
-            storeId: returned.storeId,
-            productVariantId,
-          },
-        },
-        data: { stock: { increment: returned.quantity } },
+        createdByUserId: cancelledByUserId,
+        productVariantId: movement.productVariantId,
+        inventoryLotId: movement.inventoryLotId,
+        relatedAccountId: accountId,
+        quantity: Math.abs(movement.quantity),
+        unit: movement.unit,
+        type: "RETURN",
+        observation: `Anulación de venta: ${reason}`,
       });
     }
 

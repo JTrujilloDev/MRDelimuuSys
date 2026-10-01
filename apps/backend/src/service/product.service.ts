@@ -194,6 +194,11 @@ export const getInventoryProductsService = async (storeId: number) => {
         include: {
           catalogItems: { where: { groupId: store.groupId } },
           storeInventories: { where: { storeId } },
+          inventoryLots: {
+            where: { storeInventories: { some: { storeId, stock: { gt: 0 } } } },
+            include: { storeInventories: { where: { storeId, stock: { gt: 0 } } } },
+            orderBy: [{ expiresAt: "asc" }, { id: "asc" }],
+          },
         },
       },
     },
@@ -205,6 +210,7 @@ export const getInventoryProductsService = async (storeId: number) => {
     variants: product.variants.map(({
       catalogItems,
       storeInventories,
+      inventoryLots,
       productCost: _productCost,
       ...variant
     }) => ({
@@ -213,6 +219,10 @@ export const getInventoryProductsService = async (storeId: number) => {
       minStock: storeInventories[0]?.minStock ?? 0,
       isNew: !(storeInventories[0]?.isInitialized ?? false),
       isCatalogActive: catalogItems[0]?.isPosActive ?? false,
+      lots: inventoryLots.map(({ storeInventories: lotInventories, ...lot }) => ({
+        ...lot,
+        stock: lotInventories[0]?.stock ?? 0,
+      })),
     })),
   }));
 };

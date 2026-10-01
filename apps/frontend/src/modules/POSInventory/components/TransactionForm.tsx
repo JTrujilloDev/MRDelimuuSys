@@ -43,6 +43,9 @@ interface CartItem extends InventoryVariant {
   productName: string;
   categoryName: string;
   quantity: string;
+  lotCode: string;
+  manufacturedAt: string;
+  expiresAt: string;
 }
 
 interface TransactionFormProps {
@@ -148,8 +151,13 @@ const TransactionForm = ({
     setDialogOpen(false);
   };
 
-  const addItem = (variant: Omit<CartItem, "quantity">) => {
-    setCartItems((items) => [...items, { ...variant, quantity: "" }]);
+  const addItem = (
+    variant: Omit<CartItem, "quantity" | "lotCode" | "manufacturedAt" | "expiresAt">,
+  ) => {
+    setCartItems((items) => [
+      ...items,
+      { ...variant, quantity: "", lotCode: "", manufacturedAt: "", expiresAt: "" },
+    ]);
     setSearchTerm("");
     setSearchFocused(false);
   };
@@ -161,13 +169,28 @@ const TransactionForm = ({
     );
   };
 
+  const updateLotField = (
+    variantId: number,
+    field: "lotCode" | "manufacturedAt" | "expiresAt",
+    value: string,
+  ) => {
+    setCartItems((items) =>
+      items.map((item) => (item.id === variantId ? { ...item, [field]: value } : item)),
+    );
+  };
+
   const hasInvalidItems = cartItems.some((item) => {
     const quantity = Number(item.quantity);
     const invalidQuantity =
       !Number.isInteger(quantity) ||
       quantity === 0 ||
       (transactionType !== "ADJUSTMENT" && quantity < 0);
-    return invalidQuantity || getResultingStock(item, transactionType) < 0;
+    const invalidLot = transactionType === "RECEIPT" && (
+      !item.lotCode.trim() ||
+      !item.expiresAt ||
+      Boolean(item.manufacturedAt && item.manufacturedAt > item.expiresAt)
+    );
+    return invalidQuantity || invalidLot || getResultingStock(item, transactionType) < 0;
   });
   const requiresLossReason = transactionType === "WASTE";
   const requiresObservation =
@@ -189,6 +212,11 @@ const TransactionForm = ({
         items: cartItems.map((item) => ({
           productVariantId: item.id,
           quantity: Number(item.quantity),
+          ...(transactionType === "RECEIPT" && {
+            lotCode: item.lotCode.trim(),
+            manufacturedAt: item.manufacturedAt || undefined,
+            expiresAt: item.expiresAt,
+          }),
         })),
       },
       {
@@ -357,6 +385,13 @@ const TransactionForm = ({
                         <tr>
                           <th className="px-3 py-3">Producto</th>
                           <th className="min-w-36 px-3 py-3">{getQuantityLabel(transactionType)}</th>
+                          {transactionType === "RECEIPT" && (
+                            <>
+                              <th className="min-w-40 px-3 py-3">Lote</th>
+                              <th className="min-w-40 px-3 py-3">Fabricación</th>
+                              <th className="min-w-40 px-3 py-3">Vencimiento</th>
+                            </>
+                          )}
                           <th className="px-3 py-3 text-center">Inventario</th>
                           <th className="w-12 px-3 py-3" aria-label="Acciones" />
                         </tr>
@@ -396,6 +431,55 @@ const TransactionForm = ({
                                   Unidad: {productUnits.find((unit) => unit.value === item.unit)?.label ?? item.unit}
                                 </span>
                               </td>
+                              {transactionType === "RECEIPT" && (
+                                <>
+                                  <td className="px-3 py-3 align-top">
+                                    <Input
+                                      aria-label={`Lote de ${item.productName} ${item.name}`}
+                                      className="border border-border bg-background text-foreground"
+                                      placeholder="Ej. L-2026-001"
+                                      autoComplete="off"
+                                      value={item.lotCode}
+                                      onChange={(event) =>
+                                        updateLotField(item.id, "lotCode", event.target.value)
+                                      }
+                                    />
+                                    <span className="mt-1 block text-xs text-foreground/60">
+                                      Obligatorio
+                                    </span>
+                                  </td>
+                                  <td className="px-3 py-3 align-top">
+                                    <Input
+                                      aria-label={`Fecha de fabricación de ${item.productName} ${item.name}`}
+                                      className="border border-border bg-background text-foreground"
+                                      type="date"
+                                      max={item.expiresAt || undefined}
+                                      value={item.manufacturedAt}
+                                      onChange={(event) =>
+                                        updateLotField(item.id, "manufacturedAt", event.target.value)
+                                      }
+                                    />
+                                    <span className="mt-1 block text-xs text-foreground/60">
+                                      Opcional
+                                    </span>
+                                  </td>
+                                  <td className="px-3 py-3 align-top">
+                                    <Input
+                                      aria-label={`Fecha de vencimiento de ${item.productName} ${item.name}`}
+                                      className="border border-border bg-background text-foreground"
+                                      type="date"
+                                      min={new Date().toISOString().slice(0, 10)}
+                                      value={item.expiresAt}
+                                      onChange={(event) =>
+                                        updateLotField(item.id, "expiresAt", event.target.value)
+                                      }
+                                    />
+                                    <span className="mt-1 block text-xs text-foreground/60">
+                                      Obligatorio
+                                    </span>
+                                  </td>
+                                </>
+                              )}
                               <td className="px-3 py-3 text-center text-foreground">
                                 <span className="font-semibold">{item.stock}</span>
                                 <span className="mx-1.5 text-foreground/45">→</span>

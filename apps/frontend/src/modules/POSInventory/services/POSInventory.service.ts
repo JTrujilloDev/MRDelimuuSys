@@ -88,6 +88,9 @@ export interface BulkInventoryTransactionItem {
   productVariantId: number;
   quantity: number;
   observation?: string;
+  lotCode?: string;
+  manufacturedAt?: string;
+  expiresAt?: string;
 }
 
 export const createBulkPOSInventoryTransaction = async (data: {
