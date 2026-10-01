@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   initializesInventory,
   isManualInventoryTransactionAllowed,
+  normalizeInventoryLossDetails,
   normalizeInventoryQuantity,
 } from "./POSInventory.rules";
 
@@ -31,4 +32,23 @@ test("rejects zero, decimal, and POS-only quantities", () => {
   assert.throws(() => normalizeInventoryQuantity("PURCHASE", 0), /non-zero integer/);
   assert.throws(() => normalizeInventoryQuantity("PURCHASE", 1.5), /non-zero integer/);
   assert.throws(() => normalizeInventoryQuantity("SALE", 1), /Invalid manual/);
+});
+
+test("requires a structured reason for waste and observation only for other", () => {
+  assert.deepEqual(
+    normalizeInventoryLossDetails("WASTE", "EXPIRATION", "  Lote 14  "),
+    { lossReason: "EXPIRATION", observation: "Lote 14" },
+  );
+  assert.throws(
+    () => normalizeInventoryLossDetails("WASTE", undefined, "Vencido"),
+    /loss reason/,
+  );
+  assert.throws(
+    () => normalizeInventoryLossDetails("WASTE", "OTHER", ""),
+    /Observation/,
+  );
+  assert.deepEqual(
+    normalizeInventoryLossDetails("ADJUSTMENT", "DAMAGED", "  Conteo físico  "),
+    { lossReason: null, observation: "Conteo físico" },
+  );
 });

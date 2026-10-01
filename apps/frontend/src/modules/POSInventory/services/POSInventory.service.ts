@@ -18,7 +18,9 @@ export interface InventoryTransactionItem {
   quantity: number;
   unit: string;
   type: string;
+  lossReason: string | null;
   observation: string | null;
+  createdByUser: { id: number; name: string } | null;
   createdAt: string;
   productVariant: {
     id: number;
@@ -36,8 +38,10 @@ export interface InventoryOperation {
   id: string;
   operationId: string | null;
   type: string;
+  lossReason: string | null;
   origin: "MANUAL" | "POS";
   observation: string | null;
+  createdByUser: { id: number; name: string } | null;
   createdAt: string;
   items: InventoryTransactionItem[];
 }
@@ -73,6 +77,7 @@ export const createPOSInventoryTransaction = async (data: {
   relatedAccountId?: number;
   quantity: number;
   type: string;
+  lossReason?: string;
   observation?: string;
 }) => {
   const { data: response } = await api.post("pos-inventory", data);
@@ -87,6 +92,7 @@ export interface BulkInventoryTransactionItem {
 
 export const createBulkPOSInventoryTransaction = async (data: {
   type: string;
+  lossReason?: string;
   observation?: string;
   items: BulkInventoryTransactionItem[];
 }) => {

@@ -204,6 +204,7 @@ model InventoryTransaction {
   quantity         Int
   unit             Unit                     @default(UNIT)
   type             InventoryTransactionType
+  lossReason       InventoryLossReason?
   observation      String?
 
   createdAt DateTime @default(now())
@@ -213,6 +214,7 @@ model InventoryTransaction {
   @@index([createdByUserId])
   @@index([createdAt])
   @@index([type])
+  @@index([lossReason])
 }
 
 enum InventoryTransactionType {
@@ -227,6 +229,14 @@ enum InventoryTransactionType {
   WHOLESALE
   INTERNAL_CONSUMPTION
   DONATION
+}
+
+enum InventoryLossReason {
+  EXPIRATION
+  DAMAGED
+  PREPARATION_ERROR
+  QUALITY_CONTROL
+  OTHER
 }
 
 model FinancialTransaction {

@@ -1,7 +1,16 @@
 import type {
+  InventoryLossReason,
   InventoryTransactionType,
   ProductType,
 } from "../../generated/prisma/client";
+
+const inventoryLossReasons = new Set<InventoryLossReason>([
+  "EXPIRATION",
+  "DAMAGED",
+  "PREPARATION_ERROR",
+  "QUALITY_CONTROL",
+  "OTHER",
+]);
 
 const manualTransactionsByProductType: Record<
   ProductType,
@@ -45,4 +54,33 @@ export const normalizeInventoryQuantity = (
     default:
       throw new Error("Invalid manual transaction type");
   }
+};
+
+export const normalizeInventoryLossDetails = (
+  type: InventoryTransactionType,
+  lossReasonValue: unknown,
+  observationValue: unknown,
+) => {
+  const observation =
+    typeof observationValue === "string" && observationValue.trim()
+      ? observationValue.trim()
+      : null;
+
+  if (type !== "WASTE") {
+    return { lossReason: null, observation };
+  }
+
+  if (
+    typeof lossReasonValue !== "string" ||
+    !inventoryLossReasons.has(lossReasonValue as InventoryLossReason)
+  ) {
+    throw new Error("A valid loss reason is required for waste transactions");
+  }
+
+  const lossReason = lossReasonValue as InventoryLossReason;
+  if (lossReason === "OTHER" && !observation) {
+    throw new Error("Observation is required when the loss reason is other");
+  }
+
+  return { lossReason, observation };
 };

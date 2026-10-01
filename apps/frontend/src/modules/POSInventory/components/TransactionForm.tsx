@@ -17,6 +17,10 @@ import {
   transactionTypes,
 } from "../../../shared/constants/inventoryTransactionsByProductType";
 import { productUnits } from "../../../shared/constants/productUnits";
+import {
+  inventoryLossReasons,
+  type InventoryLossReason,
+} from "../../../shared/constants/inventoryLossReasons";
 import { useCreateBulkPOSInventoryTransaction } from "../hooks/useCreateBulkPOSInventoryTransaction";
 
 interface InventoryVariant {
@@ -52,7 +56,6 @@ const manualTransactionTypes = Object.values(transactionTypes).filter(
 );
 const outputTypes = new Set(["WASTE", "INTERNAL_CONSUMPTION"]);
 const observationRequiredTypes = new Set([
-  "WASTE",
   "ADJUSTMENT",
   "INTERNAL_CONSUMPTION",
 ]);
@@ -86,6 +89,7 @@ const TransactionForm = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const [observation, setObservation] = useState("");
+  const [lossReason, setLossReason] = useState<InventoryLossReason | "">("");
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const { mutate: createTransactions, isPending } =
@@ -134,6 +138,7 @@ const TransactionForm = ({
     setTransactionType("RECEIPT");
     setSearchTerm("");
     setObservation("");
+    setLossReason("");
     setCartItems([]);
   };
 
@@ -164,10 +169,14 @@ const TransactionForm = ({
       (transactionType !== "ADJUSTMENT" && quantity < 0);
     return invalidQuantity || getResultingStock(item, transactionType) < 0;
   });
-  const requiresObservation = observationRequiredTypes.has(transactionType);
+  const requiresLossReason = transactionType === "WASTE";
+  const requiresObservation =
+    observationRequiredTypes.has(transactionType) ||
+    (requiresLossReason && lossReason === "OTHER");
   const canSubmit =
     cartItems.length > 0 &&
     !hasInvalidItems &&
+    (!requiresLossReason || Boolean(lossReason)) &&
     (!requiresObservation || observation.trim().length > 0);
 
   const submitTransactions = () => {
@@ -175,6 +184,7 @@ const TransactionForm = ({
     createTransactions(
       {
         type: transactionType,
+        lossReason: requiresLossReason ? lossReason : undefined,
         observation: observation.trim() || undefined,
         items: cartItems.map((item) => ({
           productVariantId: item.id,
@@ -236,6 +246,7 @@ const TransactionForm = ({
                       setCartItems([]);
                       setSearchTerm("");
                       setObservation("");
+                      setLossReason("");
                     }}
                   >
                     <Label className="text-sm font-semibold text-foreground">
@@ -424,7 +435,30 @@ const TransactionForm = ({
                 )}
               </div>
 
-              <div className="flex shrink-0 flex-col gap-1.5 rounded-xl border border-border bg-pos-surface-soft p-2.5">
+              <div className="flex shrink-0 flex-col gap-3 rounded-xl border border-border bg-pos-surface-soft p-2.5">
+                {requiresLossReason && (
+                  <Select
+                    value={lossReason || null}
+                    onChange={(value) => setLossReason(String(value) as InventoryLossReason)}
+                  >
+                    <Label className="text-sm font-semibold text-foreground">
+                      Motivo de la merma
+                    </Label>
+                    <Select.Trigger className="border border-border bg-background text-foreground">
+                      <Select.Value placeholder="Selecciona el motivo" />
+                      <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.Popover className="rounded-md border border-border bg-pos-surface text-foreground">
+                      <ListBox>
+                        {inventoryLossReasons.map((reason) => (
+                          <ListBox.Item id={reason.value} key={reason.value} textValue={reason.label}>
+                            {reason.label}
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
+                )}
                 <div className="flex items-center justify-between gap-3">
                   <Label className="text-sm font-semibold text-foreground">
                     Observación
@@ -443,7 +477,11 @@ const TransactionForm = ({
                   aria-label="Observación general de los movimientos"
                   className="min-h-16 w-full border border-border bg-background text-foreground placeholder:text-foreground/55"
                   rows={2}
-                  placeholder="Agrega una observación general para estos movimientos"
+                  placeholder={
+                    requiresLossReason && lossReason !== "OTHER"
+                      ? "Detalle adicional opcional"
+                      : "Agrega una observación general para estos movimientos"
+                  }
                   value={observation}
                   onChange={(event) => setObservation(event.target.value)}
                 />

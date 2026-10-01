@@ -22,6 +22,7 @@ import {
 import { useDeferredValue, useState } from "react";
 import { transactionTypes } from "../../../shared/constants/inventoryTransactionsByProductType";
 import { productUnits } from "../../../shared/constants/productUnits";
+import { getInventoryLossReasonLabel } from "../../../shared/constants/inventoryLossReasons";
 import { useGetPOSInventoryTransactions } from "../hooks/useGetPOSInventoryTransactions";
 import type {
   InventoryOperation,
@@ -459,6 +460,7 @@ interface OperationRowsProps {
 
 const OperationRows = ({ operation, expanded, onToggle }: OperationRowsProps) => {
   const transaction = getTransactionPresentation(operation.type);
+  const lossReasonLabel = getInventoryLossReasonLabel(operation.lossReason);
   const quantities = getOperationQuantities(operation);
   const product = getProductSummary(operation.items);
   const operationUnits = Array.from(
@@ -483,6 +485,11 @@ const OperationRows = ({ operation, expanded, onToggle }: OperationRowsProps) =>
             <span className="text-[11px] text-foreground/55">
               {operation.origin === "POS" ? "Venta POS" : "Manual"}
             </span>
+            {operation.createdByUser && (
+              <span className="text-[11px] text-foreground/55">
+                Por {operation.createdByUser.name}
+              </span>
+            )}
           </div>
         </td>
         <td className="max-w-64 px-4 py-3">
@@ -506,9 +513,14 @@ const OperationRows = ({ operation, expanded, onToggle }: OperationRowsProps) =>
             <span className="text-[11px] text-foreground/55">{unitLabel}</span>
           </div>
         </td>
-        <td className="max-w-52 px-4 py-3" title={operation.observation ?? undefined}>
+        <td className="max-w-52 px-4 py-3" title={operation.observation ?? lossReasonLabel ?? undefined}>
+          {lossReasonLabel && (
+            <span className="block truncate font-semibold text-destructive">
+              {lossReasonLabel}
+            </span>
+          )}
           <span className="block truncate text-foreground/75">
-            {operation.observation || "Sin observación"}
+            {operation.observation || (lossReasonLabel ? "Sin detalle adicional" : "Sin observación")}
           </span>
         </td>
         <td className="px-3 py-3">

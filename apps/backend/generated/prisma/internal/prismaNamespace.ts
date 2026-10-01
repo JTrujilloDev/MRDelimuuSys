@@ -2134,6 +2134,7 @@ export const InventoryTransactionScalarFieldEnum = {
   quantity: 'quantity',
   unit: 'unit',
   type: 'type',
+  lossReason: 'lossReason',
   observation: 'observation',
   createdAt: 'createdAt'
 } as const
@@ -2513,6 +2514,20 @@ export type EnumInventoryTransactionTypeFieldRefInput<$PrismaModel> = FieldRefIn
  * Reference to a field of type 'InventoryTransactionType[]'
  */
 export type ListEnumInventoryTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryTransactionType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'InventoryLossReason'
+ */
+export type EnumInventoryLossReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryLossReason'>
+    
+
+
+/**
+ * Reference to a field of type 'InventoryLossReason[]'
+ */
+export type ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryLossReason[]'>
     
 
 

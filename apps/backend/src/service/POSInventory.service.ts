@@ -7,6 +7,7 @@ import { randomUUID } from "crypto";
 import {
   initializesInventory,
   isManualInventoryTransactionAllowed,
+  normalizeInventoryLossDetails,
   normalizeInventoryQuantity,
 } from "./POSInventory.rules";
 
@@ -18,6 +19,7 @@ interface BulkInventoryTransactionItem {
 
 interface CreateBulkInventoryTransactionData {
   type: InventoryTransactionType;
+  lossReason?: unknown;
   observation?: string;
   items: BulkInventoryTransactionItem[];
 }
@@ -27,6 +29,7 @@ interface CreateInventoryTransactionData {
   relatedAccountId?: number | null;
   quantity: number;
   type: InventoryTransactionType;
+  lossReason?: unknown;
   observation?: string | null;
 }
 
@@ -76,6 +79,11 @@ export const createPOSInventoryTransactionService = async (
       }
     }
     const quantity = normalizeInventoryQuantity(data.type, Number(data.quantity));
+    const lossDetails = normalizeInventoryLossDetails(
+      data.type,
+      data.lossReason,
+      data.observation,
+    );
 
     // 3. Validar stock (solo para salidas)
     if (quantity < 0) {
@@ -87,8 +95,8 @@ export const createPOSInventoryTransactionService = async (
     }
 
     if (
-      ["WASTE", "ADJUSTMENT", "INTERNAL_CONSUMPTION"].includes(data.type) &&
-      !data.observation
+      ["ADJUSTMENT", "INTERNAL_CONSUMPTION"].includes(data.type) &&
+      !lossDetails.observation
     ) {
       throw new Error(
         "Observation is required for waste, adjustment, and internal consumption transactions",
@@ -105,7 +113,8 @@ export const createPOSInventoryTransactionService = async (
         quantity,
         unit: product.unit,
         type: data.type,
-        observation: data.observation,
+        lossReason: lossDetails.lossReason,
+        observation: lossDetails.observation,
       },
     });
 
@@ -144,8 +153,14 @@ export const createBulkPOSInventoryTransactionService = async (
     throw new Error("A product variant cannot be repeated");
   }
 
+  const lossDetails = normalizeInventoryLossDetails(
+    data.type,
+    data.lossReason,
+    data.observation,
+  );
+
   if (
-    ["WASTE", "ADJUSTMENT", "INTERNAL_CONSUMPTION"].includes(data.type) &&
+    ["ADJUSTMENT", "INTERNAL_CONSUMPTION"].includes(data.type) &&
     !data.observation?.trim() &&
     data.items.some((item) => !item.observation?.trim())
   ) {
@@ -226,6 +241,7 @@ export const createBulkPOSInventoryTransactionService = async (
           quantity: item.quantity,
           unit: item.variant.unit,
           type: data.type,
+          lossReason: lossDetails.lossReason,
           observation: item.observation,
         },
       });
@@ -352,6 +368,7 @@ export const getPOSInventoryTransactionsService = async (
           product: true,
         },
       },
+      createdByUser: { select: { id: true, name: true } },
     },
     orderBy: {
       createdAt: "desc",
@@ -363,8 +380,10 @@ export const getPOSInventoryTransactionsService = async (
     id: string;
     operationId: string | null;
     type: InventoryTransactionType;
+    lossReason: TransactionWithProduct["lossReason"];
     origin: "MANUAL" | "POS";
     observation: string | null;
+    createdByUser: TransactionWithProduct["createdByUser"];
     createdAt: Date;
     items: TransactionWithProduct[];
   }
@@ -391,8 +410,10 @@ export const getPOSInventoryTransactionsService = async (
       id: groupId,
       operationId: transaction.operationId,
       type: transaction.type,
+      lossReason: transaction.lossReason,
       origin: transaction.type === "SALE" ? "POS" : "MANUAL",
       observation: transaction.observation,
+      createdByUser: transaction.createdByUser,
       createdAt: transaction.createdAt,
       items: [transaction],
     });

@@ -207,6 +207,7 @@ export const InventoryTransactionScalarFieldEnum = {
   quantity: 'quantity',
   unit: 'unit',
   type: 'type',
+  lossReason: 'lossReason',
   observation: 'observation',
   createdAt: 'createdAt'
 } as const

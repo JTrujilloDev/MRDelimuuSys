@@ -338,6 +338,13 @@ export type EnumInventoryTransactionTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumInventoryTransactionTypeFilter<$PrismaModel> | $Enums.InventoryTransactionType
 }
 
+export type EnumInventoryLossReasonNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryLossReason | Prisma.EnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.InventoryLossReason[] | Prisma.ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.InventoryLossReason[] | Prisma.ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumInventoryLossReasonNullableFilter<$PrismaModel> | $Enums.InventoryLossReason | null
+}
+
 export type EnumInventoryTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.InventoryTransactionType | Prisma.EnumInventoryTransactionTypeFieldRefInput<$PrismaModel>
   in?: $Enums.InventoryTransactionType[] | Prisma.ListEnumInventoryTransactionTypeFieldRefInput<$PrismaModel>
@@ -346,6 +353,16 @@ export type EnumInventoryTransactionTypeWithAggregatesFilter<$PrismaModel = neve
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumInventoryTransactionTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumInventoryTransactionTypeFilter<$PrismaModel>
+}
+
+export type EnumInventoryLossReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryLossReason | Prisma.EnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.InventoryLossReason[] | Prisma.ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.InventoryLossReason[] | Prisma.ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumInventoryLossReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.InventoryLossReason | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInventoryLossReasonNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInventoryLossReasonNullableFilter<$PrismaModel>
 }
 
 export type EnumFinancialTransactionTypeFilter<$PrismaModel = never> = {
@@ -830,6 +847,13 @@ export type NestedEnumInventoryTransactionTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumInventoryTransactionTypeFilter<$PrismaModel> | $Enums.InventoryTransactionType
 }
 
+export type NestedEnumInventoryLossReasonNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryLossReason | Prisma.EnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.InventoryLossReason[] | Prisma.ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.InventoryLossReason[] | Prisma.ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumInventoryLossReasonNullableFilter<$PrismaModel> | $Enums.InventoryLossReason | null
+}
+
 export type NestedEnumInventoryTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.InventoryTransactionType | Prisma.EnumInventoryTransactionTypeFieldRefInput<$PrismaModel>
   in?: $Enums.InventoryTransactionType[] | Prisma.ListEnumInventoryTransactionTypeFieldRefInput<$PrismaModel>
@@ -838,6 +862,16 @@ export type NestedEnumInventoryTransactionTypeWithAggregatesFilter<$PrismaModel 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumInventoryTransactionTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumInventoryTransactionTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumInventoryLossReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryLossReason | Prisma.EnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.InventoryLossReason[] | Prisma.ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.InventoryLossReason[] | Prisma.ListEnumInventoryLossReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumInventoryLossReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.InventoryLossReason | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInventoryLossReasonNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInventoryLossReasonNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumFinancialTransactionTypeFilter<$PrismaModel = never> = {

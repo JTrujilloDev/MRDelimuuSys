@@ -91,6 +91,17 @@ export const InventoryTransactionType = {
 export type InventoryTransactionType = (typeof InventoryTransactionType)[keyof typeof InventoryTransactionType]
 
 
+export const InventoryLossReason = {
+  EXPIRATION: 'EXPIRATION',
+  DAMAGED: 'DAMAGED',
+  PREPARATION_ERROR: 'PREPARATION_ERROR',
+  QUALITY_CONTROL: 'QUALITY_CONTROL',
+  OTHER: 'OTHER'
+} as const
+
+export type InventoryLossReason = (typeof InventoryLossReason)[keyof typeof InventoryLossReason]
+
+
 export const FinancialTransactionType = {
   SALE: 'SALE',
   REFUND: 'REFUND',
