@@ -15,6 +15,7 @@ import qzRoutes from "./qz.routes";
 import kitchenTicketRoutes from "./kitchenTicket.routes";
 import catalogRoutes from "./catalog.routes";
 import inventoryTransferRoutes from "./inventoryTransfer.routes";
+import notificationRoutes from "./notification.routes";
 import { requireActiveContext, requireAuth } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -25,6 +26,7 @@ router.use("/store-groups", storeGroupRoutes);
 router.use("/terminal", terminalRoutes);
 router.use("/users", usersRoutes);
 router.use("/catalog", catalogRoutes);
+router.use("/notifications", notificationRoutes);
 
 router.use(requireAuth, requireActiveContext);
 

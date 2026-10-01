@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 
 import app from "./app";
 import { setIO } from "./socket";
+import { startNotificationWorker } from "./service/notification.service";
 import { getAccountByIdService } from './service/accounts.service';
 
 const httpServer = createServer(app);
@@ -66,4 +67,6 @@ const port = Number(process.env.PORT) || 3000;
 
 httpServer.listen(port, "0.0.0.0", () => {
   console.log(`Server running on 0.0.0.0:${port}`);
+  const stopNotifications = startNotificationWorker();
+  httpServer.once("close", stopNotifications);
 });

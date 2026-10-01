@@ -7,6 +7,36 @@ datasource db {
   provider = "postgresql"
 }
 
+// Durable delivery queue. Recipients and reports are snapshotted at event time.
+model NotificationOutbox {
+  id            Int      @id @default(autoincrement())
+  deduplicationKey String @unique
+  channel       String
+  kind          String
+  recipient     String
+  payload       Json
+  status        String   @default("PENDING")
+  attempts      Int      @default(0)
+  nextAttemptAt DateTime @default(now())
+  lockedUntil   DateTime?
+  sentAt        DateTime?
+  lastError     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status, nextAttemptAt])
+}
+
+model StockNotificationState {
+  storeId          Int
+  productVariantId Int
+  level            String
+  revision         Int      @default(1)
+  updatedAt        DateTime @updatedAt
+
+  @@id([storeId, productVariantId])
+}
+
 model Category {
   id          Int     @id @default(autoincrement())
   name        String

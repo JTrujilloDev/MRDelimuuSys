@@ -6,6 +6,7 @@ import {
   validateCashRegisterClosing,
 } from "./cashRegister.rules";
 import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
+import { enqueueShiftClosed } from "./notification.service";
 
 export interface UpdateCashRegisterTotalsInput {
   cashRegisterId: number;
@@ -166,6 +167,11 @@ export const closeCashRegisterService = async (
         },
       });
     }
+
+    await enqueueShiftClosed(tx, cashRegisterId, {
+      totalExpenses, expectedCash, closingAmount: closing.closingAmount,
+      difference: closing.difference, differenceJustification: closing.differenceJustification,
+    });
 
     return {
       cashRegister: closedCashRegister,

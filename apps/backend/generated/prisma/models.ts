@@ -8,6 +8,8 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/NotificationOutbox'
+export type * from './models/StockNotificationState'
 export type * from './models/Category'
 export type * from './models/Product'
 export type * from './models/ProductVariant'

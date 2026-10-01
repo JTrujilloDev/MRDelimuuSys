@@ -51,6 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  NotificationOutbox: 'NotificationOutbox',
+  StockNotificationState: 'StockNotificationState',
   Category: 'Category',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
@@ -92,6 +94,37 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const NotificationOutboxScalarFieldEnum = {
+  id: 'id',
+  deduplicationKey: 'deduplicationKey',
+  channel: 'channel',
+  kind: 'kind',
+  recipient: 'recipient',
+  payload: 'payload',
+  status: 'status',
+  attempts: 'attempts',
+  nextAttemptAt: 'nextAttemptAt',
+  lockedUntil: 'lockedUntil',
+  sentAt: 'sentAt',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationOutboxScalarFieldEnum = (typeof NotificationOutboxScalarFieldEnum)[keyof typeof NotificationOutboxScalarFieldEnum]
+
+
+export const StockNotificationStateScalarFieldEnum = {
+  storeId: 'storeId',
+  productVariantId: 'productVariantId',
+  level: 'level',
+  revision: 'revision',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StockNotificationStateScalarFieldEnum = (typeof StockNotificationStateScalarFieldEnum)[keyof typeof StockNotificationStateScalarFieldEnum]
 
 
 export const CategoryScalarFieldEnum = {
@@ -476,12 +509,28 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 export const NullsOrder = {

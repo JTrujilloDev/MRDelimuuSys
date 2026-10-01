@@ -6,6 +6,14 @@ x-backend-image: &backend-image
 x-backend-environment: &backend-environment
   DATABASE_URL: postgresql://${POSTGRES_USER:-deli-db}:${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en las variables del stack}@db:5432/${POSTGRES_DB:-delimuu}
   NODE_ENV: production
+  NOTIFICATIONS_EMAIL_ENABLED: ${NOTIFICATIONS_EMAIL_ENABLED:-false}
+  GMAIL_USER: ${GMAIL_USER:-}
+  GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
+  NOTIFICATIONS_EMAIL_TO: ${NOTIFICATIONS_EMAIL_TO:-}
+  NOTIFICATIONS_PUSH_ENABLED: ${NOTIFICATIONS_PUSH_ENABLED:-false}
+  NTFY_BASE_URL: ${NTFY_BASE_URL:-https://ntfy.sh}
+  NTFY_TOPIC: ${NTFY_TOPIC:-}
+  NTFY_TOKEN: ${NTFY_TOKEN:-}
 
 services:
   db:
