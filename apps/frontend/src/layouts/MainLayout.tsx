@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import { Navigate, Outlet } from "react-router";
 import { connectQZ } from "../shared/services/qz.service";
 import { useAuth } from "../app/auth/AuthProvider";
+import ExpirationAlert from "./components/ExpirationAlert";
 
 export function MainLayout() {
   const { state, isLoading } = useAuth();
@@ -29,6 +30,7 @@ export function MainLayout() {
   return (
     <div className="flex h-screen w-full flex-row overflow-hidden">
       <Sidebar />
+      <ExpirationAlert />
       <div className="min-w-0 flex-1 overflow-hidden">
         <Outlet />
       </div>

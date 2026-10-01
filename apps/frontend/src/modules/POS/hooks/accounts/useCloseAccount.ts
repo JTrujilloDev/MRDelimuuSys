@@ -10,6 +10,7 @@ export const useCloseAccount = () => {
       void queryClient.invalidateQueries({ queryKey: ["openCashRegister"] });
       void queryClient.invalidateQueries({ queryKey: ["products"] });
       void queryClient.invalidateQueries({ queryKey: ["getAllActiveProducts"] });
+      void queryClient.invalidateQueries({ queryKey: ["getInventoryProducts"] });
     },
   });
 };

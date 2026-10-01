@@ -12,6 +12,7 @@ import { CalendarClock, FileText, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
 import { useGetInventoryProducts } from "../../products/hooks/useGetInventoryProducts";
 import { getReportPDF } from "../services/report.service";
@@ -84,6 +85,11 @@ const getExpirationStatus = (expiresAt: string | null) => {
 const Inventory = () => {
   const { state } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedTab = searchParams.get("tab");
+  const selectedTab = requestedTab === "current-stock" || requestedTab === "lots"
+    ? requestedTab
+    : "movements";
   const { data: categories } = useGetAllProductCategories();
   const productsQuery = useGetInventoryProducts();
   const activeProducts = (productsQuery.data?.data ?? []) as InventoryProduct[];
@@ -141,7 +147,11 @@ const Inventory = () => {
         <h1 className="text-2xl font-bold text-foreground">Inventario</h1>
         <p className="text-sm text-muted-foreground">Punto: {state?.activeContext?.store.name}</p>
       </div>
-      <Tabs className="w-full">
+      <Tabs
+        className="w-full"
+        selectedKey={selectedTab}
+        onSelectionChange={(key) => setSearchParams({ tab: String(key) })}
+      >
         <Tabs.ListContainer className="w-full max-w-2xl rounded-md bg-card border border-border">
           <Tabs.List
             aria-label="Options"

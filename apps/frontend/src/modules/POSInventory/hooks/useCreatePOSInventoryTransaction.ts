@@ -8,6 +8,7 @@ export const useCreatePOSInventoryTransaction = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["POSInventoryTransactions"] });
             queryClient.invalidateQueries({ queryKey: ["getAllActiveProducts"] });
+            queryClient.invalidateQueries({ queryKey: ["getInventoryProducts"] });
         },
     });
 };
