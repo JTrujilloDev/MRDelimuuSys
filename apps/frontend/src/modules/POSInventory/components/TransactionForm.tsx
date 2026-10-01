@@ -61,6 +61,7 @@ const manualTransactionTypes = Object.values(transactionTypes).filter(
     "PRODUCTION",
     "TRANSFER_OUT",
     "TRANSFER_IN",
+    "TRANSFER_REVERSAL",
   ].includes(transaction.value),
 );
 const outputTypes = new Set(["WASTE", "INTERNAL_CONSUMPTION"]);

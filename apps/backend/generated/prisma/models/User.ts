@@ -264,6 +264,7 @@ export type UserWhereInput = {
   inventoryTransactions?: Prisma.InventoryTransactionListRelationFilter
   dispatchedTransfers?: Prisma.InventoryTransferListRelationFilter
   receivedTransfers?: Prisma.InventoryTransferListRelationFilter
+  cancelledTransfers?: Prisma.InventoryTransferListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -285,6 +286,7 @@ export type UserOrderByWithRelationInput = {
   inventoryTransactions?: Prisma.InventoryTransactionOrderByRelationAggregateInput
   dispatchedTransfers?: Prisma.InventoryTransferOrderByRelationAggregateInput
   receivedTransfers?: Prisma.InventoryTransferOrderByRelationAggregateInput
+  cancelledTransfers?: Prisma.InventoryTransferOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -309,6 +311,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   inventoryTransactions?: Prisma.InventoryTransactionListRelationFilter
   dispatchedTransfers?: Prisma.InventoryTransferListRelationFilter
   receivedTransfers?: Prisma.InventoryTransferListRelationFilter
+  cancelledTransfers?: Prisma.InventoryTransferListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -363,6 +366,7 @@ export type UserCreateInput = {
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -384,6 +388,7 @@ export type UserUncheckedCreateInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUpdateInput = {
@@ -404,6 +409,7 @@ export type UserUpdateInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -425,6 +431,7 @@ export type UserUncheckedUpdateInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -602,6 +609,12 @@ export type UserCreateNestedOneWithoutReceivedTransfersInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
+export type UserCreateNestedOneWithoutCancelledTransfersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCancelledTransfersInput, Prisma.UserUncheckedCreateWithoutCancelledTransfersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCancelledTransfersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
 export type UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutDispatchedTransfersInput, Prisma.UserUncheckedCreateWithoutDispatchedTransfersInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutDispatchedTransfersInput
@@ -618,6 +631,16 @@ export type UserUpdateOneWithoutReceivedTransfersNestedInput = {
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReceivedTransfersInput, Prisma.UserUpdateWithoutReceivedTransfersInput>, Prisma.UserUncheckedUpdateWithoutReceivedTransfersInput>
+}
+
+export type UserUpdateOneWithoutCancelledTransfersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCancelledTransfersInput, Prisma.UserUncheckedCreateWithoutCancelledTransfersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCancelledTransfersInput
+  upsert?: Prisma.UserUpsertWithoutCancelledTransfersInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCancelledTransfersInput, Prisma.UserUpdateWithoutCancelledTransfersInput>, Prisma.UserUncheckedUpdateWithoutCancelledTransfersInput>
 }
 
 export type UserCreateNestedOneWithoutStoreAccessesInput = {
@@ -665,6 +688,7 @@ export type UserCreateWithoutAccountsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -685,6 +709,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -709,6 +734,7 @@ export type UserCreateWithoutCancelledAccountsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateWithoutCancelledAccountsInput = {
@@ -729,6 +755,7 @@ export type UserUncheckedCreateWithoutCancelledAccountsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserCreateOrConnectWithoutCancelledAccountsInput = {
@@ -764,6 +791,7 @@ export type UserUpdateWithoutAccountsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -784,6 +812,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUpsertWithoutCancelledAccountsInput = {
@@ -814,6 +843,7 @@ export type UserUpdateWithoutCancelledAccountsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCancelledAccountsInput = {
@@ -834,6 +864,7 @@ export type UserUncheckedUpdateWithoutCancelledAccountsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserCreateWithoutInventoryTransactionsInput = {
@@ -853,6 +884,7 @@ export type UserCreateWithoutInventoryTransactionsInput = {
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateWithoutInventoryTransactionsInput = {
@@ -873,6 +905,7 @@ export type UserUncheckedCreateWithoutInventoryTransactionsInput = {
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserCreateOrConnectWithoutInventoryTransactionsInput = {
@@ -908,6 +941,7 @@ export type UserUpdateWithoutInventoryTransactionsInput = {
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInventoryTransactionsInput = {
@@ -928,6 +962,7 @@ export type UserUncheckedUpdateWithoutInventoryTransactionsInput = {
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserCreateWithoutCashRegistersInput = {
@@ -947,6 +982,7 @@ export type UserCreateWithoutCashRegistersInput = {
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateWithoutCashRegistersInput = {
@@ -967,6 +1003,7 @@ export type UserUncheckedCreateWithoutCashRegistersInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserCreateOrConnectWithoutCashRegistersInput = {
@@ -1002,6 +1039,7 @@ export type UserUpdateWithoutCashRegistersInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCashRegistersInput = {
@@ -1022,6 +1060,7 @@ export type UserUncheckedUpdateWithoutCashRegistersInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserCreateWithoutDispatchedTransfersInput = {
@@ -1041,6 +1080,7 @@ export type UserCreateWithoutDispatchedTransfersInput = {
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
   receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateWithoutDispatchedTransfersInput = {
@@ -1061,6 +1101,7 @@ export type UserUncheckedCreateWithoutDispatchedTransfersInput = {
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserCreateOrConnectWithoutDispatchedTransfersInput = {
@@ -1085,6 +1126,7 @@ export type UserCreateWithoutReceivedTransfersInput = {
   sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateWithoutReceivedTransfersInput = {
@@ -1105,11 +1147,58 @@ export type UserUncheckedCreateWithoutReceivedTransfersInput = {
   sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserCreateOrConnectWithoutReceivedTransfersInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutReceivedTransfersInput, Prisma.UserUncheckedCreateWithoutReceivedTransfersInput>
+}
+
+export type UserCreateWithoutCancelledTransfersInput = {
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
+  CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+}
+
+export type UserUncheckedCreateWithoutCancelledTransfersInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
+  CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+}
+
+export type UserCreateOrConnectWithoutCancelledTransfersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCancelledTransfersInput, Prisma.UserUncheckedCreateWithoutCancelledTransfersInput>
 }
 
 export type UserUpsertWithoutDispatchedTransfersInput = {
@@ -1140,6 +1229,7 @@ export type UserUpdateWithoutDispatchedTransfersInput = {
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDispatchedTransfersInput = {
@@ -1160,6 +1250,7 @@ export type UserUncheckedUpdateWithoutDispatchedTransfersInput = {
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUpsertWithoutReceivedTransfersInput = {
@@ -1190,6 +1281,7 @@ export type UserUpdateWithoutReceivedTransfersInput = {
   sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReceivedTransfersInput = {
@@ -1210,6 +1302,59 @@ export type UserUncheckedUpdateWithoutReceivedTransfersInput = {
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
+}
+
+export type UserUpsertWithoutCancelledTransfersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCancelledTransfersInput, Prisma.UserUncheckedUpdateWithoutCancelledTransfersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCancelledTransfersInput, Prisma.UserUncheckedCreateWithoutCancelledTransfersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCancelledTransfersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCancelledTransfersInput, Prisma.UserUncheckedUpdateWithoutCancelledTransfersInput>
+}
+
+export type UserUpdateWithoutCancelledTransfersInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCancelledTransfersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
 }
 
 export type UserCreateWithoutStoreAccessesInput = {
@@ -1229,6 +1374,7 @@ export type UserCreateWithoutStoreAccessesInput = {
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateWithoutStoreAccessesInput = {
@@ -1249,6 +1395,7 @@ export type UserUncheckedCreateWithoutStoreAccessesInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserCreateOrConnectWithoutStoreAccessesInput = {
@@ -1284,6 +1431,7 @@ export type UserUpdateWithoutStoreAccessesInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStoreAccessesInput = {
@@ -1304,6 +1452,7 @@ export type UserUncheckedUpdateWithoutStoreAccessesInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1323,6 +1472,7 @@ export type UserCreateWithoutSessionsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1343,6 +1493,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1378,6 +1529,7 @@ export type UserUpdateWithoutSessionsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1398,6 +1550,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
 }
 
 
@@ -1414,6 +1567,7 @@ export type UserCountOutputType = {
   inventoryTransactions: number
   dispatchedTransfers: number
   receivedTransfers: number
+  cancelledTransfers: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1425,6 +1579,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   inventoryTransactions?: boolean | UserCountOutputTypeCountInventoryTransactionsArgs
   dispatchedTransfers?: boolean | UserCountOutputTypeCountDispatchedTransfersArgs
   receivedTransfers?: boolean | UserCountOutputTypeCountReceivedTransfersArgs
+  cancelledTransfers?: boolean | UserCountOutputTypeCountCancelledTransfersArgs
 }
 
 /**
@@ -1493,6 +1648,13 @@ export type UserCountOutputTypeCountReceivedTransfersArgs<ExtArgs extends runtim
   where?: Prisma.InventoryTransferWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCancelledTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryTransferWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1513,6 +1675,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   inventoryTransactions?: boolean | Prisma.User$inventoryTransactionsArgs<ExtArgs>
   dispatchedTransfers?: boolean | Prisma.User$dispatchedTransfersArgs<ExtArgs>
   receivedTransfers?: boolean | Prisma.User$receivedTransfersArgs<ExtArgs>
+  cancelledTransfers?: boolean | Prisma.User$cancelledTransfersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1565,6 +1728,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   inventoryTransactions?: boolean | Prisma.User$inventoryTransactionsArgs<ExtArgs>
   dispatchedTransfers?: boolean | Prisma.User$dispatchedTransfersArgs<ExtArgs>
   receivedTransfers?: boolean | Prisma.User$receivedTransfersArgs<ExtArgs>
+  cancelledTransfers?: boolean | Prisma.User$cancelledTransfersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1581,6 +1745,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     inventoryTransactions: Prisma.$InventoryTransactionPayload<ExtArgs>[]
     dispatchedTransfers: Prisma.$InventoryTransferPayload<ExtArgs>[]
     receivedTransfers: Prisma.$InventoryTransferPayload<ExtArgs>[]
+    cancelledTransfers: Prisma.$InventoryTransferPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1995,6 +2160,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   inventoryTransactions<T extends Prisma.User$inventoryTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inventoryTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dispatchedTransfers<T extends Prisma.User$dispatchedTransfersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dispatchedTransfersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   receivedTransfers<T extends Prisma.User$receivedTransfersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$receivedTransfersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cancelledTransfers<T extends Prisma.User$cancelledTransfersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cancelledTransfersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2598,6 +2764,30 @@ export type User$dispatchedTransfersArgs<ExtArgs extends runtime.Types.Extension
  * User.receivedTransfers
  */
 export type User$receivedTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryTransfer
+   */
+  select?: Prisma.InventoryTransferSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryTransfer
+   */
+  omit?: Prisma.InventoryTransferOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryTransferInclude<ExtArgs> | null
+  where?: Prisma.InventoryTransferWhereInput
+  orderBy?: Prisma.InventoryTransferOrderByWithRelationInput | Prisma.InventoryTransferOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryTransferWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryTransferScalarFieldEnum | Prisma.InventoryTransferScalarFieldEnum[]
+}
+
+/**
+ * User.cancelledTransfers
+ */
+export type User$cancelledTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the InventoryTransfer
    */

@@ -11,11 +11,12 @@ import {
 } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { ArrowRight, PackageCheck, Plus, Search, Trash2, Truck } from "lucide-react";
+import { ArrowRight, Ban, PackageCheck, Plus, Search, Trash2, Truck } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useAuth } from "../../../app/auth/AuthProvider";
 import { useGetInventoryProducts } from "../../products/hooks/useGetInventoryProducts";
 import {
+  cancelInventoryTransfer,
   createInventoryTransfer,
   getInventoryTransferDestinations,
   getInventoryTransfers,
@@ -64,6 +65,8 @@ const InventoryTransfersPage = () => {
   });
   const [dispatchOpen, setDispatchOpen] = useState(false);
   const [receiveTransfer, setReceiveTransfer] = useState<InventoryTransfer | null>(null);
+  const [cancelTransfer, setCancelTransfer] = useState<InventoryTransfer | null>(null);
+  const [cancellationReason, setCancellationReason] = useState("");
   const [destinationStoreId, setDestinationStoreId] = useState("");
   const [search, setSearch] = useState("");
   const [dispatchItems, setDispatchItems] = useState<DispatchItem[]>([]);
@@ -117,6 +120,16 @@ const InventoryTransfersPage = () => {
     },
     onError: (error) => toast(getErrorMessage(error, "No fue posible recibir el traslado"), { variant: "danger" }),
   });
+  const cancelMutation = useMutation({
+    mutationFn: ({ transferId, reason }: { transferId: number; reason: string }) =>
+      cancelInventoryTransfer(transferId, reason),
+    onSuccess: async () => {
+      await refresh();
+      toast("Traslado cancelado y existencias restauradas", { variant: "success" });
+      closeCancellation();
+    },
+    onError: (error) => toast(getErrorMessage(error, "No fue posible cancelar el traslado"), { variant: "danger" }),
+  });
 
   const closeDispatch = () => {
     setDispatchOpen(false);
@@ -136,6 +149,14 @@ const InventoryTransfersPage = () => {
     setReceivedQuantities({});
     setReceptionObservation("");
     setDiscrepancyReason("");
+  };
+  const openCancellation = (transfer: InventoryTransfer) => {
+    setCancelTransfer(transfer);
+    setCancellationReason("");
+  };
+  const closeCancellation = () => {
+    setCancelTransfer(null);
+    setCancellationReason("");
   };
   const dispatchIsValid = Boolean(destinationStoreId) && dispatchItems.length > 0 && dispatchItems.every((item) => {
     const quantity = Number(item.quantity);
@@ -200,8 +221,8 @@ const InventoryTransfersPage = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-bold">Traslado #{transfer.id}</span>
-                    <Chip className={transfer.status === "RECEIVED" ? "bg-success/15 text-success" : "bg-amber-500/20 text-amber-700"}>
-                      {transfer.status === "RECEIVED" ? "Recibido" : "En tránsito"}
+                    <Chip className={transfer.status === "RECEIVED" ? "bg-success/15 text-success" : transfer.status === "CANCELLED" ? "bg-destructive/15 text-destructive" : "bg-amber-500/20 text-amber-700"}>
+                      {transfer.status === "RECEIVED" ? "Recibido" : transfer.status === "CANCELLED" ? "Cancelado" : "En tránsito"}
                     </Chip>
                     <Chip className="bg-muted text-foreground">{incoming ? "Entrada" : "Salida"}</Chip>
                   </div>
@@ -212,11 +233,22 @@ const InventoryTransfersPage = () => {
                     Despachado por {transfer.dispatchedByUser.name} · {formatDateTime(transfer.dispatchedAt)}
                   </p>
                 </div>
-                {incoming && transfer.status === "DISPATCHED" && (
-                  <Button className="bg-primary text-primary-foreground" onClick={() => openReception(transfer)}>
-                    <PackageCheck className="h-4 w-4" /> Recibir
-                  </Button>
-                )}
+                <div className="flex flex-wrap gap-2">
+                  {incoming && transfer.status === "DISPATCHED" && (
+                    <Button className="bg-primary text-primary-foreground" onClick={() => openReception(transfer)}>
+                      <PackageCheck className="h-4 w-4" /> Recibir
+                    </Button>
+                  )}
+                  {!incoming && transfer.status === "DISPATCHED" && (
+                    <Button
+                      className="border-destructive/40 text-destructive"
+                      variant="outline"
+                      onClick={() => openCancellation(transfer)}
+                    >
+                      <Ban className="h-4 w-4" /> Cancelar traslado
+                    </Button>
+                  )}
+                </div>
               </div>
               <div className="mt-4 overflow-x-auto rounded-lg border border-border">
                 <table className="w-full min-w-[650px] text-sm">
@@ -229,7 +261,9 @@ const InventoryTransfersPage = () => {
                         <td className="p-2">{item.productVariant.product.name} · {item.productVariant.name}</td>
                         <td className="p-2 font-mono">{item.inventoryLot.code}</td>
                         <td className="p-2">{item.quantitySent}</td>
-                        <td className="p-2">{item.quantityReceived ?? "Pendiente"}</td>
+                        <td className="p-2">
+                          {transfer.status === "CANCELLED" ? "—" : item.quantityReceived ?? "Pendiente"}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -239,6 +273,14 @@ const InventoryTransfersPage = () => {
                 Total enviado: {sentTotal}{transfer.status === "RECEIVED" ? ` · Total recibido: ${receivedTotal}` : ""}
                 {transfer.discrepancyReason ? ` · Diferencia: ${transfer.discrepancyReason}` : ""}
               </p>
+              {transfer.status === "CANCELLED" && (
+                <div className="mt-3 rounded-lg border border-destructive/25 bg-destructive/5 px-3 py-2 text-xs text-foreground">
+                  <span className="font-bold text-destructive">Cancelado</span>
+                  {transfer.cancelledByUser && ` por ${transfer.cancelledByUser.name}`}
+                  {transfer.cancelledAt && ` · ${formatDateTime(transfer.cancelledAt)}`}
+                  {transfer.cancellationReason && <p className="mt-1 text-muted-foreground">{transfer.cancellationReason}</p>}
+                </div>
+              )}
             </div>
           );
         })}
@@ -445,6 +487,61 @@ const InventoryTransfersPage = () => {
                   {dispatchMutation.isPending
                     ? "Despachando..."
                     : "Confirmar despacho"}
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
+
+      <Modal>
+        <Modal.Backdrop isOpen={Boolean(cancelTransfer)}>
+          <Modal.Container size="md">
+            <Modal.Dialog className="overflow-hidden rounded-2xl border border-border bg-pos-surface text-foreground shadow-2xl">
+              <Modal.Header className="border-b border-border px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-destructive/15 text-destructive">
+                    <Ban className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <h2 className="text-lg font-bold">Cancelar traslado #{cancelTransfer?.id}</h2>
+                    <p className="text-sm text-muted-foreground">Las existencias volverán al punto de origen.</p>
+                  </div>
+                </div>
+              </Modal.Header>
+              <Modal.Body className="space-y-3 px-5 py-4">
+                <div className="rounded-xl border border-border bg-pos-surface-soft p-3 text-sm">
+                  <p className="font-semibold">
+                    {cancelTransfer?.originStore.name} <ArrowRight className="mx-1 inline h-4 w-4" /> {cancelTransfer?.destinationStore.name}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {cancelTransfer?.items.length} {cancelTransfer?.items.length === 1 ? "línea" : "líneas"} de producto serán restauradas en sus lotes originales.
+                  </p>
+                </div>
+                <div>
+                  <Label className="mb-2 block font-semibold">Motivo de la cancelación</Label>
+                  <TextArea
+                    className="block min-h-24 w-full min-w-0 max-w-full resize-none border border-border bg-background text-foreground"
+                    rows={4}
+                    maxLength={500}
+                    placeholder="Explica por qué se cancela este traslado"
+                    value={cancellationReason}
+                    onChange={(event) => setCancellationReason(event.target.value)}
+                  />
+                  <p className="mt-1 text-right text-xs text-muted-foreground">{cancellationReason.length}/500</p>
+                </div>
+              </Modal.Body>
+              <Modal.Footer className="border-t border-border px-5 py-3">
+                <Button variant="outline" onClick={closeCancellation}>Volver</Button>
+                <Button
+                  className="bg-destructive text-white"
+                  isDisabled={!cancellationReason.trim() || cancelMutation.isPending}
+                  onClick={() => cancelTransfer && cancelMutation.mutate({
+                    transferId: cancelTransfer.id,
+                    reason: cancellationReason.trim(),
+                  })}
+                >
+                  {cancelMutation.isPending ? "Cancelando..." : "Confirmar cancelación"}
                 </Button>
               </Modal.Footer>
             </Modal.Dialog>

@@ -358,11 +358,14 @@ export const InventoryTransferScalarFieldEnum = {
   status: 'status',
   dispatchedByUserId: 'dispatchedByUserId',
   receivedByUserId: 'receivedByUserId',
+  cancelledByUserId: 'cancelledByUserId',
   dispatchObservation: 'dispatchObservation',
   receptionObservation: 'receptionObservation',
   discrepancyReason: 'discrepancyReason',
+  cancellationReason: 'cancellationReason',
   dispatchedAt: 'dispatchedAt',
   receivedAt: 'receivedAt',
+  cancelledAt: 'cancelledAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

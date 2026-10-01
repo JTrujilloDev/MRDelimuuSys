@@ -1,11 +1,27 @@
 import { Request, Response } from "express";
 import { getIO } from "../socket";
 import {
+  cancelInventoryTransferService,
   createInventoryTransferService,
   getInventoryTransferDestinationsService,
   getInventoryTransfersService,
   receiveInventoryTransferService,
 } from "../service/inventoryTransfer.service";
+
+export const cancelInventoryTransfer = async (req: Request, res: Response) => {
+  try {
+    const transfer = await cancelInventoryTransferService(
+      req.params.transferId,
+      req.body,
+      req.auth!.activeStoreId!,
+      req.auth!.userId,
+    );
+    getIO().emit("inventory:updated");
+    res.status(200).json({ success: true, data: transfer });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
+  }
+};
 
 export const getInventoryTransferDestinations = async (req: Request, res: Response) => {
   try {

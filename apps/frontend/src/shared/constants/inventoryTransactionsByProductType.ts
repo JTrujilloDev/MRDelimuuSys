@@ -59,6 +59,11 @@ export const transactionTypes = {
     value: "TRANSFER_IN",
     className: "bg-[#10b981]/20 text-[#047857]",
   },
+  TRANSFER_REVERSAL: {
+    label: "Traslado cancelado",
+    value: "TRANSFER_REVERSAL",
+    className: "bg-destructive/15 text-destructive",
+  },
 };
 
 export const inventoryTransactionsByProductType = {

@@ -5,6 +5,7 @@ import {
   normalizeDispatchTransferItems,
   normalizeReceiveTransferItems,
   normalizeTransferObservation,
+  requireTransferCancellationReason,
   requireTransferDiscrepancyReason,
 } from "./inventoryTransfer.rules";
 
@@ -13,6 +14,7 @@ const transferInclude = {
   destinationStore: { select: { id: true, name: true } },
   dispatchedByUser: { select: { id: true, name: true } },
   receivedByUser: { select: { id: true, name: true } },
+  cancelledByUser: { select: { id: true, name: true } },
   items: {
     include: {
       productVariant: { include: { product: { select: { id: true, name: true } } } },
@@ -137,7 +139,7 @@ export const receiveInventoryTransferService = async (
   userId: number,
 ) => {
   const transferId = Number(transferIdValue);
-  if (!Number.isInteger(transferId) || transferId <= 0) throw new Error("Invalid transfer");
+  if (!Number.isInteger(transferId) || transferId <= 0) throw new Error("Traslado inválido");
   const receivedItems = normalizeReceiveTransferItems(data.items);
   const observation = normalizeTransferObservation(data.observation);
 
@@ -146,7 +148,7 @@ export const receiveInventoryTransferService = async (
       where: { id: transferId },
       include: { items: { include: { productVariant: true } } },
     });
-    if (!transfer) throw new Error("Transfer not found");
+    if (!transfer) throw new Error("No se encontró el traslado");
     if (transfer.destinationStoreId !== destinationStoreId) {
       throw new Error("Transfer belongs to another destination store");
     }
@@ -198,6 +200,63 @@ export const receiveInventoryTransferService = async (
       await tx.inventoryTransferItem.update({
         where: { id: item.id },
         data: { quantityReceived },
+      });
+    }
+
+    return tx.inventoryTransfer.findUniqueOrThrow({
+      where: { id: transferId },
+      include: transferInclude,
+    });
+  });
+};
+
+export const cancelInventoryTransferService = async (
+  transferIdValue: unknown,
+  data: { reason?: unknown },
+  originStoreId: number,
+  userId: number,
+) => {
+  const transferId = Number(transferIdValue);
+  if (!Number.isInteger(transferId) || transferId <= 0) throw new Error("Invalid transfer");
+  const reason = requireTransferCancellationReason(data.reason);
+
+  return prisma.$transaction(async (tx) => {
+    const transfer = await tx.inventoryTransfer.findUnique({
+      where: { id: transferId },
+      include: { items: { include: { productVariant: true } } },
+    });
+    if (!transfer) throw new Error("Transfer not found");
+    if (transfer.originStoreId !== originStoreId) {
+      throw new Error("Solo el punto de origen puede cancelar este traslado");
+    }
+    if (transfer.status !== "DISPATCHED") {
+      throw new Error("Solo se pueden cancelar traslados que estén en tránsito");
+    }
+
+    const claimed = await tx.inventoryTransfer.updateMany({
+      where: { id: transferId, status: "DISPATCHED" },
+      data: {
+        status: "CANCELLED",
+        cancelledByUserId: userId,
+        cancelledAt: new Date(),
+        cancellationReason: reason,
+      },
+    });
+    if (claimed.count === 0) {
+      throw new Error("El traslado ya fue recibido o cancelado");
+    }
+
+    for (const item of transfer.items) {
+      await applyInventoryMovementTx(tx, {
+        operationId: `transfer-cancel-${transfer.id}`,
+        storeId: originStoreId,
+        createdByUserId: userId,
+        productVariantId: item.productVariantId,
+        inventoryLotId: item.inventoryLotId,
+        quantity: item.quantitySent,
+        unit: item.productVariant.unit,
+        type: "TRANSFER_REVERSAL",
+        observation: `Cancelación del traslado #${transfer.id}: ${reason}`,
       });
     }
 

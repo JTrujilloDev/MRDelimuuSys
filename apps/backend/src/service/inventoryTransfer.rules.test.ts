@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   normalizeDispatchTransferItems,
   normalizeReceiveTransferItems,
+  requireTransferCancellationReason,
   requireTransferDiscrepancyReason,
 } from "./inventoryTransfer.rules";
 
@@ -35,4 +36,12 @@ test("requires a reason only when reception differs from dispatch", () => {
   assert.equal(requireTransferDiscrepancyReason(false, "ignored"), null);
   assert.equal(requireTransferDiscrepancyReason(true, "  Faltante en transporte  "), "Faltante en transporte");
   assert.throws(() => requireTransferDiscrepancyReason(true, ""), /reason is required/);
+});
+
+test("requires and normalizes a transfer cancellation reason", () => {
+  assert.equal(
+    requireTransferCancellationReason("  Error en el despacho  "),
+    "Error en el despacho",
+  );
+  assert.throws(() => requireTransferCancellationReason(""), /reason is required/);
 });

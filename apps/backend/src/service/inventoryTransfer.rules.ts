@@ -68,3 +68,9 @@ export const requireTransferDiscrepancyReason = (
   }
   return hasDiscrepancy ? reason : null;
 };
+
+export const requireTransferCancellationReason = (value: unknown) => {
+  const reason = normalizeTransferObservation(value);
+  if (!reason) throw new Error("A cancellation reason is required");
+  return reason;
+};

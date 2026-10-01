@@ -25,18 +25,21 @@ export interface InventoryTransferItem {
 
 export interface InventoryTransfer {
   id: number;
-  status: "DISPATCHED" | "RECEIVED";
+  status: "DISPATCHED" | "RECEIVED" | "CANCELLED";
   originStoreId: number;
   destinationStoreId: number;
   originStore: TransferStore;
   destinationStore: TransferStore;
   dispatchedByUser: { id: number; name: string };
   receivedByUser: { id: number; name: string } | null;
+  cancelledByUser: { id: number; name: string } | null;
   dispatchObservation: string | null;
   receptionObservation: string | null;
   discrepancyReason: string | null;
+  cancellationReason: string | null;
   dispatchedAt: string;
   receivedAt: string | null;
+  cancelledAt: string | null;
   items: InventoryTransferItem[];
 }
 
@@ -72,5 +75,13 @@ export const receiveInventoryTransfer = async (
   },
 ) => {
   const response = await api.post(`inventory-transfers/${transferId}/receive`, data);
+  return response.data;
+};
+
+export const cancelInventoryTransfer = async (
+  transferId: number,
+  reason: string,
+) => {
+  const response = await api.post(`inventory-transfers/${transferId}/cancel`, { reason });
   return response.data;
 };

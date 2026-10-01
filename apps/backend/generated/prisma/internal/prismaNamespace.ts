@@ -2581,11 +2581,14 @@ export const InventoryTransferScalarFieldEnum = {
   status: 'status',
   dispatchedByUserId: 'dispatchedByUserId',
   receivedByUserId: 'receivedByUserId',
+  cancelledByUserId: 'cancelledByUserId',
   dispatchObservation: 'dispatchObservation',
   receptionObservation: 'receptionObservation',
   discrepancyReason: 'discrepancyReason',
+  cancellationReason: 'cancellationReason',
   dispatchedAt: 'dispatchedAt',
   receivedAt: 'receivedAt',
+  cancelledAt: 'cancelledAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2722,14 +2725,14 @@ export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-
+    
 
 
 /**
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-
+    
 
 
 /**
@@ -2953,14 +2956,14 @@ export type ListEnumKitchenModeFieldRefInput<$PrismaModel> = FieldRefInputType<$
  * Reference to a field of type 'InventoryTransferStatus'
  */
 export type EnumInventoryTransferStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryTransferStatus'>
-
+    
 
 
 /**
  * Reference to a field of type 'InventoryTransferStatus[]'
  */
 export type ListEnumInventoryTransferStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryTransferStatus[]'>
-
+    
 
 
 /**

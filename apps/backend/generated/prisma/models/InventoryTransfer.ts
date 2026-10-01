@@ -33,6 +33,7 @@ export type InventoryTransferAvgAggregateOutputType = {
   destinationStoreId: number | null
   dispatchedByUserId: number | null
   receivedByUserId: number | null
+  cancelledByUserId: number | null
 }
 
 export type InventoryTransferSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type InventoryTransferSumAggregateOutputType = {
   destinationStoreId: number | null
   dispatchedByUserId: number | null
   receivedByUserId: number | null
+  cancelledByUserId: number | null
 }
 
 export type InventoryTransferMinAggregateOutputType = {
@@ -52,11 +54,14 @@ export type InventoryTransferMinAggregateOutputType = {
   status: $Enums.InventoryTransferStatus | null
   dispatchedByUserId: number | null
   receivedByUserId: number | null
+  cancelledByUserId: number | null
   dispatchObservation: string | null
   receptionObservation: string | null
   discrepancyReason: string | null
+  cancellationReason: string | null
   dispatchedAt: Date | null
   receivedAt: Date | null
+  cancelledAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -69,11 +74,14 @@ export type InventoryTransferMaxAggregateOutputType = {
   status: $Enums.InventoryTransferStatus | null
   dispatchedByUserId: number | null
   receivedByUserId: number | null
+  cancelledByUserId: number | null
   dispatchObservation: string | null
   receptionObservation: string | null
   discrepancyReason: string | null
+  cancellationReason: string | null
   dispatchedAt: Date | null
   receivedAt: Date | null
+  cancelledAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -86,11 +94,14 @@ export type InventoryTransferCountAggregateOutputType = {
   status: number
   dispatchedByUserId: number
   receivedByUserId: number
+  cancelledByUserId: number
   dispatchObservation: number
   receptionObservation: number
   discrepancyReason: number
+  cancellationReason: number
   dispatchedAt: number
   receivedAt: number
+  cancelledAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -104,6 +115,7 @@ export type InventoryTransferAvgAggregateInputType = {
   destinationStoreId?: true
   dispatchedByUserId?: true
   receivedByUserId?: true
+  cancelledByUserId?: true
 }
 
 export type InventoryTransferSumAggregateInputType = {
@@ -113,6 +125,7 @@ export type InventoryTransferSumAggregateInputType = {
   destinationStoreId?: true
   dispatchedByUserId?: true
   receivedByUserId?: true
+  cancelledByUserId?: true
 }
 
 export type InventoryTransferMinAggregateInputType = {
@@ -123,11 +136,14 @@ export type InventoryTransferMinAggregateInputType = {
   status?: true
   dispatchedByUserId?: true
   receivedByUserId?: true
+  cancelledByUserId?: true
   dispatchObservation?: true
   receptionObservation?: true
   discrepancyReason?: true
+  cancellationReason?: true
   dispatchedAt?: true
   receivedAt?: true
+  cancelledAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -140,11 +156,14 @@ export type InventoryTransferMaxAggregateInputType = {
   status?: true
   dispatchedByUserId?: true
   receivedByUserId?: true
+  cancelledByUserId?: true
   dispatchObservation?: true
   receptionObservation?: true
   discrepancyReason?: true
+  cancellationReason?: true
   dispatchedAt?: true
   receivedAt?: true
+  cancelledAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -157,11 +176,14 @@ export type InventoryTransferCountAggregateInputType = {
   status?: true
   dispatchedByUserId?: true
   receivedByUserId?: true
+  cancelledByUserId?: true
   dispatchObservation?: true
   receptionObservation?: true
   discrepancyReason?: true
+  cancellationReason?: true
   dispatchedAt?: true
   receivedAt?: true
+  cancelledAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -261,11 +283,14 @@ export type InventoryTransferGroupByOutputType = {
   status: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId: number | null
+  cancelledByUserId: number | null
   dispatchObservation: string | null
   receptionObservation: string | null
   discrepancyReason: string | null
+  cancellationReason: string | null
   dispatchedAt: Date
   receivedAt: Date | null
+  cancelledAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: InventoryTransferCountAggregateOutputType | null
@@ -301,11 +326,14 @@ export type InventoryTransferWhereInput = {
   status?: Prisma.EnumInventoryTransferStatusFilter<"InventoryTransfer"> | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFilter<"InventoryTransfer"> | number
   receivedByUserId?: Prisma.IntNullableFilter<"InventoryTransfer"> | number | null
+  cancelledByUserId?: Prisma.IntNullableFilter<"InventoryTransfer"> | number | null
   dispatchObservation?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   receptionObservation?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   discrepancyReason?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
+  cancellationReason?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   dispatchedAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
   receivedAt?: Prisma.DateTimeNullableFilter<"InventoryTransfer"> | Date | string | null
+  cancelledAt?: Prisma.DateTimeNullableFilter<"InventoryTransfer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
   group?: Prisma.XOR<Prisma.StoreGroupScalarRelationFilter, Prisma.StoreGroupWhereInput>
@@ -313,6 +341,7 @@ export type InventoryTransferWhereInput = {
   destinationStore?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>
   dispatchedByUser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   receivedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  cancelledByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   items?: Prisma.InventoryTransferItemListRelationFilter
 }
 
@@ -324,11 +353,14 @@ export type InventoryTransferOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   dispatchedByUserId?: Prisma.SortOrder
   receivedByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancelledByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   dispatchObservation?: Prisma.SortOrderInput | Prisma.SortOrder
   receptionObservation?: Prisma.SortOrderInput | Prisma.SortOrder
   discrepancyReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrderInput | Prisma.SortOrder
   dispatchedAt?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   group?: Prisma.StoreGroupOrderByWithRelationInput
@@ -336,6 +368,7 @@ export type InventoryTransferOrderByWithRelationInput = {
   destinationStore?: Prisma.StoreOrderByWithRelationInput
   dispatchedByUser?: Prisma.UserOrderByWithRelationInput
   receivedByUser?: Prisma.UserOrderByWithRelationInput
+  cancelledByUser?: Prisma.UserOrderByWithRelationInput
   items?: Prisma.InventoryTransferItemOrderByRelationAggregateInput
 }
 
@@ -350,11 +383,14 @@ export type InventoryTransferWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumInventoryTransferStatusFilter<"InventoryTransfer"> | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFilter<"InventoryTransfer"> | number
   receivedByUserId?: Prisma.IntNullableFilter<"InventoryTransfer"> | number | null
+  cancelledByUserId?: Prisma.IntNullableFilter<"InventoryTransfer"> | number | null
   dispatchObservation?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   receptionObservation?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   discrepancyReason?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
+  cancellationReason?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   dispatchedAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
   receivedAt?: Prisma.DateTimeNullableFilter<"InventoryTransfer"> | Date | string | null
+  cancelledAt?: Prisma.DateTimeNullableFilter<"InventoryTransfer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
   group?: Prisma.XOR<Prisma.StoreGroupScalarRelationFilter, Prisma.StoreGroupWhereInput>
@@ -362,6 +398,7 @@ export type InventoryTransferWhereUniqueInput = Prisma.AtLeast<{
   destinationStore?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>
   dispatchedByUser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   receivedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  cancelledByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   items?: Prisma.InventoryTransferItemListRelationFilter
 }, "id">
 
@@ -373,11 +410,14 @@ export type InventoryTransferOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   dispatchedByUserId?: Prisma.SortOrder
   receivedByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancelledByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   dispatchObservation?: Prisma.SortOrderInput | Prisma.SortOrder
   receptionObservation?: Prisma.SortOrderInput | Prisma.SortOrder
   discrepancyReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrderInput | Prisma.SortOrder
   dispatchedAt?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.InventoryTransferCountOrderByAggregateInput
@@ -398,11 +438,14 @@ export type InventoryTransferScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumInventoryTransferStatusWithAggregatesFilter<"InventoryTransfer"> | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntWithAggregatesFilter<"InventoryTransfer"> | number
   receivedByUserId?: Prisma.IntNullableWithAggregatesFilter<"InventoryTransfer"> | number | null
+  cancelledByUserId?: Prisma.IntNullableWithAggregatesFilter<"InventoryTransfer"> | number | null
   dispatchObservation?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransfer"> | string | null
   receptionObservation?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransfer"> | string | null
   discrepancyReason?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransfer"> | string | null
+  cancellationReason?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransfer"> | string | null
   dispatchedAt?: Prisma.DateTimeWithAggregatesFilter<"InventoryTransfer"> | Date | string
   receivedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"InventoryTransfer"> | Date | string | null
+  cancelledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"InventoryTransfer"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"InventoryTransfer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"InventoryTransfer"> | Date | string
 }
@@ -412,8 +455,10 @@ export type InventoryTransferCreateInput = {
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   group: Prisma.StoreGroupCreateNestedOneWithoutTransfersInput
@@ -421,6 +466,7 @@ export type InventoryTransferCreateInput = {
   destinationStore: Prisma.StoreCreateNestedOneWithoutIncomingTransfersInput
   dispatchedByUser: Prisma.UserCreateNestedOneWithoutDispatchedTransfersInput
   receivedByUser?: Prisma.UserCreateNestedOneWithoutReceivedTransfersInput
+  cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledTransfersInput
   items?: Prisma.InventoryTransferItemCreateNestedManyWithoutTransferInput
 }
 
@@ -432,11 +478,14 @@ export type InventoryTransferUncheckedCreateInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.InventoryTransferItemUncheckedCreateNestedManyWithoutTransferInput
@@ -447,8 +496,10 @@ export type InventoryTransferUpdateInput = {
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.StoreGroupUpdateOneRequiredWithoutTransfersNestedInput
@@ -456,6 +507,7 @@ export type InventoryTransferUpdateInput = {
   destinationStore?: Prisma.StoreUpdateOneRequiredWithoutIncomingTransfersNestedInput
   dispatchedByUser?: Prisma.UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput
   receivedByUser?: Prisma.UserUpdateOneWithoutReceivedTransfersNestedInput
+  cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledTransfersNestedInput
   items?: Prisma.InventoryTransferItemUpdateManyWithoutTransferNestedInput
 }
 
@@ -467,11 +519,14 @@ export type InventoryTransferUncheckedUpdateInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.InventoryTransferItemUncheckedUpdateManyWithoutTransferNestedInput
@@ -485,11 +540,14 @@ export type InventoryTransferCreateManyInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -499,8 +557,10 @@ export type InventoryTransferUpdateManyMutationInput = {
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -513,11 +573,14 @@ export type InventoryTransferUncheckedUpdateManyInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -540,11 +603,14 @@ export type InventoryTransferCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   dispatchedByUserId?: Prisma.SortOrder
   receivedByUserId?: Prisma.SortOrder
+  cancelledByUserId?: Prisma.SortOrder
   dispatchObservation?: Prisma.SortOrder
   receptionObservation?: Prisma.SortOrder
   discrepancyReason?: Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrder
   dispatchedAt?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -556,6 +622,7 @@ export type InventoryTransferAvgOrderByAggregateInput = {
   destinationStoreId?: Prisma.SortOrder
   dispatchedByUserId?: Prisma.SortOrder
   receivedByUserId?: Prisma.SortOrder
+  cancelledByUserId?: Prisma.SortOrder
 }
 
 export type InventoryTransferMaxOrderByAggregateInput = {
@@ -566,11 +633,14 @@ export type InventoryTransferMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   dispatchedByUserId?: Prisma.SortOrder
   receivedByUserId?: Prisma.SortOrder
+  cancelledByUserId?: Prisma.SortOrder
   dispatchObservation?: Prisma.SortOrder
   receptionObservation?: Prisma.SortOrder
   discrepancyReason?: Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrder
   dispatchedAt?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -583,11 +653,14 @@ export type InventoryTransferMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   dispatchedByUserId?: Prisma.SortOrder
   receivedByUserId?: Prisma.SortOrder
+  cancelledByUserId?: Prisma.SortOrder
   dispatchObservation?: Prisma.SortOrder
   receptionObservation?: Prisma.SortOrder
   discrepancyReason?: Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrder
   dispatchedAt?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -599,6 +672,7 @@ export type InventoryTransferSumOrderByAggregateInput = {
   destinationStoreId?: Prisma.SortOrder
   dispatchedByUserId?: Prisma.SortOrder
   receivedByUserId?: Prisma.SortOrder
+  cancelledByUserId?: Prisma.SortOrder
 }
 
 export type InventoryTransferScalarRelationFilter = {
@@ -620,6 +694,13 @@ export type InventoryTransferCreateNestedManyWithoutReceivedByUserInput = {
   connect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
 }
 
+export type InventoryTransferCreateNestedManyWithoutCancelledByUserInput = {
+  create?: Prisma.XOR<Prisma.InventoryTransferCreateWithoutCancelledByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput> | Prisma.InventoryTransferCreateWithoutCancelledByUserInput[] | Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput[]
+  connectOrCreate?: Prisma.InventoryTransferCreateOrConnectWithoutCancelledByUserInput | Prisma.InventoryTransferCreateOrConnectWithoutCancelledByUserInput[]
+  createMany?: Prisma.InventoryTransferCreateManyCancelledByUserInputEnvelope
+  connect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+}
+
 export type InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput = {
   create?: Prisma.XOR<Prisma.InventoryTransferCreateWithoutDispatchedByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutDispatchedByUserInput> | Prisma.InventoryTransferCreateWithoutDispatchedByUserInput[] | Prisma.InventoryTransferUncheckedCreateWithoutDispatchedByUserInput[]
   connectOrCreate?: Prisma.InventoryTransferCreateOrConnectWithoutDispatchedByUserInput | Prisma.InventoryTransferCreateOrConnectWithoutDispatchedByUserInput[]
@@ -631,6 +712,13 @@ export type InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
   create?: Prisma.XOR<Prisma.InventoryTransferCreateWithoutReceivedByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutReceivedByUserInput> | Prisma.InventoryTransferCreateWithoutReceivedByUserInput[] | Prisma.InventoryTransferUncheckedCreateWithoutReceivedByUserInput[]
   connectOrCreate?: Prisma.InventoryTransferCreateOrConnectWithoutReceivedByUserInput | Prisma.InventoryTransferCreateOrConnectWithoutReceivedByUserInput[]
   createMany?: Prisma.InventoryTransferCreateManyReceivedByUserInputEnvelope
+  connect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+}
+
+export type InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput = {
+  create?: Prisma.XOR<Prisma.InventoryTransferCreateWithoutCancelledByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput> | Prisma.InventoryTransferCreateWithoutCancelledByUserInput[] | Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput[]
+  connectOrCreate?: Prisma.InventoryTransferCreateOrConnectWithoutCancelledByUserInput | Prisma.InventoryTransferCreateOrConnectWithoutCancelledByUserInput[]
+  createMany?: Prisma.InventoryTransferCreateManyCancelledByUserInputEnvelope
   connect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
 }
 
@@ -662,6 +750,20 @@ export type InventoryTransferUpdateManyWithoutReceivedByUserNestedInput = {
   deleteMany?: Prisma.InventoryTransferScalarWhereInput | Prisma.InventoryTransferScalarWhereInput[]
 }
 
+export type InventoryTransferUpdateManyWithoutCancelledByUserNestedInput = {
+  create?: Prisma.XOR<Prisma.InventoryTransferCreateWithoutCancelledByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput> | Prisma.InventoryTransferCreateWithoutCancelledByUserInput[] | Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput[]
+  connectOrCreate?: Prisma.InventoryTransferCreateOrConnectWithoutCancelledByUserInput | Prisma.InventoryTransferCreateOrConnectWithoutCancelledByUserInput[]
+  upsert?: Prisma.InventoryTransferUpsertWithWhereUniqueWithoutCancelledByUserInput | Prisma.InventoryTransferUpsertWithWhereUniqueWithoutCancelledByUserInput[]
+  createMany?: Prisma.InventoryTransferCreateManyCancelledByUserInputEnvelope
+  set?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+  disconnect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+  delete?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+  connect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+  update?: Prisma.InventoryTransferUpdateWithWhereUniqueWithoutCancelledByUserInput | Prisma.InventoryTransferUpdateWithWhereUniqueWithoutCancelledByUserInput[]
+  updateMany?: Prisma.InventoryTransferUpdateManyWithWhereWithoutCancelledByUserInput | Prisma.InventoryTransferUpdateManyWithWhereWithoutCancelledByUserInput[]
+  deleteMany?: Prisma.InventoryTransferScalarWhereInput | Prisma.InventoryTransferScalarWhereInput[]
+}
+
 export type InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput = {
   create?: Prisma.XOR<Prisma.InventoryTransferCreateWithoutDispatchedByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutDispatchedByUserInput> | Prisma.InventoryTransferCreateWithoutDispatchedByUserInput[] | Prisma.InventoryTransferUncheckedCreateWithoutDispatchedByUserInput[]
   connectOrCreate?: Prisma.InventoryTransferCreateOrConnectWithoutDispatchedByUserInput | Prisma.InventoryTransferCreateOrConnectWithoutDispatchedByUserInput[]
@@ -687,6 +789,20 @@ export type InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
   connect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
   update?: Prisma.InventoryTransferUpdateWithWhereUniqueWithoutReceivedByUserInput | Prisma.InventoryTransferUpdateWithWhereUniqueWithoutReceivedByUserInput[]
   updateMany?: Prisma.InventoryTransferUpdateManyWithWhereWithoutReceivedByUserInput | Prisma.InventoryTransferUpdateManyWithWhereWithoutReceivedByUserInput[]
+  deleteMany?: Prisma.InventoryTransferScalarWhereInput | Prisma.InventoryTransferScalarWhereInput[]
+}
+
+export type InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput = {
+  create?: Prisma.XOR<Prisma.InventoryTransferCreateWithoutCancelledByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput> | Prisma.InventoryTransferCreateWithoutCancelledByUserInput[] | Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput[]
+  connectOrCreate?: Prisma.InventoryTransferCreateOrConnectWithoutCancelledByUserInput | Prisma.InventoryTransferCreateOrConnectWithoutCancelledByUserInput[]
+  upsert?: Prisma.InventoryTransferUpsertWithWhereUniqueWithoutCancelledByUserInput | Prisma.InventoryTransferUpsertWithWhereUniqueWithoutCancelledByUserInput[]
+  createMany?: Prisma.InventoryTransferCreateManyCancelledByUserInputEnvelope
+  set?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+  disconnect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+  delete?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+  connect?: Prisma.InventoryTransferWhereUniqueInput | Prisma.InventoryTransferWhereUniqueInput[]
+  update?: Prisma.InventoryTransferUpdateWithWhereUniqueWithoutCancelledByUserInput | Prisma.InventoryTransferUpdateWithWhereUniqueWithoutCancelledByUserInput[]
+  updateMany?: Prisma.InventoryTransferUpdateManyWithWhereWithoutCancelledByUserInput | Prisma.InventoryTransferUpdateManyWithWhereWithoutCancelledByUserInput[]
   deleteMany?: Prisma.InventoryTransferScalarWhereInput | Prisma.InventoryTransferScalarWhereInput[]
 }
 
@@ -839,14 +955,17 @@ export type InventoryTransferCreateWithoutDispatchedByUserInput = {
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   group: Prisma.StoreGroupCreateNestedOneWithoutTransfersInput
   originStore: Prisma.StoreCreateNestedOneWithoutOutgoingTransfersInput
   destinationStore: Prisma.StoreCreateNestedOneWithoutIncomingTransfersInput
   receivedByUser?: Prisma.UserCreateNestedOneWithoutReceivedTransfersInput
+  cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledTransfersInput
   items?: Prisma.InventoryTransferItemCreateNestedManyWithoutTransferInput
 }
 
@@ -857,11 +976,14 @@ export type InventoryTransferUncheckedCreateWithoutDispatchedByUserInput = {
   destinationStoreId: number
   status?: $Enums.InventoryTransferStatus
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.InventoryTransferItemUncheckedCreateNestedManyWithoutTransferInput
@@ -882,14 +1004,17 @@ export type InventoryTransferCreateWithoutReceivedByUserInput = {
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   group: Prisma.StoreGroupCreateNestedOneWithoutTransfersInput
   originStore: Prisma.StoreCreateNestedOneWithoutOutgoingTransfersInput
   destinationStore: Prisma.StoreCreateNestedOneWithoutIncomingTransfersInput
   dispatchedByUser: Prisma.UserCreateNestedOneWithoutDispatchedTransfersInput
+  cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledTransfersInput
   items?: Prisma.InventoryTransferItemCreateNestedManyWithoutTransferInput
 }
 
@@ -900,11 +1025,14 @@ export type InventoryTransferUncheckedCreateWithoutReceivedByUserInput = {
   destinationStoreId: number
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.InventoryTransferItemUncheckedCreateNestedManyWithoutTransferInput
@@ -917,6 +1045,55 @@ export type InventoryTransferCreateOrConnectWithoutReceivedByUserInput = {
 
 export type InventoryTransferCreateManyReceivedByUserInputEnvelope = {
   data: Prisma.InventoryTransferCreateManyReceivedByUserInput | Prisma.InventoryTransferCreateManyReceivedByUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type InventoryTransferCreateWithoutCancelledByUserInput = {
+  status?: $Enums.InventoryTransferStatus
+  dispatchObservation?: string | null
+  receptionObservation?: string | null
+  discrepancyReason?: string | null
+  cancellationReason?: string | null
+  dispatchedAt?: Date | string
+  receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  group: Prisma.StoreGroupCreateNestedOneWithoutTransfersInput
+  originStore: Prisma.StoreCreateNestedOneWithoutOutgoingTransfersInput
+  destinationStore: Prisma.StoreCreateNestedOneWithoutIncomingTransfersInput
+  dispatchedByUser: Prisma.UserCreateNestedOneWithoutDispatchedTransfersInput
+  receivedByUser?: Prisma.UserCreateNestedOneWithoutReceivedTransfersInput
+  items?: Prisma.InventoryTransferItemCreateNestedManyWithoutTransferInput
+}
+
+export type InventoryTransferUncheckedCreateWithoutCancelledByUserInput = {
+  id?: number
+  groupId: number
+  originStoreId: number
+  destinationStoreId: number
+  status?: $Enums.InventoryTransferStatus
+  dispatchedByUserId: number
+  receivedByUserId?: number | null
+  dispatchObservation?: string | null
+  receptionObservation?: string | null
+  discrepancyReason?: string | null
+  cancellationReason?: string | null
+  dispatchedAt?: Date | string
+  receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.InventoryTransferItemUncheckedCreateNestedManyWithoutTransferInput
+}
+
+export type InventoryTransferCreateOrConnectWithoutCancelledByUserInput = {
+  where: Prisma.InventoryTransferWhereUniqueInput
+  create: Prisma.XOR<Prisma.InventoryTransferCreateWithoutCancelledByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput>
+}
+
+export type InventoryTransferCreateManyCancelledByUserInputEnvelope = {
+  data: Prisma.InventoryTransferCreateManyCancelledByUserInput | Prisma.InventoryTransferCreateManyCancelledByUserInput[]
   skipDuplicates?: boolean
 }
 
@@ -947,11 +1124,14 @@ export type InventoryTransferScalarWhereInput = {
   status?: Prisma.EnumInventoryTransferStatusFilter<"InventoryTransfer"> | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFilter<"InventoryTransfer"> | number
   receivedByUserId?: Prisma.IntNullableFilter<"InventoryTransfer"> | number | null
+  cancelledByUserId?: Prisma.IntNullableFilter<"InventoryTransfer"> | number | null
   dispatchObservation?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   receptionObservation?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   discrepancyReason?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
+  cancellationReason?: Prisma.StringNullableFilter<"InventoryTransfer"> | string | null
   dispatchedAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
   receivedAt?: Prisma.DateTimeNullableFilter<"InventoryTransfer"> | Date | string | null
+  cancelledAt?: Prisma.DateTimeNullableFilter<"InventoryTransfer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryTransfer"> | Date | string
 }
@@ -972,19 +1152,38 @@ export type InventoryTransferUpdateManyWithWhereWithoutReceivedByUserInput = {
   data: Prisma.XOR<Prisma.InventoryTransferUpdateManyMutationInput, Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserInput>
 }
 
+export type InventoryTransferUpsertWithWhereUniqueWithoutCancelledByUserInput = {
+  where: Prisma.InventoryTransferWhereUniqueInput
+  update: Prisma.XOR<Prisma.InventoryTransferUpdateWithoutCancelledByUserInput, Prisma.InventoryTransferUncheckedUpdateWithoutCancelledByUserInput>
+  create: Prisma.XOR<Prisma.InventoryTransferCreateWithoutCancelledByUserInput, Prisma.InventoryTransferUncheckedCreateWithoutCancelledByUserInput>
+}
+
+export type InventoryTransferUpdateWithWhereUniqueWithoutCancelledByUserInput = {
+  where: Prisma.InventoryTransferWhereUniqueInput
+  data: Prisma.XOR<Prisma.InventoryTransferUpdateWithoutCancelledByUserInput, Prisma.InventoryTransferUncheckedUpdateWithoutCancelledByUserInput>
+}
+
+export type InventoryTransferUpdateManyWithWhereWithoutCancelledByUserInput = {
+  where: Prisma.InventoryTransferScalarWhereInput
+  data: Prisma.XOR<Prisma.InventoryTransferUpdateManyMutationInput, Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserInput>
+}
+
 export type InventoryTransferCreateWithoutGroupInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   originStore: Prisma.StoreCreateNestedOneWithoutOutgoingTransfersInput
   destinationStore: Prisma.StoreCreateNestedOneWithoutIncomingTransfersInput
   dispatchedByUser: Prisma.UserCreateNestedOneWithoutDispatchedTransfersInput
   receivedByUser?: Prisma.UserCreateNestedOneWithoutReceivedTransfersInput
+  cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledTransfersInput
   items?: Prisma.InventoryTransferItemCreateNestedManyWithoutTransferInput
 }
 
@@ -995,11 +1194,14 @@ export type InventoryTransferUncheckedCreateWithoutGroupInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.InventoryTransferItemUncheckedCreateNestedManyWithoutTransferInput
@@ -1036,14 +1238,17 @@ export type InventoryTransferCreateWithoutOriginStoreInput = {
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   group: Prisma.StoreGroupCreateNestedOneWithoutTransfersInput
   destinationStore: Prisma.StoreCreateNestedOneWithoutIncomingTransfersInput
   dispatchedByUser: Prisma.UserCreateNestedOneWithoutDispatchedTransfersInput
   receivedByUser?: Prisma.UserCreateNestedOneWithoutReceivedTransfersInput
+  cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledTransfersInput
   items?: Prisma.InventoryTransferItemCreateNestedManyWithoutTransferInput
 }
 
@@ -1054,11 +1259,14 @@ export type InventoryTransferUncheckedCreateWithoutOriginStoreInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.InventoryTransferItemUncheckedCreateNestedManyWithoutTransferInput
@@ -1079,14 +1287,17 @@ export type InventoryTransferCreateWithoutDestinationStoreInput = {
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   group: Prisma.StoreGroupCreateNestedOneWithoutTransfersInput
   originStore: Prisma.StoreCreateNestedOneWithoutOutgoingTransfersInput
   dispatchedByUser: Prisma.UserCreateNestedOneWithoutDispatchedTransfersInput
   receivedByUser?: Prisma.UserCreateNestedOneWithoutReceivedTransfersInput
+  cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledTransfersInput
   items?: Prisma.InventoryTransferItemCreateNestedManyWithoutTransferInput
 }
 
@@ -1097,11 +1308,14 @@ export type InventoryTransferUncheckedCreateWithoutDestinationStoreInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.InventoryTransferItemUncheckedCreateNestedManyWithoutTransferInput
@@ -1154,8 +1368,10 @@ export type InventoryTransferCreateWithoutItemsInput = {
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   group: Prisma.StoreGroupCreateNestedOneWithoutTransfersInput
@@ -1163,6 +1379,7 @@ export type InventoryTransferCreateWithoutItemsInput = {
   destinationStore: Prisma.StoreCreateNestedOneWithoutIncomingTransfersInput
   dispatchedByUser: Prisma.UserCreateNestedOneWithoutDispatchedTransfersInput
   receivedByUser?: Prisma.UserCreateNestedOneWithoutReceivedTransfersInput
+  cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledTransfersInput
 }
 
 export type InventoryTransferUncheckedCreateWithoutItemsInput = {
@@ -1173,11 +1390,14 @@ export type InventoryTransferUncheckedCreateWithoutItemsInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1203,8 +1423,10 @@ export type InventoryTransferUpdateWithoutItemsInput = {
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.StoreGroupUpdateOneRequiredWithoutTransfersNestedInput
@@ -1212,6 +1434,7 @@ export type InventoryTransferUpdateWithoutItemsInput = {
   destinationStore?: Prisma.StoreUpdateOneRequiredWithoutIncomingTransfersNestedInput
   dispatchedByUser?: Prisma.UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput
   receivedByUser?: Prisma.UserUpdateOneWithoutReceivedTransfersNestedInput
+  cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledTransfersNestedInput
 }
 
 export type InventoryTransferUncheckedUpdateWithoutItemsInput = {
@@ -1222,11 +1445,14 @@ export type InventoryTransferUncheckedUpdateWithoutItemsInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1238,11 +1464,14 @@ export type InventoryTransferCreateManyDispatchedByUserInput = {
   destinationStoreId: number
   status?: $Enums.InventoryTransferStatus
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1254,11 +1483,33 @@ export type InventoryTransferCreateManyReceivedByUserInput = {
   destinationStoreId: number
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type InventoryTransferCreateManyCancelledByUserInput = {
+  id?: number
+  groupId: number
+  originStoreId: number
+  destinationStoreId: number
+  status?: $Enums.InventoryTransferStatus
+  dispatchedByUserId: number
+  receivedByUserId?: number | null
+  dispatchObservation?: string | null
+  receptionObservation?: string | null
+  discrepancyReason?: string | null
+  cancellationReason?: string | null
+  dispatchedAt?: Date | string
+  receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1268,14 +1519,17 @@ export type InventoryTransferUpdateWithoutDispatchedByUserInput = {
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.StoreGroupUpdateOneRequiredWithoutTransfersNestedInput
   originStore?: Prisma.StoreUpdateOneRequiredWithoutOutgoingTransfersNestedInput
   destinationStore?: Prisma.StoreUpdateOneRequiredWithoutIncomingTransfersNestedInput
   receivedByUser?: Prisma.UserUpdateOneWithoutReceivedTransfersNestedInput
+  cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledTransfersNestedInput
   items?: Prisma.InventoryTransferItemUpdateManyWithoutTransferNestedInput
 }
 
@@ -1286,11 +1540,14 @@ export type InventoryTransferUncheckedUpdateWithoutDispatchedByUserInput = {
   destinationStoreId?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.InventoryTransferItemUncheckedUpdateManyWithoutTransferNestedInput
@@ -1303,11 +1560,14 @@ export type InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserInput = {
   destinationStoreId?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1317,14 +1577,17 @@ export type InventoryTransferUpdateWithoutReceivedByUserInput = {
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.StoreGroupUpdateOneRequiredWithoutTransfersNestedInput
   originStore?: Prisma.StoreUpdateOneRequiredWithoutOutgoingTransfersNestedInput
   destinationStore?: Prisma.StoreUpdateOneRequiredWithoutIncomingTransfersNestedInput
   dispatchedByUser?: Prisma.UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput
+  cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledTransfersNestedInput
   items?: Prisma.InventoryTransferItemUpdateManyWithoutTransferNestedInput
 }
 
@@ -1335,11 +1598,14 @@ export type InventoryTransferUncheckedUpdateWithoutReceivedByUserInput = {
   destinationStoreId?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.InventoryTransferItemUncheckedUpdateManyWithoutTransferNestedInput
@@ -1352,11 +1618,72 @@ export type InventoryTransferUncheckedUpdateManyWithoutReceivedByUserInput = {
   destinationStoreId?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type InventoryTransferUpdateWithoutCancelledByUserInput = {
+  status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
+  dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  group?: Prisma.StoreGroupUpdateOneRequiredWithoutTransfersNestedInput
+  originStore?: Prisma.StoreUpdateOneRequiredWithoutOutgoingTransfersNestedInput
+  destinationStore?: Prisma.StoreUpdateOneRequiredWithoutIncomingTransfersNestedInput
+  dispatchedByUser?: Prisma.UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput
+  receivedByUser?: Prisma.UserUpdateOneWithoutReceivedTransfersNestedInput
+  items?: Prisma.InventoryTransferItemUpdateManyWithoutTransferNestedInput
+}
+
+export type InventoryTransferUncheckedUpdateWithoutCancelledByUserInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.IntFieldUpdateOperationsInput | number
+  originStoreId?: Prisma.IntFieldUpdateOperationsInput | number
+  destinationStoreId?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
+  dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.InventoryTransferItemUncheckedUpdateManyWithoutTransferNestedInput
+}
+
+export type InventoryTransferUncheckedUpdateManyWithoutCancelledByUserInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.IntFieldUpdateOperationsInput | number
+  originStoreId?: Prisma.IntFieldUpdateOperationsInput | number
+  destinationStoreId?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
+  dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1368,11 +1695,14 @@ export type InventoryTransferCreateManyGroupInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1382,14 +1712,17 @@ export type InventoryTransferUpdateWithoutGroupInput = {
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   originStore?: Prisma.StoreUpdateOneRequiredWithoutOutgoingTransfersNestedInput
   destinationStore?: Prisma.StoreUpdateOneRequiredWithoutIncomingTransfersNestedInput
   dispatchedByUser?: Prisma.UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput
   receivedByUser?: Prisma.UserUpdateOneWithoutReceivedTransfersNestedInput
+  cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledTransfersNestedInput
   items?: Prisma.InventoryTransferItemUpdateManyWithoutTransferNestedInput
 }
 
@@ -1400,11 +1733,14 @@ export type InventoryTransferUncheckedUpdateWithoutGroupInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.InventoryTransferItemUncheckedUpdateManyWithoutTransferNestedInput
@@ -1417,11 +1753,14 @@ export type InventoryTransferUncheckedUpdateManyWithoutGroupInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1433,11 +1772,14 @@ export type InventoryTransferCreateManyOriginStoreInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1449,11 +1791,14 @@ export type InventoryTransferCreateManyDestinationStoreInput = {
   status?: $Enums.InventoryTransferStatus
   dispatchedByUserId: number
   receivedByUserId?: number | null
+  cancelledByUserId?: number | null
   dispatchObservation?: string | null
   receptionObservation?: string | null
   discrepancyReason?: string | null
+  cancellationReason?: string | null
   dispatchedAt?: Date | string
   receivedAt?: Date | string | null
+  cancelledAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1463,14 +1808,17 @@ export type InventoryTransferUpdateWithoutOriginStoreInput = {
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.StoreGroupUpdateOneRequiredWithoutTransfersNestedInput
   destinationStore?: Prisma.StoreUpdateOneRequiredWithoutIncomingTransfersNestedInput
   dispatchedByUser?: Prisma.UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput
   receivedByUser?: Prisma.UserUpdateOneWithoutReceivedTransfersNestedInput
+  cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledTransfersNestedInput
   items?: Prisma.InventoryTransferItemUpdateManyWithoutTransferNestedInput
 }
 
@@ -1481,11 +1829,14 @@ export type InventoryTransferUncheckedUpdateWithoutOriginStoreInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.InventoryTransferItemUncheckedUpdateManyWithoutTransferNestedInput
@@ -1498,11 +1849,14 @@ export type InventoryTransferUncheckedUpdateManyWithoutOriginStoreInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1512,14 +1866,17 @@ export type InventoryTransferUpdateWithoutDestinationStoreInput = {
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.StoreGroupUpdateOneRequiredWithoutTransfersNestedInput
   originStore?: Prisma.StoreUpdateOneRequiredWithoutOutgoingTransfersNestedInput
   dispatchedByUser?: Prisma.UserUpdateOneRequiredWithoutDispatchedTransfersNestedInput
   receivedByUser?: Prisma.UserUpdateOneWithoutReceivedTransfersNestedInput
+  cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledTransfersNestedInput
   items?: Prisma.InventoryTransferItemUpdateManyWithoutTransferNestedInput
 }
 
@@ -1530,11 +1887,14 @@ export type InventoryTransferUncheckedUpdateWithoutDestinationStoreInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.InventoryTransferItemUncheckedUpdateManyWithoutTransferNestedInput
@@ -1547,11 +1907,14 @@ export type InventoryTransferUncheckedUpdateManyWithoutDestinationStoreInput = {
   status?: Prisma.EnumInventoryTransferStatusFieldUpdateOperationsInput | $Enums.InventoryTransferStatus
   dispatchedByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   receivedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   dispatchObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receptionObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   discrepancyReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dispatchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1595,11 +1958,14 @@ export type InventoryTransferSelect<ExtArgs extends runtime.Types.Extensions.Int
   status?: boolean
   dispatchedByUserId?: boolean
   receivedByUserId?: boolean
+  cancelledByUserId?: boolean
   dispatchObservation?: boolean
   receptionObservation?: boolean
   discrepancyReason?: boolean
+  cancellationReason?: boolean
   dispatchedAt?: boolean
   receivedAt?: boolean
+  cancelledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
@@ -1607,6 +1973,7 @@ export type InventoryTransferSelect<ExtArgs extends runtime.Types.Extensions.Int
   destinationStore?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   dispatchedByUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   receivedByUser?: boolean | Prisma.InventoryTransfer$receivedByUserArgs<ExtArgs>
+  cancelledByUser?: boolean | Prisma.InventoryTransfer$cancelledByUserArgs<ExtArgs>
   items?: boolean | Prisma.InventoryTransfer$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.InventoryTransferCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["inventoryTransfer"]>
@@ -1619,11 +1986,14 @@ export type InventoryTransferSelectCreateManyAndReturn<ExtArgs extends runtime.T
   status?: boolean
   dispatchedByUserId?: boolean
   receivedByUserId?: boolean
+  cancelledByUserId?: boolean
   dispatchObservation?: boolean
   receptionObservation?: boolean
   discrepancyReason?: boolean
+  cancellationReason?: boolean
   dispatchedAt?: boolean
   receivedAt?: boolean
+  cancelledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
@@ -1631,6 +2001,7 @@ export type InventoryTransferSelectCreateManyAndReturn<ExtArgs extends runtime.T
   destinationStore?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   dispatchedByUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   receivedByUser?: boolean | Prisma.InventoryTransfer$receivedByUserArgs<ExtArgs>
+  cancelledByUser?: boolean | Prisma.InventoryTransfer$cancelledByUserArgs<ExtArgs>
 }, ExtArgs["result"]["inventoryTransfer"]>
 
 export type InventoryTransferSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1641,11 +2012,14 @@ export type InventoryTransferSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   status?: boolean
   dispatchedByUserId?: boolean
   receivedByUserId?: boolean
+  cancelledByUserId?: boolean
   dispatchObservation?: boolean
   receptionObservation?: boolean
   discrepancyReason?: boolean
+  cancellationReason?: boolean
   dispatchedAt?: boolean
   receivedAt?: boolean
+  cancelledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
@@ -1653,6 +2027,7 @@ export type InventoryTransferSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   destinationStore?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   dispatchedByUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   receivedByUser?: boolean | Prisma.InventoryTransfer$receivedByUserArgs<ExtArgs>
+  cancelledByUser?: boolean | Prisma.InventoryTransfer$cancelledByUserArgs<ExtArgs>
 }, ExtArgs["result"]["inventoryTransfer"]>
 
 export type InventoryTransferSelectScalar = {
@@ -1663,22 +2038,26 @@ export type InventoryTransferSelectScalar = {
   status?: boolean
   dispatchedByUserId?: boolean
   receivedByUserId?: boolean
+  cancelledByUserId?: boolean
   dispatchObservation?: boolean
   receptionObservation?: boolean
   discrepancyReason?: boolean
+  cancellationReason?: boolean
   dispatchedAt?: boolean
   receivedAt?: boolean
+  cancelledAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type InventoryTransferOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "originStoreId" | "destinationStoreId" | "status" | "dispatchedByUserId" | "receivedByUserId" | "dispatchObservation" | "receptionObservation" | "discrepancyReason" | "dispatchedAt" | "receivedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["inventoryTransfer"]>
+export type InventoryTransferOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "originStoreId" | "destinationStoreId" | "status" | "dispatchedByUserId" | "receivedByUserId" | "cancelledByUserId" | "dispatchObservation" | "receptionObservation" | "discrepancyReason" | "cancellationReason" | "dispatchedAt" | "receivedAt" | "cancelledAt" | "createdAt" | "updatedAt", ExtArgs["result"]["inventoryTransfer"]>
 export type InventoryTransferInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
   originStore?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   destinationStore?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   dispatchedByUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   receivedByUser?: boolean | Prisma.InventoryTransfer$receivedByUserArgs<ExtArgs>
+  cancelledByUser?: boolean | Prisma.InventoryTransfer$cancelledByUserArgs<ExtArgs>
   items?: boolean | Prisma.InventoryTransfer$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.InventoryTransferCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1688,6 +2067,7 @@ export type InventoryTransferIncludeCreateManyAndReturn<ExtArgs extends runtime.
   destinationStore?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   dispatchedByUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   receivedByUser?: boolean | Prisma.InventoryTransfer$receivedByUserArgs<ExtArgs>
+  cancelledByUser?: boolean | Prisma.InventoryTransfer$cancelledByUserArgs<ExtArgs>
 }
 export type InventoryTransferIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
@@ -1695,6 +2075,7 @@ export type InventoryTransferIncludeUpdateManyAndReturn<ExtArgs extends runtime.
   destinationStore?: boolean | Prisma.StoreDefaultArgs<ExtArgs>
   dispatchedByUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   receivedByUser?: boolean | Prisma.InventoryTransfer$receivedByUserArgs<ExtArgs>
+  cancelledByUser?: boolean | Prisma.InventoryTransfer$cancelledByUserArgs<ExtArgs>
 }
 
 export type $InventoryTransferPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1705,6 +2086,7 @@ export type $InventoryTransferPayload<ExtArgs extends runtime.Types.Extensions.I
     destinationStore: Prisma.$StorePayload<ExtArgs>
     dispatchedByUser: Prisma.$UserPayload<ExtArgs>
     receivedByUser: Prisma.$UserPayload<ExtArgs> | null
+    cancelledByUser: Prisma.$UserPayload<ExtArgs> | null
     items: Prisma.$InventoryTransferItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1715,11 +2097,14 @@ export type $InventoryTransferPayload<ExtArgs extends runtime.Types.Extensions.I
     status: $Enums.InventoryTransferStatus
     dispatchedByUserId: number
     receivedByUserId: number | null
+    cancelledByUserId: number | null
     dispatchObservation: string | null
     receptionObservation: string | null
     discrepancyReason: string | null
+    cancellationReason: string | null
     dispatchedAt: Date
     receivedAt: Date | null
+    cancelledAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["inventoryTransfer"]>
@@ -2121,6 +2506,7 @@ export interface Prisma__InventoryTransferClient<T, Null = never, ExtArgs extend
   destinationStore<T extends Prisma.StoreDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreDefaultArgs<ExtArgs>>): Prisma.Prisma__StoreClient<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   dispatchedByUser<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   receivedByUser<T extends Prisma.InventoryTransfer$receivedByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InventoryTransfer$receivedByUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  cancelledByUser<T extends Prisma.InventoryTransfer$cancelledByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InventoryTransfer$cancelledByUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.InventoryTransfer$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InventoryTransfer$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryTransferItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2158,11 +2544,14 @@ export interface InventoryTransferFieldRefs {
   readonly status: Prisma.FieldRef<"InventoryTransfer", 'InventoryTransferStatus'>
   readonly dispatchedByUserId: Prisma.FieldRef<"InventoryTransfer", 'Int'>
   readonly receivedByUserId: Prisma.FieldRef<"InventoryTransfer", 'Int'>
+  readonly cancelledByUserId: Prisma.FieldRef<"InventoryTransfer", 'Int'>
   readonly dispatchObservation: Prisma.FieldRef<"InventoryTransfer", 'String'>
   readonly receptionObservation: Prisma.FieldRef<"InventoryTransfer", 'String'>
   readonly discrepancyReason: Prisma.FieldRef<"InventoryTransfer", 'String'>
+  readonly cancellationReason: Prisma.FieldRef<"InventoryTransfer", 'String'>
   readonly dispatchedAt: Prisma.FieldRef<"InventoryTransfer", 'DateTime'>
   readonly receivedAt: Prisma.FieldRef<"InventoryTransfer", 'DateTime'>
+  readonly cancelledAt: Prisma.FieldRef<"InventoryTransfer", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"InventoryTransfer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"InventoryTransfer", 'DateTime'>
 }
@@ -2569,6 +2958,25 @@ export type InventoryTransferDeleteManyArgs<ExtArgs extends runtime.Types.Extens
  * InventoryTransfer.receivedByUser
  */
 export type InventoryTransfer$receivedByUserArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * InventoryTransfer.cancelledByUser
+ */
+export type InventoryTransfer$cancelledByUserArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the User
    */

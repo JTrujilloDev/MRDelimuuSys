@@ -116,6 +116,7 @@ model User {
   inventoryTransactions InventoryTransaction[] @relation("InventoryTransactionCreatedBy")
   dispatchedTransfers   InventoryTransfer[]    @relation("TransferDispatchedBy")
   receivedTransfers     InventoryTransfer[]    @relation("TransferReceivedBy")
+  cancelledTransfers    InventoryTransfer[]    @relation("TransferCancelledBy")
 }
 
 enum Role {
@@ -239,6 +240,7 @@ enum InventoryTransactionType {
   DONATION
   TRANSFER_OUT
   TRANSFER_IN
+  TRANSFER_REVERSAL
 }
 
 enum InventoryLossReason {
@@ -439,6 +441,7 @@ model StoreLotInventory {
 enum InventoryTransferStatus {
   DISPATCHED
   RECEIVED
+  CANCELLED
 }
 
 model InventoryTransfer {
@@ -454,11 +457,15 @@ model InventoryTransfer {
   dispatchedByUser     User                    @relation("TransferDispatchedBy", fields: [dispatchedByUserId], references: [id], onDelete: Restrict)
   receivedByUserId     Int?
   receivedByUser       User?                   @relation("TransferReceivedBy", fields: [receivedByUserId], references: [id], onDelete: Restrict)
+  cancelledByUserId    Int?
+  cancelledByUser      User?                   @relation("TransferCancelledBy", fields: [cancelledByUserId], references: [id], onDelete: Restrict)
   dispatchObservation  String?
   receptionObservation String?
   discrepancyReason    String?
+  cancellationReason   String?
   dispatchedAt         DateTime                @default(now())
   receivedAt           DateTime?
+  cancelledAt          DateTime?
   createdAt            DateTime                @default(now())
   updatedAt            DateTime                @updatedAt
 
@@ -469,6 +476,7 @@ model InventoryTransfer {
   @@index([destinationStoreId, status, dispatchedAt])
   @@index([dispatchedByUserId])
   @@index([receivedByUserId])
+  @@index([cancelledByUserId])
 }
 
 model InventoryTransferItem {
