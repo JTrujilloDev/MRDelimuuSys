@@ -6,6 +6,7 @@ import axios from "axios";
 import { api } from "../../../shared/services/api";
 import { useAuth } from "../../../app/auth/AuthProvider";
 import QuickInventoryCount from "./QuickInventoryCount";
+import { orderInventoryCountReview } from "../utils/inventoryCountReview.rules";
 
 type Phase = "OPENING" | "CLOSING";
 type Product = { productVariantId: number; productName: string; unit: string; expectedQuantity: number; movementRevision: number };
@@ -52,7 +53,8 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
   const closed = data?.register.status === "CLOSED";
   const editable = !readOnly && !closed && !count?.confirmedAt && (phase === "OPENING" || openingComplete);
   const products = closed || readOnly ? (count?.items ?? []) : (data?.products ?? []);
-  const visible = products.filter(product => product.productName.toLocaleLowerCase("es").includes(search.toLocaleLowerCase("es")));
+  const reviewProducts = editable ? products : orderInventoryCountReview(products, count?.items ?? []);
+  const visible = reviewProducts.filter(product => product.productName.toLocaleLowerCase("es").includes(search.toLocaleLowerCase("es")));
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ["shiftInventory", cashRegisterId] });
     await queryClient.invalidateQueries({ queryKey: ["openCashRegister"] });
@@ -80,6 +82,7 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
         {phase === "CLOSING" && !openingComplete && !readOnly && !closed && <p className="mt-3 text-sm text-danger">Primero completa y confirma el conteo inicial.</p>}
       </section>
       {editable && <p className="text-sm text-muted-foreground">Escribe la cantidad y pulsa Enter o Tab para guardar y avanzar. Si hay diferencia, completa su justificación. Vacío significa pendiente, no cero.</p>}
+      {!editable && !!count?.items.length && <p className="text-sm text-muted-foreground">Primero se muestran las diferencias pendientes de revisión, luego las resueltas y al final los productos sin diferencias.</p>}
       {(error || loadError) && <p role="alert" className="rounded-xl border border-danger/30 bg-danger/10 p-4 text-sm text-danger">{error || message(loadError)}</p>}
       <div className="flex items-center gap-3"><input aria-label="Buscar producto en el conteo" className={inputClass} value={search} onChange={event => setSearch(event.target.value)} placeholder="Buscar producto…" /><Button variant="secondary" onPress={() => void refetch()} aria-label="Actualizar inventario"><RefreshCw className="h-4 w-4" /></Button></div>
       <div className="space-y-3">
