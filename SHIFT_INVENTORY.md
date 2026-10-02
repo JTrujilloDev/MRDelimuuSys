@@ -4,7 +4,9 @@
 
 - La caja abre con el efectivo inicial; no es necesario terminar el inventario para vender.
 - «Ver conteos» está disponible en el POS y en el cierre. Cada producto se verifica con una fotografía del stock vigente, no con el stock que tenía al abrir la caja.
-- «Contar» actualiza la referencia. Cantidad vacía significa pendiente, no cero. Se guardan cantidad esperada, física, diferencia, justificación, responsable y hora.
+- La planilla permite escribir directamente la cantidad física. Entrar al campo actualiza la referencia; Enter o Tab guardan y avanzan al siguiente producto. Al salir del campo también se guarda una fila válida modificada. Si hay diferencia, Enter/Tab llevan a la justificación antes de avanzar.
+- Cantidad vacía significa pendiente, no cero. Nunca se rellena con la cantidad esperada: los valores mostrados previamente corresponden únicamente a verificaciones ya guardadas. Se guardan cantidad esperada, física, diferencia, justificación, responsable y hora.
+- Cada fila muestra su estado y conserva lo escrito ante un fallo de guardado. Una referencia invalidada por movimientos exige actualizar y volver a contar. No se permite confirmar ni cambiar de etapa con filas pendientes de guardar; «Volver» avisa antes de descartar esas filas. Las verificaciones guardadas sí se conservan al volver al POS.
 - Se incluyen variantes con inventario inicializado de productos terminados y de terceros del grupo, así como productos con stock aunque hayan salido del catálogo. No se incluyen recetas, ingredientes, bases ni empaques.
 - Las ventas o movimientos que ocurren antes de guardar invalidan la referencia de ese producto, incluso si dos movimientos se compensan. Debe verificarse de nuevo.
 - El conteo inicial confirmado conserva la evidencia de recepción; las ventas posteriores no lo invalidan.

@@ -5,6 +5,7 @@ import { ArrowLeft, ClipboardCheck, RefreshCw } from "lucide-react";
 import axios from "axios";
 import { api } from "../../../shared/services/api";
 import { useAuth } from "../../../app/auth/AuthProvider";
+import QuickInventoryCount from "./QuickInventoryCount";
 
 type Phase = "OPENING" | "CLOSING";
 type Product = { productVariantId: number; productName: string; unit: string; expectedQuantity: number; movementRevision: number };
@@ -43,6 +44,8 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState("");
+  const [draftsBlocked, setDraftsBlocked] = useState(false);
+  const [leaveWarning, setLeaveWarning] = useState(false);
   const { data, isLoading, error: loadError, refetch } = useQuery({ queryKey: ["shiftInventory", cashRegisterId], queryFn: () => readCount(cashRegisterId) });
   const count = data?.counts.find(count => count.phase === phase);
   const openingComplete = Boolean(data?.counts.find(count => count.phase === "OPENING")?.confirmedAt);
@@ -55,6 +58,7 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
     await queryClient.invalidateQueries({ queryKey: ["openCashRegister"] });
   };
   const act = async (action: "confirm" | "reopen") => {
+    if (draftsBlocked) { setError("Guarda o corrige las filas pendientes antes de confirmar."); return; }
     setBusy(true); setError("");
     try { await api.post(`cash-register/inventory-count/${action}`, { cashRegisterId, phase }); await refresh(); }
     catch (error) { setError(message(error)); await refetch(); }
@@ -62,9 +66,10 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
   };
   return <main className="h-full overflow-y-auto bg-background p-4 sm:p-6">
     <div className="mx-auto max-w-5xl space-y-5">
-      <header className="flex items-center gap-3"><Button variant="secondary" onPress={onBack} aria-label="Volver"><ArrowLeft className="h-4 w-4" />Volver</Button><div><h1 className="text-xl font-bold text-foreground">Verificación de inventario</h1><p className="text-sm text-muted-foreground">Turno #{cashRegisterId} · Las diferencias no cambian el stock automáticamente.</p></div></header>
+      <header className="flex items-center gap-3"><Button variant="secondary" onPress={() => { if (draftsBlocked) setLeaveWarning(true); else onBack(); }} aria-label="Volver"><ArrowLeft className="h-4 w-4" />Volver</Button><div><h1 className="text-xl font-bold text-foreground">Verificación de inventario</h1><p className="text-sm text-muted-foreground">Turno #{cashRegisterId} · Las diferencias no cambian el stock automáticamente.</p></div></header>
+      {leaveWarning && draftsBlocked && <div role="alert" className="rounded-xl border border-border bg-pos-surface p-4 text-sm text-foreground"><p>Hay filas sin guardar. Las verificaciones ya guardadas se conservan; lo que aún estás escribiendo se perderá si sales.</p><div className="mt-3 flex gap-2"><Button variant="secondary" onPress={() => setLeaveWarning(false)}>Seguir contando</Button><Button variant="secondary" onPress={onBack}>Volver sin guardar esas filas</Button></div></div>}
       <div className="flex flex-wrap gap-2" role="tablist" aria-label="Momento del conteo">
-        {(["OPENING", "CLOSING"] as Phase[]).map(value => <button key={value} role="tab" aria-selected={phase === value} className={`rounded-xl border px-4 py-3 text-sm font-semibold ${phase === value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-pos-surface text-foreground hover:bg-secondary"}`} onClick={() => { setPhase(value); setError(""); }}>
+        {(["OPENING", "CLOSING"] as Phase[]).map(value => <button key={value} role="tab" aria-selected={phase === value} disabled={draftsBlocked || busy} className={`rounded-xl border px-4 py-3 text-sm font-semibold ${phase === value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-pos-surface text-foreground hover:bg-secondary"}`} onClick={() => { setPhase(value); setError(""); }}>
           {value === "OPENING" ? "Conteo inicial" : "Conteo final"} · {data?.counts.find(count => count.phase === value)?.confirmedAt ? "Confirmado" : "Pendiente"}
         </button>)}
       </div>
@@ -74,51 +79,33 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
         {count?.confirmedAt && <p className="mt-3 text-sm font-semibold text-primary">Confirmado el {new Date(count.confirmedAt).toLocaleString("es-CO")} · {count.confirmedByUser?.name}</p>}
         {phase === "CLOSING" && !openingComplete && !readOnly && !closed && <p className="mt-3 text-sm text-danger">Primero completa y confirma el conteo inicial.</p>}
       </section>
+      {editable && <p className="text-sm text-muted-foreground">Escribe la cantidad y pulsa Enter o Tab para guardar y avanzar. Si hay diferencia, completa su justificación. Vacío significa pendiente, no cero.</p>}
       {(error || loadError) && <p role="alert" className="rounded-xl border border-danger/30 bg-danger/10 p-4 text-sm text-danger">{error || message(loadError)}</p>}
       <div className="flex items-center gap-3"><input aria-label="Buscar producto en el conteo" className={inputClass} value={search} onChange={event => setSearch(event.target.value)} placeholder="Buscar producto…" /><Button variant="secondary" onPress={() => void refetch()} aria-label="Actualizar inventario"><RefreshCw className="h-4 w-4" /></Button></div>
       <div className="space-y-3">
         {isLoading && <p className="p-6 text-muted-foreground">Cargando inventario…</p>}
         {!isLoading && !visible.length && <p className="rounded-2xl border border-dashed border-border p-8 text-center text-muted-foreground">{products.length ? "No hay coincidencias." : closed || readOnly ? "Este turno no tiene productos contados en esta etapa." : "No hay productos con inventario inicializado para contar. Confirma igualmente esta etapa."}</p>}
-        {visible.map(product => <CountRow key={`${phase}-${product.productVariantId}`} product={product} item={count?.items.find(item => item.productVariantId === product.productVariantId)} phase={phase} cashRegisterId={cashRegisterId} editable={editable && !busy} review={Boolean(state?.user.isGlobalAdmin && closed && count?.confirmedAt)} readFresh={() => readCount(cashRegisterId)} onSaved={refresh} />)}
+        {editable ? <QuickInventoryCount key={phase} products={products} items={count?.items ?? []} search={search} phase={phase} cashRegisterId={cashRegisterId} disabled={busy} readFresh={() => readCount(cashRegisterId)} onSaved={refresh} onStateChange={setDraftsBlocked} /> : visible.map(product => <CountRow key={`${phase}-${product.productVariantId}`} product={product} item={count?.items.find(item => item.productVariantId === product.productVariantId)} phase={phase} review={Boolean(state?.user.isGlobalAdmin && closed && count?.confirmedAt)} readFresh={() => readCount(cashRegisterId)} onSaved={refresh} />)}
       </div>
       {!readOnly && !closed && <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-pos-surface p-5">
         <p className="text-sm text-muted-foreground">{products.filter(product => count?.items.some(item => item.productVariantId === product.productVariantId)).length} de {products.length} productos verificados</p>
-        {count?.confirmedAt ? phase === "CLOSING" && <Button variant="secondary" isDisabled={busy} onPress={() => void act("reopen")}>Reabrir verificación final</Button> : <Button isDisabled={busy || !data || (phase === "CLOSING" && !openingComplete)} onPress={() => void act("confirm")}>{busy ? "Guardando…" : "Confirmar conteo completo"}</Button>}
+        {count?.confirmedAt ? phase === "CLOSING" && <Button variant="secondary" isDisabled={busy} onPress={() => void act("reopen")}>Reabrir verificación final</Button> : <Button id="confirm-inventory-count" isDisabled={busy || draftsBlocked || !data || (phase === "CLOSING" && !openingComplete)} onPress={() => void act("confirm")}>{busy ? "Guardando…" : "Confirmar conteo completo"}</Button>}
       </div>}
       {!!count?.archivedVerifications?.length && <details className="rounded-2xl border border-border bg-pos-surface p-5"><summary className="cursor-pointer font-semibold text-foreground">Verificaciones finales anteriores ({count.archivedVerifications.length})</summary>{count.archivedVerifications.map((archive, index) => <div key={index} className="mt-4 border-t border-border pt-3"><p className="text-sm font-semibold text-foreground">{new Date(archive.confirmedAt).toLocaleString("es-CO")}</p>{archive.items.map(item => <p key={item.id} className="mt-1 text-sm text-muted-foreground">{item.productName}: esperado {item.expectedQuantity}, contado {item.countedQuantity}, diferencia {item.difference}. {item.justification}</p>)}</div>)}</details>}
     </div>
   </main>;
 }
 
-function CountRow({ product, item, phase, cashRegisterId, editable, review, readFresh, onSaved }: {
-  product: Product; item?: CountItem; phase: Phase; cashRegisterId: number; editable: boolean; review: boolean;
+function CountRow({ product, item, phase, review, readFresh, onSaved }: {
+  product: Product; item?: CountItem; phase: Phase; review: boolean;
   readFresh: () => Promise<CountData>; onSaved: () => Promise<void>;
 }) {
-  const [snapshot, setSnapshot] = useState<Product | null>(null);
-  const [quantity, setQuantity] = useState("");
   const [reason, setReason] = useState("");
   const [resolution, setResolution] = useState("EXPLAINED");
   const [reviewing, setReviewing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const stale = phase === "CLOSING" && item && (item.movementRevision !== product.movementRevision || item.expectedQuantity !== product.expectedQuantity);
-  const begin = async () => {
-    setBusy(true); setError("");
-    try {
-      const fresh = (await readFresh()).products.find(value => value.productVariantId === product.productVariantId);
-      if (!fresh) throw new Error("El producto ya no está disponible para contar.");
-      setSnapshot(fresh); setQuantity(""); setReason("");
-    } catch (error) { setError(message(error)); } finally { setBusy(false); }
-  };
-  const save = async () => {
-    setBusy(true); setError("");
-    try {
-      if (!snapshot) throw new Error("Actualiza el producto antes de guardar.");
-      if (!/^\d+$/.test(quantity)) throw new Error("Ingresa la cantidad contada. Un campo vacío no significa cero.");
-      await api.post("cash-register/inventory-count/item", { cashRegisterId, phase, ...snapshot, countedQuantity: Number(quantity), justification: reason });
-      setSnapshot(null); await onSaved();
-    } catch (error) { setError(message(error)); } finally { setBusy(false); }
-  };
   const resolve = async () => {
     if (!item) return;
     setBusy(true); setError("");
@@ -136,11 +123,6 @@ function CountRow({ product, item, phase, cashRegisterId, editable, review, read
           <h2 className="font-semibold">{product.productName}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{units[product.unit] ?? product.unit}</p>
         </div>
-        {editable && (
-          <Button size="sm" variant="secondary" isDisabled={busy} onPress={() => void begin()}>
-            {item ? "Volver a verificar" : "Contar"}
-          </Button>
-        )}
       </div>
       {item && (
         <div className="mt-4 space-y-1">
@@ -166,25 +148,6 @@ function CountRow({ product, item, phase, cashRegisterId, editable, review, read
       )}
       {stale && !review && (
         <p className="mt-2 text-sm text-danger">Hubo movimientos posteriores. Reabre el conteo si está confirmado y vuelve a verificar este producto.</p>
-      )}
-      {snapshot && editable && (
-        <div className="mt-4 space-y-3 rounded-xl border border-primary/30 p-4">
-          <p className="text-sm">Esperado al comenzar esta verificación: <strong>{snapshot.expectedQuantity}</strong></p>
-          <label className="block text-sm">Cantidad física
-            <input autoFocus type="number" min="0" step="1" className={`${inputClass} mt-1`} value={quantity} onChange={event => setQuantity(event.target.value)} />
-          </label>
-          {/^\d+$/.test(quantity) && Number.isSafeInteger(Number(quantity)) && (
-            <p className="text-sm">Diferencia: <strong>{Number(quantity) - snapshot.expectedQuantity}</strong></p>
-          )}
-          <label className="block text-sm">Justificación de la diferencia
-            <textarea className={`${inputClass} mt-1 min-h-20 resize-y`} value={reason} maxLength={2000} onChange={event => setReason(event.target.value)} placeholder="Obligatoria cuando el conteo no coincide" />
-          </label>
-          <div className="flex gap-2">
-            <Button isDisabled={busy || quantity === ""} onPress={() => void save()}>Guardar verificación</Button>
-            <Button variant="secondary" onPress={() => setSnapshot(null)}>Cancelar</Button>
-          </div>
-          <p className="text-xs text-muted-foreground">Si se mueve este producto mientras cuentas, pulsa «{item ? "Volver a verificar" : "Contar"}» y repite el conteo antes de guardar.</p>
-        </div>
       )}
       {review && item && item.difference !== 0 && !item.resolution && !reviewing && (
         <Button className="mt-3" variant="secondary" onPress={() => { setReviewing(true); setReason(""); }}>Revisar diferencia</Button>
