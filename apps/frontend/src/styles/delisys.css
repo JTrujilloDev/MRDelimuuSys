@@ -1,0 +1,56 @@
+/* System identity for login and sessions without an active point. */
+:root[data-brand="delisys"]:not(.dark):not([data-theme="dark"]) {
+  --accent: #9E382D;
+  --accent-foreground: #FFFDF9;
+  --background: #F6F0E7;
+  --foreground: #211C19;
+  --border: #DCCBB8;
+  --default: #EFE3D3;
+  --default-foreground: #211C19;
+  --field-background: #FFFDF9;
+  --field-foreground: #211C19;
+  --field-placeholder: #6F5F52;
+  --focus: #9E382D;
+  --muted: #6F5F52;
+  --overlay: #FFFDF9;
+  --overlay-foreground: #211C19;
+  --segment: #FFFDF9;
+  --segment-foreground: #211C19;
+  --separator: #DCCBB8;
+  --surface: #FFFDF9;
+  --surface-foreground: #211C19;
+  --surface-secondary: #EFE3D3;
+  --surface-secondary-foreground: #211C19;
+  --surface-tertiary: #E8DAC9;
+  --surface-tertiary-foreground: #211C19;
+  --pos-surface: #FFFDF9;
+  --pos-surface-soft: #EFE3D3;
+}
+
+:root[data-brand="delisys"]:is(.dark, [data-theme="dark"]) {
+  --accent: #D88372;
+  --accent-foreground: #211C19;
+  --background: #1C1714;
+  --foreground: #FFFDF9;
+  --border: #645043;
+  --default: #352822;
+  --default-foreground: #FFFDF9;
+  --field-background: #352822;
+  --field-foreground: #FFFDF9;
+  --field-placeholder: #D4C0AD;
+  --focus: #D88372;
+  --muted: #D4C0AD;
+  --overlay: #2B211B;
+  --overlay-foreground: #FFFDF9;
+  --segment: #352822;
+  --segment-foreground: #FFFDF9;
+  --separator: #645043;
+  --surface: #2B211B;
+  --surface-foreground: #FFFDF9;
+  --surface-secondary: #352822;
+  --surface-secondary-foreground: #FFFDF9;
+  --surface-tertiary: #48342A;
+  --surface-tertiary-foreground: #FFFDF9;
+  --pos-surface: #2B211B;
+  --pos-surface-soft: #352822;
+}

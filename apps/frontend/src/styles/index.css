@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 @import "./veleno.css";
+@import "./delisys.css";
 
 :root,
 .light,
