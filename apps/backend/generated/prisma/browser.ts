@@ -83,6 +83,16 @@ export type Customer = Prisma.CustomerModel
  */
 export type CashRegister = Prisma.CashRegisterModel
 /**
+ * Model ShiftInventoryCount
+ * 
+ */
+export type ShiftInventoryCount = Prisma.ShiftInventoryCountModel
+/**
+ * Model ShiftInventoryCountItem
+ * 
+ */
+export type ShiftInventoryCountItem = Prisma.ShiftInventoryCountItemModel
+/**
  * Model StoreGroup
  * 
  */

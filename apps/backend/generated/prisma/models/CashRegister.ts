@@ -356,6 +356,7 @@ export type CashRegisterWhereInput = {
   transactions?: Prisma.FinancialTransactionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  inventoryCounts?: Prisma.ShiftInventoryCountListRelationFilter
 }
 
 export type CashRegisterOrderByWithRelationInput = {
@@ -379,6 +380,7 @@ export type CashRegisterOrderByWithRelationInput = {
   transactions?: Prisma.FinancialTransactionOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   user?: Prisma.UserOrderByWithRelationInput
+  inventoryCounts?: Prisma.ShiftInventoryCountOrderByRelationAggregateInput
 }
 
 export type CashRegisterWhereUniqueInput = Prisma.AtLeast<{
@@ -405,6 +407,7 @@ export type CashRegisterWhereUniqueInput = Prisma.AtLeast<{
   transactions?: Prisma.FinancialTransactionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  inventoryCounts?: Prisma.ShiftInventoryCountListRelationFilter
 }, "id">
 
 export type CashRegisterOrderByWithAggregationInput = {
@@ -471,6 +474,7 @@ export type CashRegisterCreateInput = {
   transactions?: Prisma.FinancialTransactionCreateNestedManyWithoutCashRegisterInput
   accounts?: Prisma.AccountCreateNestedManyWithoutCashRegisterInput
   user: Prisma.UserCreateNestedOneWithoutCashRegistersInput
+  inventoryCounts?: Prisma.ShiftInventoryCountCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterUncheckedCreateInput = {
@@ -492,6 +496,7 @@ export type CashRegisterUncheckedCreateInput = {
   creditAmount?: number
   transactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCashRegisterInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCashRegisterInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterUpdateInput = {
@@ -512,6 +517,7 @@ export type CashRegisterUpdateInput = {
   transactions?: Prisma.FinancialTransactionUpdateManyWithoutCashRegisterNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutCashRegisterNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCashRegistersNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterUncheckedUpdateInput = {
@@ -533,6 +539,7 @@ export type CashRegisterUncheckedUpdateInput = {
   creditAmount?: Prisma.FloatFieldUpdateOperationsInput | number
   transactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCashRegisterNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutCashRegisterNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterCreateManyInput = {
@@ -693,6 +700,11 @@ export type CashRegisterSumOrderByAggregateInput = {
   creditAmount?: Prisma.SortOrder
 }
 
+export type CashRegisterScalarRelationFilter = {
+  is?: Prisma.CashRegisterWhereInput
+  isNot?: Prisma.CashRegisterWhereInput
+}
+
 export type CashRegisterCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.CashRegisterCreateWithoutUserInput, Prisma.CashRegisterUncheckedCreateWithoutUserInput> | Prisma.CashRegisterCreateWithoutUserInput[] | Prisma.CashRegisterUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.CashRegisterCreateOrConnectWithoutUserInput | Prisma.CashRegisterCreateOrConnectWithoutUserInput[]
@@ -771,6 +783,20 @@ export type EnumCashRegisterStatusFieldUpdateOperationsInput = {
   set?: $Enums.CashRegisterStatus
 }
 
+export type CashRegisterCreateNestedOneWithoutInventoryCountsInput = {
+  create?: Prisma.XOR<Prisma.CashRegisterCreateWithoutInventoryCountsInput, Prisma.CashRegisterUncheckedCreateWithoutInventoryCountsInput>
+  connectOrCreate?: Prisma.CashRegisterCreateOrConnectWithoutInventoryCountsInput
+  connect?: Prisma.CashRegisterWhereUniqueInput
+}
+
+export type CashRegisterUpdateOneRequiredWithoutInventoryCountsNestedInput = {
+  create?: Prisma.XOR<Prisma.CashRegisterCreateWithoutInventoryCountsInput, Prisma.CashRegisterUncheckedCreateWithoutInventoryCountsInput>
+  connectOrCreate?: Prisma.CashRegisterCreateOrConnectWithoutInventoryCountsInput
+  upsert?: Prisma.CashRegisterUpsertWithoutInventoryCountsInput
+  connect?: Prisma.CashRegisterWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CashRegisterUpdateToOneWithWhereWithoutInventoryCountsInput, Prisma.CashRegisterUpdateWithoutInventoryCountsInput>, Prisma.CashRegisterUncheckedUpdateWithoutInventoryCountsInput>
+}
+
 export type CashRegisterCreateNestedManyWithoutTerminalInput = {
   create?: Prisma.XOR<Prisma.CashRegisterCreateWithoutTerminalInput, Prisma.CashRegisterUncheckedCreateWithoutTerminalInput> | Prisma.CashRegisterCreateWithoutTerminalInput[] | Prisma.CashRegisterUncheckedCreateWithoutTerminalInput[]
   connectOrCreate?: Prisma.CashRegisterCreateOrConnectWithoutTerminalInput | Prisma.CashRegisterCreateOrConnectWithoutTerminalInput[]
@@ -830,6 +856,7 @@ export type CashRegisterCreateWithoutUserInput = {
   terminal: Prisma.TerminalCreateNestedOneWithoutRegistersInput
   transactions?: Prisma.FinancialTransactionCreateNestedManyWithoutCashRegisterInput
   accounts?: Prisma.AccountCreateNestedManyWithoutCashRegisterInput
+  inventoryCounts?: Prisma.ShiftInventoryCountCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterUncheckedCreateWithoutUserInput = {
@@ -850,6 +877,7 @@ export type CashRegisterUncheckedCreateWithoutUserInput = {
   creditAmount?: number
   transactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCashRegisterInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCashRegisterInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterCreateOrConnectWithoutUserInput = {
@@ -917,6 +945,7 @@ export type CashRegisterCreateWithoutAccountsInput = {
   terminal: Prisma.TerminalCreateNestedOneWithoutRegistersInput
   transactions?: Prisma.FinancialTransactionCreateNestedManyWithoutCashRegisterInput
   user: Prisma.UserCreateNestedOneWithoutCashRegistersInput
+  inventoryCounts?: Prisma.ShiftInventoryCountCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterUncheckedCreateWithoutAccountsInput = {
@@ -937,6 +966,7 @@ export type CashRegisterUncheckedCreateWithoutAccountsInput = {
   qrAmount?: number
   creditAmount?: number
   transactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCashRegisterInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterCreateOrConnectWithoutAccountsInput = {
@@ -972,6 +1002,7 @@ export type CashRegisterUpdateWithoutAccountsInput = {
   terminal?: Prisma.TerminalUpdateOneRequiredWithoutRegistersNestedInput
   transactions?: Prisma.FinancialTransactionUpdateManyWithoutCashRegisterNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCashRegistersNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterUncheckedUpdateWithoutAccountsInput = {
@@ -992,6 +1023,7 @@ export type CashRegisterUncheckedUpdateWithoutAccountsInput = {
   qrAmount?: Prisma.FloatFieldUpdateOperationsInput | number
   creditAmount?: Prisma.FloatFieldUpdateOperationsInput | number
   transactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCashRegisterNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterCreateWithoutTransactionsInput = {
@@ -1011,6 +1043,7 @@ export type CashRegisterCreateWithoutTransactionsInput = {
   terminal: Prisma.TerminalCreateNestedOneWithoutRegistersInput
   accounts?: Prisma.AccountCreateNestedManyWithoutCashRegisterInput
   user: Prisma.UserCreateNestedOneWithoutCashRegistersInput
+  inventoryCounts?: Prisma.ShiftInventoryCountCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterUncheckedCreateWithoutTransactionsInput = {
@@ -1031,6 +1064,7 @@ export type CashRegisterUncheckedCreateWithoutTransactionsInput = {
   qrAmount?: number
   creditAmount?: number
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCashRegisterInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterCreateOrConnectWithoutTransactionsInput = {
@@ -1066,6 +1100,7 @@ export type CashRegisterUpdateWithoutTransactionsInput = {
   terminal?: Prisma.TerminalUpdateOneRequiredWithoutRegistersNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutCashRegisterNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCashRegistersNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterUncheckedUpdateWithoutTransactionsInput = {
@@ -1086,6 +1121,105 @@ export type CashRegisterUncheckedUpdateWithoutTransactionsInput = {
   qrAmount?: Prisma.FloatFieldUpdateOperationsInput | number
   creditAmount?: Prisma.FloatFieldUpdateOperationsInput | number
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutCashRegisterNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedUpdateManyWithoutCashRegisterNestedInput
+}
+
+export type CashRegisterCreateWithoutInventoryCountsInput = {
+  openedAt: Date | string
+  closedAt?: Date | string | null
+  openingAmount: number
+  closingAmount?: number | null
+  difference?: number | null
+  status?: $Enums.CashRegisterStatus
+  totalSales?: number
+  totalDiscounts?: number
+  totalExpenses?: number
+  cashAmount?: number
+  cardAmount?: number
+  qrAmount?: number
+  creditAmount?: number
+  terminal: Prisma.TerminalCreateNestedOneWithoutRegistersInput
+  transactions?: Prisma.FinancialTransactionCreateNestedManyWithoutCashRegisterInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutCashRegisterInput
+  user: Prisma.UserCreateNestedOneWithoutCashRegistersInput
+}
+
+export type CashRegisterUncheckedCreateWithoutInventoryCountsInput = {
+  id?: number
+  userId: number
+  terminalId: number
+  openedAt: Date | string
+  closedAt?: Date | string | null
+  openingAmount: number
+  closingAmount?: number | null
+  difference?: number | null
+  status?: $Enums.CashRegisterStatus
+  totalSales?: number
+  totalDiscounts?: number
+  totalExpenses?: number
+  cashAmount?: number
+  cardAmount?: number
+  qrAmount?: number
+  creditAmount?: number
+  transactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCashRegisterInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCashRegisterInput
+}
+
+export type CashRegisterCreateOrConnectWithoutInventoryCountsInput = {
+  where: Prisma.CashRegisterWhereUniqueInput
+  create: Prisma.XOR<Prisma.CashRegisterCreateWithoutInventoryCountsInput, Prisma.CashRegisterUncheckedCreateWithoutInventoryCountsInput>
+}
+
+export type CashRegisterUpsertWithoutInventoryCountsInput = {
+  update: Prisma.XOR<Prisma.CashRegisterUpdateWithoutInventoryCountsInput, Prisma.CashRegisterUncheckedUpdateWithoutInventoryCountsInput>
+  create: Prisma.XOR<Prisma.CashRegisterCreateWithoutInventoryCountsInput, Prisma.CashRegisterUncheckedCreateWithoutInventoryCountsInput>
+  where?: Prisma.CashRegisterWhereInput
+}
+
+export type CashRegisterUpdateToOneWithWhereWithoutInventoryCountsInput = {
+  where?: Prisma.CashRegisterWhereInput
+  data: Prisma.XOR<Prisma.CashRegisterUpdateWithoutInventoryCountsInput, Prisma.CashRegisterUncheckedUpdateWithoutInventoryCountsInput>
+}
+
+export type CashRegisterUpdateWithoutInventoryCountsInput = {
+  openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  openingAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  closingAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  difference?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumCashRegisterStatusFieldUpdateOperationsInput | $Enums.CashRegisterStatus
+  totalSales?: Prisma.FloatFieldUpdateOperationsInput | number
+  totalDiscounts?: Prisma.FloatFieldUpdateOperationsInput | number
+  totalExpenses?: Prisma.FloatFieldUpdateOperationsInput | number
+  cashAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  cardAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  qrAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  creditAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  terminal?: Prisma.TerminalUpdateOneRequiredWithoutRegistersNestedInput
+  transactions?: Prisma.FinancialTransactionUpdateManyWithoutCashRegisterNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutCashRegisterNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutCashRegistersNestedInput
+}
+
+export type CashRegisterUncheckedUpdateWithoutInventoryCountsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  terminalId?: Prisma.IntFieldUpdateOperationsInput | number
+  openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  openingAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  closingAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  difference?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumCashRegisterStatusFieldUpdateOperationsInput | $Enums.CashRegisterStatus
+  totalSales?: Prisma.FloatFieldUpdateOperationsInput | number
+  totalDiscounts?: Prisma.FloatFieldUpdateOperationsInput | number
+  totalExpenses?: Prisma.FloatFieldUpdateOperationsInput | number
+  cashAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  cardAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  qrAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  creditAmount?: Prisma.FloatFieldUpdateOperationsInput | number
+  transactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCashRegisterNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterCreateWithoutTerminalInput = {
@@ -1105,6 +1239,7 @@ export type CashRegisterCreateWithoutTerminalInput = {
   transactions?: Prisma.FinancialTransactionCreateNestedManyWithoutCashRegisterInput
   accounts?: Prisma.AccountCreateNestedManyWithoutCashRegisterInput
   user: Prisma.UserCreateNestedOneWithoutCashRegistersInput
+  inventoryCounts?: Prisma.ShiftInventoryCountCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterUncheckedCreateWithoutTerminalInput = {
@@ -1125,6 +1260,7 @@ export type CashRegisterUncheckedCreateWithoutTerminalInput = {
   creditAmount?: number
   transactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCashRegisterInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCashRegisterInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedCreateNestedManyWithoutCashRegisterInput
 }
 
 export type CashRegisterCreateOrConnectWithoutTerminalInput = {
@@ -1188,6 +1324,7 @@ export type CashRegisterUpdateWithoutUserInput = {
   terminal?: Prisma.TerminalUpdateOneRequiredWithoutRegistersNestedInput
   transactions?: Prisma.FinancialTransactionUpdateManyWithoutCashRegisterNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutCashRegisterNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterUncheckedUpdateWithoutUserInput = {
@@ -1208,6 +1345,7 @@ export type CashRegisterUncheckedUpdateWithoutUserInput = {
   creditAmount?: Prisma.FloatFieldUpdateOperationsInput | number
   transactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCashRegisterNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutCashRegisterNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterUncheckedUpdateManyWithoutUserInput = {
@@ -1263,6 +1401,7 @@ export type CashRegisterUpdateWithoutTerminalInput = {
   transactions?: Prisma.FinancialTransactionUpdateManyWithoutCashRegisterNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutCashRegisterNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCashRegistersNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterUncheckedUpdateWithoutTerminalInput = {
@@ -1283,6 +1422,7 @@ export type CashRegisterUncheckedUpdateWithoutTerminalInput = {
   creditAmount?: Prisma.FloatFieldUpdateOperationsInput | number
   transactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCashRegisterNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutCashRegisterNestedInput
+  inventoryCounts?: Prisma.ShiftInventoryCountUncheckedUpdateManyWithoutCashRegisterNestedInput
 }
 
 export type CashRegisterUncheckedUpdateManyWithoutTerminalInput = {
@@ -1311,11 +1451,13 @@ export type CashRegisterUncheckedUpdateManyWithoutTerminalInput = {
 export type CashRegisterCountOutputType = {
   transactions: number
   accounts: number
+  inventoryCounts: number
 }
 
 export type CashRegisterCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transactions?: boolean | CashRegisterCountOutputTypeCountTransactionsArgs
   accounts?: boolean | CashRegisterCountOutputTypeCountAccountsArgs
+  inventoryCounts?: boolean | CashRegisterCountOutputTypeCountInventoryCountsArgs
 }
 
 /**
@@ -1342,6 +1484,13 @@ export type CashRegisterCountOutputTypeCountAccountsArgs<ExtArgs extends runtime
   where?: Prisma.AccountWhereInput
 }
 
+/**
+ * CashRegisterCountOutputType without action
+ */
+export type CashRegisterCountOutputTypeCountInventoryCountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShiftInventoryCountWhereInput
+}
+
 
 export type CashRegisterSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1364,6 +1513,7 @@ export type CashRegisterSelect<ExtArgs extends runtime.Types.Extensions.Internal
   transactions?: boolean | Prisma.CashRegister$transactionsArgs<ExtArgs>
   accounts?: boolean | Prisma.CashRegister$accountsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  inventoryCounts?: boolean | Prisma.CashRegister$inventoryCountsArgs<ExtArgs>
   _count?: boolean | Prisma.CashRegisterCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["cashRegister"]>
 
@@ -1434,6 +1584,7 @@ export type CashRegisterInclude<ExtArgs extends runtime.Types.Extensions.Interna
   transactions?: boolean | Prisma.CashRegister$transactionsArgs<ExtArgs>
   accounts?: boolean | Prisma.CashRegister$accountsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  inventoryCounts?: boolean | Prisma.CashRegister$inventoryCountsArgs<ExtArgs>
   _count?: boolean | Prisma.CashRegisterCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CashRegisterIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1452,6 +1603,7 @@ export type $CashRegisterPayload<ExtArgs extends runtime.Types.Extensions.Intern
     transactions: Prisma.$FinancialTransactionPayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
     user: Prisma.$UserPayload<ExtArgs>
+    inventoryCounts: Prisma.$ShiftInventoryCountPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1868,6 +2020,7 @@ export interface Prisma__CashRegisterClient<T, Null = never, ExtArgs extends run
   transactions<T extends Prisma.CashRegister$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CashRegister$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FinancialTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.CashRegister$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CashRegister$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  inventoryCounts<T extends Prisma.CashRegister$inventoryCountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CashRegister$inventoryCountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftInventoryCountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2359,6 +2512,30 @@ export type CashRegister$accountsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.AccountScalarFieldEnum | Prisma.AccountScalarFieldEnum[]
+}
+
+/**
+ * CashRegister.inventoryCounts
+ */
+export type CashRegister$inventoryCountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShiftInventoryCount
+   */
+  select?: Prisma.ShiftInventoryCountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShiftInventoryCount
+   */
+  omit?: Prisma.ShiftInventoryCountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShiftInventoryCountInclude<ExtArgs> | null
+  where?: Prisma.ShiftInventoryCountWhereInput
+  orderBy?: Prisma.ShiftInventoryCountOrderByWithRelationInput | Prisma.ShiftInventoryCountOrderByWithRelationInput[]
+  cursor?: Prisma.ShiftInventoryCountWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShiftInventoryCountScalarFieldEnum | Prisma.ShiftInventoryCountScalarFieldEnum[]
 }
 
 /**

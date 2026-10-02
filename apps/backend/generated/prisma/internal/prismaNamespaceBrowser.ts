@@ -64,6 +64,8 @@ export const ModelName = {
   FinancialTransaction: 'FinancialTransaction',
   Customer: 'Customer',
   CashRegister: 'CashRegister',
+  ShiftInventoryCount: 'ShiftInventoryCount',
+  ShiftInventoryCountItem: 'ShiftInventoryCountItem',
   StoreGroup: 'StoreGroup',
   GroupCatalogItem: 'GroupCatalogItem',
   Store: 'Store',
@@ -301,6 +303,42 @@ export const CashRegisterScalarFieldEnum = {
 } as const
 
 export type CashRegisterScalarFieldEnum = (typeof CashRegisterScalarFieldEnum)[keyof typeof CashRegisterScalarFieldEnum]
+
+
+export const ShiftInventoryCountScalarFieldEnum = {
+  id: 'id',
+  cashRegisterId: 'cashRegisterId',
+  phase: 'phase',
+  confirmedAt: 'confirmedAt',
+  confirmedByUserId: 'confirmedByUserId',
+  createdAt: 'createdAt',
+  archivedVerifications: 'archivedVerifications'
+} as const
+
+export type ShiftInventoryCountScalarFieldEnum = (typeof ShiftInventoryCountScalarFieldEnum)[keyof typeof ShiftInventoryCountScalarFieldEnum]
+
+
+export const ShiftInventoryCountItemScalarFieldEnum = {
+  id: 'id',
+  countId: 'countId',
+  productVariantId: 'productVariantId',
+  productName: 'productName',
+  unit: 'unit',
+  expectedQuantity: 'expectedQuantity',
+  countedQuantity: 'countedQuantity',
+  movementRevision: 'movementRevision',
+  difference: 'difference',
+  justification: 'justification',
+  countedAt: 'countedAt',
+  countedByUserId: 'countedByUserId',
+  resolution: 'resolution',
+  resolutionReason: 'resolutionReason',
+  resolvedAt: 'resolvedAt',
+  resolvedByUserId: 'resolvedByUserId',
+  adjustmentOperationId: 'adjustmentOperationId'
+} as const
+
+export type ShiftInventoryCountItemScalarFieldEnum = (typeof ShiftInventoryCountItemScalarFieldEnum)[keyof typeof ShiftInventoryCountItemScalarFieldEnum]
 
 
 export const StoreGroupScalarFieldEnum = {

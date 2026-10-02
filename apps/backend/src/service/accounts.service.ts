@@ -12,6 +12,7 @@ import {
 } from "./saleCancellation.rules";
 import { randomUUID } from "crypto";
 import { applyInventoryMovementTx } from "./inventoryLot.service";
+import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
 
 interface CreateAccountItem {
   productVariantId: number;
@@ -125,6 +126,9 @@ const validateRecipeAvailabilityForAccount = async (
 
 export const createAccountService = async (data: AccountData) => {
   return await prisma.$transaction(async (tx) => {
+    await lockInventoryVerificationTx(tx);
+    const register = await tx.cashRegister.findFirst({ where: { terminalId: data.terminalId, status: "OPEN" } });
+    if (!register) throw new Error("Abre un turno antes de crear una cuenta.");
     if (!data.userId) {
       throw new Error("userId is required");
     }
@@ -543,6 +547,8 @@ export const closeAccountService = async ({
       throw new Error("Invalid payment method");
     }
 
+    await lockInventoryVerificationTx(tx);
+
     if (!Number.isInteger(cashRegisterId) || cashRegisterId <= 0) {
       throw new Error("Invalid cash register");
     }
@@ -862,6 +868,7 @@ export const cancelClosedAccountService = async ({
   const reason = requireCancellationReason(reasonValue);
 
   return prisma.$transaction(async (tx) => {
+    await lockInventoryVerificationTx(tx);
     const account = await tx.account.findUnique({
       where: { id: accountId },
       include: {

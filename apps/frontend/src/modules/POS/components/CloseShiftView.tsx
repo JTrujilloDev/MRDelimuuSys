@@ -22,6 +22,7 @@ import dayjs from "dayjs";
 import numeral from "numeral";
 import { useCloseCashRegister } from "../hooks/cashRegister/useCloseCashRegister";
 import { useGetExpenses } from "../hooks/financialTransaction/useGetExpenses";
+import InventoryCountView, { InventoryCountStatus } from "./InventoryCountView";
 
 export interface CompletedSale {
   id: string;
@@ -79,6 +80,7 @@ const CloseShiftView = ({
   const [billCounts, setBillCounts] = useState<Record<number, string>>({});
   const [differenceJustification, setDifferenceJustification] = useState("");
   const [closeError, setCloseError] = useState<string | null>(null);
+  const [showInventoryCount, setShowInventoryCount] = useState(false);
 
   // Sales breakdown
   const totalSales = shift.totalSales;
@@ -108,8 +110,11 @@ const CloseShiftView = ({
 
   const difference = countedCash - expectedCash;
 
+  if (showInventoryCount) return <InventoryCountView cashRegisterId={cashRegisterId} initialPhase="CLOSING" onBack={() => setShowInventoryCount(false)} />;
+
   return (
     <div className="flex h-full flex-col bg-background">
+      <InventoryCountStatus cashRegisterId={cashRegisterId} onOpen={() => setShowInventoryCount(true)} />
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border/70 bg-pos-surface/80 px-6 py-4 backdrop-blur">
         <div className="flex items-center gap-3">

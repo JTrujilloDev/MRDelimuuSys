@@ -24,7 +24,7 @@ export const enqueueShiftClosed = async (
   if (!emailEnabled() && !pushEnabled()) return;
   const shift = await tx.cashRegister.findUniqueOrThrow({
     where: { id: shiftId },
-    include: { user: { select: { name: true } }, terminal: { include: { store: true } }, accounts: true },
+    include: { user: { select: { name: true } }, terminal: { include: { store: true } }, accounts: true, inventoryCounts: { include: { items: true } } },
   });
   const payload: ShiftNotification = {
     shiftId, store: shift.terminal.store.name, terminal: shift.terminal.name, user: shift.user.name,
@@ -34,11 +34,14 @@ export const enqueueShiftClosed = async (
     closingAmount: closing.closingAmount, difference: closing.difference,
     justification: closing.differenceJustification || "",
     cancelledCount: shift.accounts.filter((account) => account.status === "CANCELLED").length,
-    observations: shift.accounts.flatMap((account) => {
+    observations: [...(shift.inventoryCounts ?? []).flatMap(count => [
+      `Conteo ${count.phase === "OPENING" ? "inicial" : "final"}: ${count.items.length} productos verificados; ${count.items.filter(item => item.difference !== 0).length} diferencias pendientes de revisión.`,
+      ...count.items.map(item => `${count.phase === "OPENING" ? "Apertura" : "Cierre"} — ${item.productName}: esperado ${item.expectedQuantity}, contado ${item.countedQuantity}, diferencia ${item.difference}. ${item.justification || "Sin diferencia"}`),
+    ]), ...shift.accounts.flatMap((account) => {
       if (account.status === "CANCELLED") return [`Venta #${account.id} anulada: ${account.cancellationReason || "Sin observación"}`];
       if (account.status === "CLOSED" && account.discount > 0) return [`Venta #${account.id}: descuento ${account.discount} COP — ${account.discountObservation || "Sin observación"}`];
       return [];
-    }),
+    })],
   };
   // Blank recipient remains pending until configuration is supplied.
   if (emailEnabled()) for (const recipient of recipients().length ? recipients() : [""]) {

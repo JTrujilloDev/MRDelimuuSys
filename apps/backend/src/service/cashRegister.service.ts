@@ -7,6 +7,8 @@ import {
 } from "./cashRegister.rules";
 import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
 import { enqueueShiftClosed } from "./notification.service";
+import { requireShiftInventoryClosing } from "./shiftInventory.service";
+import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
 
 export interface UpdateCashRegisterTotalsInput {
   cashRegisterId: number;
@@ -79,9 +81,12 @@ export const closeCashRegisterService = async (
   cashRegisterId: number,
   closingAmount: number, // dinero contado físicamente
   differenceJustification?: unknown,
+  database: Pick<typeof prisma, "$transaction"> = prisma,
 ) => {
-  return await prisma.$transaction(async (tx) => {
+  return await database.$transaction(async (tx) => {
     // 1. Obtener caja
+    await lockInventoryVerificationTx(tx);
+    await tx.$queryRaw`SELECT "id" FROM "CashRegister" WHERE "id" = ${cashRegisterId} FOR UPDATE`;
     const cashRegister = await tx.cashRegister.findUnique({
       where: { id: cashRegisterId },
     });
@@ -102,6 +107,9 @@ export const closeCashRegisterService = async (
         `Cannot close the shift with ${openAccounts} open account${openAccounts === 1 ? "" : "s"}`,
       );
     }
+
+    const terminal = await tx.terminal.findUniqueOrThrow({ where: { id: cashRegister.terminalId } });
+    await requireShiftInventoryClosing(tx, cashRegisterId, terminal.storeId);
 
     // 2. Obtener movimientos financieros de la caja
     const transactions = await tx.financialTransaction.findMany({

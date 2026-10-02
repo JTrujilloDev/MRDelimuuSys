@@ -16,6 +16,7 @@ import {
 import numeral from "numeral";
 import { useMemo, useState } from "react";
 import { useCashRegisterHistory } from "../hooks/useCashRegisterHistory";
+import InventoryCountView from "../../POS/components/InventoryCountView";
 
 type SoldVariant = {
   productVariantId: number;
@@ -113,6 +114,7 @@ const toIsoBoundary = (value: string, boundary: "start" | "end") => {
 };
 
 const CashRegisterHistory = () => {
+  const [inventoryRegisterId, setInventoryRegisterId] = useState<number | null>(null);
   const [from, setFrom] = useState(dayjs().subtract(6, "day").format("YYYY-MM-DD"));
   const [to, setTo] = useState(dayjs().format("YYYY-MM-DD"));
   const [productSearch, setProductSearch] = useState("");
@@ -176,6 +178,8 @@ const CashRegisterHistory = () => {
       from === dayjs().subtract(days - 1, "day").format("YYYY-MM-DD") &&
       to === dayjs().format("YYYY-MM-DD"),
   );
+
+  if (inventoryRegisterId !== null) return <InventoryCountView cashRegisterId={inventoryRegisterId} readOnly onBack={() => setInventoryRegisterId(null)} />;
 
   return (
     <main className="h-full overflow-y-auto p-6 lg:p-8">
@@ -371,7 +375,7 @@ const CashRegisterHistory = () => {
           ) : registers.length === 0 ? (
             <EmptyState message="No hay cajas registradas en este período." />
           ) : (
-            registers.map((register) => <RegisterCard key={register.id} register={register} />)
+            registers.map((register) => <div key={register.id} className="space-y-2"><RegisterCard register={register} /><Button variant="secondary" size="sm" onPress={() => setInventoryRegisterId(register.id)}><PackageCheck className="h-4 w-4" />Conteos y diferencias de inventario · Turno #{register.id}</Button></div>)
           )}
         </section>
       </div>

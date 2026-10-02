@@ -4,6 +4,8 @@ import type {
   Unit,
 } from "../../generated/prisma/client";
 
+import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
+
 const UNTRACKED_LOT_CODE = "SIN-LOTE";
 
 export interface InventoryLotDetails {
@@ -175,6 +177,7 @@ export const applyInventoryMovementTx = async (
   tx: Prisma.TransactionClient,
   data: InventoryMovementData,
 ) => {
+  await lockInventoryVerificationTx(tx);
   if (!Number.isInteger(data.quantity) || data.quantity === 0) {
     throw new Error("Inventory movement quantity must be a non-zero integer");
   }

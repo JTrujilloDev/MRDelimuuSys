@@ -6,6 +6,7 @@ import { Search, ArrowLeft } from "lucide-react";
 import type { ProductWithVariants, Variant } from "../components/VariantModal";
 import ShiftGate, { ShiftBanner } from "../components/ShiftGate";
 import CloseShiftView from "../components/CloseShiftView";
+import InventoryCountView, { InventoryCountStatus } from "../components/InventoryCountView";
 import ExpensesView from "../components/ExpensesView";
 import TableGrid from "../components/TableGrid";
 import CheckoutView, {
@@ -96,6 +97,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState(() =>
     readSessionValue("pos:search", ""),
   );
+  const [showInventoryCount, setShowInventoryCount] = useState(false);
   const [recentProducts, setRecentProducts] = useState<RecentProductShortcut[]>(
     () => readSessionValue("pos:recent-products", []),
   );
@@ -709,6 +711,9 @@ const Index = () => {
   }
 
   // ── Close shift view ──
+  if (showInventoryCount) {
+    return <InventoryCountView cashRegisterId={openCashRegisterData.data.id} onBack={() => setShowInventoryCount(false)} />;
+  }
   if (showCloseShift) {
     return (
       <CloseShiftView
@@ -744,6 +749,7 @@ const Index = () => {
   if (!activeTableId) {
     return (
       <div className="flex h-full flex-col">
+        <InventoryCountStatus cashRegisterId={openCashRegisterData.data.id} onOpen={() => setShowInventoryCount(true)} />
         <ShiftBanner
           shift={openCashRegisterData?.data}
           onSalesHistory={() => setShowSalesHistory(true)}
@@ -790,6 +796,7 @@ const Index = () => {
     <div className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-background xl:flex-row">
       {/* Left — Products */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-4 sm:px-6 sm:py-5">
+        <InventoryCountStatus cashRegisterId={openCashRegisterData.data.id} onOpen={() => setShowInventoryCount(true)} />
         {/* Top bar */}
         <div className="mb-4 flex flex-col gap-4 rounded-[28px] border border-border/80 bg-pos-surface/95 p-4 shadow-[0_18px_40px_-32px_rgba(98,68,38,0.45)] sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">

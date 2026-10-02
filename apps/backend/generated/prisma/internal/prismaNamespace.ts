@@ -397,6 +397,8 @@ export const ModelName = {
   FinancialTransaction: 'FinancialTransaction',
   Customer: 'Customer',
   CashRegister: 'CashRegister',
+  ShiftInventoryCount: 'ShiftInventoryCount',
+  ShiftInventoryCountItem: 'ShiftInventoryCountItem',
   StoreGroup: 'StoreGroup',
   GroupCatalogItem: 'GroupCatalogItem',
   Store: 'Store',
@@ -426,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "notificationOutbox" | "stockNotificationState" | "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "storeGroup" | "groupCatalogItem" | "store" | "storeInventory" | "inventoryLot" | "storeLotInventory" | "inventoryTransfer" | "inventoryTransferItem" | "terminal" | "userStoreAccess" | "userSession" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
+    modelProps: "notificationOutbox" | "stockNotificationState" | "category" | "product" | "productVariant" | "recipeItem" | "user" | "account" | "accountItem" | "inventoryTransaction" | "financialTransaction" | "customer" | "cashRegister" | "shiftInventoryCount" | "shiftInventoryCountItem" | "storeGroup" | "groupCatalogItem" | "store" | "storeInventory" | "inventoryLot" | "storeLotInventory" | "inventoryTransfer" | "inventoryTransferItem" | "terminal" | "userStoreAccess" | "userSession" | "kitchenTicket" | "kitchenTicketItem" | "kitchenTicketAdjustment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1389,6 +1391,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CashRegisterCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CashRegisterCountAggregateOutputType> | number
+        }
+      }
+    }
+    ShiftInventoryCount: {
+      payload: Prisma.$ShiftInventoryCountPayload<ExtArgs>
+      fields: Prisma.ShiftInventoryCountFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShiftInventoryCountFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShiftInventoryCountFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>
+        }
+        findFirst: {
+          args: Prisma.ShiftInventoryCountFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShiftInventoryCountFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>
+        }
+        findMany: {
+          args: Prisma.ShiftInventoryCountFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>[]
+        }
+        create: {
+          args: Prisma.ShiftInventoryCountCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>
+        }
+        createMany: {
+          args: Prisma.ShiftInventoryCountCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShiftInventoryCountCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>[]
+        }
+        delete: {
+          args: Prisma.ShiftInventoryCountDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>
+        }
+        update: {
+          args: Prisma.ShiftInventoryCountUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>
+        }
+        deleteMany: {
+          args: Prisma.ShiftInventoryCountDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShiftInventoryCountUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShiftInventoryCountUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>[]
+        }
+        upsert: {
+          args: Prisma.ShiftInventoryCountUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountPayload>
+        }
+        aggregate: {
+          args: Prisma.ShiftInventoryCountAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShiftInventoryCount>
+        }
+        groupBy: {
+          args: Prisma.ShiftInventoryCountGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShiftInventoryCountGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShiftInventoryCountCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShiftInventoryCountCountAggregateOutputType> | number
+        }
+      }
+    }
+    ShiftInventoryCountItem: {
+      payload: Prisma.$ShiftInventoryCountItemPayload<ExtArgs>
+      fields: Prisma.ShiftInventoryCountItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShiftInventoryCountItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShiftInventoryCountItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>
+        }
+        findFirst: {
+          args: Prisma.ShiftInventoryCountItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShiftInventoryCountItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>
+        }
+        findMany: {
+          args: Prisma.ShiftInventoryCountItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>[]
+        }
+        create: {
+          args: Prisma.ShiftInventoryCountItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>
+        }
+        createMany: {
+          args: Prisma.ShiftInventoryCountItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShiftInventoryCountItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>[]
+        }
+        delete: {
+          args: Prisma.ShiftInventoryCountItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>
+        }
+        update: {
+          args: Prisma.ShiftInventoryCountItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.ShiftInventoryCountItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShiftInventoryCountItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShiftInventoryCountItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.ShiftInventoryCountItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShiftInventoryCountItemPayload>
+        }
+        aggregate: {
+          args: Prisma.ShiftInventoryCountItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShiftInventoryCountItem>
+        }
+        groupBy: {
+          args: Prisma.ShiftInventoryCountItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShiftInventoryCountItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShiftInventoryCountItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShiftInventoryCountItemCountAggregateOutputType> | number
         }
       }
     }
@@ -2674,6 +2824,42 @@ export const CashRegisterScalarFieldEnum = {
 export type CashRegisterScalarFieldEnum = (typeof CashRegisterScalarFieldEnum)[keyof typeof CashRegisterScalarFieldEnum]
 
 
+export const ShiftInventoryCountScalarFieldEnum = {
+  id: 'id',
+  cashRegisterId: 'cashRegisterId',
+  phase: 'phase',
+  confirmedAt: 'confirmedAt',
+  confirmedByUserId: 'confirmedByUserId',
+  createdAt: 'createdAt',
+  archivedVerifications: 'archivedVerifications'
+} as const
+
+export type ShiftInventoryCountScalarFieldEnum = (typeof ShiftInventoryCountScalarFieldEnum)[keyof typeof ShiftInventoryCountScalarFieldEnum]
+
+
+export const ShiftInventoryCountItemScalarFieldEnum = {
+  id: 'id',
+  countId: 'countId',
+  productVariantId: 'productVariantId',
+  productName: 'productName',
+  unit: 'unit',
+  expectedQuantity: 'expectedQuantity',
+  countedQuantity: 'countedQuantity',
+  movementRevision: 'movementRevision',
+  difference: 'difference',
+  justification: 'justification',
+  countedAt: 'countedAt',
+  countedByUserId: 'countedByUserId',
+  resolution: 'resolution',
+  resolutionReason: 'resolutionReason',
+  resolvedAt: 'resolvedAt',
+  resolvedByUserId: 'resolvedByUserId',
+  adjustmentOperationId: 'adjustmentOperationId'
+} as const
+
+export type ShiftInventoryCountItemScalarFieldEnum = (typeof ShiftInventoryCountItemScalarFieldEnum)[keyof typeof ShiftInventoryCountItemScalarFieldEnum]
+
+
 export const StoreGroupScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -3327,6 +3513,8 @@ export type GlobalOmitConfig = {
   financialTransaction?: Prisma.FinancialTransactionOmit
   customer?: Prisma.CustomerOmit
   cashRegister?: Prisma.CashRegisterOmit
+  shiftInventoryCount?: Prisma.ShiftInventoryCountOmit
+  shiftInventoryCountItem?: Prisma.ShiftInventoryCountItemOmit
   storeGroup?: Prisma.StoreGroupOmit
   groupCatalogItem?: Prisma.GroupCatalogItemOmit
   store?: Prisma.StoreOmit
