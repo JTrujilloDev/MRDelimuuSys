@@ -1,4 +1,4 @@
-import Logo from "/DeliLogo.png";
+import { useBrand } from "../../app/branding/useBrand";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { Tooltip } from "@heroui/react";
@@ -37,6 +37,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { state, logout } = useAuth();
+  const brand = useBrand();
   const activeContext = state!.activeContext!;
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -93,7 +94,7 @@ const Sidebar = () => {
   ];
   return (
     <div className="flex h-full w-24 flex-col items-center gap-4 rounded-tr-[24px] rounded-br-[24px] border-r border-border/70 bg-pos-surface/95 py-4 shadow-[0_18px_40px_-30px_rgba(84,56,32,0.45)]">
-      <img src={Logo} alt="Logo" className="mt-4 w-14 rounded-2xl" />
+      <img src={brand.logo} alt={`Logo de ${brand.name}`} className={`mt-4 h-14 w-14 object-contain ${brand.key === "veleno" ? "rounded-full" : "rounded-2xl"}`} />
 
       <div ref={profileRef} className="group relative mt-6">
         <button

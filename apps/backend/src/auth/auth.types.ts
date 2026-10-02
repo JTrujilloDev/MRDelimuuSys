@@ -12,6 +12,8 @@ export type AuthenticatedRequestContext = {
 
 export type AuthStoreOption = {
   id: number;
+  groupId: number;
+  group: { id: number; code: string; name: string };
   code: string;
   name: string;
   kitchenMode: KitchenMode;

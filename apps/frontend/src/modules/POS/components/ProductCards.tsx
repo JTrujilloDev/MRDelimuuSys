@@ -7,6 +7,7 @@ interface ProductCardProps {
   name: string;
   price: number | null;
   image: string;
+  containImage?: boolean;
   variantsInfo?: Variant[];
   productType: string;
   reservedQuantities?: Record<number, number>;
@@ -15,7 +16,7 @@ interface ProductCardProps {
   onAdd: () => void;
 }
 
-const ProductCard = ({ name, price, image, variantsInfo, productType, reservedQuantities = {}, isAdding = false, wasJustAdded = false, onAdd }: ProductCardProps) => {
+const ProductCard = ({ name, price, image, containImage = false, variantsInfo, productType, reservedQuantities = {}, isAdding = false, wasJustAdded = false, onAdd }: ProductCardProps) => {
   const activeVariants = (variantsInfo ?? []).filter((variant) => variant.isActive);
   const recipeAvailability = activeVariants.map((variant) => {
     const availability = getRecipeAvailability(variant);
@@ -29,7 +30,7 @@ const ProductCard = ({ name, price, image, variantsInfo, productType, reservedQu
   return (
     <button type="button" onClick={onAdd} disabled={isUnavailable || isAdding} aria-label={`${name}, ${activeVariants.length > 1 ? `${activeVariants.length} variantes` : numeral(price).format("$0,0")}${isUnavailable ? ", no disponible" : ""}`} className={`group relative flex min-h-[270px] flex-col overflow-hidden rounded-[24px] border-2 bg-pos-surface text-left shadow-[0_12px_32px_-24px_rgba(84,56,32,0.35)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_40px_-24px_rgba(84,56,32,0.45)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0 ${wasJustAdded ? "border-success ring-2 ring-success/20" : "border-border hover:border-primary"}`}>
       <div className="aspect-[4/3] w-full overflow-hidden bg-pos-surface-soft">
-        <img src={image} alt={name} loading="lazy" width={512} height={512} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+        <img src={image} alt={name} loading="lazy" width={512} height={512} className={`h-full w-full transition-transform duration-300 group-hover:scale-105 ${containImage ? "object-contain p-5" : "object-cover"}`} />
       </div>
       {isUnavailable && (
         <span className="absolute right-3 top-3 rounded-full border border-destructive bg-destructive px-3 py-1.5 text-sm font-black text-destructive-foreground shadow-md">

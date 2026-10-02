@@ -32,7 +32,7 @@ const getAvailableStores = async (
   if (isGlobalAdmin) {
     const stores = await prisma.store.findMany({
       where: { isActive: true, group: { isActive: true } },
-      include: { terminals: { where: { isActive: true }, orderBy: { name: "asc" } } },
+      include: { group: { select: { id: true, code: true, name: true } }, terminals: { where: { isActive: true }, orderBy: { name: "asc" } } },
       orderBy: [{ group: { name: "asc" } }, { name: "asc" }],
     });
     return stores.map((store) => ({ ...store, role: Role.ADMIN }));
@@ -46,7 +46,7 @@ const getAvailableStores = async (
     },
     include: {
       store: {
-        include: { terminals: { where: { isActive: true }, orderBy: { name: "asc" } } },
+        include: { group: { select: { id: true, code: true, name: true } }, terminals: { where: { isActive: true }, orderBy: { name: "asc" } } },
       },
     },
     orderBy: { store: { name: "asc" } },

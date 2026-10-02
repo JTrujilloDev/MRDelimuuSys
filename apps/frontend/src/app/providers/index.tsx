@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { SocketProvider } from "../../shared/socket/SocketProvider";
 import { AuthProvider } from "../auth/AuthProvider";
+import BrandAppearance from "../branding/BrandAppearance";
 
 type ThemeMode = "light" | "dark";
 
@@ -51,6 +52,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeContext.Provider value={value}>
       <AuthProvider>
+        <BrandAppearance />
         <SocketProvider>{children}</SocketProvider>
       </AuthProvider>
     </ThemeContext.Provider>

@@ -1,0 +1,69 @@
+/* Brand-only overrides. Delimuu keeps its existing tokens and semantic colors. */
+:root[data-brand="veleno"]:not(.dark):not([data-theme="dark"]) {
+  --accent: #D4A017;
+  --accent-foreground: #4A2E1E;
+  --background: #FDFBF5;
+  --foreground: #4A2E1E;
+  --border: #DBC7A8;
+  --default: #F3E6D1;
+  --default-foreground: #4A2E1E;
+  --field-background: #FDFBF5;
+  --field-foreground: #4A2E1E;
+  --field-placeholder: #8B5E3C;
+  --focus: #8B5E3C;
+  --muted: #8B5E3C;
+  --overlay: #FDFBF5;
+  --overlay-foreground: #4A2E1E;
+  --scrollbar: #C89B3C;
+  --segment: #FDFBF5;
+  --segment-foreground: #4A2E1E;
+  --separator: #DBC7A8;
+  --surface: #FDFBF5;
+  --surface-foreground: #4A2E1E;
+  --surface-secondary: #F3E6D1;
+  --surface-secondary-foreground: #4A2E1E;
+  --surface-tertiary: #EAD9BC;
+  --surface-tertiary-foreground: #4A2E1E;
+  --pos-surface: #FDFBF5;
+  --pos-surface-soft: #F3E6D1;
+  --pos-order-bg: #4A2E1E;
+  --pos-order-fg: #FDFBF5;
+  --pos-category-inactive: #F3E6D1;
+}
+
+/* Mustard is an accent, not small text on a pale background. */
+:root[data-brand="veleno"]:not(.dark):not([data-theme="dark"]) :is(.text-primary, .text-accent) {
+  color: #4A2E1E;
+}
+
+:root[data-brand="veleno"]:is(.dark, [data-theme="dark"]) {
+  --accent: #D4A017;
+  --accent-foreground: #4A2E1E;
+  --background: #20150F;
+  --foreground: #FDFBF5;
+  --border: #76553D;
+  --default: #3A261B;
+  --default-foreground: #FDFBF5;
+  --field-background: #322117;
+  --field-foreground: #FDFBF5;
+  --field-placeholder: #DDC6A4;
+  --focus: #D4A017;
+  --muted: #DDC6A4;
+  --overlay: #322117;
+  --overlay-foreground: #FDFBF5;
+  --scrollbar: #8B5E3C;
+  --segment: #3A261B;
+  --segment-foreground: #FDFBF5;
+  --separator: #76553D;
+  --surface: #2C1D15;
+  --surface-foreground: #FDFBF5;
+  --surface-secondary: #3A261B;
+  --surface-secondary-foreground: #FDFBF5;
+  --surface-tertiary: #4A2E1E;
+  --surface-tertiary-foreground: #FDFBF5;
+  --pos-surface: #2C1D15;
+  --pos-surface-soft: #3A261B;
+  --pos-order-bg: #20150F;
+  --pos-order-fg: #FDFBF5;
+  --pos-category-inactive: #3A261B;
+}

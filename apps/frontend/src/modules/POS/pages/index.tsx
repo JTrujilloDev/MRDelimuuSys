@@ -17,7 +17,7 @@ import OrderPanel from "../components/OrderPanel";
 import VariantModal from "../components/VariantModal";
 import { getRecipeAvailability } from "../utils/recipeAvailability";
 
-import temporalImg from "../../../../public/DeliLogo.png";
+import { useBrand } from "../../../app/branding/useBrand";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
 import { useGetProductsByCategory } from "../../products/hooks/useGetProductsByCategory";
 import { useOpenCashRegister } from "../hooks/cashRegister/useOpenCashRegister";
@@ -54,6 +54,7 @@ const readSessionValue = <T,>(key: string, fallback: T): T => {
 
 const Index = () => {
   const { state } = useAuth();
+  const brand = useBrand();
   const userId = state!.user.id;
   const terminalId = state!.activeContext!.terminal.id;
   const canManageAnyShift =
@@ -867,7 +868,8 @@ const Index = () => {
                     ? product?.variants[0]?.retailPrice
                     : null
                 }
-                image={temporalImg}
+                image={brand.logo}
+                containImage={brand.key === "veleno"}
                 variantsInfo={product.variants}
                 productType={product.productType}
                 reservedQuantities={reservedQuantitiesByVariant}

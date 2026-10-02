@@ -12,6 +12,7 @@ export type AuthTerminal = {
 export type AuthStore = {
   id: number;
   groupId: number;
+  group?: { id: number; code: string; name: string };
   code: string;
   name: string;
   kitchenMode: KitchenMode;
