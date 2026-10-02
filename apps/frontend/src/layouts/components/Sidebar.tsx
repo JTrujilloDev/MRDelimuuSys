@@ -27,7 +27,7 @@ import type { UserRole } from "../../app/auth/auth.service";
 
 const roleLabels: Record<UserRole, string> = {
   ADMIN: "Administrador del punto",
-  CASHIER: "Cajera",
+  CASHIER: "Caja",
   KITCHEN: "Cocina",
   WAITER: "Mesero",
   BAKERY: "Panadería",

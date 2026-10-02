@@ -35,14 +35,14 @@ const buttonClass =
 const inactiveTabClass =
   "border border-border bg-pos-surface text-foreground shadow-sm hover:border-primary/50 hover:bg-secondary";
 const roleOptions: Array<{ value: UserRole; label: string }> = [
-  { value: "CASHIER", label: "Cajera" },
+  { value: "CASHIER", label: "Caja" },
   { value: "KITCHEN", label: "Cocina" },
   { value: "ADMIN", label: "Administrador del punto" },
 ];
 
 const roleLabels: Record<UserRole, string> = {
   ADMIN: "Administrador del punto",
-  CASHIER: "Cajera",
+  CASHIER: "Caja",
   KITCHEN: "Cocina",
   WAITER: "Mesero",
   BAKERY: "Panadería",
