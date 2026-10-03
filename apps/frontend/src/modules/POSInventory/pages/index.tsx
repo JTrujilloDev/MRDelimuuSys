@@ -21,6 +21,7 @@ import TransactionForm from "../components/TransactionForm";
 import InventoryMovements from "../components/InventoryMovements";
 import { useAuth } from "../../../app/auth/AuthProvider";
 import { updateStoreInventorySettings } from "../services/POSInventory.service";
+import { getDaysUntilExpiration, needsExpirationWarning } from "../../../shared/utils/expiration.rules";
 
 interface InventoryVariant {
   id: number;
@@ -64,21 +65,12 @@ const dateFormatter = new Intl.DateTimeFormat("es-CO", {
 const formatLotDate = (value: string | null) =>
   value ? dateFormatter.format(new Date(value)) : "Sin fecha";
 
-const getDaysUntilExpiration = (value: string | null) => {
-  if (!value) return null;
-  const expiration = new Date(value.slice(0, 10) + "T00:00:00.000Z");
-  const now = new Date();
-  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  return Math.ceil((expiration.getTime() - today) / 86_400_000);
-};
-
 const getExpirationStatus = (expiresAt: string | null) => {
   const days = getDaysUntilExpiration(expiresAt);
   if (days === null) return { label: "Sin vencimiento", className: "bg-muted text-foreground/75" };
   if (days < 0) return { label: `Vencido hace ${Math.abs(days)} d`, className: "bg-danger-soft-hover text-destructive" };
   if (days === 0) return { label: "Vence hoy", className: "bg-danger-soft-hover text-destructive" };
-  if (days <= 3) return { label: `Vence en ${days} d`, className: "bg-orange-500/20 text-orange-700" };
-  if (days <= 7) return { label: `Vence en ${days} d`, className: "bg-amber-500/20 text-amber-700" };
+  if (needsExpirationWarning(days)) return { label: "Vence mañana", className: "bg-orange-500/20 text-orange-700" };
   return { label: "Vigente", className: "bg-[#10b981]/20 text-[#047857]" };
 };
 
@@ -113,11 +105,11 @@ const Inventory = () => {
   );
   const expiredLots = lotRows.filter(({ lot }) => {
     const days = getDaysUntilExpiration(lot.expiresAt);
-    return days !== null && days < 0;
+    return lot.stock > 0 && days !== null && days < 0;
   }).length;
   const expiringSoonLots = lotRows.filter(({ lot }) => {
     const days = getDaysUntilExpiration(lot.expiresAt);
-    return days !== null && days >= 0 && days <= 7;
+    return lot.stock > 0 && days !== null && days >= 0 && needsExpirationWarning(days);
   }).length;
   const historicalLots = lotRows.filter(({ lot }) => lot.isLegacy).length;
   const canManageInventory = Boolean(
@@ -415,7 +407,7 @@ const Inventory = () => {
               <p className="mt-1 text-2xl font-bold text-destructive">{expiredLots}</p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-xs text-muted-foreground">Vencen en los próximos 7 días</p>
+              <p className="text-xs text-muted-foreground">Vencen hoy o mañana con existencias</p>
               <p className="mt-1 text-2xl font-bold text-amber-600">{expiringSoonLots}</p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">
