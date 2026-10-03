@@ -124,6 +124,10 @@ test("cola y alertas sin conexiones externas", async (t) => {
     await deliverNotification(message);
     assert.equal(new Headers(calls[0].headers).has("Authorization"), false);
     assert.equal(JSON.parse(calls[0].body as string).topic, "fake-test-topic");
+    const stockAlert = JSON.parse(calls[0].body as string);
+    assert.equal(stockAlert.title, "Stock bajo");
+    assert.ok(stockAlert.message.includes("Prueba\nProducto\nDisponible: 2"));
+    assert.equal(stockAlert.priority, 3);
     let sent = false;
     const outbox = { findMany: async () => [{ ...message, attempts: 0 }], updateMany: async () => ({ count: 1 }) } as unknown as typeof prisma.notificationOutbox;
     await processNotificationQueue(async () => { sent = true; }, outbox);
@@ -132,6 +136,29 @@ test("cola y alertas sin conexiones externas", async (t) => {
     await deliverNotification(message);
     assert.equal(new Headers(calls[1].headers).get("Authorization"), "Bearer fake-token");
     assert.equal(notificationConfiguration().pushPublicMode, false);
+    delete process.env.NTFY_TOKEN;
+    await deliverNotification({ ...message, payload: { ...message.payload, stock: 0, level: "EMPTY" } });
+    const emptyAlert = JSON.parse(calls[2].body as string);
+    assert.equal(emptyAlert.title, "Producto agotado");
+    assert.ok(emptyAlert.message.includes("Disponible: 0"));
+    assert.equal(emptyAlert.priority, 4);
+    await deliverNotification({ ...message, kind: "SHIFT_CLOSED", payload: {
+      shiftId: 42, store: "Veleño 2", terminal: "Caja 1", user: "Prueba",
+      openedAt: "2026-10-02T12:00:00Z", closedAt: "2026-10-02T22:00:00Z",
+      saleCount: 1, grossSales: 12000, totalSales: 10000, totalDiscounts: 2000,
+      cashAmount: 10000, cardAmount: 0, qrAmount: 0, creditAmount: 0,
+      openingAmount: 5000, totalExpenses: 0, expectedCash: 15000,
+      closingAmount: 15000, difference: 0, justification: "", cancelledCount: 0, observations: [],
+    } });
+    const closingAlert = JSON.parse(calls[3].body as string);
+    assert.equal(closingAlert.title, "Cierre de turno #42 — Veleño 2");
+    assert.ok(closingAlert.message.includes("Veleño 2 · Caja 1"));
+    assert.match(closingAlert.message, /Ventas:.*10[.,]000/);
+    assert.match(closingAlert.message, /Descuentos:.*2[.,]000/);
+    assert.match(closingAlert.message, /Efectivo:.*15[.,]000/);
+    assert.ok(closingAlert.message.includes("Diferencia:"));
+    assert.deepEqual(closingAlert.tags, ["receipt"]);
+    assert.equal(new Headers(calls[3].headers).has("Authorization"), false);
     process.env.NTFY_BASE_URL = "http://ntfy.sh";
     assert.equal(notificationConfiguration().pushReady, false);
     await assert.rejects(deliverNotification(message), /explicit public mode/);

@@ -30,6 +30,8 @@ El contenido no se reduce en modo público: envía los mismos cierres y alertas 
 
 Cada cierre genera una alerta con ventas netas, descuentos, efectivo contado y diferencia. No se genera un consolidado diario adicional.
 
+El alcance acordado para ntfy es únicamente stock bajo/agotado y cada cierre de turno, con cifras reales y aceptación explícita del tema gratuito público. Las alertas de stock indican punto, producto/variante, cantidad disponible, mínimo y fecha de detección. El cierre indica punto, terminal, responsable, fecha y las cifras del resumen; no publica el detalle de ventas ni las observaciones del correo.
+
 El stock se revisa cada minuto mientras el backend esté encendido. Se usan los mínimos existentes por punto/variante: agotado si stock <= 0; bajo si stock > 0, mínimo > 0 y stock <= mínimo. Solo inventarios inicializados de puntos/grupos activos y variantes activas. Productos de receta no tienen alerta por stock propio; sí sus ingredientes, empaques y bases. Para otros productos se exige pertenecer al catálogo del grupo (incluidos los temporalmente desactivados para venta).
 
 Una alerta por entrada en nivel bajo; otra si se agota. No se repite en cada revisión. Al recuperar stock por encima del mínimo, un descenso posterior habilita una alerta nueva. La primera activación también avisa por productos ya bajos/agotados. Cambios completos entre dos revisiones pueden no detectarse. No se reconstruyen cierres ni movimientos ocurridos con los canales deshabilitados.
