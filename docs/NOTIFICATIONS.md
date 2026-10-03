@@ -20,6 +20,14 @@ Documentación: [SMTP de Google](https://support.google.com/a/answer/176600), [c
 4. En Galaxy Wearable permite que el reloj muestre las notificaciones de ntfy. La entrega al reloj depende del teléfono, conexión y ajustes del dispositivo; no hay una integración directa con el reloj.
 5. Activa `NOTIFICATIONS_PUSH_ENABLED=true` y reinicia el backend.
 
+### Modo gratuito público (opción explícita)
+
+Para ntfy.sh sin tema reservado puede omitirse `NTFY_TOKEN` únicamente con `NTFY_ALLOW_PUBLIC_TOPIC=true`. Mantener HTTPS, un tema aleatorio y `NOTIFICATIONS_PUSH_ENABLED=true`. Por defecto esta excepción está desactivada; el backend advierte al iniciar y el estado de configuración muestra `pushPublicMode`.
+
+Este modo NO es privado: quien conozca el tema puede leer los cierres con cifras y publicar avisos falsos. El token por sí solo tampoco protege un tema no reservado. Usarlo solo con aceptación explícita de ese riesgo, como en la prueba acordada. Para privacidad, reservar/proteger el tema o usar servidor propio y dejar `NTFY_ALLOW_PUBLIC_TOPIC=false`.
+
+El contenido no se reduce en modo público: envía los mismos cierres y alertas de stock. ntfy.sh aplica cuotas al servicio gratuito; revisar volumen al activar porque también se notifican los productos ya bajos/agotados. Una aceptación de ntfy no confirma recepción en el teléfono o el reloj.
+
 Cada cierre genera una alerta con ventas netas, descuentos, efectivo contado y diferencia. No se genera un consolidado diario adicional.
 
 El stock se revisa cada minuto mientras el backend esté encendido. Se usan los mínimos existentes por punto/variante: agotado si stock <= 0; bajo si stock > 0, mínimo > 0 y stock <= mínimo. Solo inventarios inicializados de puntos/grupos activos y variantes activas. Productos de receta no tienen alerta por stock propio; sí sus ingredientes, empaques y bases. Para otros productos se exige pertenecer al catálogo del grupo (incluidos los temporalmente desactivados para venta).

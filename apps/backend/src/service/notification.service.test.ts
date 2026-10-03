@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { Prisma } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
-import { enqueueShiftClosed, processNotificationQueue, scanLowStock } from "./notification.service";
+import { deliverNotification, enqueueShiftClosed, notificationConfiguration, processNotificationQueue, scanLowStock } from "./notification.service";
 
-const keys = ["NOTIFICATIONS_EMAIL_ENABLED", "NOTIFICATIONS_PUSH_ENABLED", "GMAIL_USER", "GMAIL_APP_PASSWORD", "NOTIFICATIONS_EMAIL_TO", "NTFY_TOPIC"];
+const keys = ["NOTIFICATIONS_EMAIL_ENABLED", "NOTIFICATIONS_PUSH_ENABLED", "GMAIL_USER", "GMAIL_APP_PASSWORD", "NOTIFICATIONS_EMAIL_TO", "NTFY_TOPIC", "NTFY_BASE_URL", "NTFY_TOKEN", "NTFY_ALLOW_PUBLIC_TOPIC"];
 
 test("cola y alertas sin conexiones externas", async (t) => {
   const original = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
@@ -102,5 +102,38 @@ test("cola y alertas sin conexiones externas", async (t) => {
     delete process.env.GMAIL_APP_PASSWORD;
     const outbox = { findMany: async () => { throw new Error("No debe consultar"); } } as unknown as typeof prisma.notificationOutbox;
     await processNotificationQueue(async () => { throw new Error("No debe enviar"); }, outbox);
+  });
+
+  await t.test("push gratuito requiere permiso explícito y no inventa un Bearer token", async (t) => {
+    process.env.NOTIFICATIONS_EMAIL_ENABLED = "false";
+    process.env.NOTIFICATIONS_PUSH_ENABLED = "true";
+    process.env.NTFY_BASE_URL = "https://ntfy.sh";
+    process.env.NTFY_TOPIC = "fake-test-topic";
+    delete process.env.NTFY_TOKEN;
+    delete process.env.NTFY_ALLOW_PUBLIC_TOPIC;
+    const message = { id: 7, channel: "PUSH", kind: "STOCK_LOW", recipient: "fake-test-topic", payload: { store: "Prueba", product: "Producto", stock: 2, minimum: 5, level: "LOW", observedAt: new Date().toISOString() } };
+    assert.equal(notificationConfiguration().pushReady, false);
+    await assert.rejects(deliverNotification(message), /explicit public mode/);
+    await processNotificationQueue(async () => { throw new Error("No debe enviar"); }, { findMany: async () => { throw new Error("No debe consultar"); } } as unknown as typeof prisma.notificationOutbox);
+    const originalFetch = globalThis.fetch;
+    t.after(() => { globalThis.fetch = originalFetch; });
+    const calls: RequestInit[] = [];
+    globalThis.fetch = (async (_url, init) => { calls.push(init!); return { ok: true } as Response; }) as typeof fetch;
+    process.env.NTFY_ALLOW_PUBLIC_TOPIC = "true";
+    assert.equal(notificationConfiguration().pushReady, true);
+    await deliverNotification(message);
+    assert.equal(new Headers(calls[0].headers).has("Authorization"), false);
+    assert.equal(JSON.parse(calls[0].body as string).topic, "fake-test-topic");
+    let sent = false;
+    const outbox = { findMany: async () => [{ ...message, attempts: 0 }], updateMany: async () => ({ count: 1 }) } as unknown as typeof prisma.notificationOutbox;
+    await processNotificationQueue(async () => { sent = true; }, outbox);
+    assert.equal(sent, true);
+    process.env.NTFY_TOKEN = "fake-token";
+    await deliverNotification(message);
+    assert.equal(new Headers(calls[1].headers).get("Authorization"), "Bearer fake-token");
+    assert.equal(notificationConfiguration().pushPublicMode, false);
+    process.env.NTFY_BASE_URL = "http://ntfy.sh";
+    assert.equal(notificationConfiguration().pushReady, false);
+    await assert.rejects(deliverNotification(message), /explicit public mode/);
   });
 });
