@@ -61,6 +61,7 @@ export const createFinancialTransactionService = async (
     const transaction = await tx.financialTransaction.create({
       data: {
         type: data.type,
+        createdByUserId: data.createdByUserId,
         requestKey: data.requestKey ?? null,
         amount,
         description: data.description?.trim(),

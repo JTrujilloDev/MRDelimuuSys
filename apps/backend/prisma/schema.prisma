@@ -128,6 +128,7 @@ model RecipeItem {
 }
 
 model User {
+  financialTransactionsCreated FinancialTransaction[] @relation("FinancialCreatedBy")
   id            Int       @id @default(autoincrement())
   name          String
   email         String    @unique
@@ -301,6 +302,8 @@ model FinancialTransaction {
   voidReason              String?
   voidedByUserId          Int?
   requestKey              String? @unique
+  createdByUserId         Int?
+  createdByUser           User? @relation("FinancialCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
 }
 
 enum FinancialTransactionType {

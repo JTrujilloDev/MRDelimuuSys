@@ -8,6 +8,7 @@ import {
   assertClosingSnapshot,
 } from "./cashRegister.rules";
 import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
+import { summarizeCreditCollections } from "./credit.rules";
 import { enqueueShiftClosed } from "./notification.service";
 import { requireShiftInventoryClosing } from "./shiftInventory.service";
 import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
@@ -226,13 +227,14 @@ export const getCashRegisterHistoryService = async (
       user: { select: { id: true, name: true } },
       terminal: { select: { id: true, name: true } },
       transactions: {
-        where: { type: { in: ["EXPENSE", "ADJUSTMENT"] }, voidedAt: null },
+        where: { type: { in: ["EXPENSE", "ADJUSTMENT", "CASH_IN"] }, voidedAt: null },
         orderBy: { createdAt: "desc" },
         select: {
           id: true,
           type: true,
           amount: true,
           paymentMethod: true,
+          relatedAccountId: true,
           description: true,
           adjustmentJustification: true,
           createdAt: true,
@@ -349,6 +351,7 @@ export const getCashRegisterHistoryService = async (
       ...cashRegister,
       ...buildShiftSalesSummary(cashRegister.accounts),
       totalExpenses: summarizeShiftExpenses(cashRegister.transactions),
+      ...summarizeCreditCollections(cashRegister.transactions),
       expectedCash: cashRegister.closingAmount !== null && cashRegister.difference !== null
         ? cashRegister.closingAmount - cashRegister.difference : null,
       soldVariants: Array.from(variants.values()).sort(
@@ -398,6 +401,7 @@ export const getOpenCashRegisterService = async (terminalId: number, database: P
     ...cashRegister,
     ...buildShiftSalesSummary(cashRegister.accounts),
     totalExpenses: summarizeShiftExpenses(cashRegister.transactions),
+    ...summarizeCreditCollections(cashRegister.transactions),
     expectedCash: calculateExpectedCash(cashRegister.transactions),
   };
 };

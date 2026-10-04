@@ -2788,7 +2788,8 @@ export const FinancialTransactionScalarFieldEnum = {
   voidedAt: 'voidedAt',
   voidReason: 'voidReason',
   voidedByUserId: 'voidedByUserId',
-  requestKey: 'requestKey'
+  requestKey: 'requestKey',
+  createdByUserId: 'createdByUserId'
 } as const
 
 export type FinancialTransactionScalarFieldEnum = (typeof FinancialTransactionScalarFieldEnum)[keyof typeof FinancialTransactionScalarFieldEnum]

@@ -10,7 +10,7 @@ export const calculateExpectedCash = (transactions: CashMovement[]) =>
     if (transaction.voidedAt) return cash;
     if (transaction.type === "OPENING") return cash + transaction.amount;
     if (
-      (transaction.type === "SALE" || transaction.type === "REFUND") &&
+      (transaction.type === "SALE" || transaction.type === "REFUND" || transaction.type === "CASH_IN") &&
       transaction.paymentMethod === "CASH"
     ) {
       return cash + transaction.amount;

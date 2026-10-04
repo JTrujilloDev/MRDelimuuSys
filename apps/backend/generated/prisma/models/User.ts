@@ -256,6 +256,7 @@ export type UserWhereInput = {
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionListRelationFilter
   Accounts?: Prisma.AccountListRelationFilter
   cancelledAccounts?: Prisma.AccountListRelationFilter
   CashRegisters?: Prisma.CashRegisterListRelationFilter
@@ -281,6 +282,7 @@ export type UserOrderByWithRelationInput = {
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  financialTransactionsCreated?: Prisma.FinancialTransactionOrderByRelationAggregateInput
   Accounts?: Prisma.AccountOrderByRelationAggregateInput
   cancelledAccounts?: Prisma.AccountOrderByRelationAggregateInput
   CashRegisters?: Prisma.CashRegisterOrderByRelationAggregateInput
@@ -309,6 +311,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionListRelationFilter
   Accounts?: Prisma.AccountListRelationFilter
   cancelledAccounts?: Prisma.AccountListRelationFilter
   CashRegisters?: Prisma.CashRegisterListRelationFilter
@@ -367,6 +370,7 @@ export type UserCreateInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -392,6 +396,7 @@ export type UserUncheckedCreateInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -416,6 +421,7 @@ export type UserUpdateInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -441,6 +447,7 @@ export type UserUncheckedUpdateInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -600,6 +607,22 @@ export type UserUpdateOneWithoutInventoryTransactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInventoryTransactionsInput, Prisma.UserUpdateWithoutInventoryTransactionsInput>, Prisma.UserUncheckedUpdateWithoutInventoryTransactionsInput>
 }
 
+export type UserCreateNestedOneWithoutFinancialTransactionsCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutFinancialTransactionsCreatedInput, Prisma.UserUncheckedCreateWithoutFinancialTransactionsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFinancialTransactionsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutFinancialTransactionsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutFinancialTransactionsCreatedInput, Prisma.UserUncheckedCreateWithoutFinancialTransactionsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFinancialTransactionsCreatedInput
+  upsert?: Prisma.UserUpsertWithoutFinancialTransactionsCreatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFinancialTransactionsCreatedInput, Prisma.UserUpdateWithoutFinancialTransactionsCreatedInput>, Prisma.UserUncheckedUpdateWithoutFinancialTransactionsCreatedInput>
+}
+
 export type UserCreateNestedOneWithoutCashRegistersInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCashRegistersInput, Prisma.UserUncheckedCreateWithoutCashRegistersInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCashRegistersInput
@@ -744,6 +767,7 @@ export type UserCreateWithoutAccountsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
@@ -768,6 +792,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
@@ -796,6 +821,7 @@ export type UserCreateWithoutCancelledAccountsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
@@ -820,6 +846,7 @@ export type UserUncheckedCreateWithoutCancelledAccountsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
@@ -859,6 +886,7 @@ export type UserUpdateWithoutAccountsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
@@ -883,6 +911,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
@@ -917,6 +946,7 @@ export type UserUpdateWithoutCancelledAccountsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
@@ -941,6 +971,7 @@ export type UserUncheckedUpdateWithoutCancelledAccountsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
@@ -964,6 +995,7 @@ export type UserCreateWithoutInventoryTransactionsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -988,6 +1020,7 @@ export type UserUncheckedCreateWithoutInventoryTransactionsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -1027,6 +1060,7 @@ export type UserUpdateWithoutInventoryTransactionsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -1051,11 +1085,126 @@ export type UserUncheckedUpdateWithoutInventoryTransactionsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
+  confirmedInventoryCounts?: Prisma.ShiftInventoryCountUncheckedUpdateManyWithoutConfirmedByUserNestedInput
+  countedInventoryItems?: Prisma.ShiftInventoryCountItemUncheckedUpdateManyWithoutCountedByUserNestedInput
+  resolvedInventoryItems?: Prisma.ShiftInventoryCountItemUncheckedUpdateManyWithoutResolvedByUserNestedInput
+}
+
+export type UserCreateWithoutFinancialTransactionsCreatedInput = {
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
+  CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferCreateNestedManyWithoutCancelledByUserInput
+  confirmedInventoryCounts?: Prisma.ShiftInventoryCountCreateNestedManyWithoutConfirmedByUserInput
+  countedInventoryItems?: Prisma.ShiftInventoryCountItemCreateNestedManyWithoutCountedByUserInput
+  resolvedInventoryItems?: Prisma.ShiftInventoryCountItemCreateNestedManyWithoutResolvedByUserInput
+}
+
+export type UserUncheckedCreateWithoutFinancialTransactionsCreatedInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  role?: $Enums.Role
+  isActive?: boolean
+  isGlobalAdmin?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
+  CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.UserSessionUncheckedCreateNestedManyWithoutUserInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  dispatchedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutDispatchedByUserInput
+  receivedTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutReceivedByUserInput
+  cancelledTransfers?: Prisma.InventoryTransferUncheckedCreateNestedManyWithoutCancelledByUserInput
+  confirmedInventoryCounts?: Prisma.ShiftInventoryCountUncheckedCreateNestedManyWithoutConfirmedByUserInput
+  countedInventoryItems?: Prisma.ShiftInventoryCountItemUncheckedCreateNestedManyWithoutCountedByUserInput
+  resolvedInventoryItems?: Prisma.ShiftInventoryCountItemUncheckedCreateNestedManyWithoutResolvedByUserInput
+}
+
+export type UserCreateOrConnectWithoutFinancialTransactionsCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutFinancialTransactionsCreatedInput, Prisma.UserUncheckedCreateWithoutFinancialTransactionsCreatedInput>
+}
+
+export type UserUpsertWithoutFinancialTransactionsCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutFinancialTransactionsCreatedInput, Prisma.UserUncheckedUpdateWithoutFinancialTransactionsCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutFinancialTransactionsCreatedInput, Prisma.UserUncheckedCreateWithoutFinancialTransactionsCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutFinancialTransactionsCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutFinancialTransactionsCreatedInput, Prisma.UserUncheckedUpdateWithoutFinancialTransactionsCreatedInput>
+}
+
+export type UserUpdateWithoutFinancialTransactionsCreatedInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUpdateManyWithoutCreatedByUserNestedInput
+  dispatchedTransfers?: Prisma.InventoryTransferUpdateManyWithoutDispatchedByUserNestedInput
+  receivedTransfers?: Prisma.InventoryTransferUpdateManyWithoutReceivedByUserNestedInput
+  cancelledTransfers?: Prisma.InventoryTransferUpdateManyWithoutCancelledByUserNestedInput
+  confirmedInventoryCounts?: Prisma.ShiftInventoryCountUpdateManyWithoutConfirmedByUserNestedInput
+  countedInventoryItems?: Prisma.ShiftInventoryCountItemUpdateManyWithoutCountedByUserNestedInput
+  resolvedInventoryItems?: Prisma.ShiftInventoryCountItemUpdateManyWithoutResolvedByUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutFinancialTransactionsCreatedInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGlobalAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
+  CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
+  storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  inventoryTransactions?: Prisma.InventoryTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   dispatchedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutDispatchedByUserNestedInput
   receivedTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutReceivedByUserNestedInput
   cancelledTransfers?: Prisma.InventoryTransferUncheckedUpdateManyWithoutCancelledByUserNestedInput
@@ -1074,6 +1223,7 @@ export type UserCreateWithoutCashRegistersInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   storeAccesses?: Prisma.UserStoreAccessCreateNestedManyWithoutUserInput
@@ -1098,6 +1248,7 @@ export type UserUncheckedCreateWithoutCashRegistersInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedCreateNestedManyWithoutUserInput
@@ -1137,6 +1288,7 @@ export type UserUpdateWithoutCashRegistersInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUpdateManyWithoutUserNestedInput
@@ -1161,6 +1313,7 @@ export type UserUncheckedUpdateWithoutCashRegistersInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   storeAccesses?: Prisma.UserStoreAccessUncheckedUpdateManyWithoutUserNestedInput
@@ -1184,6 +1337,7 @@ export type UserCreateWithoutConfirmedInventoryCountsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -1208,6 +1362,7 @@ export type UserUncheckedCreateWithoutConfirmedInventoryCountsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -1247,6 +1402,7 @@ export type UserUpdateWithoutConfirmedInventoryCountsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -1271,6 +1427,7 @@ export type UserUncheckedUpdateWithoutConfirmedInventoryCountsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -1294,6 +1451,7 @@ export type UserCreateWithoutCountedInventoryItemsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -1318,6 +1476,7 @@ export type UserUncheckedCreateWithoutCountedInventoryItemsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -1346,6 +1505,7 @@ export type UserCreateWithoutResolvedInventoryItemsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -1370,6 +1530,7 @@ export type UserUncheckedCreateWithoutResolvedInventoryItemsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -1409,6 +1570,7 @@ export type UserUpdateWithoutCountedInventoryItemsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -1433,6 +1595,7 @@ export type UserUncheckedUpdateWithoutCountedInventoryItemsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -1467,6 +1630,7 @@ export type UserUpdateWithoutResolvedInventoryItemsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -1491,6 +1655,7 @@ export type UserUncheckedUpdateWithoutResolvedInventoryItemsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -1514,6 +1679,7 @@ export type UserCreateWithoutDispatchedTransfersInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -1538,6 +1704,7 @@ export type UserUncheckedCreateWithoutDispatchedTransfersInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -1566,6 +1733,7 @@ export type UserCreateWithoutReceivedTransfersInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -1590,6 +1758,7 @@ export type UserUncheckedCreateWithoutReceivedTransfersInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -1618,6 +1787,7 @@ export type UserCreateWithoutCancelledTransfersInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -1642,6 +1812,7 @@ export type UserUncheckedCreateWithoutCancelledTransfersInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -1681,6 +1852,7 @@ export type UserUpdateWithoutDispatchedTransfersInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -1705,6 +1877,7 @@ export type UserUncheckedUpdateWithoutDispatchedTransfersInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -1739,6 +1912,7 @@ export type UserUpdateWithoutReceivedTransfersInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -1763,6 +1937,7 @@ export type UserUncheckedUpdateWithoutReceivedTransfersInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -1797,6 +1972,7 @@ export type UserUpdateWithoutCancelledTransfersInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -1821,6 +1997,7 @@ export type UserUncheckedUpdateWithoutCancelledTransfersInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -1844,6 +2021,7 @@ export type UserCreateWithoutStoreAccessesInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -1868,6 +2046,7 @@ export type UserUncheckedCreateWithoutStoreAccessesInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -1907,6 +2086,7 @@ export type UserUpdateWithoutStoreAccessesInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -1931,6 +2111,7 @@ export type UserUncheckedUpdateWithoutStoreAccessesInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -1954,6 +2135,7 @@ export type UserCreateWithoutSessionsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterCreateNestedManyWithoutUserInput
@@ -1978,6 +2160,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   Accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   cancelledAccounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCancelledByUserInput
   CashRegisters?: Prisma.CashRegisterUncheckedCreateNestedManyWithoutUserInput
@@ -2017,6 +2200,7 @@ export type UserUpdateWithoutSessionsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUpdateManyWithoutUserNestedInput
@@ -2041,6 +2225,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  financialTransactionsCreated?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   Accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   cancelledAccounts?: Prisma.AccountUncheckedUpdateManyWithoutCancelledByUserNestedInput
   CashRegisters?: Prisma.CashRegisterUncheckedUpdateManyWithoutUserNestedInput
@@ -2060,6 +2245,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
  */
 
 export type UserCountOutputType = {
+  financialTransactionsCreated: number
   Accounts: number
   cancelledAccounts: number
   CashRegisters: number
@@ -2075,6 +2261,7 @@ export type UserCountOutputType = {
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  financialTransactionsCreated?: boolean | UserCountOutputTypeCountFinancialTransactionsCreatedArgs
   Accounts?: boolean | UserCountOutputTypeCountAccountsArgs
   cancelledAccounts?: boolean | UserCountOutputTypeCountCancelledAccountsArgs
   CashRegisters?: boolean | UserCountOutputTypeCountCashRegistersArgs
@@ -2097,6 +2284,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountFinancialTransactionsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FinancialTransactionWhereInput
 }
 
 /**
@@ -2195,6 +2389,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  financialTransactionsCreated?: boolean | Prisma.User$financialTransactionsCreatedArgs<ExtArgs>
   Accounts?: boolean | Prisma.User$AccountsArgs<ExtArgs>
   cancelledAccounts?: boolean | Prisma.User$cancelledAccountsArgs<ExtArgs>
   CashRegisters?: boolean | Prisma.User$CashRegistersArgs<ExtArgs>
@@ -2251,6 +2446,7 @@ export type UserSelectScalar = {
 
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "isActive" | "isGlobalAdmin" | "lastLoginAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  financialTransactionsCreated?: boolean | Prisma.User$financialTransactionsCreatedArgs<ExtArgs>
   Accounts?: boolean | Prisma.User$AccountsArgs<ExtArgs>
   cancelledAccounts?: boolean | Prisma.User$cancelledAccountsArgs<ExtArgs>
   CashRegisters?: boolean | Prisma.User$CashRegistersArgs<ExtArgs>
@@ -2271,6 +2467,7 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    financialTransactionsCreated: Prisma.$FinancialTransactionPayload<ExtArgs>[]
     Accounts: Prisma.$AccountPayload<ExtArgs>[]
     cancelledAccounts: Prisma.$AccountPayload<ExtArgs>[]
     CashRegisters: Prisma.$CashRegisterPayload<ExtArgs>[]
@@ -2689,6 +2886,7 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  financialTransactionsCreated<T extends Prisma.User$financialTransactionsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$financialTransactionsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FinancialTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   Accounts<T extends Prisma.User$AccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$AccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cancelledAccounts<T extends Prisma.User$cancelledAccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cancelledAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   CashRegisters<T extends Prisma.User$CashRegistersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$CashRegistersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CashRegisterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3130,6 +3328,30 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Users to delete.
    */
   limit?: number
+}
+
+/**
+ * User.financialTransactionsCreated
+ */
+export type User$financialTransactionsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FinancialTransaction
+   */
+  select?: Prisma.FinancialTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FinancialTransaction
+   */
+  omit?: Prisma.FinancialTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FinancialTransactionInclude<ExtArgs> | null
+  where?: Prisma.FinancialTransactionWhereInput
+  orderBy?: Prisma.FinancialTransactionOrderByWithRelationInput | Prisma.FinancialTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.FinancialTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FinancialTransactionScalarFieldEnum | Prisma.FinancialTransactionScalarFieldEnum[]
 }
 
 /**

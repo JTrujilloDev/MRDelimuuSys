@@ -213,6 +213,9 @@ export const adjustAccountItemQuantity = async (
 };
 
 export const closeAccount = async (req: Request, res: Response) => {
+  if (req.body.paymentMethod === "CREDIT" && !req.auth!.isGlobalAdmin && !["ADMIN", "CASHIER"].includes(req.auth!.storeRole || "")) {
+    res.status(403).json({ success: false, message: "Solo caja y administración pueden otorgar créditos" }); return;
+  }
   const {
     accountId,
     paymentMethod,
@@ -229,6 +232,7 @@ export const closeAccount = async (req: Request, res: Response) => {
         cashRegisterId: Number(cashRegisterId),
         discount,
         discountObservation,
+        creditCustomer: req.body.creditCustomer,
       }
     );
     getIO().emit("inventory:updated");

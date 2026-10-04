@@ -12,6 +12,7 @@ export const createFinancialTransaction = async (
   try {
     const transaction = await createFinancialTransactionService({ ...req.body,
       relatedCashRegisterId: req.auth!.openCashRegisterId, relatedAccountId: null,
+      createdByUserId: req.auth!.userId,
     });
     res.status(201).json({
       success: true,

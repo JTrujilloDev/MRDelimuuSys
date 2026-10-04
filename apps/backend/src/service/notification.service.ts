@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import { Prisma } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
+import { summarizeCreditCollections } from "./credit.rules";
 import { renderShiftNotification, retryDelayMs, ShiftNotification, stockAlertLevel } from "./notification.rules";
 
 const enabled = (key: string) => process.env[key] === "true";
@@ -31,12 +32,13 @@ export const enqueueShiftClosed = async (
   if (!emailEnabled() && !pushEnabled()) return;
   const shift = await tx.cashRegister.findUniqueOrThrow({
     where: { id: shiftId },
-    include: { user: { select: { name: true } }, terminal: { include: { store: true } }, accounts: true, inventoryCounts: { include: { items: true } } },
+    include: { user: { select: { name: true } }, terminal: { include: { store: true } }, accounts: true, transactions: true, inventoryCounts: { include: { items: true } } },
   });
   const payload: ShiftNotification = {
     shiftId, store: shift.terminal.store.name, terminal: shift.terminal.name, user: shift.user.name,
     openedAt: shift.openedAt.toISOString(), closedAt: shift.closedAt!.toISOString(),
     ...buildShiftSalesSummary(shift.accounts), openingAmount: shift.openingAmount,
+    ...summarizeCreditCollections(shift.transactions ?? []),
     totalExpenses: closing.totalExpenses, expectedCash: closing.expectedCash,
     closingAmount: closing.closingAmount, difference: closing.difference,
     justification: closing.differenceJustification || "",
