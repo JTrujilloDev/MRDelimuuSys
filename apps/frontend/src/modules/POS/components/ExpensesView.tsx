@@ -1,5 +1,9 @@
-import { useState } from "react";
-import { ArrowLeft, Plus, Receipt } from "lucide-react";
+import { useRef, useState } from "react";
+import { ArrowLeft, Plus, Receipt, Trash2 } from "lucide-react";
+import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { voidExpense } from "../services/financialTransaction.service";
+import { newRequestKey } from "../../../shared/utils/requestKey";
 import type { Expense } from "./CloseShiftView";
 import { Button, Input, Label, toast } from "@heroui/react";
 import { useCreateExpense } from "../hooks/financialTransaction/useCreateExpense";
@@ -18,25 +22,43 @@ interface ExpensesViewProps {
 }
 
 const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
-  const { mutate: createExpense } = useCreateExpense();
-  const { data: { data: { data: expenses = [] } = {} } = {} } =
-    useGetExpenses(cashRegisterId);
+  const { mutate: createExpense, isPending: isCreating } = useCreateExpense();
+  const expensesQuery = useGetExpenses(cashRegisterId);
+  const expenses = expensesQuery.data?.data.data ?? [];
+  const queryClient = useQueryClient();
+  const [voidingId, setVoidingId] = useState<number | null>(null);
+  const [voidReason, setVoidReason] = useState("");
+  const voidMutation = useMutation({ mutationFn: voidExpense,
+    onSuccess: async () => {
+      setVoidingId(null); setVoidReason("");
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["expenses", cashRegisterId] }),
+        queryClient.invalidateQueries({ queryKey: ["openCashRegister"] }),
+      ]);
+      toast("Gasto anulado", { variant: "success" });
+    },
+    onError: error => toast("No se pudo anular el gasto", { variant: "danger", description: axios.isAxiosError(error) ? error.response?.data?.message : "Inténtalo nuevamente" }),
+  });
 
   const [description, setDescription] = useState("");
   const [observation, setObservation] = useState("");
   const [amount, setAmount] = useState("");
+  const request = useRef<{ fingerprint: string; key: string } | null>(null);
   
-  const totalExpenses = expenses.reduce((sum, e) => sum + Math.abs(e.amount), 0);
+  const totalExpenses = expenses.reduce((sum, e) => sum + (e.voidedAt ? 0 : Math.abs(e.amount)), 0);
 
   const handleSubmit = () => {
     const parsedAmount = parseFloat(amount);
-    if (!description.trim() || !observation.trim() || isNaN(parsedAmount) || parsedAmount <= 0) return;
+    if (isCreating || !description.trim() || !observation.trim() || !Number.isFinite(parsedAmount) || parsedAmount <= 0) return;
+    const fingerprint = JSON.stringify([cashRegisterId, description.trim(), observation.trim(), parsedAmount]);
+    if (request.current?.fingerprint !== fingerprint) request.current = { fingerprint, key: newRequestKey() };
     createExpense(
       {
         description,
         observation,
         amount: parsedAmount,
         cashRegisterId,
+        requestKey: request.current.key,
       },
       {
         onSuccess: () => {
@@ -44,6 +66,7 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
           setDescription("");
           setObservation("");
           setAmount("");
+          request.current = null;
         },
         onError: () => {
           toast("Error al registrar el gasto", { variant: "danger" });
@@ -126,10 +149,10 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
             onClick={handleSubmit}
             className="w-full mt-auto"
             size="lg"
-            isDisabled={!description.trim() || !observation.trim() || !(Number(amount) > 0)}
+            isDisabled={isCreating || voidMutation.isPending || !description.trim() || !observation.trim() || !Number.isFinite(Number(amount)) || !(Number(amount) > 0)}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Registrar Gasto
+            {isCreating ? "Guardando..." : "Registrar Gasto"}
           </Button>
         </div>
 
@@ -139,14 +162,16 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
             Gastos registrados ({expenses?.length})
           </h2>
 
-          {expenses?.length === 0 ? (
+          {expensesQuery.isError && <p role="alert" className="mb-3 text-destructive">No fue posible cargar los gastos. <button onClick={() => expensesQuery.refetch()}>Reintentar</button></p>}
+          {expensesQuery.isPending && <p>Cargando gastos...</p>}
+          {!expensesQuery.isPending && !expensesQuery.isError && expenses.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
               <Receipt className="h-12 w-12 mb-3 opacity-30" />
               <p className="text-sm">No hay gastos registrados en este turno</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {expenses?.sort((a, b) => b.createdAt - a.createdAt).map((exp) => (
+              {[...expenses].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).map((exp) => (
                 <div
                   key={exp.id}
                   className="rounded-xl border border-border bg-secondary/30 p-4 flex items-start justify-between gap-4"
@@ -154,6 +179,7 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground">
                       {exp.description}
+                      {exp.voidedAt && <span className="ml-2 rounded bg-muted px-2 py-1 text-xs">Anulado</span>}
                     </p>
                     {exp.adjustmentJustification && (
                       <p className="text-xs text-muted-foreground mt-1">
@@ -164,11 +190,21 @@ const ExpensesView = ({ cashRegisterId, onBack }: ExpensesViewProps) => {
                      
                       {dayjs(exp.createdAt).format("HH:mm ")}
                     </p>
+                    {exp.voidedAt && <p className="mt-2 text-xs text-muted-foreground">Motivo de anulación: {exp.voidReason}</p>}
+                    {voidingId === exp.id && <div className="mt-3 flex flex-col gap-2">
+                      <Label htmlFor={`void-expense-${exp.id}`}>Motivo de anulación</Label>
+                      <Input id={`void-expense-${exp.id}`} value={voidReason} onChange={event => setVoidReason(event.target.value)} placeholder="Ej.: gasto registrado dos veces" />
+                      <div className="flex gap-2">
+                        <Button variant="danger" isDisabled={!voidReason.trim() || voidMutation.isPending} onClick={() => voidMutation.mutate({ id: exp.id, cashRegisterId, reason: voidReason })}>Confirmar anulación</Button>
+                        <Button isDisabled={voidMutation.isPending} onClick={() => setVoidingId(null)}>Conservar gasto</Button>
+                      </div>
+                    </div>}
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-base font-bold text-destructive whitespace-nowrap">
                       {numeral(Math.abs(exp.amount)).format("$ 0,0")}
                     </span>
+                    {!exp.voidedAt && <Button aria-label={`Anular gasto ${exp.description}`} isDisabled={voidMutation.isPending || isCreating} onClick={() => { setVoidingId(exp.id); setVoidReason(""); }}><Trash2 className="h-4 w-4" />Anular</Button>}
                   </div>
                 </div>
               ))}

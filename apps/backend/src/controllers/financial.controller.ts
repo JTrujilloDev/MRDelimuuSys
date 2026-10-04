@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   createFinancialTransactionService,
   getFinancialTransactionsService,
+  voidExpenseService,
 } from "../service/financial.service";
 
 export const createFinancialTransaction = async (
@@ -9,7 +10,9 @@ export const createFinancialTransaction = async (
   res: Response,
 ) => {
   try {
-    const transaction = await createFinancialTransactionService(req.body);
+    const transaction = await createFinancialTransactionService({ ...req.body,
+      relatedCashRegisterId: req.auth!.openCashRegisterId, relatedAccountId: null,
+    });
     res.status(201).json({
       success: true,
       message: "Financial transaction created successfully",
@@ -20,6 +23,15 @@ export const createFinancialTransaction = async (
       success: false,
       message: (error as Error).message,
     });
+  }
+};
+
+export const voidExpense = async (req: Request, res: Response) => {
+  try {
+    const data = await voidExpenseService(Number(req.params.id), req.auth!.openCashRegisterId!, req.auth!.userId, req.body.reason);
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
   }
 };
 

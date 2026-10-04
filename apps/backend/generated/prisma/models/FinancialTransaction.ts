@@ -31,6 +31,7 @@ export type FinancialTransactionAvgAggregateOutputType = {
   amount: number | null
   relatedCashRegisterId: number | null
   relatedAccountId: number | null
+  voidedByUserId: number | null
 }
 
 export type FinancialTransactionSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type FinancialTransactionSumAggregateOutputType = {
   amount: number | null
   relatedCashRegisterId: number | null
   relatedAccountId: number | null
+  voidedByUserId: number | null
 }
 
 export type FinancialTransactionMinAggregateOutputType = {
@@ -50,6 +52,10 @@ export type FinancialTransactionMinAggregateOutputType = {
   relatedAccountId: number | null
   paymentMethod: $Enums.PaymentMethod | null
   adjustmentJustification: string | null
+  voidedAt: Date | null
+  voidReason: string | null
+  voidedByUserId: number | null
+  requestKey: string | null
 }
 
 export type FinancialTransactionMaxAggregateOutputType = {
@@ -62,6 +68,10 @@ export type FinancialTransactionMaxAggregateOutputType = {
   relatedAccountId: number | null
   paymentMethod: $Enums.PaymentMethod | null
   adjustmentJustification: string | null
+  voidedAt: Date | null
+  voidReason: string | null
+  voidedByUserId: number | null
+  requestKey: string | null
 }
 
 export type FinancialTransactionCountAggregateOutputType = {
@@ -74,6 +84,10 @@ export type FinancialTransactionCountAggregateOutputType = {
   relatedAccountId: number
   paymentMethod: number
   adjustmentJustification: number
+  voidedAt: number
+  voidReason: number
+  voidedByUserId: number
+  requestKey: number
   _all: number
 }
 
@@ -83,6 +97,7 @@ export type FinancialTransactionAvgAggregateInputType = {
   amount?: true
   relatedCashRegisterId?: true
   relatedAccountId?: true
+  voidedByUserId?: true
 }
 
 export type FinancialTransactionSumAggregateInputType = {
@@ -90,6 +105,7 @@ export type FinancialTransactionSumAggregateInputType = {
   amount?: true
   relatedCashRegisterId?: true
   relatedAccountId?: true
+  voidedByUserId?: true
 }
 
 export type FinancialTransactionMinAggregateInputType = {
@@ -102,6 +118,10 @@ export type FinancialTransactionMinAggregateInputType = {
   relatedAccountId?: true
   paymentMethod?: true
   adjustmentJustification?: true
+  voidedAt?: true
+  voidReason?: true
+  voidedByUserId?: true
+  requestKey?: true
 }
 
 export type FinancialTransactionMaxAggregateInputType = {
@@ -114,6 +134,10 @@ export type FinancialTransactionMaxAggregateInputType = {
   relatedAccountId?: true
   paymentMethod?: true
   adjustmentJustification?: true
+  voidedAt?: true
+  voidReason?: true
+  voidedByUserId?: true
+  requestKey?: true
 }
 
 export type FinancialTransactionCountAggregateInputType = {
@@ -126,6 +150,10 @@ export type FinancialTransactionCountAggregateInputType = {
   relatedAccountId?: true
   paymentMethod?: true
   adjustmentJustification?: true
+  voidedAt?: true
+  voidReason?: true
+  voidedByUserId?: true
+  requestKey?: true
   _all?: true
 }
 
@@ -225,6 +253,10 @@ export type FinancialTransactionGroupByOutputType = {
   relatedAccountId: number | null
   paymentMethod: $Enums.PaymentMethod | null
   adjustmentJustification: string | null
+  voidedAt: Date | null
+  voidReason: string | null
+  voidedByUserId: number | null
+  requestKey: string | null
   _count: FinancialTransactionCountAggregateOutputType | null
   _avg: FinancialTransactionAvgAggregateOutputType | null
   _sum: FinancialTransactionSumAggregateOutputType | null
@@ -260,6 +292,10 @@ export type FinancialTransactionWhereInput = {
   relatedAccountId?: Prisma.IntNullableFilter<"FinancialTransaction"> | number | null
   paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"FinancialTransaction"> | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.StringNullableFilter<"FinancialTransaction"> | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"FinancialTransaction"> | Date | string | null
+  voidReason?: Prisma.StringNullableFilter<"FinancialTransaction"> | string | null
+  voidedByUserId?: Prisma.IntNullableFilter<"FinancialTransaction"> | number | null
+  requestKey?: Prisma.StringNullableFilter<"FinancialTransaction"> | string | null
   cashRegister?: Prisma.XOR<Prisma.CashRegisterNullableScalarRelationFilter, Prisma.CashRegisterWhereInput> | null
   account?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
 }
@@ -274,12 +310,17 @@ export type FinancialTransactionOrderByWithRelationInput = {
   relatedAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   adjustmentJustification?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestKey?: Prisma.SortOrderInput | Prisma.SortOrder
   cashRegister?: Prisma.CashRegisterOrderByWithRelationInput
   account?: Prisma.AccountOrderByWithRelationInput
 }
 
 export type FinancialTransactionWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  requestKey?: string
   AND?: Prisma.FinancialTransactionWhereInput | Prisma.FinancialTransactionWhereInput[]
   OR?: Prisma.FinancialTransactionWhereInput[]
   NOT?: Prisma.FinancialTransactionWhereInput | Prisma.FinancialTransactionWhereInput[]
@@ -291,9 +332,12 @@ export type FinancialTransactionWhereUniqueInput = Prisma.AtLeast<{
   relatedAccountId?: Prisma.IntNullableFilter<"FinancialTransaction"> | number | null
   paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"FinancialTransaction"> | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.StringNullableFilter<"FinancialTransaction"> | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"FinancialTransaction"> | Date | string | null
+  voidReason?: Prisma.StringNullableFilter<"FinancialTransaction"> | string | null
+  voidedByUserId?: Prisma.IntNullableFilter<"FinancialTransaction"> | number | null
   cashRegister?: Prisma.XOR<Prisma.CashRegisterNullableScalarRelationFilter, Prisma.CashRegisterWhereInput> | null
   account?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
-}, "id">
+}, "id" | "requestKey">
 
 export type FinancialTransactionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -305,6 +349,10 @@ export type FinancialTransactionOrderByWithAggregationInput = {
   relatedAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   adjustmentJustification?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestKey?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.FinancialTransactionCountOrderByAggregateInput
   _avg?: Prisma.FinancialTransactionAvgOrderByAggregateInput
   _max?: Prisma.FinancialTransactionMaxOrderByAggregateInput
@@ -325,6 +373,10 @@ export type FinancialTransactionScalarWhereWithAggregatesInput = {
   relatedAccountId?: Prisma.IntNullableWithAggregatesFilter<"FinancialTransaction"> | number | null
   paymentMethod?: Prisma.EnumPaymentMethodNullableWithAggregatesFilter<"FinancialTransaction"> | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.StringNullableWithAggregatesFilter<"FinancialTransaction"> | string | null
+  voidedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FinancialTransaction"> | Date | string | null
+  voidReason?: Prisma.StringNullableWithAggregatesFilter<"FinancialTransaction"> | string | null
+  voidedByUserId?: Prisma.IntNullableWithAggregatesFilter<"FinancialTransaction"> | number | null
+  requestKey?: Prisma.StringNullableWithAggregatesFilter<"FinancialTransaction"> | string | null
 }
 
 export type FinancialTransactionCreateInput = {
@@ -334,6 +386,10 @@ export type FinancialTransactionCreateInput = {
   createdAt?: Date | string
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
   cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutTransactionsInput
   account?: Prisma.AccountCreateNestedOneWithoutFinancialTransactionsInput
 }
@@ -348,6 +404,10 @@ export type FinancialTransactionUncheckedCreateInput = {
   relatedAccountId?: number | null
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
 }
 
 export type FinancialTransactionUpdateInput = {
@@ -357,6 +417,10 @@ export type FinancialTransactionUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cashRegister?: Prisma.CashRegisterUpdateOneWithoutTransactionsNestedInput
   account?: Prisma.AccountUpdateOneWithoutFinancialTransactionsNestedInput
 }
@@ -371,6 +435,10 @@ export type FinancialTransactionUncheckedUpdateInput = {
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FinancialTransactionCreateManyInput = {
@@ -383,6 +451,10 @@ export type FinancialTransactionCreateManyInput = {
   relatedAccountId?: number | null
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
 }
 
 export type FinancialTransactionUpdateManyMutationInput = {
@@ -392,6 +464,10 @@ export type FinancialTransactionUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FinancialTransactionUncheckedUpdateManyInput = {
@@ -404,6 +480,10 @@ export type FinancialTransactionUncheckedUpdateManyInput = {
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FinancialTransactionListRelationFilter = {
@@ -426,6 +506,10 @@ export type FinancialTransactionCountOrderByAggregateInput = {
   relatedAccountId?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   adjustmentJustification?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  voidReason?: Prisma.SortOrder
+  voidedByUserId?: Prisma.SortOrder
+  requestKey?: Prisma.SortOrder
 }
 
 export type FinancialTransactionAvgOrderByAggregateInput = {
@@ -433,6 +517,7 @@ export type FinancialTransactionAvgOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   relatedCashRegisterId?: Prisma.SortOrder
   relatedAccountId?: Prisma.SortOrder
+  voidedByUserId?: Prisma.SortOrder
 }
 
 export type FinancialTransactionMaxOrderByAggregateInput = {
@@ -445,6 +530,10 @@ export type FinancialTransactionMaxOrderByAggregateInput = {
   relatedAccountId?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   adjustmentJustification?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  voidReason?: Prisma.SortOrder
+  voidedByUserId?: Prisma.SortOrder
+  requestKey?: Prisma.SortOrder
 }
 
 export type FinancialTransactionMinOrderByAggregateInput = {
@@ -457,6 +546,10 @@ export type FinancialTransactionMinOrderByAggregateInput = {
   relatedAccountId?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   adjustmentJustification?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  voidReason?: Prisma.SortOrder
+  voidedByUserId?: Prisma.SortOrder
+  requestKey?: Prisma.SortOrder
 }
 
 export type FinancialTransactionSumOrderByAggregateInput = {
@@ -464,6 +557,7 @@ export type FinancialTransactionSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   relatedCashRegisterId?: Prisma.SortOrder
   relatedAccountId?: Prisma.SortOrder
+  voidedByUserId?: Prisma.SortOrder
 }
 
 export type FinancialTransactionCreateNestedManyWithoutAccountInput = {
@@ -561,6 +655,10 @@ export type FinancialTransactionCreateWithoutAccountInput = {
   createdAt?: Date | string
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
   cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutTransactionsInput
 }
 
@@ -573,6 +671,10 @@ export type FinancialTransactionUncheckedCreateWithoutAccountInput = {
   relatedCashRegisterId?: number | null
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
 }
 
 export type FinancialTransactionCreateOrConnectWithoutAccountInput = {
@@ -614,6 +716,10 @@ export type FinancialTransactionScalarWhereInput = {
   relatedAccountId?: Prisma.IntNullableFilter<"FinancialTransaction"> | number | null
   paymentMethod?: Prisma.EnumPaymentMethodNullableFilter<"FinancialTransaction"> | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.StringNullableFilter<"FinancialTransaction"> | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"FinancialTransaction"> | Date | string | null
+  voidReason?: Prisma.StringNullableFilter<"FinancialTransaction"> | string | null
+  voidedByUserId?: Prisma.IntNullableFilter<"FinancialTransaction"> | number | null
+  requestKey?: Prisma.StringNullableFilter<"FinancialTransaction"> | string | null
 }
 
 export type FinancialTransactionCreateWithoutCashRegisterInput = {
@@ -623,6 +729,10 @@ export type FinancialTransactionCreateWithoutCashRegisterInput = {
   createdAt?: Date | string
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
   account?: Prisma.AccountCreateNestedOneWithoutFinancialTransactionsInput
 }
 
@@ -635,6 +745,10 @@ export type FinancialTransactionUncheckedCreateWithoutCashRegisterInput = {
   relatedAccountId?: number | null
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
 }
 
 export type FinancialTransactionCreateOrConnectWithoutCashRegisterInput = {
@@ -672,6 +786,10 @@ export type FinancialTransactionCreateManyAccountInput = {
   relatedCashRegisterId?: number | null
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
 }
 
 export type FinancialTransactionUpdateWithoutAccountInput = {
@@ -681,6 +799,10 @@ export type FinancialTransactionUpdateWithoutAccountInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cashRegister?: Prisma.CashRegisterUpdateOneWithoutTransactionsNestedInput
 }
 
@@ -693,6 +815,10 @@ export type FinancialTransactionUncheckedUpdateWithoutAccountInput = {
   relatedCashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FinancialTransactionUncheckedUpdateManyWithoutAccountInput = {
@@ -704,6 +830,10 @@ export type FinancialTransactionUncheckedUpdateManyWithoutAccountInput = {
   relatedCashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FinancialTransactionCreateManyCashRegisterInput = {
@@ -715,6 +845,10 @@ export type FinancialTransactionCreateManyCashRegisterInput = {
   relatedAccountId?: number | null
   paymentMethod?: $Enums.PaymentMethod | null
   adjustmentJustification?: string | null
+  voidedAt?: Date | string | null
+  voidReason?: string | null
+  voidedByUserId?: number | null
+  requestKey?: string | null
 }
 
 export type FinancialTransactionUpdateWithoutCashRegisterInput = {
@@ -724,6 +858,10 @@ export type FinancialTransactionUpdateWithoutCashRegisterInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   account?: Prisma.AccountUpdateOneWithoutFinancialTransactionsNestedInput
 }
 
@@ -736,6 +874,10 @@ export type FinancialTransactionUncheckedUpdateWithoutCashRegisterInput = {
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FinancialTransactionUncheckedUpdateManyWithoutCashRegisterInput = {
@@ -747,6 +889,10 @@ export type FinancialTransactionUncheckedUpdateManyWithoutCashRegisterInput = {
   relatedAccountId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
   adjustmentJustification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voidedByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -761,6 +907,10 @@ export type FinancialTransactionSelect<ExtArgs extends runtime.Types.Extensions.
   relatedAccountId?: boolean
   paymentMethod?: boolean
   adjustmentJustification?: boolean
+  voidedAt?: boolean
+  voidReason?: boolean
+  voidedByUserId?: boolean
+  requestKey?: boolean
   cashRegister?: boolean | Prisma.FinancialTransaction$cashRegisterArgs<ExtArgs>
   account?: boolean | Prisma.FinancialTransaction$accountArgs<ExtArgs>
 }, ExtArgs["result"]["financialTransaction"]>
@@ -775,6 +925,10 @@ export type FinancialTransactionSelectCreateManyAndReturn<ExtArgs extends runtim
   relatedAccountId?: boolean
   paymentMethod?: boolean
   adjustmentJustification?: boolean
+  voidedAt?: boolean
+  voidReason?: boolean
+  voidedByUserId?: boolean
+  requestKey?: boolean
   cashRegister?: boolean | Prisma.FinancialTransaction$cashRegisterArgs<ExtArgs>
   account?: boolean | Prisma.FinancialTransaction$accountArgs<ExtArgs>
 }, ExtArgs["result"]["financialTransaction"]>
@@ -789,6 +943,10 @@ export type FinancialTransactionSelectUpdateManyAndReturn<ExtArgs extends runtim
   relatedAccountId?: boolean
   paymentMethod?: boolean
   adjustmentJustification?: boolean
+  voidedAt?: boolean
+  voidReason?: boolean
+  voidedByUserId?: boolean
+  requestKey?: boolean
   cashRegister?: boolean | Prisma.FinancialTransaction$cashRegisterArgs<ExtArgs>
   account?: boolean | Prisma.FinancialTransaction$accountArgs<ExtArgs>
 }, ExtArgs["result"]["financialTransaction"]>
@@ -803,9 +961,13 @@ export type FinancialTransactionSelectScalar = {
   relatedAccountId?: boolean
   paymentMethod?: boolean
   adjustmentJustification?: boolean
+  voidedAt?: boolean
+  voidReason?: boolean
+  voidedByUserId?: boolean
+  requestKey?: boolean
 }
 
-export type FinancialTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "type" | "description" | "createdAt" | "relatedCashRegisterId" | "relatedAccountId" | "paymentMethod" | "adjustmentJustification", ExtArgs["result"]["financialTransaction"]>
+export type FinancialTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "type" | "description" | "createdAt" | "relatedCashRegisterId" | "relatedAccountId" | "paymentMethod" | "adjustmentJustification" | "voidedAt" | "voidReason" | "voidedByUserId" | "requestKey", ExtArgs["result"]["financialTransaction"]>
 export type FinancialTransactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cashRegister?: boolean | Prisma.FinancialTransaction$cashRegisterArgs<ExtArgs>
   account?: boolean | Prisma.FinancialTransaction$accountArgs<ExtArgs>
@@ -835,6 +997,10 @@ export type $FinancialTransactionPayload<ExtArgs extends runtime.Types.Extension
     relatedAccountId: number | null
     paymentMethod: $Enums.PaymentMethod | null
     adjustmentJustification: string | null
+    voidedAt: Date | null
+    voidReason: string | null
+    voidedByUserId: number | null
+    requestKey: string | null
   }, ExtArgs["result"]["financialTransaction"]>
   composites: {}
 }
@@ -1269,6 +1435,10 @@ export interface FinancialTransactionFieldRefs {
   readonly relatedAccountId: Prisma.FieldRef<"FinancialTransaction", 'Int'>
   readonly paymentMethod: Prisma.FieldRef<"FinancialTransaction", 'PaymentMethod'>
   readonly adjustmentJustification: Prisma.FieldRef<"FinancialTransaction", 'String'>
+  readonly voidedAt: Prisma.FieldRef<"FinancialTransaction", 'DateTime'>
+  readonly voidReason: Prisma.FieldRef<"FinancialTransaction", 'String'>
+  readonly voidedByUserId: Prisma.FieldRef<"FinancialTransaction", 'Int'>
+  readonly requestKey: Prisma.FieldRef<"FinancialTransaction", 'String'>
 }
     
 

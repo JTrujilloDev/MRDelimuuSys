@@ -2,44 +2,26 @@ import { FinancialTransaction } from "../../generated/prisma/client";
 import { PaymentMethod } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { updateCashRegisterTotalsTx } from "./cashRegister.service";
+import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
 
 export const createFinancialTransactionService = async (
   data: FinancialTransaction,
+  database: Pick<typeof prisma, "$transaction"> = prisma,
 ) => {
-  return await prisma.$transaction(async (tx) => {
+  return await database.$transaction(async (tx) => {
+    if (data.type !== "EXPENSE") throw new Error("Solo se pueden registrar gastos desde este formulario");
+    if (!Number.isInteger(data.relatedCashRegisterId) || Number(data.relatedCashRegisterId) <= 0) throw new Error("Valid cash register required");
+    await lockInventoryVerificationTx(tx);
+    await tx.$queryRaw`SELECT "id" FROM "CashRegister" WHERE "id" = ${data.relatedCashRegisterId} FOR UPDATE`;
     // 1. Validar monto
-    if (!data.amount || data.amount <= 0) {
+    if (typeof data.amount !== "number" || !Number.isFinite(data.amount) || data.amount <= 0) {
       throw new Error("Invalid amount");
     }
 
     // 2. Validar tipo vs monto
-    let amount = data.amount;
-
-    switch (data.type) {
-      case "SALE":
-        amount = Math.abs(amount);
-        break;
-
-      case "EXPENSE":
-        if (!data.description?.trim()) {
-          throw new Error("Expense description is required");
-        }
-        if (!data.adjustmentJustification?.trim()) {
-          throw new Error("Expense observation is required");
-        }
-        amount = -Math.abs(amount);
-        break;
-
-      case "ADJUSTMENT":
-        // puede ser +/- pero requiere justificación
-        if (!data.adjustmentJustification) {
-          throw new Error("Justification required for adjustment");
-        }
-        break;
-
-      default:
-        throw new Error("Invalid transaction type");
-    }
+    if (typeof data.description !== "string" || !data.description.trim()) throw new Error("Expense description is required");
+    if (typeof data.adjustmentJustification !== "string" || !data.adjustmentJustification.trim()) throw new Error("Expense observation is required");
+    const amount = -Math.abs(data.amount);
 
     // 3. Validar caja
     if (data.relatedCashRegisterId) {
@@ -56,6 +38,18 @@ export const createFinancialTransactionService = async (
       }
     }
 
+    if (data.requestKey != null) {
+      if (typeof data.requestKey !== "string" || !/^[a-f0-9-]{36}$/i.test(data.requestKey)) throw new Error("Invalid request key");
+      const previous = await tx.financialTransaction.findUnique({ where: { requestKey: data.requestKey } });
+      if (previous) {
+        if (previous.relatedCashRegisterId !== data.relatedCashRegisterId || previous.type !== "EXPENSE"
+          || previous.amount !== amount || previous.description !== data.description.trim()
+          || previous.adjustmentJustification !== data.adjustmentJustification.trim()) throw new Error("La solicitud ya se utilizó para otro gasto");
+        if (previous.voidedAt) throw new Error("El gasto de esta solicitud fue anulado");
+        return previous;
+      }
+    }
+
     if (data.relatedCashRegisterId && data.type === "EXPENSE") {
       await updateCashRegisterTotalsTx(tx, {
         cashRegisterId: data.relatedCashRegisterId,
@@ -67,6 +61,7 @@ export const createFinancialTransactionService = async (
     const transaction = await tx.financialTransaction.create({
       data: {
         type: data.type,
+        requestKey: data.requestKey ?? null,
         amount,
         description: data.description?.trim(),
         relatedAccountId: data.relatedAccountId,
@@ -80,7 +75,29 @@ export const createFinancialTransactionService = async (
   });
 };
 
+export const voidExpenseService = async (
+  id: number, cashRegisterId: number, userId: number, reason: unknown,
+  database: Pick<typeof prisma, "$transaction"> = prisma,
+) => database.$transaction(async tx => {
+  if (!Number.isInteger(id) || id <= 0) throw new Error("Gasto inválido");
+  if (typeof reason !== "string" || !reason.trim()) throw new Error("Indica el motivo de anulación");
+  await lockInventoryVerificationTx(tx);
+  await tx.$queryRaw`SELECT "id" FROM "CashRegister" WHERE "id" = ${cashRegisterId} FOR UPDATE`;
+  const register = await tx.cashRegister.findUnique({ where: { id: cashRegisterId } });
+  if (!register || register.status !== "OPEN") throw new Error("No se pueden anular gastos de un turno cerrado");
+  const expense = await tx.financialTransaction.findUnique({ where: { id } });
+  if (!expense || expense.type !== "EXPENSE" || expense.relatedCashRegisterId !== cashRegisterId) throw new Error("El gasto no pertenece al turno activo");
+  const result = await tx.financialTransaction.updateMany({
+    where: { id, type: "EXPENSE", relatedCashRegisterId: cashRegisterId, voidedAt: null },
+    data: { voidedAt: new Date(), voidReason: reason.trim(), voidedByUserId: userId },
+  });
+  if (!result.count) throw new Error("El gasto ya fue anulado");
+  await updateCashRegisterTotalsTx(tx, { cashRegisterId, expenseAmount: -Math.abs(expense.amount) });
+  return { id, voided: true };
+});
+
 interface FinancialTransactionFilters {
+  includeVoided?: string;
   type?: "SALE" | "EXPENSE" | "ADJUSTMENT";
   paymentMethod?: PaymentMethod;
   cashRegisterId?: number;
@@ -96,6 +113,7 @@ interface FinancialTransactionFilters {
 export const getFinancialTransactionsService = async (
   filters: FinancialTransactionFilters,
   storeId: number,
+  database: Pick<typeof prisma, "$transaction" | "financialTransaction"> = prisma,
 ) => {
   const {
     type,
@@ -113,6 +131,7 @@ export const getFinancialTransactionsService = async (
 
   const where: any = {
     cashRegister: { terminal: { storeId } },
+    ...(filters.includeVoided !== "true" && { voidedAt: null }),
   };
 
   // 1. Filtros directos
@@ -154,25 +173,29 @@ export const getFinancialTransactionsService = async (
   }
 
   // 5. Paginación
-  const skip = (page - 1) * limit;
+  const pageNumber = Number(page);
+  const pageSize = Number(limit);
+  if (!Number.isInteger(pageNumber) || pageNumber < 1 || !Number.isInteger(pageSize) || pageSize < 1 || pageSize > 1000) throw new Error("Invalid pagination");
+  const fullShiftExpenses = type === "EXPENSE" && Number(cashRegisterId) > 0;
+  const skip = fullShiftExpenses ? 0 : (pageNumber - 1) * pageSize;
 
-  const [transactions, total] = await prisma.$transaction([
-    prisma.financialTransaction.findMany({
+  const [transactions, total] = await database.$transaction([
+    database.financialTransaction.findMany({
       where,
       orderBy: { createdAt: "desc" },
       skip,
-      take: limit,
+      ...(fullShiftExpenses ? {} : { take: pageSize }),
     }),
-    prisma.financialTransaction.count({ where }),
+    database.financialTransaction.count({ where }),
   ]);
 
   return {
     data: transactions,
     meta: {
       total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
+      page: fullShiftExpenses ? 1 : pageNumber,
+      limit: fullShiftExpenses ? total : pageSize,
+      totalPages: fullShiftExpenses ? (total ? 1 : 0) : Math.ceil(total / pageSize),
     },
   };
 };

@@ -265,7 +265,11 @@ export const FinancialTransactionScalarFieldEnum = {
   relatedCashRegisterId: 'relatedCashRegisterId',
   relatedAccountId: 'relatedAccountId',
   paymentMethod: 'paymentMethod',
-  adjustmentJustification: 'adjustmentJustification'
+  adjustmentJustification: 'adjustmentJustification',
+  voidedAt: 'voidedAt',
+  voidReason: 'voidReason',
+  voidedByUserId: 'voidedByUserId',
+  requestKey: 'requestKey'
 } as const
 
 export type FinancialTransactionScalarFieldEnum = (typeof FinancialTransactionScalarFieldEnum)[keyof typeof FinancialTransactionScalarFieldEnum]

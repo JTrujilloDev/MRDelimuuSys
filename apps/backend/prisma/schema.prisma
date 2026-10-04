@@ -297,6 +297,10 @@ model FinancialTransaction {
   account                 Account?                 @relation(fields: [relatedAccountId], references: [id], onDelete: Cascade, name: "AccountFinancialTransactions")
   paymentMethod           PaymentMethod?
   adjustmentJustification String?
+  voidedAt                DateTime?
+  voidReason              String?
+  voidedByUserId          Int?
+  requestKey              String? @unique
 }
 
 enum FinancialTransactionType {
