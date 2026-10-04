@@ -76,12 +76,14 @@ export const closeAccount = async ({
   cashRegisterId,
   discount,
   discountObservation,
+  creditCustomer,
 }: {
   accountId: number;
   paymentMethod: string;
   cashRegisterId: number;
   discount: number;
   discountObservation: string;
+  creditCustomer?: { name: string; phone: string };
 }) => {
   const { data } = await api.put("accounts/close", {
     accountId,
@@ -89,6 +91,7 @@ export const closeAccount = async ({
     cashRegisterId,
     discount,
     discountObservation,
+    creditCustomer,
   });
   return data;
 };

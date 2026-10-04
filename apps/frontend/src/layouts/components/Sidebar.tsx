@@ -19,6 +19,7 @@ import {
   Tag,
   UserCog,
   UserRound,
+  Wallet,
 } from "lucide-react";
 import { LuLogOut } from "react-icons/lu";
 import { useTheme } from "../../app/providers";
@@ -73,6 +74,7 @@ const Sidebar = () => {
   const items = [
     { title: "Punto de Venta", url: "pos", icon: ShoppingCart },
     { title: "Historial de cajas", url: "cash-register-history", icon: History },
+    ...(state?.user.isGlobalAdmin || ["ADMIN", "CASHIER"].includes(activeContext.role) ? [{ title: "Créditos", url: "credits", icon: Wallet }] : []),
     ...(state?.user.isGlobalAdmin || activeContext.role === "ADMIN"
       ? [
           { title: "Reportes", url: "reports", icon: ChartNoAxesCombined },

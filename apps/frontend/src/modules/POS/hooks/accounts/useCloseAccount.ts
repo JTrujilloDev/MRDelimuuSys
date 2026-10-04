@@ -6,6 +6,7 @@ export const useCloseAccount = () => {
   return useMutation({
     mutationFn: closeAccount,
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["credits"] });
       void queryClient.invalidateQueries({ queryKey: ["accounts"] });
       void queryClient.invalidateQueries({ queryKey: ["openCashRegister"] });
       void queryClient.invalidateQueries({ queryKey: ["products"] });

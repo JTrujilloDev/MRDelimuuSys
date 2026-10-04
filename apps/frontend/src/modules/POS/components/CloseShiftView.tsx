@@ -176,6 +176,7 @@ const CloseShiftView = ({
                 color="text-orange-500"
                 negative
               />
+              <SummaryCard icon={Receipt} label="Ventas a crédito" value={shift.creditAmount} color="text-primary" />
               <SummaryCard
                 icon={Minus}
                 label="Gastos"
@@ -187,9 +188,20 @@ const CloseShiftView = ({
           </div>
 
           <div>
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Descuentos justificados
-            </h2>
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Recaudo de créditos
+              </h2>
+            <div className="mb-4 rounded-xl border border-border bg-secondary/30 p-4">
+              <p className="font-bold text-foreground">Abonos de créditos recibidos: {numeral(shift.creditCollections || 0).format("$ 0,0")}</p>
+              <p className="mt-2 text-sm text-muted-foreground">Efectivo: {numeral(shift.cashCreditCollections || 0).format("$ 0,0")} · Tarjeta: {numeral(shift.cardCreditCollections || 0).format("$ 0,0")} · QR: {numeral(shift.qrCreditCollections || 0).format("$ 0,0")}</p>
+              <p className="mt-1 text-xs text-muted-foreground">No son ventas nuevas. Solo los abonos en efectivo se incluyen en el efectivo esperado.</p>
+            </div>
+            </div>
+
+            <div>
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Descuentos justificados
+              </h2>
             <div className="space-y-2">
               {discountedSales.length === 0 && (
                 <p className="text-sm italic text-muted-foreground">

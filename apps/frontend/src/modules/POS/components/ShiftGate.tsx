@@ -23,6 +23,10 @@ export interface Shift {
   cardAmount: number;
   qrAmount: number;
   creditAmount: number;
+  creditCollections: number;
+  cashCreditCollections: number;
+  cardCreditCollections: number;
+  qrCreditCollections: number;
   accounts: Array<{
     id: number;
     name: string;

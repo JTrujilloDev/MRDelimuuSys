@@ -612,6 +612,7 @@ const Index = () => {
     discountObservation,
     order,
     printTicket,
+    creditCustomer,
   }: CloseAccountParams) => {
     if (closingAccountRef.current) return;
     closingAccountRef.current = true;
@@ -623,6 +624,7 @@ const Index = () => {
         cashRegisterId: cashRegisterId,
         discount,
         discountObservation,
+        creditCustomer,
       },
       {
         onSuccess: async () => {

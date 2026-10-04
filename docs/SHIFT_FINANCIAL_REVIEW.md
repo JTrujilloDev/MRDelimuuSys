@@ -15,9 +15,9 @@
 
 La suite de lógica no usa producción ni envía avisos externos. Hay pruebas para efectivo, devoluciones, pagos electrónicos/crédito, descuentos/cortesías, anulación de gastos, reintentos y conteo de denominaciones.
 
-Resultado local: 56 pruebas de backend aprobadas, 2 pruebas de integración omitidas por falta de base; 3 pruebas de frontend aprobadas. La revisión de tipos del backend y la compilación de producción del frontend finalizaron correctamente. La revisión global de tipos del frontend sigue mostrando errores en otros archivos (categorías, impresión, productos, reportes y otros); no se presenta como una comprobación global limpia.
+Resultado final local: 63 pruebas de backend aprobadas, incluidas las tres pruebas de integración PostgreSQL, sin omisiones; 15 pruebas de frontend aprobadas. La revisión de tipos del backend y la compilación de producción del frontend finalizaron correctamente. La revisión global de tipos del frontend sigue mostrando errores preexistentes en otros archivos (categorías, impresión, productos, reportes y otros); no se presenta como una comprobación global limpia.
 
-La conexión PostgreSQL local devolvió `ECONNREFUSED` y Docker no tenía un motor disponible. Se intentó aplicar la migración, pero no fue posible; la migración sigue pendiente. El cliente Prisma sí fue regenerado, por lo que hay que migrar la base antes de iniciar esta versión del backend.
+La primera revisión se realizó sin base disponible. Al iniciarse PostgreSQL se aplicaron localmente las migraciones `20261003120000_expense_cancellation` y `20261003160000_credit_payment_operator` y se regeneró Prisma. No se han aplicado migraciones en producción.
 
 La prueba `financial.integration.test.ts` reproduce en PostgreSQL una compra duplicada de 131.000, anula una, corrompe deliberadamente los acumulados y verifica que el efectivo esperado sea 169.000 y que contar 168.500 guarde un faltante de 500 tanto al cerrar como en el historial. Todo se ejecuta dentro de una transacción que se revierte.
 
@@ -31,4 +31,4 @@ La base local fue iniciada después de la primera revisión. La migración pendi
 4. Revisar el cierre reportado mediante lectura de sus datos, sin corregir importes históricos automáticamente.
 5. Tomar respaldo productivo y desplegar juntos migración, backend y frontend solo después de validar los pasos anteriores.
 
-El módulo de créditos queda condicionado a completar esta validación, según lo solicitado. Propuesta de alcance: venta fiada identificada por cliente, saldo por punto y abonos posteriores en un turno abierto, sin duplicar ventas ni inflar el efectivo al vender a crédito.
+Tras completar la validación local se implementó el módulo de créditos. Su funcionamiento y pruebas se documentan en `CREDITS.md`.

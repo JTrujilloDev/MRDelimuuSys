@@ -14,6 +14,7 @@ import ContextSelector from "../../pages/ContextSelector";
 import AdminPage from "../../modules/admin/pages";
 import ReportsPage from "../../modules/reports/pages";
 import InventoryTransfersPage from "../../modules/inventoryTransfers/pages";
+import CreditsPage from "../../modules/credits/pages";
 import { useAuth } from "../auth/AuthProvider";
 
 const GlobalAdminOnly = ({ children }: { children: React.ReactNode }) => {
@@ -43,6 +44,7 @@ export const router = createBrowserRouter([
       { path: "products", element: <Navigate to="../catalog?tab=products" replace /> },
       { path: "inventory", element: <Inventory /> },
       { path: "inventory-transfers", element: <InventoryTransfersPage /> },
+      { path: "credits", element: <CreditsPage /> },
       {
         path: "fundation-tags",
         element: (
