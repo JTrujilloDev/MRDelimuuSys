@@ -94,6 +94,8 @@ const CloseShiftView = ({
   const discountedSales = (shift.accounts ?? []).filter(
     (account) => account.status === "CLOSED" && account.discount > 0,
   );
+  const visibleDiscounts = discountedSales.slice(0, 3);
+  const visibleExpenses = expenses.slice(0, 3);
 
   // Expected cash = initial + cash sales - expenses
   const expectedCash = shift.expectedCash;
@@ -132,13 +134,13 @@ const CloseShiftView = ({
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left — Sales summary */}
-        <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-6 lg:p-7">
+        <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:p-5">
           {/* Summary cards */}
           <div>
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Resumen de ventas
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-4 gap-2">
               <SummaryCard
                 icon={Receipt}
                 label="Ventas brutas"
@@ -187,147 +189,130 @@ const CloseShiftView = ({
             </div>
           </div>
 
-          <div>
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="grid min-h-0 flex-1 grid-cols-3 gap-3">
+          <section className="overflow-hidden rounded-xl border border-border bg-secondary/20 p-3">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Recaudo de créditos
               </h2>
-            <div className="mb-4 rounded-xl border border-border bg-secondary/30 p-4">
-              <p className="font-bold text-foreground">Abonos de créditos recibidos: {numeral(shift.creditCollections || 0).format("$ 0,0")}</p>
-              <p className="mt-2 text-sm text-muted-foreground">Efectivo: {numeral(shift.cashCreditCollections || 0).format("$ 0,0")} · Tarjeta: {numeral(shift.cardCreditCollections || 0).format("$ 0,0")} · QR: {numeral(shift.qrCreditCollections || 0).format("$ 0,0")}</p>
-              <p className="mt-1 text-xs text-muted-foreground">No son ventas nuevas. Solo los abonos en efectivo se incluyen en el efectivo esperado.</p>
-            </div>
-            </div>
+              <p className="text-xl font-bold text-foreground">{numeral(shift.creditCollections || 0).format("$ 0,0")}</p>
+              <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
+                <p className="flex justify-between gap-2"><span>Efectivo</span><strong className="text-foreground">{numeral(shift.cashCreditCollections || 0).format("$ 0,0")}</strong></p>
+                <p className="flex justify-between gap-2"><span>Tarjeta</span><strong className="text-foreground">{numeral(shift.cardCreditCollections || 0).format("$ 0,0")}</strong></p>
+                <p className="flex justify-between gap-2"><span>QR</span><strong className="text-foreground">{numeral(shift.qrCreditCollections || 0).format("$ 0,0")}</strong></p>
+              </div>
+              <p className="mt-3 border-t border-border pt-2 text-[11px] leading-snug text-muted-foreground">Solo el efectivo se suma a la caja esperada.</p>
+            </section>
 
-            <div>
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            <section className="overflow-hidden rounded-xl border border-border bg-secondary/20 p-3">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Descuentos justificados
               </h2>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {discountedSales.length === 0 && (
                 <p className="text-sm italic text-muted-foreground">
                   Sin descuentos registrados
                 </p>
               )}
-              {discountedSales.map((account) => (
+              {visibleDiscounts.map((account) => (
                 <div
                   key={account.id}
-                  className="flex items-start justify-between gap-4 rounded-lg bg-secondary/50 px-3 py-2"
+                  className="flex items-start justify-between gap-2 rounded-lg bg-background/50 px-2.5 py-2"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{account.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold text-foreground">{account.name}</p>
+                    <p className="truncate text-[11px] text-muted-foreground">
                       {account.discountObservation}
                     </p>
                   </div>
-                  <span className="text-sm font-medium text-orange-500">
+                  <span className="shrink-0 text-xs font-medium text-orange-500">
                     -{numeral(account.discount).format("$ 0,0")}
                   </span>
                 </div>
               ))}
+              {discountedSales.length > visibleDiscounts.length && <p className="pt-1 text-xs font-medium text-muted-foreground">+ {discountedSales.length - visibleDiscounts.length} descuentos adicionales</p>}
             </div>
-          </div>
+          </section>
 
           {/* Expenses section (read-only) */}
-          <div>
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          <section className="overflow-hidden rounded-xl border border-border bg-secondary/20 p-3">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Gastos del turno
             </h2>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {expenses.length === 0 && (
                 <p className="text-sm text-muted-foreground italic">
                   Sin gastos registrados
                 </p>
               )}
-              {expenses.map((exp) => (
+              {visibleExpenses.map((exp) => (
                 <div
                   key={exp.id}
-                  className="flex items-center justify-between rounded-lg bg-secondary/50 px-3 py-2"
+                  className="flex items-center justify-between gap-2 rounded-lg bg-background/50 px-2.5 py-2"
                 >
-                  <div>
-                    <span className="text-sm text-foreground">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold text-foreground">
                       {exp.description}
-                    </span>
+                    </p>
                     {exp.adjustmentJustification && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="truncate text-[11px] text-muted-foreground">
                         {exp.adjustmentJustification}
                       </p>
                     )}
                   </div>
-                  <span className="text-sm font-medium text-destructive">
+                  <span className="shrink-0 text-xs font-medium text-destructive">
                     {numeral(exp.amount).format("$ 0,0")}
                   </span>
                 </div>
               ))}
+              {expenses.length > visibleExpenses.length && <p className="pt-1 text-xs font-medium text-muted-foreground">+ {expenses.length - visibleExpenses.length} gastos adicionales</p>}
             </div>
-          </div>
-
-          {/* Discrepancy */}
-          <div
-            className={`rounded-xl border-2 p-5 ${
-              Math.abs(difference) < 0.01
-                ? "border-green-500/30 bg-green-500/5"
-                : "border-destructive/30 bg-destructive/5"
-            }`}
-          >
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Diferencia / Descuadre
-            </h2>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">
-                  Esperado en caja
-                </p>
-                <p className="text-xl font-bold text-foreground">
-                  {numeral(expectedCash).format("$ 0,0")}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">
-                  Contado en caja
-                </p>
-                <p className="text-xl font-bold text-foreground">
-                  {numeral(countedCash).format("$ 0,0")}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Diferencia</p>
-                <div className="flex items-center justify-center gap-1.5">
-                  {Math.abs(difference) < 0.01 ? (
-                    <TrendingUp className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <AlertTriangle className="h-4 w-4 text-destructive" />
-                  )}
-                  <p
-                    className={`text-xl font-bold ${
-                      Math.abs(difference) < 0.01
-                        ? "text-green-500"
-                        : difference > 0
-                          ? "text-green-500"
-                          : "text-destructive"
-                    }`}
-                  >
-                    {difference >= 0 ? "+" : ""}{" "}
-                    {numeral(difference).format("$ 0,0")}
-                  </p>
-                </div>
-              </div>
-            </div>
+          </section>
           </div>
         </div>
 
         {/* Right — Bill counting */}
-        <div className="flex w-95 shrink-0 flex-col overflow-y-auto border-l border-border/70 bg-pos-surface/35 p-6 lg:w-100 lg:p-7">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+        <div className="flex w-[34rem] shrink-0 flex-col overflow-hidden border-l border-border/70 bg-pos-surface/35 p-4 lg:p-5">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Conteo de caja
           </h2>
 
           <DenominationCounter
             billCounts={billCounts}
             setBillCounts={setBillCounts}
+            compact
           />
 
+          {/* Discrepancy */}
+          <div
+            className={`mt-4 rounded-xl border p-3 ${
+              Math.abs(difference) < 0.01
+                ? "border-green-500/30 bg-green-500/5"
+                : "border-destructive/30 bg-destructive/5"
+            }`}
+          >
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <p className="text-[11px] text-muted-foreground">Esperado</p>
+                <p className="text-base font-bold text-foreground">{numeral(expectedCash).format("$ 0,0")}</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">Contado</p>
+                <p className="text-base font-bold text-foreground">{numeral(countedCash).format("$ 0,0")}</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">Diferencia</p>
+                <div className="flex items-center justify-center gap-1">
+                  {Math.abs(difference) < 0.01 ? <TrendingUp className="h-3.5 w-3.5 text-green-500" /> : <AlertTriangle className="h-3.5 w-3.5 text-destructive" />}
+                  <p className={`text-base font-bold ${Math.abs(difference) < 0.01 || difference > 0 ? "text-green-500" : "text-destructive"}`}>
+                    {difference >= 0 ? "+" : ""} {numeral(difference).format("$ 0,0")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {Math.abs(difference) >= 0.01 && (
-            <div className="mt-5 flex flex-col gap-2">
+            <div className="mt-3 flex flex-col gap-1.5">
               <Label htmlFor="cash-difference-justification">
                 Justificación del descuadre
               </Label>
@@ -345,7 +330,7 @@ const CloseShiftView = ({
             </div>
           )}
 
-          <div className="mt-auto">
+          <div className="mt-4">
             {closeError && (
               <div
                 role="alert"
