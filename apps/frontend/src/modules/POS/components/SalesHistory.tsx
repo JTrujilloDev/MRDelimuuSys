@@ -11,6 +11,7 @@ import {
   Calendar,
   ArrowLeft,
   Ban,
+  Wallet,
 } from "lucide-react";
 import { printTicketService } from "../../../shared/services/qz.service";
 import { Input } from "@heroui/react/input";
@@ -26,7 +27,13 @@ const methodMeta = {
   CASH: { label: "Efectivo", icon: Banknote, color: "text-green-500" },
   CARD: { label: "Tarjeta", icon: CreditCard, color: "text-blue-500" },
   QR: { label: "QR", icon: QrCode, color: "text-violet-500" },
+  CREDIT: { label: "Crédito", icon: Wallet, color: "text-amber-500" },
 } as const;
+
+type SalePaymentMethod = keyof typeof methodMeta;
+const fallbackMethodMeta = { label: "Otro", icon: Receipt, color: "text-muted-foreground" } as const;
+const getMethodMeta = (method: string | null | undefined) =>
+  methodMeta[method as SalePaymentMethod] ?? fallbackMethodMeta;
 
 export interface Sale {
   id: number;
@@ -34,7 +41,7 @@ export interface Sale {
   total: number;
   discount: number;
   discountObservation: string | null;
-  paymentMethod: "CASH" | "CARD" | "QR";
+  paymentMethod: SalePaymentMethod;
   closedAt: Dayjs | null;
   tableLabel: string;
   accountItems: OrderItem[];
@@ -53,7 +60,7 @@ const SalesHistory = ({
   onBack: () => void;
   canCancelSales: boolean;
 }) => {
-  const [filter, setFilter] = useState<"all" | "CASH" | "CARD" | "QR">("all");
+  const [filter, setFilter] = useState<"all" | SalePaymentMethod>("all");
   const [search, setSearch] = useState("");
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
 
@@ -113,7 +120,7 @@ const SalesHistory = ({
           />
         </div>
         <div className="flex gap-1">
-          {(["all", "CASH", "CARD", "QR"] as const).map((k) => (
+          {(["all", "CASH", "CARD", "QR", "CREDIT"] as const).map((k) => (
             <button
               key={k}
               onClick={() => setFilter(k)}
@@ -144,7 +151,7 @@ const SalesHistory = ({
         ) : (
           <div className="space-y-2">
             {filtered.sort((a, b) => dayjs(b.closedAt).unix() - dayjs(a.closedAt).unix()).map((s) => {
-              const Meta = methodMeta[s.paymentMethod];
+              const Meta = getMethodMeta(s.paymentMethod);
 
               const Icon = Meta.icon;
               return (
@@ -226,7 +233,7 @@ const SaleDetailDialog = ({
   const [isConfirmingCancellation, setIsConfirmingCancellation] = useState(false);
   const { mutate: cancelSale, isPending: isCancelling } = useCancelAccount();
   if (!sale) return null;
-  const Meta = methodMeta[sale.paymentMethod];
+  const Meta = getMethodMeta(sale.paymentMethod);
   const Icon = Meta.icon;
   const closeDetail = () => {
     setCancellationReason("");
