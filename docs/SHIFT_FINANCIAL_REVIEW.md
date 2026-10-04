@@ -21,7 +21,7 @@ La conexión PostgreSQL local devolvió `ECONNREFUSED` y Docker no tenía un mot
 
 La prueba `financial.integration.test.ts` reproduce en PostgreSQL una compra duplicada de 131.000, anula una, corrompe deliberadamente los acumulados y verifica que el efectivo esperado sea 169.000 y que contar 168.500 guarde un faltante de 500 tanto al cerrar como en el historial. Todo se ejecuta dentro de una transacción que se revierte.
 
-La prueba de PostgreSQL queda **pendiente** mientras la base local y Docker estén apagados. No se afirma que el incidente productivo esté diagnosticado ni reparado; falta obtener sus movimientos, gastos, base inicial, conteo y versión desplegada. No se han modificado registros productivos.
+La base local fue iniciada después de la primera revisión. La migración pendiente se aplicó y las dos pruebas PostgreSQL (gastos/cierre y conteo de inventario) **pasaron**, con rollback de los datos de prueba. El caso probado conserva el faltante de 500 tanto al cerrar como en el historial. Esto no identifica ni repara automáticamente el incidente productivo; falta obtener sus movimientos, gastos, base inicial, conteo y versión desplegada. No se han modificado registros productivos.
 
 ## Antes de desplegar
 
