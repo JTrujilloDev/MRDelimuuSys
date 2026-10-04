@@ -71,6 +71,7 @@ type CashRegister = {
   totalSales: number;
   totalDiscounts: number;
   totalExpenses: number;
+  expectedCash: number | null;
   cashAmount: number;
   cardAmount: number;
   qrAmount: number;
@@ -428,6 +429,7 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
           <Detail label="Venta bruta" value={money(register.totalSales + register.totalDiscounts)} />
           <Detail label="Descuentos" value={money(register.totalDiscounts)} />
           <Detail label="Gastos" value={money(register.totalExpenses)} />
+          <Detail label="Efectivo esperado al cerrar" value={money(register.expectedCash)} />
           <Detail label="Diferencia de caja" value={money(register.difference)} />
         </div>
         <RegisterFinancialNotes register={register} />

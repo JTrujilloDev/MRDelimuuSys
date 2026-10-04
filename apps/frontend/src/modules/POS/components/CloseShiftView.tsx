@@ -23,6 +23,7 @@ import numeral from "numeral";
 import { useCloseCashRegister } from "../hooks/cashRegister/useCloseCashRegister";
 import { useGetExpenses } from "../hooks/financialTransaction/useGetExpenses";
 import InventoryCountView, { InventoryCountStatus } from "./InventoryCountView";
+import { calculateCashCount } from "../utils/cashCount.rules";
 
 export interface CompletedSale {
   id: string;
@@ -75,8 +76,8 @@ const CloseShiftView = ({
 }: CloseShiftViewProps) => {
   const { mutate: closeCashRegister, isPending: isClosingShift } =
     useCloseCashRegister();
-  const { data: { data: { data: expenses = [] } = {} } = {} } =
-    useGetExpenses(cashRegisterId);
+  const expensesQuery = useGetExpenses(cashRegisterId);
+  const expenses = (expensesQuery.data?.data.data ?? []).filter(item => !item.voidedAt);
   const [billCounts, setBillCounts] = useState<Record<number, string>>({});
   const [differenceJustification, setDifferenceJustification] = useState("");
   const [closeError, setCloseError] = useState<string | null>(null);
@@ -95,18 +96,11 @@ const CloseShiftView = ({
   );
 
   // Expected cash = initial + cash sales - expenses
-  const expectedCash = shift.openingAmount + cashSales - totalExpenses;
+  const expectedCash = shift.expectedCash;
 
   // Counted cash from bills/coins
-  const countedCash = useMemo(() => {
-    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce(
-      (sum, denom) => {
-        const count = parseInt(billCounts[denom] || "0") || 0;
-        return sum + denom * count;
-      },
-      0,
-    );
-  }, [billCounts]);
+  const counted = useMemo(() => calculateCashCount(billCounts, [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS]), [billCounts]);
+  const countedCash = counted.total;
 
   const difference = countedCash - expectedCash;
 
@@ -356,6 +350,7 @@ const CloseShiftView = ({
                   {
                     cashRegisterId: shift.id,
                     closingAmount: countedCash,
+                    expectedCash,
                     differenceJustification: differenceJustification.trim(),
                   },
                   {
@@ -363,6 +358,7 @@ const CloseShiftView = ({
                       onConfirmClose();
                     },
                     onError: (error) => {
+                      expensesQuery.refetch();
                       const message = getCloseShiftErrorMessage(error);
                       setCloseError(message);
                       toast("No se pudo cerrar el turno", {
@@ -377,6 +373,8 @@ const CloseShiftView = ({
               size="lg"
               isDisabled={
                 isClosingShift ||
+                !counted.valid ||
+                !Number.isFinite(expectedCash) || expensesQuery.isPending || expensesQuery.isError ||
                 (Math.abs(difference) >= 0.01 && !differenceJustification.trim())
               }
             >

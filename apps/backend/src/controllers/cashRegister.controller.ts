@@ -82,6 +82,8 @@ export const closeCashRegister = async (req: Request, res: Response) => {
       cashRegisterId,
       closingAmount,
       differenceJustification,
+      undefined,
+      req.body.expectedCash,
     );
     res.status(200).json({
       success: true,

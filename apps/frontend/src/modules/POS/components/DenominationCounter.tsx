@@ -1,4 +1,5 @@
-import React, {  useMemo, type Dispatch, type SetStateAction } from "react";
+import { useMemo, type Dispatch, type SetStateAction } from "react";
+import { calculateCashCount } from "../utils/cashCount.rules";
 import { Input } from "@heroui/react";
 import numeral from "numeral";
 
@@ -12,15 +13,12 @@ interface Props {
 }
 
 const DenominationCounter = ({ billCounts, setBillCounts, showTotal = true }: Props) => {
-  const countedCash = useMemo(() => {
-    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce((sum, denom) => {
-      const count = parseInt(billCounts[denom] || "0") || 0;
-      return sum + denom * count;
-    }, 0);
-  }, [billCounts]);
+  const counted = useMemo(() => calculateCashCount(billCounts, [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS]), [billCounts]);
+  const countedCash = counted.total;
 
   return (
     <div>
+      {!counted.valid && <p role="alert" className="mb-3 text-sm text-destructive">Ingresa cantidades enteras y no negativas de billetes y monedas.</p>}
       <div className="space-y-1.5 mb-4">
         <p className="text-xs text-muted-foreground">Billetes</p>
         {BILL_DENOMINATIONS.map((denom) => (
@@ -43,7 +41,7 @@ const DenominationCounter = ({ billCounts, setBillCounts, showTotal = true }: Pr
               className="w-20 text-center h-8 text-sm"
             />
             <span className="text-sm text-muted-foreground w-20 text-right">
-              = ${numeral((parseInt(billCounts[denom] || "0") || 0) * denom).format("0,0")}
+              = ${numeral(calculateCashCount(billCounts, [denom]).total).format("0,0")}
             </span>
           </div>
         ))}
@@ -71,7 +69,7 @@ const DenominationCounter = ({ billCounts, setBillCounts, showTotal = true }: Pr
               className="w-20 text-center h-8 text-sm"
             />
             <span className="text-sm text-muted-foreground w-20 text-right">
-              = ${numeral((parseInt(billCounts[denom] || "0") || 0) * denom).format("0,0")}
+              = ${numeral(calculateCashCount(billCounts, [denom]).total).format("0,0")}
             </span>
           </div>
         ))}

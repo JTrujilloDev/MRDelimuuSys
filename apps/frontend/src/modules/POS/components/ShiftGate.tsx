@@ -3,6 +3,7 @@ import { Clock, LogOut, History, DollarSign } from "lucide-react";
 import { Button, Label } from "@heroui/react";
 import DenominationCounter, { BILL_DENOMINATIONS, COIN_DENOMINATIONS } from "./DenominationCounter";
 import dayjs from "dayjs";
+import { calculateCashCount } from "../utils/cashCount.rules";
 
 export interface Shift {
   id: number;
@@ -17,6 +18,7 @@ export interface Shift {
   totalSales: number;
   totalDiscounts: number;
   totalExpenses: number;
+  expectedCash: number;
   cashAmount: number;
   cardAmount: number;
   qrAmount: number;
@@ -42,18 +44,15 @@ interface ShiftGateProps {
 const ShiftGate = ({ activeShift, onOpenShift, children }: ShiftGateProps) => {
   const [billCounts, setBillCounts] = useState<Record<number, string>>({});
 
-  const countedCash = useMemo(() => {
-    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce((sum, denom) => {
-      const count = parseInt(billCounts[denom] || "0") || 0;
-      return sum + denom * count;
-    }, 0);
-  }, [billCounts]);
+  const counted = useMemo(() => calculateCashCount(billCounts, [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS]), [billCounts]);
+  const countedCash = counted.total;
 
   if (activeShift) {
     return <>{children}</>;
   }
 
   const handleOpen = () => {
+    if (!counted.valid) return;
     // Use the counted cash as the opening amount
     const opening = countedCash || 0;
     onOpenShift(opening);
