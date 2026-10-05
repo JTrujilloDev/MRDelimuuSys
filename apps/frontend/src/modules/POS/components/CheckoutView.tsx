@@ -1,13 +1,14 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button, Input, Label } from "@heroui/react";
 import { BsArrowLeft, BsBank, BsQrCode } from "react-icons/bs";
 import { BiCreditCard } from "react-icons/bi";
 import { FiFileText, FiTag } from "react-icons/fi";
 import type { OrderItem } from "./OrderPanel";
 import numeral from "numeral";
-import { Printer } from "lucide-react";
+import { CheckCircle2, LoaderCircle, Printer, UserRound } from "lucide-react";
 import dayjs from "dayjs";
 import { useSocket } from "../../../shared/socket/useSocket";
+import { findCustomerByIdentification, type FiscalCustomer } from "../services/customer.service";
 
 export interface OrderInfo {
   clientName: string;
@@ -37,6 +38,7 @@ export interface CloseAccountParams {
   discountObservation: string;
   order: OrderInfo | PrinterCommand;
   creditCustomer?: { name: string; phone: string };
+  customer?: FiscalCustomer;
   printTicket: boolean;
 }
 interface CheckoutViewProps {
@@ -68,6 +70,20 @@ const CheckoutView = ({
   const [cashReceived, setCashReceived] = useState("");
   const [qrGenerated, setQrGenerated] = useState(false);
   const [printTicket, setPrintTicket] = useState(false);
+  const [customerEnabled, setCustomerEnabled] = useState(false);
+  const [customerLookup, setCustomerLookup] = useState<"IDLE" | "SEARCHING" | "FOUND" | "NEW" | "ERROR">("IDLE");
+  const [customerForm, setCustomerForm] = useState<FiscalCustomer>({
+    identificationType: "CC",
+    identification: "",
+    organizationType: "NATURAL_PERSON",
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    countryCode: "CO",
+    tributeCode: "ZZ",
+    responsibilities: ["R-99-PN"],
+  });
   const socket = useSocket();
   const subtotal = useMemo(
     () => items.reduce((s, i) => s + i.price * i.quantity, 0),
@@ -82,6 +98,50 @@ const CheckoutView = ({
 
   const cashValue = parseFloat(cashReceived) || 0;
   const change = Math.max(0, cashValue - total);
+  const normalizedIdentification = customerForm.identification.replace(/[^0-9A-Za-z]/g, "").toUpperCase();
+  const customerEmailIsValid = !customerForm.email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerForm.email);
+  const customerIsValid = !customerEnabled || (
+    normalizedIdentification.length >= 3 &&
+    customerForm.name.trim().length >= 2 &&
+    customerEmailIsValid
+  );
+  const effectiveCreditName = customerEnabled ? customerForm.name : creditName;
+  const effectiveCreditPhone = customerEnabled ? customerForm.phone ?? "" : creditPhone;
+
+  useEffect(() => {
+    if (!customerEnabled || normalizedIdentification.length < 3) {
+      setCustomerLookup("IDLE");
+      return;
+    }
+    let cancelled = false;
+    setCustomerLookup("SEARCHING");
+    const timeout = window.setTimeout(async () => {
+      try {
+        const customer = await findCustomerByIdentification(customerForm.identificationType, normalizedIdentification);
+        if (cancelled) return;
+        setCustomerForm({
+          ...customer,
+          verificationDigit: customer.verificationDigit ?? "",
+          tradeName: customer.tradeName ?? "",
+          phone: customer.phone ?? "",
+          email: customer.email ?? "",
+          address: customer.address ?? "",
+          countryCode: customer.countryCode ?? "CO",
+          municipalityCode: customer.municipalityCode ?? "",
+          tributeCode: customer.tributeCode ?? "ZZ",
+          responsibilities: customer.responsibilities?.length ? customer.responsibilities : ["R-99-PN"],
+        });
+        setCustomerLookup("FOUND");
+      } catch (error: any) {
+        if (cancelled) return;
+        setCustomerLookup(error?.response?.status === 404 ? "NEW" : "ERROR");
+      }
+    }, 450);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
+    };
+  }, [customerEnabled, customerForm.identificationType, normalizedIdentification]);
 
   const suggestedCashAmounts = useMemo(() => {
     if (!total || isNaN(total) || total <= 0) return [];
@@ -104,7 +164,8 @@ const CheckoutView = ({
     items.length > 0 &&
     discountIsValid &&
     discountHasReason &&
-    ((paymentMethod === "CREDIT" && creditName.trim().length >= 2 && creditPhone.trim().length >= 5) || paymentMethod === "CARD" ||
+    customerIsValid &&
+    ((paymentMethod === "CREDIT" && effectiveCreditName.trim().length >= 2 && effectiveCreditPhone.trim().length >= 5) || paymentMethod === "CARD" ||
       (paymentMethod === "CASH" && cashValue >= total) ||
       (paymentMethod === "QR" && qrGenerated));
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -218,6 +279,101 @@ const CheckoutView = ({
               </div>
             </div>
           </div>
+
+          <section className="mt-5 overflow-hidden rounded-2xl border border-border/80 bg-background/75">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between gap-4 p-4 text-left transition-colors hover:bg-secondary/40"
+              onClick={() => setCustomerEnabled(value => !value)}
+            >
+              <span className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary"><UserRound className="h-5 w-5" /></span>
+                <span><span className="block font-bold text-foreground">Datos del cliente</span><span className="block text-xs text-muted-foreground">Opcional para factura y futuras compras</span></span>
+              </span>
+              <span className={`relative h-6 w-11 rounded-full transition-colors ${customerEnabled ? "bg-primary" : "bg-muted"}`}>
+                <span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${customerEnabled ? "translate-x-6" : "translate-x-1"}`} />
+              </span>
+            </button>
+
+            {customerEnabled && <div className="space-y-4 border-t border-border/70 p-4">
+              <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="customer-id-type" className="text-xs">Tipo de identificación</Label>
+                  <select
+                    id="customer-id-type"
+                    className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-primary"
+                    value={customerForm.identificationType}
+                    onChange={event => {
+                      const identificationType = event.target.value as FiscalCustomer["identificationType"];
+                      setCustomerForm(current => ({
+                        ...current,
+                        identificationType,
+                        identification: "",
+                        organizationType: identificationType === "NIT" ? "LEGAL_ENTITY" : "NATURAL_PERSON",
+                        verificationDigit: "",
+                        name: "",
+                        tradeName: "",
+                        phone: "",
+                        email: "",
+                        address: "",
+                        municipalityCode: "",
+                      }));
+                    }}
+                  >
+                    <option value="CC">Cédula de ciudadanía</option>
+                    <option value="NIT">NIT</option>
+                    <option value="CE">Cédula de extranjería</option>
+                    <option value="PASSPORT">Pasaporte</option>
+                    <option value="OTHER">Otro</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="customer-identification" className="text-xs">{customerForm.identificationType === "NIT" ? "NIT sin dígito de verificación" : "Número"}</Label>
+                  <div className="relative">
+                    <Input
+                      id="customer-identification"
+                      autoComplete="off"
+                      maxLength={35}
+                      value={customerForm.identification}
+                      onChange={event => setCustomerForm(current => ({
+                        ...current,
+                        id: undefined,
+                        identification: event.target.value,
+                        verificationDigit: "",
+                        name: "",
+                        tradeName: "",
+                        phone: "",
+                        email: "",
+                        address: "",
+                        municipalityCode: "",
+                      }))}
+                      placeholder="Escribe para buscar"
+                      className="pr-10"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      {customerLookup === "SEARCHING" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : customerLookup === "FOUND" ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : null}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {customerLookup === "FOUND" && <p className="rounded-xl bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-600">Cliente encontrado. Puedes actualizar sus datos antes de cobrar.</p>}
+              {customerLookup === "NEW" && <p className="rounded-xl bg-primary/10 px-3 py-2 text-xs text-foreground">Cliente nuevo. Se guardará al confirmar la venta.</p>}
+              {customerLookup === "ERROR" && <p className="rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive">No fue posible consultar la base de clientes.</p>}
+
+              {normalizedIdentification.length >= 3 && <>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="flex flex-col gap-2 sm:col-span-2"><Label htmlFor="customer-name" className="text-xs">Nombre completo o razón social</Label><Input id="customer-name" maxLength={160} value={customerForm.name} onChange={event => setCustomerForm(current => ({ ...current, name: event.target.value }))} /></div>
+                  {customerForm.identificationType === "NIT" && <div className="flex flex-col gap-2"><Label htmlFor="customer-dv" className="text-xs">Dígito de verificación</Label><Input id="customer-dv" inputMode="numeric" maxLength={1} value={customerForm.verificationDigit ?? ""} onChange={event => setCustomerForm(current => ({ ...current, verificationDigit: event.target.value.replace(/\D/g, "") }))} /></div>}
+                  <div className="flex flex-col gap-2"><Label htmlFor="customer-organization" className="text-xs">Tipo de persona</Label><select id="customer-organization" className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-primary" value={customerForm.organizationType} onChange={event => setCustomerForm(current => ({ ...current, organizationType: event.target.value as FiscalCustomer["organizationType"] }))}><option value="NATURAL_PERSON">Persona natural</option><option value="LEGAL_ENTITY">Persona jurídica</option></select></div>
+                  <div className="flex flex-col gap-2"><Label htmlFor="customer-email" className="text-xs">Correo</Label><Input id="customer-email" type="email" maxLength={160} value={customerForm.email ?? ""} onChange={event => setCustomerForm(current => ({ ...current, email: event.target.value }))} />{!customerEmailIsValid && <span className="text-xs text-destructive">Correo no válido</span>}</div>
+                  <div className="flex flex-col gap-2"><Label htmlFor="customer-phone" className="text-xs">Teléfono</Label><Input id="customer-phone" type="tel" maxLength={40} value={customerForm.phone ?? ""} onChange={event => setCustomerForm(current => ({ ...current, phone: event.target.value }))} /></div>
+                  <div className="flex flex-col gap-2 sm:col-span-2"><Label htmlFor="customer-address" className="text-xs">Dirección</Label><Input id="customer-address" maxLength={200} value={customerForm.address ?? ""} onChange={event => setCustomerForm(current => ({ ...current, address: event.target.value }))} /></div>
+                  <div className="flex flex-col gap-2"><Label htmlFor="customer-municipality" className="text-xs">Código DANE del municipio</Label><Input id="customer-municipality" inputMode="numeric" maxLength={5} placeholder="Ej. 11001" value={customerForm.municipalityCode ?? ""} onChange={event => setCustomerForm(current => ({ ...current, municipalityCode: event.target.value.replace(/\D/g, "") }))} /></div>
+                </div>
+              </>}
+            </div>}
+          </section>
         </div>
 
         {/* Right — Payment method */}
@@ -257,8 +413,10 @@ const CheckoutView = ({
           {/* Cash options */}
           {paymentMethod === "CREDIT" && <section className="mb-5 space-y-4 rounded-2xl border border-primary/25 bg-primary/5 p-4">
             <div><p className="font-bold text-foreground">Venta a crédito</p><p className="mt-1 text-sm text-muted-foreground">Se registra la venta y queda un saldo pendiente. No ingresa efectivo en este momento.</p></div>
-            <div className="flex flex-col gap-2"><Label htmlFor="credit-customer-name">Nombre del cliente</Label><Input id="credit-customer-name" maxLength={120} autoComplete="off" placeholder="Nombre completo" value={creditName} onChange={event => setCreditName(event.target.value)} /></div>
-            <div className="flex flex-col gap-2"><Label htmlFor="credit-customer-phone">Teléfono de contacto</Label><Input id="credit-customer-phone" type="tel" maxLength={40} autoComplete="off" placeholder="Número de contacto" value={creditPhone} onChange={event => setCreditPhone(event.target.value)} /></div>
+            {customerEnabled ? <div className="rounded-xl border border-primary/20 bg-background/70 p-3"><p className="font-bold text-foreground">{customerForm.name || "Completa los datos del cliente"}</p><p className="mt-1 text-sm text-muted-foreground">{customerForm.phone || "El crédito requiere un teléfono de contacto"}</p></div> : <>
+              <div className="flex flex-col gap-2"><Label htmlFor="credit-customer-name">Nombre del cliente</Label><Input id="credit-customer-name" maxLength={120} autoComplete="off" placeholder="Nombre completo" value={creditName} onChange={event => setCreditName(event.target.value)} /></div>
+              <div className="flex flex-col gap-2"><Label htmlFor="credit-customer-phone">Teléfono de contacto</Label><Input id="credit-customer-phone" type="tel" maxLength={40} autoComplete="off" placeholder="Número de contacto" value={creditPhone} onChange={event => setCreditPhone(event.target.value)} /></div>
+            </>}
             <p className="text-xs text-muted-foreground">Los abonos se registran después desde la sección Créditos.</p>
           </section>}
           {paymentMethod === "CASH" && (
@@ -399,7 +557,8 @@ const CheckoutView = ({
                 <span>Total</span>
                 <span>{numeral(total).format("$ 0,0")}</span>
               </div>
-              {paymentMethod === "CREDIT" && <div className="rounded-xl bg-primary/10 p-3 text-foreground"><p className="font-bold">{creditName.trim()}</p><p>{creditPhone.trim()}</p><p className="mt-1 text-xs">Este valor quedará pendiente de pago.</p></div>}
+              {paymentMethod === "CREDIT" && <div className="rounded-xl bg-primary/10 p-3 text-foreground"><p className="font-bold">{effectiveCreditName.trim()}</p><p>{effectiveCreditPhone.trim()}</p><p className="mt-1 text-xs">Este valor quedará pendiente de pago.</p></div>}
+              {customerEnabled && <div className="rounded-xl border border-border bg-secondary/40 p-3 text-foreground"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Cliente</p><p className="mt-1 font-bold">{customerForm.name.trim()}</p><p className="text-xs">{customerForm.identificationType} {normalizedIdentification}</p></div>}
 
               {paymentMethod === "CASH" && (
                 <>
@@ -437,13 +596,14 @@ const CheckoutView = ({
                     cashRegisterId: accountInfo.cashRegisterId,
                     discount: discountAmount,
                     discountObservation: discountReason.trim(),
-                    ...(paymentMethod === "CREDIT" && { creditCustomer: { name: creditName.trim(), phone: creditPhone.trim() } }),
+                    ...(paymentMethod === "CREDIT" && { creditCustomer: { name: effectiveCreditName.trim(), phone: effectiveCreditPhone.trim() } }),
+                    ...(customerEnabled && { customer: { ...customerForm, identification: normalizedIdentification } }),
                     order: {
-                      clientName: paymentMethod === "CREDIT" ? creditName.trim() : "",
-                      idType: "",
-                      idNumber: "",
-                      email: "",
-                      phone: paymentMethod === "CREDIT" ? creditPhone.trim() : "",
+                      clientName: customerEnabled ? customerForm.name.trim() : paymentMethod === "CREDIT" ? creditName.trim() : "",
+                      idType: customerEnabled ? customerForm.identificationType : "",
+                      idNumber: customerEnabled ? normalizedIdentification : "",
+                      email: customerEnabled ? customerForm.email ?? "" : "",
+                      phone: customerEnabled ? customerForm.phone ?? "" : paymentMethod === "CREDIT" ? creditPhone.trim() : "",
                       date: dayjs().format("DD/MM/YYYY HH:mm"),
                       items,
                       subtotal,

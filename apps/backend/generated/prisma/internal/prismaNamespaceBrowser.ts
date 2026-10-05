@@ -222,6 +222,7 @@ export const AccountScalarFieldEnum = {
   cancelledByUserId: 'cancelledByUserId',
   paymentMethod: 'paymentMethod',
   customerId: 'customerId',
+  customerSnapshot: 'customerSnapshot',
   financialTransactionId: 'financialTransactionId'
 } as const
 
@@ -285,11 +286,23 @@ export type FinancialTransactionScalarFieldEnum = (typeof FinancialTransactionSc
 
 export const CustomerScalarFieldEnum = {
   id: 'id',
+  identificationType: 'identificationType',
+  identification: 'identification',
+  verificationDigit: 'verificationDigit',
+  organizationType: 'organizationType',
   name: 'name',
+  tradeName: 'tradeName',
   phone: 'phone',
   email: 'email',
+  address: 'address',
+  countryCode: 'countryCode',
+  municipalityCode: 'municipalityCode',
+  tributeCode: 'tributeCode',
+  responsibilities: 'responsibilities',
+  isActive: 'isActive',
   type: 'type',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]

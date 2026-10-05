@@ -15,6 +15,8 @@ import { applyInventoryMovementTx } from "./inventoryLot.service";
 import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
 import { prepareCreditCustomerTx } from "./credit.service";
 import { validateCreditCustomer } from "./credit.rules";
+import { customerSnapshot as buildCustomerSnapshot, upsertCustomerTx } from "./customer.service";
+import type { CustomerFiscalInput } from "./customer.rules";
 
 interface CreateAccountItem {
   productVariantId: number;
@@ -538,6 +540,7 @@ export const closeAccountService = async ({
   discount,
   discountObservation,
   creditCustomer,
+  customer: customerInput,
 }: {
   accountId: number;
   paymentMethod: PaymentMethod;
@@ -545,12 +548,17 @@ export const closeAccountService = async ({
   discount?: unknown;
   discountObservation?: unknown;
   creditCustomer?: { name?: unknown; phone?: unknown };
+  customer?: CustomerFiscalInput;
 }, database: Pick<typeof prisma, "$transaction"> = prisma) => {
   return await database.$transaction(async (tx) => {
     if (!Object.values(PaymentMethod).includes(paymentMethod)) {
       throw new Error("Invalid payment method");
     }
-    if (paymentMethod === "CREDIT") validateCreditCustomer(creditCustomer);
+    const resolvedCreditCustomer = creditCustomer ?? (customerInput ? {
+      name: customerInput.name,
+      phone: customerInput.phone,
+    } : undefined);
+    if (paymentMethod === "CREDIT") validateCreditCustomer(resolvedCreditCustomer);
 
     await lockInventoryVerificationTx(tx);
 
@@ -633,7 +641,8 @@ export const closeAccountService = async ({
       discountObservation ?? account.discountObservation,
     );
     const total = discountResult.netTotal;
-    const customer = paymentMethod === "CREDIT" ? await prepareCreditCustomerTx(tx, creditCustomer) : null;
+    const fiscalCustomer = customerInput ? await upsertCustomerTx(tx, customerInput) : null;
+    const customer = fiscalCustomer ?? (paymentMethod === "CREDIT" ? await prepareCreditCustomerTx(tx, resolvedCreditCustomer) : null);
 
     // 3.1 Validar stock de FINISHED_PRODUCT y THIRD_PARTY_PRODUCT
     const finishedProductIds = account.accountItems
@@ -850,6 +859,7 @@ export const closeAccountService = async ({
         discountObservation: discountResult.discountObservation,
         financialTransactionId: financialTransaction.id,
         ...(customer && { customerId: customer.id }),
+        ...(fiscalCustomer && { customerSnapshot: buildCustomerSnapshot(fiscalCustomer) }),
         cashRegisterId,
       },
       include: {

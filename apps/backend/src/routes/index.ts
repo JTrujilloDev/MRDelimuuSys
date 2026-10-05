@@ -17,6 +17,7 @@ import catalogRoutes from "./catalog.routes";
 import inventoryTransferRoutes from "./inventoryTransfer.routes";
 import notificationRoutes from "./notification.routes";
 import creditRoutes from "./credit.routes";
+import customerRoutes from "./customer.routes";
 import { requireActiveContext, requireAuth } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -37,6 +38,7 @@ router.use("/products", productsRoutes);
 router.use("/cash-register", cashRegisterRoutes);
 router.use("/financial-transactions", financialTransactionRoutes);
 router.use("/credits", creditRoutes);
+router.use("/customers", customerRoutes);
 router.use("/pos-inventory", POSInventoryRoutes);
 router.use("/inventory-transfers", inventoryTransferRoutes);
 router.use("/reports", reportGenerationRoutes);

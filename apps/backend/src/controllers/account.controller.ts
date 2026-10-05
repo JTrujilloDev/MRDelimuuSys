@@ -233,6 +233,7 @@ export const closeAccount = async (req: Request, res: Response) => {
         discount,
         discountObservation,
         creditCustomer: req.body.creditCustomer,
+        customer: req.body.customer,
       }
     );
     getIO().emit("inventory:updated");

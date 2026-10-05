@@ -1,4 +1,5 @@
 import { api } from "../../../shared/services/api";
+import type { FiscalCustomer } from "./customer.service";
 
 export interface AccountData {
   name: string;
@@ -77,6 +78,7 @@ export const closeAccount = async ({
   discount,
   discountObservation,
   creditCustomer,
+  customer,
 }: {
   accountId: number;
   paymentMethod: string;
@@ -84,6 +86,7 @@ export const closeAccount = async ({
   discount: number;
   discountObservation: string;
   creditCustomer?: { name: string; phone: string };
+  customer?: FiscalCustomer;
 }) => {
   const { data } = await api.put("accounts/close", {
     accountId,
@@ -92,6 +95,7 @@ export const closeAccount = async ({
     discount,
     discountObservation,
     creditCustomer,
+    customer,
   });
   return data;
 };

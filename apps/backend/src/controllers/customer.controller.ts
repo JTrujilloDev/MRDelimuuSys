@@ -1,95 +1,44 @@
 import { Request, Response } from "express";
-import { createCustomerService, deleteCustomerService, getAllCustomersService, getCustomerByIdService, updateCustomerService } from "../service/customer.service";
-import { Customer } from "../../generated/prisma/client";
+import { CUSTOMER_IDENTIFICATION_TYPES, type CustomerIdentificationType } from "../service/customer.rules";
+import {
+  createOrUpdateCustomerService,
+  deactivateCustomerService,
+  findCustomerByIdentificationService,
+  getAllCustomersService,
+  updateCustomerService,
+} from "../service/customer.service";
 
-export const  createCustomer = async (req: Request, res: Response) => {
+const failure = (res: Response, error: unknown) =>
+  res.status(400).json({ success: false, message: error instanceof Error ? error.message : "No fue posible gestionar el cliente" });
+
+export const saveCustomer = async (req: Request, res: Response) => {
+  try { res.json({ success: true, data: await createOrUpdateCustomerService(req.body) }); }
+  catch (error) { failure(res, error); }
+};
+
+export const findCustomerByIdentification = async (req: Request, res: Response) => {
   try {
-    const customerData: Customer = req.body;
-    const newCustomer = await createCustomerService(customerData);
-    res.status(201).json({
-      success: true,
-        message: "Customer created successfully",
-        data: newCustomer,
-    });
-  } catch (error) {
-    const errorMessage = (error as Error).message;
-    const statusCode = errorMessage.includes("already exists") ? 409 : 400;
-    res.status(statusCode).json({
-      success: false,
-      message: errorMessage,
-    });
-  }
-  }
-
-  export const getCustomerById = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const customer = await getCustomerByIdService(Number(id));
-      if (!customer) {
-        return res.status(404).json({
-          success: false,
-          message: "Customer not found",
-        });
-      }
-      res.status(200).json({
-        success: true,
-        message: "Customer fetched successfully",
-        data: customer,
-      });
-    } catch (error) {
-      res.status(400).json({
-        success: false,
-        message: (error as Error).message,
-      });
+    const identificationType = String(req.query.identificationType ?? "") as CustomerIdentificationType;
+    if (!CUSTOMER_IDENTIFICATION_TYPES.includes(identificationType)) throw new Error("Tipo de identificación no válido");
+    const customer = await findCustomerByIdentificationService(identificationType, req.query.identification);
+    if (!customer || !customer.isActive) {
+      res.status(404).json({ success: false, message: "Cliente no registrado" }); return;
     }
-  };
+    res.json({ success: true, data: customer });
+  } catch (error) { failure(res, error); }
+};
 
-export const getAllCustomers = async (req: Request, res: Response) => {
-  try {
-    const customers = await getAllCustomersService();
-    res.status(200).json({
-      success: true,
-      message: "Customers fetched successfully",
-      data: customers,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: (error as Error).message,
-    });
-  }
+export const listCustomers = async (req: Request, res: Response) => {
+  try { res.json({ success: true, data: await getAllCustomersService(req.query.search) }); }
+  catch (error) { failure(res, error); }
 };
 
 export const updateCustomer = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const updatedCustomer = await updateCustomerService(Number(id), req.body);
-    res.status(200).json({
-      success: true,
-      message: "Customer updated successfully",
-      data: updatedCustomer,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: (error as Error).message,
-    });
-  }
+  try { res.json({ success: true, data: await updateCustomerService(Number(req.params.id), req.body) }); }
+  catch (error) { failure(res, error); }
 };
 
-export const deleteCustomer = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const deletedCustomer = await deleteCustomerService(Number(id));
-    res.status(200).json({
-      success: true,
-      message: "Customer deleted successfully",
-      data: deletedCustomer,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: (error as Error).message,
-    });
-  }
+export const deactivateCustomer = async (req: Request, res: Response) => {
+  try { res.json({ success: true, data: await deactivateCustomerService(Number(req.params.id)) }); }
+  catch (error) { failure(res, error); }
 };

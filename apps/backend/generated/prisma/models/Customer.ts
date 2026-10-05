@@ -36,29 +36,63 @@ export type CustomerSumAggregateOutputType = {
 
 export type CustomerMinAggregateOutputType = {
   id: number | null
+  identificationType: string | null
+  identification: string | null
+  verificationDigit: string | null
+  organizationType: string | null
   name: string | null
+  tradeName: string | null
   phone: string | null
   email: string | null
+  address: string | null
+  countryCode: string | null
+  municipalityCode: string | null
+  tributeCode: string | null
+  isActive: boolean | null
   type: $Enums.CustomerType | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type CustomerMaxAggregateOutputType = {
   id: number | null
+  identificationType: string | null
+  identification: string | null
+  verificationDigit: string | null
+  organizationType: string | null
   name: string | null
+  tradeName: string | null
   phone: string | null
   email: string | null
+  address: string | null
+  countryCode: string | null
+  municipalityCode: string | null
+  tributeCode: string | null
+  isActive: boolean | null
   type: $Enums.CustomerType | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type CustomerCountAggregateOutputType = {
   id: number
+  identificationType: number
+  identification: number
+  verificationDigit: number
+  organizationType: number
   name: number
+  tradeName: number
   phone: number
   email: number
+  address: number
+  countryCode: number
+  municipalityCode: number
+  tributeCode: number
+  responsibilities: number
+  isActive: number
   type: number
   createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -73,29 +107,63 @@ export type CustomerSumAggregateInputType = {
 
 export type CustomerMinAggregateInputType = {
   id?: true
+  identificationType?: true
+  identification?: true
+  verificationDigit?: true
+  organizationType?: true
   name?: true
+  tradeName?: true
   phone?: true
   email?: true
+  address?: true
+  countryCode?: true
+  municipalityCode?: true
+  tributeCode?: true
+  isActive?: true
   type?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type CustomerMaxAggregateInputType = {
   id?: true
+  identificationType?: true
+  identification?: true
+  verificationDigit?: true
+  organizationType?: true
   name?: true
+  tradeName?: true
   phone?: true
   email?: true
+  address?: true
+  countryCode?: true
+  municipalityCode?: true
+  tributeCode?: true
+  isActive?: true
   type?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type CustomerCountAggregateInputType = {
   id?: true
+  identificationType?: true
+  identification?: true
+  verificationDigit?: true
+  organizationType?: true
   name?: true
+  tradeName?: true
   phone?: true
   email?: true
+  address?: true
+  countryCode?: true
+  municipalityCode?: true
+  tributeCode?: true
+  responsibilities?: true
+  isActive?: true
   type?: true
   createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -187,11 +255,23 @@ export type CustomerGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type CustomerGroupByOutputType = {
   id: number
+  identificationType: string | null
+  identification: string | null
+  verificationDigit: string | null
+  organizationType: string | null
   name: string
+  tradeName: string | null
   phone: string | null
   email: string | null
+  address: string | null
+  countryCode: string | null
+  municipalityCode: string | null
+  tributeCode: string | null
+  responsibilities: string[]
+  isActive: boolean
   type: $Enums.CustomerType
   createdAt: Date
+  updatedAt: Date
   _count: CustomerCountAggregateOutputType | null
   _avg: CustomerAvgAggregateOutputType | null
   _sum: CustomerSumAggregateOutputType | null
@@ -219,44 +299,93 @@ export type CustomerWhereInput = {
   OR?: Prisma.CustomerWhereInput[]
   NOT?: Prisma.CustomerWhereInput | Prisma.CustomerWhereInput[]
   id?: Prisma.IntFilter<"Customer"> | number
+  identificationType?: Prisma.StringNullableFilter<"Customer"> | string | null
+  identification?: Prisma.StringNullableFilter<"Customer"> | string | null
+  verificationDigit?: Prisma.StringNullableFilter<"Customer"> | string | null
+  organizationType?: Prisma.StringNullableFilter<"Customer"> | string | null
   name?: Prisma.StringFilter<"Customer"> | string
+  tradeName?: Prisma.StringNullableFilter<"Customer"> | string | null
   phone?: Prisma.StringNullableFilter<"Customer"> | string | null
   email?: Prisma.StringNullableFilter<"Customer"> | string | null
+  address?: Prisma.StringNullableFilter<"Customer"> | string | null
+  countryCode?: Prisma.StringNullableFilter<"Customer"> | string | null
+  municipalityCode?: Prisma.StringNullableFilter<"Customer"> | string | null
+  tributeCode?: Prisma.StringNullableFilter<"Customer"> | string | null
+  responsibilities?: Prisma.StringNullableListFilter<"Customer">
+  isActive?: Prisma.BoolFilter<"Customer"> | boolean
   type?: Prisma.EnumCustomerTypeFilter<"Customer"> | $Enums.CustomerType
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
 }
 
 export type CustomerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  identificationType?: Prisma.SortOrderInput | Prisma.SortOrder
+  identification?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationDigit?: Prisma.SortOrderInput | Prisma.SortOrder
+  organizationType?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
+  tradeName?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  countryCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  municipalityCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  tributeCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  responsibilities?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   accounts?: Prisma.AccountOrderByRelationAggregateInput
 }
 
 export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  identificationType_identification?: Prisma.CustomerIdentificationTypeIdentificationCompoundUniqueInput
   AND?: Prisma.CustomerWhereInput | Prisma.CustomerWhereInput[]
   OR?: Prisma.CustomerWhereInput[]
   NOT?: Prisma.CustomerWhereInput | Prisma.CustomerWhereInput[]
+  identificationType?: Prisma.StringNullableFilter<"Customer"> | string | null
+  identification?: Prisma.StringNullableFilter<"Customer"> | string | null
+  verificationDigit?: Prisma.StringNullableFilter<"Customer"> | string | null
+  organizationType?: Prisma.StringNullableFilter<"Customer"> | string | null
   name?: Prisma.StringFilter<"Customer"> | string
+  tradeName?: Prisma.StringNullableFilter<"Customer"> | string | null
   phone?: Prisma.StringNullableFilter<"Customer"> | string | null
   email?: Prisma.StringNullableFilter<"Customer"> | string | null
+  address?: Prisma.StringNullableFilter<"Customer"> | string | null
+  countryCode?: Prisma.StringNullableFilter<"Customer"> | string | null
+  municipalityCode?: Prisma.StringNullableFilter<"Customer"> | string | null
+  tributeCode?: Prisma.StringNullableFilter<"Customer"> | string | null
+  responsibilities?: Prisma.StringNullableListFilter<"Customer">
+  isActive?: Prisma.BoolFilter<"Customer"> | boolean
   type?: Prisma.EnumCustomerTypeFilter<"Customer"> | $Enums.CustomerType
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
-}, "id">
+}, "id" | "identificationType_identification">
 
 export type CustomerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  identificationType?: Prisma.SortOrderInput | Prisma.SortOrder
+  identification?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationDigit?: Prisma.SortOrderInput | Prisma.SortOrder
+  organizationType?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
+  tradeName?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  countryCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  municipalityCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  tributeCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  responsibilities?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.CustomerCountOrderByAggregateInput
   _avg?: Prisma.CustomerAvgOrderByAggregateInput
   _max?: Prisma.CustomerMaxOrderByAggregateInput
@@ -269,75 +398,171 @@ export type CustomerScalarWhereWithAggregatesInput = {
   OR?: Prisma.CustomerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.CustomerScalarWhereWithAggregatesInput | Prisma.CustomerScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Customer"> | number
+  identificationType?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  identification?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  verificationDigit?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  organizationType?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"Customer"> | string
+  tradeName?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  address?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  countryCode?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  municipalityCode?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  tributeCode?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  responsibilities?: Prisma.StringNullableListFilter<"Customer">
+  isActive?: Prisma.BoolWithAggregatesFilter<"Customer"> | boolean
   type?: Prisma.EnumCustomerTypeWithAggregatesFilter<"Customer"> | $Enums.CustomerType
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
 }
 
 export type CustomerCreateInput = {
+  identificationType?: string | null
+  identification?: string | null
+  verificationDigit?: string | null
+  organizationType?: string | null
   name: string
+  tradeName?: string | null
   phone?: string | null
   email?: string | null
+  address?: string | null
+  countryCode?: string | null
+  municipalityCode?: string | null
+  tributeCode?: string | null
+  responsibilities?: Prisma.CustomerCreateresponsibilitiesInput | string[]
+  isActive?: boolean
   type?: $Enums.CustomerType
   createdAt?: Date | string
+  updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateInput = {
   id?: number
+  identificationType?: string | null
+  identification?: string | null
+  verificationDigit?: string | null
+  organizationType?: string | null
   name: string
+  tradeName?: string | null
   phone?: string | null
   email?: string | null
+  address?: string | null
+  countryCode?: string | null
+  municipalityCode?: string | null
+  tributeCode?: string | null
+  responsibilities?: Prisma.CustomerCreateresponsibilitiesInput | string[]
+  isActive?: boolean
   type?: $Enums.CustomerType
   createdAt?: Date | string
+  updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUpdateInput = {
+  identificationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationDigit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalityCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tributeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibilities?: Prisma.CustomerUpdateresponsibilitiesInput | string[]
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  identificationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationDigit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalityCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tributeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibilities?: Prisma.CustomerUpdateresponsibilitiesInput | string[]
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateManyInput = {
   id?: number
+  identificationType?: string | null
+  identification?: string | null
+  verificationDigit?: string | null
+  organizationType?: string | null
   name: string
+  tradeName?: string | null
   phone?: string | null
   email?: string | null
+  address?: string | null
+  countryCode?: string | null
+  municipalityCode?: string | null
+  tributeCode?: string | null
+  responsibilities?: Prisma.CustomerCreateresponsibilitiesInput | string[]
+  isActive?: boolean
   type?: $Enums.CustomerType
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type CustomerUpdateManyMutationInput = {
+  identificationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationDigit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalityCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tributeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibilities?: Prisma.CustomerUpdateresponsibilitiesInput | string[]
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CustomerUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  identificationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationDigit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalityCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tributeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibilities?: Prisma.CustomerUpdateresponsibilitiesInput | string[]
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CustomerNullableScalarRelationFilter = {
@@ -345,13 +570,38 @@ export type CustomerNullableScalarRelationFilter = {
   isNot?: Prisma.CustomerWhereInput | null
 }
 
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
+export type CustomerIdentificationTypeIdentificationCompoundUniqueInput = {
+  identificationType: string
+  identification: string
+}
+
 export type CustomerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  identificationType?: Prisma.SortOrder
+  identification?: Prisma.SortOrder
+  verificationDigit?: Prisma.SortOrder
+  organizationType?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  tradeName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  countryCode?: Prisma.SortOrder
+  municipalityCode?: Prisma.SortOrder
+  tributeCode?: Prisma.SortOrder
+  responsibilities?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type CustomerAvgOrderByAggregateInput = {
@@ -360,20 +610,42 @@ export type CustomerAvgOrderByAggregateInput = {
 
 export type CustomerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  identificationType?: Prisma.SortOrder
+  identification?: Prisma.SortOrder
+  verificationDigit?: Prisma.SortOrder
+  organizationType?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  tradeName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  countryCode?: Prisma.SortOrder
+  municipalityCode?: Prisma.SortOrder
+  tributeCode?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type CustomerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  identificationType?: Prisma.SortOrder
+  identification?: Prisma.SortOrder
+  verificationDigit?: Prisma.SortOrder
+  organizationType?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  tradeName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  countryCode?: Prisma.SortOrder
+  municipalityCode?: Prisma.SortOrder
+  tributeCode?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type CustomerSumOrderByAggregateInput = {
@@ -396,25 +668,58 @@ export type CustomerUpdateOneWithoutAccountsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutAccountsInput, Prisma.CustomerUpdateWithoutAccountsInput>, Prisma.CustomerUncheckedUpdateWithoutAccountsInput>
 }
 
+export type CustomerCreateresponsibilitiesInput = {
+  set: string[]
+}
+
+export type CustomerUpdateresponsibilitiesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type EnumCustomerTypeFieldUpdateOperationsInput = {
   set?: $Enums.CustomerType
 }
 
 export type CustomerCreateWithoutAccountsInput = {
+  identificationType?: string | null
+  identification?: string | null
+  verificationDigit?: string | null
+  organizationType?: string | null
   name: string
+  tradeName?: string | null
   phone?: string | null
   email?: string | null
+  address?: string | null
+  countryCode?: string | null
+  municipalityCode?: string | null
+  tributeCode?: string | null
+  responsibilities?: Prisma.CustomerCreateresponsibilitiesInput | string[]
+  isActive?: boolean
   type?: $Enums.CustomerType
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type CustomerUncheckedCreateWithoutAccountsInput = {
   id?: number
+  identificationType?: string | null
+  identification?: string | null
+  verificationDigit?: string | null
+  organizationType?: string | null
   name: string
+  tradeName?: string | null
   phone?: string | null
   email?: string | null
+  address?: string | null
+  countryCode?: string | null
+  municipalityCode?: string | null
+  tributeCode?: string | null
+  responsibilities?: Prisma.CustomerCreateresponsibilitiesInput | string[]
+  isActive?: boolean
   type?: $Enums.CustomerType
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type CustomerCreateOrConnectWithoutAccountsInput = {
@@ -434,20 +739,44 @@ export type CustomerUpdateToOneWithWhereWithoutAccountsInput = {
 }
 
 export type CustomerUpdateWithoutAccountsInput = {
+  identificationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationDigit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalityCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tributeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibilities?: Prisma.CustomerUpdateresponsibilitiesInput | string[]
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CustomerUncheckedUpdateWithoutAccountsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  identificationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identification?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationDigit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalityCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tributeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibilities?: Prisma.CustomerUpdateresponsibilitiesInput | string[]
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -483,43 +812,91 @@ export type CustomerCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Typ
 
 export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  identificationType?: boolean
+  identification?: boolean
+  verificationDigit?: boolean
+  organizationType?: boolean
   name?: boolean
+  tradeName?: boolean
   phone?: boolean
   email?: boolean
+  address?: boolean
+  countryCode?: boolean
+  municipalityCode?: boolean
+  tributeCode?: boolean
+  responsibilities?: boolean
+  isActive?: boolean
   type?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   accounts?: boolean | Prisma.Customer$accountsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
 export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  identificationType?: boolean
+  identification?: boolean
+  verificationDigit?: boolean
+  organizationType?: boolean
   name?: boolean
+  tradeName?: boolean
   phone?: boolean
   email?: boolean
+  address?: boolean
+  countryCode?: boolean
+  municipalityCode?: boolean
+  tributeCode?: boolean
+  responsibilities?: boolean
+  isActive?: boolean
   type?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["customer"]>
 
 export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  identificationType?: boolean
+  identification?: boolean
+  verificationDigit?: boolean
+  organizationType?: boolean
   name?: boolean
+  tradeName?: boolean
   phone?: boolean
   email?: boolean
+  address?: boolean
+  countryCode?: boolean
+  municipalityCode?: boolean
+  tributeCode?: boolean
+  responsibilities?: boolean
+  isActive?: boolean
   type?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["customer"]>
 
 export type CustomerSelectScalar = {
   id?: boolean
+  identificationType?: boolean
+  identification?: boolean
+  verificationDigit?: boolean
+  organizationType?: boolean
   name?: boolean
+  tradeName?: boolean
   phone?: boolean
   email?: boolean
+  address?: boolean
+  countryCode?: boolean
+  municipalityCode?: boolean
+  tributeCode?: boolean
+  responsibilities?: boolean
+  isActive?: boolean
   type?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "type" | "createdAt", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "identificationType" | "identification" | "verificationDigit" | "organizationType" | "name" | "tradeName" | "phone" | "email" | "address" | "countryCode" | "municipalityCode" | "tributeCode" | "responsibilities" | "isActive" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.Customer$accountsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
@@ -534,11 +911,23 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    identificationType: string | null
+    identification: string | null
+    verificationDigit: string | null
+    organizationType: string | null
     name: string
+    tradeName: string | null
     phone: string | null
     email: string | null
+    address: string | null
+    countryCode: string | null
+    municipalityCode: string | null
+    tributeCode: string | null
+    responsibilities: string[]
+    isActive: boolean
     type: $Enums.CustomerType
     createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["customer"]>
   composites: {}
 }
@@ -964,11 +1353,23 @@ export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime
  */
 export interface CustomerFieldRefs {
   readonly id: Prisma.FieldRef<"Customer", 'Int'>
+  readonly identificationType: Prisma.FieldRef<"Customer", 'String'>
+  readonly identification: Prisma.FieldRef<"Customer", 'String'>
+  readonly verificationDigit: Prisma.FieldRef<"Customer", 'String'>
+  readonly organizationType: Prisma.FieldRef<"Customer", 'String'>
   readonly name: Prisma.FieldRef<"Customer", 'String'>
+  readonly tradeName: Prisma.FieldRef<"Customer", 'String'>
   readonly phone: Prisma.FieldRef<"Customer", 'String'>
   readonly email: Prisma.FieldRef<"Customer", 'String'>
+  readonly address: Prisma.FieldRef<"Customer", 'String'>
+  readonly countryCode: Prisma.FieldRef<"Customer", 'String'>
+  readonly municipalityCode: Prisma.FieldRef<"Customer", 'String'>
+  readonly tributeCode: Prisma.FieldRef<"Customer", 'String'>
+  readonly responsibilities: Prisma.FieldRef<"Customer", 'String[]'>
+  readonly isActive: Prisma.FieldRef<"Customer", 'Boolean'>
   readonly type: Prisma.FieldRef<"Customer", 'CustomerType'>
   readonly createdAt: Prisma.FieldRef<"Customer", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Customer", 'DateTime'>
 }
     
 

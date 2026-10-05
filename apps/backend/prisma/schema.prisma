@@ -190,6 +190,7 @@ model Account {
   paymentMethod       PaymentMethod?
   customerId          Int?
   customer            Customer?      @relation(fields: [customerId], references: [id])
+  customerSnapshot    Json?
 
   financialTransactions FinancialTransaction[] @relation("AccountFinancialTransactions")
   electronicDocuments   ElectronicDocument[]
@@ -319,16 +320,33 @@ enum FinancialTransactionType {
 }
 
 model Customer {
-  id    Int     @id @default(autoincrement())
-  name  String
-  phone String?
-  email String?
+  id                   Int      @id @default(autoincrement())
+  identificationType   String?
+  identification       String?
+  verificationDigit    String?
+  organizationType     String?
+  name                 String
+  tradeName            String?
+  phone                String?
+  email                String?
+  address              String?
+  countryCode          String?
+  municipalityCode     String?
+  tributeCode          String?
+  responsibilities     String[] @default([])
+  isActive             Boolean  @default(true)
 
   type CustomerType @default(RETAIL)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   accounts Account[]
+
+  @@unique([identificationType, identification])
+  @@index([name])
+  @@index([phone])
+  @@index([isActive])
 }
 
 enum CustomerType {
