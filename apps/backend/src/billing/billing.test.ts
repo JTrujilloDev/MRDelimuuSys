@@ -50,6 +50,7 @@ test("maps a Veleño invoice to Factus standard invoice and 8% consumption tax",
   assert.equal(payload.customer.company, "Cliente de prueba SAS");
   assert.equal(payload.items[0].taxes[0].code, "04");
   assert.equal(payload.items[0].taxes[0].rate, "8.00");
+  assert.equal(payload.items[0].discount_amount, undefined);
   assert.equal(payload.cash_rounding_amount, "0.00");
 });
 
@@ -157,4 +158,22 @@ test("Factus provider treats conflict and network uncertainty as reconciliation,
   assert.equal(result.outcome, "UNKNOWN");
   assert.equal(result.providerStatus, "REQUIRES_RECONCILIATION");
   assert.equal(result.code, "HTTP_409");
+});
+
+test("Factus provider preserves validation diagnostics without exposing credentials", async () => {
+  const validationFetch = async (input: string | URL | Request) => String(input).endsWith("/oauth/token")
+    ? Response.json({ access_token: "access-test", expires_in: 600 })
+    : Response.json({ message: "Error de validación", errors: { "items.0.taxes.0.code": ["Código inválido"] } }, { status: 422 });
+  const client = new FactusClient({
+    environment: "SANDBOX",
+    credentials: { clientId: "id", clientSecret: "secret", username: "user", password: "password" },
+  }, validationFetch);
+  const provider = new FactusBillingProvider(client, { paymentMethodCodes: { CASH: "10" } });
+
+  const result = await provider.issue(invoice());
+
+  assert.equal(result.outcome, "REJECTED");
+  assert.deepEqual(result.diagnostics, {
+    validationErrors: { "items.0.taxes.0.code": ["Código inválido"] },
+  });
 });

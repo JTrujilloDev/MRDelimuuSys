@@ -26,6 +26,10 @@ const normalizeDocument = (response: unknown): BillingProviderResult => {
   const data = documentData(response);
   const validated = data.is_validated === true;
   const links = isRecord(data.links) ? data.links : {};
+  const providerNotifications = data.errors;
+  const hasProviderNotifications = isRecord(providerNotifications)
+    ? Object.keys(providerNotifications).length > 0
+    : Array.isArray(providerNotifications) && providerNotifications.length > 0;
   return {
     outcome: validated ? "ACCEPTED" : "PROCESSING",
     providerDocumentId: data.id === undefined ? undefined : String(data.id),
@@ -36,9 +40,8 @@ const normalizeDocument = (response: unknown): BillingProviderResult => {
     qrUrl: text(links, "qr"),
     publicUrl: text(links, "public_url"),
     diagnostics: {
-      hasProviderNotifications: isRecord(data.errors)
-        ? Object.keys(data.errors).length > 0
-        : Array.isArray(data.errors) && data.errors.length > 0,
+      hasProviderNotifications,
+      ...(hasProviderNotifications ? { providerNotifications } : {}),
     },
   };
 };
@@ -46,11 +49,14 @@ const normalizeDocument = (response: unknown): BillingProviderResult => {
 const normalizeError = (error: unknown): BillingProviderResult => {
   if (!(error instanceof FactusApiError)) throw error;
   const rejected = error.status === 400 || error.status === 422;
+  const response = isRecord(error.response) ? error.response : {};
+  const validationErrors = response.errors ?? (isRecord(response.data) ? response.data.errors : undefined);
   return {
     outcome: rejected ? "REJECTED" : "UNKNOWN",
     providerStatus: rejected ? "VALIDATION_ERROR" : "REQUIRES_RECONCILIATION",
     code: error.status === null ? "NETWORK_ERROR" : `HTTP_${error.status}`,
     message: error.message,
+    ...(validationErrors === undefined ? {} : { diagnostics: { validationErrors } }),
   };
 };
 

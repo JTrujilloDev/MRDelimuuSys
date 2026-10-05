@@ -53,7 +53,7 @@ export type FactusInvoicePayload = {
     code_reference: string;
     name: string;
     quantity: string;
-    discount_amount: string;
+    discount_amount?: string;
     price: string;
     unit_measure_code: string;
     standard_code: string;
@@ -128,7 +128,9 @@ export const buildFactusInvoicePayload = (
       code_reference: line.reference,
       name: line.name,
       quantity: normalizeMoney(line.quantity),
-      discount_amount: normalizeMoney(line.discountAmount),
+      ...(normalizeMoney(line.discountAmount) === "0.00"
+        ? {}
+        : { discount_amount: normalizeMoney(line.discountAmount) }),
       price: normalizeMoney(line.unitPriceBeforeTax),
       unit_measure_code: requireMappedCode(unitCodes, line.unit, "unit measure"),
       standard_code: configuration.standardCode ?? "999",

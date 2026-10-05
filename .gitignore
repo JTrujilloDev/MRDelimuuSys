@@ -8,4 +8,5 @@ build
 .env.*
 !.env.example
 .DS_Store
-docker-compose.override.ymlgit add .
+docker-compose.override.yml
+apps/backend/tmp/factus-sandbox/
