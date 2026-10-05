@@ -403,6 +403,66 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
   }));
 };
 
+export const getPosProductsService = async (storeId: number) => {
+  const store = await prisma.store.findUnique({ where: { id: storeId } });
+  if (!store) throw new Error("Store not found");
+  const products = await prisma.product.findMany({
+    where: {
+      variants: {
+        some: {
+          isActive: true,
+          catalogItems: { some: { groupId: store.groupId, isPosActive: true } },
+        },
+      },
+    },
+    include: {
+      category: true,
+      variants: {
+        where: {
+          isActive: true,
+          catalogItems: { some: { groupId: store.groupId, isPosActive: true } },
+        },
+        include: {
+          catalogItems: { where: { groupId: store.groupId, isPosActive: true } },
+          storeInventories: { where: { storeId } },
+          recipeItems: {
+            include: {
+              ingredientVariant: {
+                include: {
+                  product: true,
+                  storeInventories: { where: { storeId } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return products.map((product) => ({
+    ...product,
+    variants: product.variants.map(({ catalogItems, storeInventories, productCost: _productCost, ...variant }) => ({
+      ...variant,
+      retailPrice: catalogItems[0]!.salePrice,
+      posCode: catalogItems[0]!.posCode,
+      stock: storeInventories[0]?.stock ?? 0,
+      minStock: storeInventories[0]?.minStock ?? 0,
+      isNew: !(storeInventories[0]?.isInitialized ?? false),
+      recipeItems: variant.recipeItems.map((recipeItem) => ({
+        ...recipeItem,
+        ingredientVariant: {
+          ...Object.fromEntries(
+            Object.entries(recipeItem.ingredientVariant).filter(([key]) => key !== "productCost"),
+          ),
+          stock: recipeItem.ingredientVariant.storeInventories[0]?.stock ?? 0,
+          storeInventories: undefined,
+        },
+      })),
+    })),
+  }));
+};
+
 export const getProductByPosCodeService = async (code: unknown, storeId: number) => {
   const posCode = requirePosCode(code);
   if (!posCode) throw new Error("Ingresa un código de producto");

@@ -22,6 +22,7 @@ import { getRecipeAvailability } from "../utils/recipeAvailability";
 import { useBrand } from "../../../app/branding/useBrand";
 import { useGetAllProductCategories } from "../../categories/hooks/useGetAllCategories";
 import { useGetProductsByCategory } from "../../products/hooks/useGetProductsByCategory";
+import { useGetPosProducts } from "../../products/hooks/useGetPosProducts";
 import { useOpenCashRegister } from "../hooks/cashRegister/useOpenCashRegister";
 import { useGetOpenCashRegister } from "../hooks/cashRegister/useGetOpenCashRegister";
 import { toast } from "@heroui/react";
@@ -100,6 +101,8 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState(() =>
     readSessionValue("pos:search", ""),
   );
+  const isSearching = searchQuery.trim().length > 0;
+  const { data: posProducts } = useGetPosProducts(isSearching);
   const [showInventoryCount, setShowInventoryCount] = useState(false);
   const [recentProducts, setRecentProducts] = useState<RecentProductShortcut[]>(
     () => readSessionValue("pos:recent-products", []),
@@ -146,7 +149,9 @@ const Index = () => {
   );
 
   const filteredProducts = useMemo(() => {
-    const availableProducts = (products?.data ?? []) as ProductWithVariants[];
+    const availableProducts = (
+      isSearching ? posProducts?.data ?? [] : products?.data ?? []
+    ) as ProductWithVariants[];
     const normalizedSearch = searchQuery
       .trim()
       .normalize("NFD")
@@ -172,7 +177,7 @@ const Index = () => {
     return [...matchingProducts].sort((first, second) =>
       first.name.localeCompare(second.name, "es", { sensitivity: "base" }),
     );
-  }, [products?.data, searchQuery]);
+  }, [isSearching, posProducts?.data, products?.data, searchQuery]);
 
   const socket = useSocket();
   const kitchenTickets = useKitchenTickets(kitchenEnabled);
@@ -834,7 +839,6 @@ const Index = () => {
     <div className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-background xl:flex-row">
       {/* Left — Products */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-4 sm:px-6 sm:py-5">
-        <InventoryCountStatus cashRegisterId={openCashRegisterData.data.id} onOpen={() => setShowInventoryCount(true)} />
         {/* Top bar */}
         <div className="mb-4 flex flex-col gap-4 rounded-[28px] border border-border/80 bg-pos-surface/95 p-4 shadow-[0_18px_40px_-32px_rgba(98,68,38,0.45)] sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -858,7 +862,7 @@ const Index = () => {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Buscar en el menú..."
+                placeholder="Buscar en todo el catálogo..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-11 w-full rounded-2xl border border-border/70 bg-background/80 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all focus:ring-2 focus:ring-primary/25"

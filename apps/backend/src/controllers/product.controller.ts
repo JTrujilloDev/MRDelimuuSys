@@ -7,9 +7,23 @@ import {
   getAllProductsService,
   getProductByIdService,
   getProductsByCategoryService,
+  getPosProductsService,
   getProductByPosCodeService,
   updateProductService,
 } from "../service/product.service";
+
+export const getPosProducts = async (req: Request, res: Response) => {
+  try {
+    const products = await getPosProductsService(req.auth!.activeStoreId!);
+    res.status(200).json({
+      success: true,
+      message: "POS products fetched successfully",
+      data: products,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: (error as Error).message });
+  }
+};
 
 export const createProduct = async (req: Request, res: Response) => {
   try {

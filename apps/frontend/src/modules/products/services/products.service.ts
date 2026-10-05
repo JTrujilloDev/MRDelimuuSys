@@ -30,6 +30,11 @@ export const getProductsByCategory = async (id: number) => {
   return data;
 };
 
+export const getPosProducts = async () => {
+  const { data } = await api.get("/products/pos");
+  return data;
+};
+
 export const getProductByPosCode = async (code: string) => {
   const { data } = await api.get(`/products/by-pos-code/${encodeURIComponent(code)}`);
   return data.data;

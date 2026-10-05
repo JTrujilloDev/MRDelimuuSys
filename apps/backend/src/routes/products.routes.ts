@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProduct, deleteProduct, getAllActiveProducts, getAllProducts, getInventoryProducts, getProductById, getProductByPosCode, getProductsByCategory, updateProduct } from "../controllers/product.controller";
+import { createProduct, deleteProduct, getAllActiveProducts, getAllProducts, getInventoryProducts, getPosProducts, getProductById, getProductByPosCode, getProductsByCategory, updateProduct } from "../controllers/product.controller";
 import { requireGlobalAdmin } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -8,6 +8,7 @@ router.get("/", getAllProducts);
 
 router.get("/active", getAllActiveProducts);
 router.get("/inventory", getInventoryProducts);
+router.get("/pos", getPosProducts);
 router.get("/by-category/:id", getProductsByCategory);
 router.get("/by-pos-code/:code", getProductByPosCode);
 
