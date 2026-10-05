@@ -51,6 +51,10 @@ export class FactusClient {
     this.timeoutMs = configuration.requestTimeoutMs ?? 20_000;
   }
 
+  async verifyAuthentication() {
+    await this.getAccessToken();
+  }
+
   async validateBill(payload: FactusInvoicePayload) {
     return this.request("/v2/bills/validate", { method: "POST", body: JSON.stringify(payload) });
   }
@@ -63,6 +67,14 @@ export class FactusClient {
     if (Array.isArray(paginated)) return paginated[0] ?? null;
     if (isRecord(paginated) && Array.isArray(paginated.data)) return paginated.data[0] ?? null;
     return null;
+  }
+
+  async listNumberingRanges(documentType = "21", apiVersion: "v1" | "v2" = "v2") {
+    const query = new URLSearchParams({
+      "filter[document]": documentType,
+      "filter[is_active]": "1",
+    });
+    return this.request(`/${apiVersion}/numbering-ranges?${query.toString()}`);
   }
 
   async downloadBillArtifact(documentNumber: string, artifact: "PDF" | "XML" | "ATTACHED_DOCUMENT_XML") {

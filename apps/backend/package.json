@@ -9,6 +9,7 @@
     "dev:watch": "nodemon --exec ts-node src/server.ts",
     "db:deploy": "npx prisma migrate deploy && npx prisma generate",
     "admin:bootstrap": "node --require ts-node/register src/scripts/bootstrapAdmin.ts",
+    "billing:factus:verify": "node --require ts-node/register src/scripts/verifyFactusSandbox.ts",
     "test": "node --require ts-node/register --test src/service/*.test.ts src/auth/*.test.ts src/billing/*.test.ts"
   },
   "keywords": [],

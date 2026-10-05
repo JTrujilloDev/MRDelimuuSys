@@ -3,6 +3,7 @@ import test from "node:test";
 import type { BillingDocumentSnapshot } from "./domain/billing-provider";
 import { computeCashRoundingAmount, validateBillingSnapshot } from "./domain/billing.rules";
 import { FactusClient } from "./providers/factus/factus.client";
+import { loadFactusConfiguration } from "./providers/factus/factus.configuration";
 import { buildFactusInvoicePayload } from "./providers/factus/factus.mapper";
 import { FactusBillingProvider } from "./providers/factus/factus.provider";
 import { MockBillingProvider } from "./providers/mock-billing.provider";
@@ -102,6 +103,44 @@ test("Factus client authenticates once and reuses its access token", async () =>
   assert.equal(second.fiscalIdentifier, "cufe-test");
   assert.equal(calls.filter((call) => call.url.endsWith("/oauth/token")).length, 1);
   assert.deepEqual(calls.slice(1).map((call) => call.authorization), ["Bearer access-test", "Bearer access-test"]);
+});
+
+test("loads Factus credentials by reference without hard-coding secrets", () => {
+  const configuration = loadFactusConfiguration({
+    FACTUS_ENVIRONMENT: "sandbox",
+    FACTUS_CREDENTIAL_REFERENCE: "FACTUS_TEST",
+    FACTUS_TEST_CLIENT_ID: "id",
+    FACTUS_TEST_CLIENT_SECRET: "secret",
+    FACTUS_TEST_USERNAME: "user",
+    FACTUS_TEST_PASSWORD: "password",
+  });
+
+  assert.equal(configuration.environment, "SANDBOX");
+  assert.equal(configuration.credentials.username, "user");
+  assert.throws(() => loadFactusConfiguration({
+    FACTUS_CREDENTIAL_REFERENCE: "FACTUS_MISSING",
+  }), /FACTUS_MISSING_CLIENT_ID/);
+});
+
+test("Factus client requests active invoice numbering ranges", async () => {
+  const calls: string[] = [];
+  const fakeFetch = async (input: string | URL | Request) => {
+    const url = String(input);
+    calls.push(url);
+    return url.endsWith("/oauth/token")
+      ? Response.json({ access_token: "access-test", expires_in: 600 })
+      : Response.json({ data: [] });
+  };
+  const client = new FactusClient({
+    environment: "SANDBOX",
+    credentials: { clientId: "id", clientSecret: "secret", username: "user", password: "password" },
+  }, fakeFetch);
+
+  await client.listNumberingRanges();
+
+  assert.match(calls[1], /\/v2\/numbering-ranges\?/);
+  assert.match(calls[1], /filter%5Bdocument%5D=21/);
+  assert.match(calls[1], /filter%5Bis_active%5D=1/);
 });
 
 test("Factus provider treats conflict and network uncertainty as reconciliation, not rejection", async () => {
