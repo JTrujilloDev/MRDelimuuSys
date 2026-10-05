@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@heroui/react";
 import axios from "axios";
 import { CircleDollarSign, PackagePlus, RotateCcw, Save, Search, Trash2 } from "lucide-react";
 import numeral from "numeral";
@@ -34,7 +35,9 @@ type CatalogRow = {
 const errorMessage = (error: unknown) =>
   axios.isAxiosError<{ message?: string }>(error)
     ? error.response?.data?.message ?? "No fue posible guardar los cambios"
-    : "No fue posible guardar los cambios";
+    : error instanceof Error
+      ? error.message
+      : "No fue posible guardar los cambios";
 
 export default function GroupCatalogManager() {
   const { state } = useAuth();
@@ -49,8 +52,6 @@ export default function GroupCatalogManager() {
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [masterSearch, setMasterSearch] = useState("");
   const [catalogSearch, setCatalogSearch] = useState("");
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
   const groupId = canManage
     ? selectedGroupId ?? groupsQuery.data?.[0]?.id ?? null
     : activeGroupId ?? null;
@@ -107,28 +108,37 @@ export default function GroupCatalogManager() {
   const configuredCodes = catalogRows.filter((row) => row.variant.catalog?.posCode).length;
 
   const save = async (variant: GroupCatalogVariant, values: CatalogValues, isNew: boolean) => {
-    setError("");
-    setNotice("");
     try {
-      await saveMutation.mutateAsync({ variantId: variant.id, ...values });
+      const savedItem = await saveMutation.mutateAsync({ variantId: variant.id, ...values });
+      if ((savedItem.posCode ?? null) !== values.posCode) {
+        throw new Error(
+          "El servidor no confirmó el código POS. Reinicia el backend y vuelve a intentarlo.",
+        );
+      }
       await refresh();
       if (isNew) setMasterSearch("");
-      setNotice(`${variant.name} fue ${isNew ? "agregada al" : "actualizada en el"} catálogo.`);
+      toast(`${variant.name} fue ${isNew ? "agregada al" : "actualizada en el"} catálogo`, {
+        variant: "success",
+      });
     } catch (requestError) {
-      setError(errorMessage(requestError));
+      toast("No fue posible guardar los cambios", {
+        variant: "danger",
+        description: errorMessage(requestError),
+      });
     }
   };
 
   const remove = async (variant: GroupCatalogVariant) => {
     if (!window.confirm(`¿Eliminar ${variant.name} de este grupo empresarial?`)) return;
-    setError("");
-    setNotice("");
     try {
       await deleteMutation.mutateAsync(variant.id);
       await refresh();
-      setNotice(`${variant.name} fue retirada del catálogo empresarial.`);
+      toast(`${variant.name} fue retirada del catálogo empresarial`, { variant: "success" });
     } catch (requestError) {
-      setError(errorMessage(requestError));
+      toast("No fue posible retirar el producto", {
+        variant: "danger",
+        description: errorMessage(requestError),
+      });
     }
   };
 
@@ -147,8 +157,6 @@ export default function GroupCatalogManager() {
                 setSelectedGroupId(Number(event.target.value));
                 setMasterSearch("");
                 setCatalogSearch("");
-                setError("");
-                setNotice("");
               }}
             >
               {(groupsQuery.data ?? []).map((group) => (
@@ -210,9 +218,6 @@ export default function GroupCatalogManager() {
           )}
         </div>
       )}
-
-      {notice && <p className="rounded-xl bg-success/10 p-3 text-sm font-semibold text-success">{notice}</p>}
-      {error && <p className="rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
 
       <section className="rounded-2xl border border-border bg-pos-surface shadow-sm">
         <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border p-4">

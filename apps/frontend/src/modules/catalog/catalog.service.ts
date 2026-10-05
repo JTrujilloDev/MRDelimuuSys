@@ -35,6 +35,17 @@ export type GroupCatalog = {
   }>;
 };
 
+export type UpdatedGroupCatalogItem = {
+  id: number;
+  groupId: number;
+  productVariantId: number;
+  salePrice: number | null;
+  costPrice: number;
+  posCode: string | null;
+  isPosActive: boolean;
+  updatedAt: string;
+};
+
 const unwrap = <T,>(response: { data: { data: T } }) => response.data.data;
 
 export const getCatalogGroups = async () =>
@@ -52,7 +63,9 @@ export const updateGroupCatalogItem = async (
     isPosActive?: boolean;
     posCode?: string | null;
   },
-) => unwrap(await api.patch(`catalog/groups/${groupId}/variants/${variantId}`, payload));
+) => unwrap<UpdatedGroupCatalogItem>(
+  await api.patch(`catalog/groups/${groupId}/variants/${variantId}`, payload),
+);
 
 export const deleteGroupCatalogItem = async (groupId: number, variantId: number) =>
   unwrap(await api.delete(`catalog/groups/${groupId}/variants/${variantId}`));
