@@ -53,7 +53,7 @@ export default function GroupCatalogManager() {
   const [masterSearch, setMasterSearch] = useState("");
   const [catalogSearch, setCatalogSearch] = useState("");
   const groupId = canManage
-    ? selectedGroupId ?? groupsQuery.data?.[0]?.id ?? null
+    ? selectedGroupId ?? activeGroupId ?? groupsQuery.data?.[0]?.id ?? null
     : activeGroupId ?? null;
   const catalogQuery = useQuery({
     queryKey: ["catalog", "group", groupId],

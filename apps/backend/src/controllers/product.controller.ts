@@ -43,7 +43,8 @@ export const getProductByPosCode = async (req: Request, res: Response) => {
     });
   } catch (error) {
     const message = (error as Error).message;
-    res.status(message.includes("no corresponde") ? 404 : 400).json({ success: false, message });
+    const status = message.includes("no existe") || message.includes("pertenece al catálogo") ? 404 : 400;
+    res.status(status).json({ success: false, message });
   }
 };
 

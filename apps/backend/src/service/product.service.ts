@@ -409,7 +409,11 @@ export const getProductByPosCodeService = async (code: unknown, storeId: number)
 
   const store = await prisma.store.findUnique({
     where: { id: storeId },
-    select: { groupId: true },
+    select: {
+      groupId: true,
+      name: true,
+      group: { select: { name: true } },
+    },
   });
   if (!store) throw new Error("Store not found");
 
@@ -435,12 +439,24 @@ export const getProductByPosCodeService = async (code: unknown, storeId: number)
     },
   });
 
-  if (
-    !catalogItem?.isPosActive ||
-    catalogItem.salePrice === null ||
-    !catalogItem.productVariant.isActive
-  ) {
-    throw new Error(`El código ${posCode} no corresponde a un producto activo del POS`);
+  if (!catalogItem) {
+    const catalogInAnotherGroup = await prisma.groupCatalogItem.findFirst({
+      where: { posCode },
+      select: { group: { select: { name: true } } },
+    });
+    if (catalogInAnotherGroup) {
+      throw new Error(
+        `El código ${posCode} pertenece al catálogo ${catalogInAnotherGroup.group.name}, ` +
+        `pero ${store.name} usa el catálogo ${store.group.name}. Asígnalo también a ${store.group.name}.`,
+      );
+    }
+    throw new Error(`El código ${posCode} no existe en el catálogo ${store.group.name}`);
+  }
+
+  if (!catalogItem.isPosActive || catalogItem.salePrice === null || !catalogItem.productVariant.isActive) {
+    throw new Error(
+      `El código ${posCode} existe en ${store.group.name}, pero el producto no está activo para vender en el POS`,
+    );
   }
 
   const { productVariant: variant } = catalogItem;
