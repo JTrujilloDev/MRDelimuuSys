@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Chip, Modal } from "@heroui/react";
-import { Check, LoaderCircle, Minus, Plus, ShoppingCart } from "lucide-react";
+import { AlertTriangle, Check, LoaderCircle, Minus, Plus, ShoppingCart } from "lucide-react";
 import numeral from "numeral";
 import {
   getRecipeAvailability,
@@ -92,6 +92,11 @@ const VariantModal = ({
                         <p className="line-clamp-2 min-h-14 text-lg font-black leading-7 text-foreground">
                           {variant.name}
                         </p>
+                        {variant.posCode && (
+                          <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                            Código {variant.posCode}
+                          </p>
+                        )}
                         <p className="mt-2 text-2xl font-black text-primary">
                           {numeral(variant.retailPrice).format("$ 0,0")}
                         </p>
@@ -116,6 +121,12 @@ const VariantModal = ({
                               Limita: {availability.limitingIngredientNames.join(", ")}
                             </p>
                           )}
+                        {(variant.expiredStock ?? 0) > 0 && (
+                          <p className="mx-auto mt-3 flex w-fit items-center gap-1.5 rounded-lg border border-danger/30 bg-danger/10 px-2.5 py-1.5 text-xs font-black text-danger">
+                            <AlertTriangle className="h-3.5 w-3.5" />
+                            {variant.expiredStock} {variant.expiredStock === 1 ? "unidad vencida" : "unidades vencidas"}
+                          </p>
+                        )}
                       </div>
 
                       <div className="mt-4 flex shrink-0 items-center justify-between gap-2 rounded-xl border border-border bg-secondary/80 p-2 shadow-inner">

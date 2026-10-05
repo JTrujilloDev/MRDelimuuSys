@@ -25,6 +25,7 @@ export interface Variant {
   stock: number;
   requirePreparation?: boolean;
   posCode?: string | null;
+  expiredStock?: number;
   recipeItems?: RecipeItem[];
 }
 

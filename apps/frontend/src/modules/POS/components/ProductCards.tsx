@@ -1,5 +1,5 @@
 import { Chip } from "@heroui/react";
-import { Check, LoaderCircle, Plus } from "lucide-react";
+import { AlertTriangle, Check, LoaderCircle, Plus } from "lucide-react";
 import numeral from "numeral";
 import { getRecipeAvailability, type Variant } from "../utils/recipeAvailability";
 
@@ -26,9 +26,15 @@ const ProductCard = ({ name, price, image, containImage = false, variantsInfo, p
   const isUnavailable = isRecipeProduct && (recipeAvailability.length === 0 || recipeAvailability.every((item) => item.remainingUnits === 0));
   const singleAvailability = recipeAvailability[0];
   const availableVariantCount = recipeAvailability.filter((item) => item.remainingUnits > 0).length;
+  const productCodes = activeVariants.map((variant) => variant.posCode).filter((code): code is string => Boolean(code));
+  const visibleCodes = productCodes.slice(0, 2);
+  const expiredStock = activeVariants.reduce((total, variant) => total + (variant.expiredStock ?? 0), 0);
+  const codeLabel = visibleCodes.length > 0
+    ? `${visibleCodes.join(" · ")}${productCodes.length > visibleCodes.length ? ` · +${productCodes.length - visibleCodes.length}` : ""}`
+    : null;
 
   return (
-    <button type="button" onClick={onAdd} disabled={isUnavailable || isAdding} aria-label={`${name}, ${activeVariants.length > 1 ? `${activeVariants.length} variantes` : numeral(price).format("$0,0")}${isUnavailable ? ", no disponible" : ""}`} className={`group relative flex min-h-[270px] flex-col overflow-hidden rounded-[24px] border-2 bg-pos-surface text-left shadow-[0_12px_32px_-24px_rgba(84,56,32,0.35)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_40px_-24px_rgba(84,56,32,0.45)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0 ${wasJustAdded ? "border-success ring-2 ring-success/20" : "border-border hover:border-primary"}`}>
+    <button type="button" onClick={onAdd} disabled={isUnavailable || isAdding} aria-label={`${name}, ${activeVariants.length > 1 ? `${activeVariants.length} variantes` : numeral(price).format("$0,0")}${expiredStock > 0 ? `, ${expiredStock} unidades vencidas` : ""}${isUnavailable ? ", no disponible" : ""}`} className={`group relative flex min-h-[270px] flex-col overflow-hidden rounded-[24px] border-2 bg-pos-surface text-left shadow-[0_12px_32px_-24px_rgba(84,56,32,0.35)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_40px_-24px_rgba(84,56,32,0.45)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0 ${wasJustAdded ? "border-success ring-2 ring-success/20" : "border-border hover:border-primary"}`}>
       <div className="aspect-[4/3] w-full overflow-hidden bg-pos-surface-soft">
         <img src={image} alt={name} loading="lazy" width={512} height={512} className={`h-full w-full transition-transform duration-300 group-hover:scale-105 ${containImage ? "object-contain p-5" : "object-cover"}`} />
       </div>
@@ -39,6 +45,7 @@ const ProductCard = ({ name, price, image, containImage = false, variantsInfo, p
       )}
       <div className="flex flex-1 items-center justify-between gap-4 p-5">
         <div className="min-w-0 text-left">
+          {codeLabel && <p className="mb-1 truncate text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Código {codeLabel}</p>}
           <p className="text-lg font-black leading-tight text-foreground">{name}</p>
           <p className="mt-2 text-xl font-black text-primary">
             {activeVariants.length > 1 ? `${activeVariants.length} variantes` : numeral(price).format("$0,0")}
@@ -62,6 +69,12 @@ const ProductCard = ({ name, price, image, containImage = false, variantsInfo, p
             <Chip className={`mt-3 border text-sm font-black ${availableVariantCount > 0 ? "border-success/50 bg-success/15 text-foreground" : "border-danger/50 bg-danger/15 text-danger"}`}>
               {`${availableVariantCount}/${activeVariants.length} disponibles`}
             </Chip>
+          )}
+          {expiredStock > 0 && (
+            <span className="mt-3 flex w-fit items-center gap-1.5 rounded-lg border border-danger/30 bg-danger/10 px-2.5 py-1.5 text-xs font-black text-danger">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              {expiredStock} {expiredStock === 1 ? "unidad vencida" : "unidades vencidas"}
+            </span>
           )}
         </div>
         <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border text-primary-foreground shadow-sm ${wasJustAdded ? "border-success bg-success" : "border-primary bg-primary"}`}>

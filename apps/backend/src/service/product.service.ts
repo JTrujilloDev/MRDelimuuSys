@@ -347,6 +347,8 @@ export const updateProductService = async (id: number, productData: any) => {
 export const getProductsByCategoryService = async (categoryId: number, storeId: number) => {
   const store = await prisma.store.findUnique({ where: { id: storeId } });
   if (!store) throw new Error("Store not found");
+  const today = new Date();
+  const todayStart = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
   const products = await prisma.product.findMany({
     where: {
       categoryId,
@@ -366,6 +368,13 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
         include: {
           catalogItems: { where: { groupId: store.groupId, isPosActive: true } },
           storeInventories: { where: { storeId } },
+          inventoryLots: {
+            where: {
+              expiresAt: { lt: todayStart },
+              storeInventories: { some: { storeId, stock: { gt: 0 } } },
+            },
+            include: { storeInventories: { where: { storeId, stock: { gt: 0 } } } },
+          },
           recipeItems: {
             include: {
               ingredientVariant: {
@@ -382,13 +391,17 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
   });
   return products.map((product) => ({
     ...product,
-    variants: product.variants.map(({ catalogItems, storeInventories, productCost: _productCost, ...variant }) => ({
+    variants: product.variants.map(({ catalogItems, storeInventories, inventoryLots, productCost: _productCost, ...variant }) => ({
       ...variant,
       retailPrice: catalogItems[0]!.salePrice,
       posCode: catalogItems[0]!.posCode,
       stock: storeInventories[0]?.stock ?? 0,
       minStock: storeInventories[0]?.minStock ?? 0,
       isNew: !(storeInventories[0]?.isInitialized ?? false),
+      expiredStock: inventoryLots.reduce(
+        (total, lot) => total + lot.storeInventories.reduce((sum, inventory) => sum + inventory.stock, 0),
+        0,
+      ),
       recipeItems: variant.recipeItems.map((recipeItem) => ({
         ...recipeItem,
         ingredientVariant: {
@@ -406,6 +419,8 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
 export const getPosProductsService = async (storeId: number) => {
   const store = await prisma.store.findUnique({ where: { id: storeId } });
   if (!store) throw new Error("Store not found");
+  const today = new Date();
+  const todayStart = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
   const products = await prisma.product.findMany({
     where: {
       variants: {
@@ -425,6 +440,13 @@ export const getPosProductsService = async (storeId: number) => {
         include: {
           catalogItems: { where: { groupId: store.groupId, isPosActive: true } },
           storeInventories: { where: { storeId } },
+          inventoryLots: {
+            where: {
+              expiresAt: { lt: todayStart },
+              storeInventories: { some: { storeId, stock: { gt: 0 } } },
+            },
+            include: { storeInventories: { where: { storeId, stock: { gt: 0 } } } },
+          },
           recipeItems: {
             include: {
               ingredientVariant: {
@@ -442,13 +464,17 @@ export const getPosProductsService = async (storeId: number) => {
 
   return products.map((product) => ({
     ...product,
-    variants: product.variants.map(({ catalogItems, storeInventories, productCost: _productCost, ...variant }) => ({
+    variants: product.variants.map(({ catalogItems, storeInventories, inventoryLots, productCost: _productCost, ...variant }) => ({
       ...variant,
       retailPrice: catalogItems[0]!.salePrice,
       posCode: catalogItems[0]!.posCode,
       stock: storeInventories[0]?.stock ?? 0,
       minStock: storeInventories[0]?.minStock ?? 0,
       isNew: !(storeInventories[0]?.isInitialized ?? false),
+      expiredStock: inventoryLots.reduce(
+        (total, lot) => total + lot.storeInventories.reduce((sum, inventory) => sum + inventory.stock, 0),
+        0,
+      ),
       recipeItems: variant.recipeItems.map((recipeItem) => ({
         ...recipeItem,
         ingredientVariant: {
