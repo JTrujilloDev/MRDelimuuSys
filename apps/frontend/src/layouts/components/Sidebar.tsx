@@ -13,6 +13,7 @@ import {
   Moon,
   Package,
   Repeat2,
+  ReceiptText,
   ShieldCheck,
   ShoppingCart,
   Sun,
@@ -89,6 +90,7 @@ const Sidebar = () => {
     ...(state?.user.isGlobalAdmin
       ? [
           { title: "Administración", url: "admin", icon: UserCog },
+          { title: "Facturación", url: "billing", icon: ReceiptText },
           { title: "Cámaras", url: "security-cameras", icon: Camera },
           { title: "Etiquetas", url: "fundation-tags", icon: Tag },
         ]

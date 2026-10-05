@@ -12,6 +12,7 @@ export const useCloseAccount = () => {
       void queryClient.invalidateQueries({ queryKey: ["products"] });
       void queryClient.invalidateQueries({ queryKey: ["getAllActiveProducts"] });
       void queryClient.invalidateQueries({ queryKey: ["getInventoryProducts"] });
+      void queryClient.invalidateQueries({ queryKey: ["billing-documents"] });
     },
   });
 };

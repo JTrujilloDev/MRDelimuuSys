@@ -12,6 +12,10 @@ import {
   updateAccountService,
 } from "../service/accounts.service";
 import { getIO } from "../socket";
+import {
+  createElectronicDocumentForAccountService,
+  sendElectronicDocumentService,
+} from "../service/billing.service";
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
@@ -236,6 +240,18 @@ export const closeAccount = async (req: Request, res: Response) => {
         customer: req.body.customer,
       }
     );
+    try {
+      const billingDocument = await createElectronicDocumentForAccountService(closedAccount.id);
+      if (billingDocument && paymentMethod === "CARD") {
+        void sendElectronicDocumentService(billingDocument.id).catch((billingError) => {
+          console.error("Automatic electronic invoice delivery failed", billingError);
+        });
+      }
+    } catch (billingError) {
+      // La facturación es posterior a la venta: una configuración fiscal incompleta
+      // nunca debe revertir ni ocultar una cuenta que ya se cerró correctamente.
+      console.error("Electronic document creation failed", billingError);
+    }
     getIO().emit("inventory:updated");
     res.status(200).json({
       success: true,

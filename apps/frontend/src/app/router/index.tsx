@@ -15,6 +15,7 @@ import AdminPage from "../../modules/admin/pages";
 import ReportsPage from "../../modules/reports/pages";
 import InventoryTransfersPage from "../../modules/inventoryTransfers/pages";
 import CreditsPage from "../../modules/credits/pages";
+import BillingPage from "../../modules/billing/pages";
 import { useAuth } from "../auth/AuthProvider";
 
 const GlobalAdminOnly = ({ children }: { children: React.ReactNode }) => {
@@ -45,6 +46,14 @@ export const router = createBrowserRouter([
       { path: "inventory", element: <Inventory /> },
       { path: "inventory-transfers", element: <InventoryTransfersPage /> },
       { path: "credits", element: <CreditsPage /> },
+      {
+        path: "billing",
+        element: (
+          <GlobalAdminOnly>
+            <BillingPage />
+          </GlobalAdminOnly>
+        ),
+      },
       {
         path: "fundation-tags",
         element: (
