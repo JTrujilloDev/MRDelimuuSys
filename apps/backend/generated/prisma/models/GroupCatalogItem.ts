@@ -48,6 +48,7 @@ export type GroupCatalogItemMinAggregateOutputType = {
   productVariantId: number | null
   salePrice: number | null
   costPrice: number | null
+  posCode: string | null
   isPosActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -59,6 +60,7 @@ export type GroupCatalogItemMaxAggregateOutputType = {
   productVariantId: number | null
   salePrice: number | null
   costPrice: number | null
+  posCode: string | null
   isPosActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -70,6 +72,7 @@ export type GroupCatalogItemCountAggregateOutputType = {
   productVariantId: number
   salePrice: number
   costPrice: number
+  posCode: number
   isPosActive: number
   createdAt: number
   updatedAt: number
@@ -99,6 +102,7 @@ export type GroupCatalogItemMinAggregateInputType = {
   productVariantId?: true
   salePrice?: true
   costPrice?: true
+  posCode?: true
   isPosActive?: true
   createdAt?: true
   updatedAt?: true
@@ -110,6 +114,7 @@ export type GroupCatalogItemMaxAggregateInputType = {
   productVariantId?: true
   salePrice?: true
   costPrice?: true
+  posCode?: true
   isPosActive?: true
   createdAt?: true
   updatedAt?: true
@@ -121,6 +126,7 @@ export type GroupCatalogItemCountAggregateInputType = {
   productVariantId?: true
   salePrice?: true
   costPrice?: true
+  posCode?: true
   isPosActive?: true
   createdAt?: true
   updatedAt?: true
@@ -219,6 +225,7 @@ export type GroupCatalogItemGroupByOutputType = {
   productVariantId: number
   salePrice: number | null
   costPrice: number
+  posCode: string | null
   isPosActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -253,6 +260,7 @@ export type GroupCatalogItemWhereInput = {
   productVariantId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   salePrice?: Prisma.FloatNullableFilter<"GroupCatalogItem"> | number | null
   costPrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
+  posCode?: Prisma.StringNullableFilter<"GroupCatalogItem"> | string | null
   isPosActive?: Prisma.BoolFilter<"GroupCatalogItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
@@ -266,6 +274,7 @@ export type GroupCatalogItemOrderByWithRelationInput = {
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrderInput | Prisma.SortOrder
   costPrice?: Prisma.SortOrder
+  posCode?: Prisma.SortOrderInput | Prisma.SortOrder
   isPosActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -276,6 +285,7 @@ export type GroupCatalogItemOrderByWithRelationInput = {
 export type GroupCatalogItemWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   groupId_productVariantId?: Prisma.GroupCatalogItemGroupIdProductVariantIdCompoundUniqueInput
+  groupId_posCode?: Prisma.GroupCatalogItemGroupIdPosCodeCompoundUniqueInput
   AND?: Prisma.GroupCatalogItemWhereInput | Prisma.GroupCatalogItemWhereInput[]
   OR?: Prisma.GroupCatalogItemWhereInput[]
   NOT?: Prisma.GroupCatalogItemWhereInput | Prisma.GroupCatalogItemWhereInput[]
@@ -283,12 +293,13 @@ export type GroupCatalogItemWhereUniqueInput = Prisma.AtLeast<{
   productVariantId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   salePrice?: Prisma.FloatNullableFilter<"GroupCatalogItem"> | number | null
   costPrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
+  posCode?: Prisma.StringNullableFilter<"GroupCatalogItem"> | string | null
   isPosActive?: Prisma.BoolFilter<"GroupCatalogItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
   group?: Prisma.XOR<Prisma.StoreGroupScalarRelationFilter, Prisma.StoreGroupWhereInput>
   productVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
-}, "id" | "groupId_productVariantId">
+}, "id" | "groupId_productVariantId" | "groupId_posCode">
 
 export type GroupCatalogItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -296,6 +307,7 @@ export type GroupCatalogItemOrderByWithAggregationInput = {
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrderInput | Prisma.SortOrder
   costPrice?: Prisma.SortOrder
+  posCode?: Prisma.SortOrderInput | Prisma.SortOrder
   isPosActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -315,6 +327,7 @@ export type GroupCatalogItemScalarWhereWithAggregatesInput = {
   productVariantId?: Prisma.IntWithAggregatesFilter<"GroupCatalogItem"> | number
   salePrice?: Prisma.FloatNullableWithAggregatesFilter<"GroupCatalogItem"> | number | null
   costPrice?: Prisma.FloatWithAggregatesFilter<"GroupCatalogItem"> | number
+  posCode?: Prisma.StringNullableWithAggregatesFilter<"GroupCatalogItem"> | string | null
   isPosActive?: Prisma.BoolWithAggregatesFilter<"GroupCatalogItem"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"GroupCatalogItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"GroupCatalogItem"> | Date | string
@@ -323,6 +336,7 @@ export type GroupCatalogItemScalarWhereWithAggregatesInput = {
 export type GroupCatalogItemCreateInput = {
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -336,6 +350,7 @@ export type GroupCatalogItemUncheckedCreateInput = {
   productVariantId: number
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -344,6 +359,7 @@ export type GroupCatalogItemUncheckedCreateInput = {
 export type GroupCatalogItemUpdateInput = {
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -357,6 +373,7 @@ export type GroupCatalogItemUncheckedUpdateInput = {
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -368,6 +385,7 @@ export type GroupCatalogItemCreateManyInput = {
   productVariantId: number
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -376,6 +394,7 @@ export type GroupCatalogItemCreateManyInput = {
 export type GroupCatalogItemUpdateManyMutationInput = {
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -387,6 +406,7 @@ export type GroupCatalogItemUncheckedUpdateManyInput = {
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -407,12 +427,18 @@ export type GroupCatalogItemGroupIdProductVariantIdCompoundUniqueInput = {
   productVariantId: number
 }
 
+export type GroupCatalogItemGroupIdPosCodeCompoundUniqueInput = {
+  groupId: number
+  posCode: string
+}
+
 export type GroupCatalogItemCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
   costPrice?: Prisma.SortOrder
+  posCode?: Prisma.SortOrder
   isPosActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -432,6 +458,7 @@ export type GroupCatalogItemMaxOrderByAggregateInput = {
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
   costPrice?: Prisma.SortOrder
+  posCode?: Prisma.SortOrder
   isPosActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -443,6 +470,7 @@ export type GroupCatalogItemMinOrderByAggregateInput = {
   productVariantId?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
   costPrice?: Prisma.SortOrder
+  posCode?: Prisma.SortOrder
   isPosActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -543,6 +571,7 @@ export type GroupCatalogItemUncheckedUpdateManyWithoutGroupNestedInput = {
 export type GroupCatalogItemCreateWithoutProductVariantInput = {
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -554,6 +583,7 @@ export type GroupCatalogItemUncheckedCreateWithoutProductVariantInput = {
   groupId: number
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -594,6 +624,7 @@ export type GroupCatalogItemScalarWhereInput = {
   productVariantId?: Prisma.IntFilter<"GroupCatalogItem"> | number
   salePrice?: Prisma.FloatNullableFilter<"GroupCatalogItem"> | number | null
   costPrice?: Prisma.FloatFilter<"GroupCatalogItem"> | number
+  posCode?: Prisma.StringNullableFilter<"GroupCatalogItem"> | string | null
   isPosActive?: Prisma.BoolFilter<"GroupCatalogItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GroupCatalogItem"> | Date | string
@@ -602,6 +633,7 @@ export type GroupCatalogItemScalarWhereInput = {
 export type GroupCatalogItemCreateWithoutGroupInput = {
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -613,6 +645,7 @@ export type GroupCatalogItemUncheckedCreateWithoutGroupInput = {
   productVariantId: number
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -649,6 +682,7 @@ export type GroupCatalogItemCreateManyProductVariantInput = {
   groupId: number
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -657,6 +691,7 @@ export type GroupCatalogItemCreateManyProductVariantInput = {
 export type GroupCatalogItemUpdateWithoutProductVariantInput = {
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -668,6 +703,7 @@ export type GroupCatalogItemUncheckedUpdateWithoutProductVariantInput = {
   groupId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -678,6 +714,7 @@ export type GroupCatalogItemUncheckedUpdateManyWithoutProductVariantInput = {
   groupId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -688,6 +725,7 @@ export type GroupCatalogItemCreateManyGroupInput = {
   productVariantId: number
   salePrice?: number | null
   costPrice: number
+  posCode?: string | null
   isPosActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -696,6 +734,7 @@ export type GroupCatalogItemCreateManyGroupInput = {
 export type GroupCatalogItemUpdateWithoutGroupInput = {
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -707,6 +746,7 @@ export type GroupCatalogItemUncheckedUpdateWithoutGroupInput = {
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -717,6 +757,7 @@ export type GroupCatalogItemUncheckedUpdateManyWithoutGroupInput = {
   productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
   salePrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   costPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  posCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPosActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -730,6 +771,7 @@ export type GroupCatalogItemSelect<ExtArgs extends runtime.Types.Extensions.Inte
   productVariantId?: boolean
   salePrice?: boolean
   costPrice?: boolean
+  posCode?: boolean
   isPosActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -743,6 +785,7 @@ export type GroupCatalogItemSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   productVariantId?: boolean
   salePrice?: boolean
   costPrice?: boolean
+  posCode?: boolean
   isPosActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -756,6 +799,7 @@ export type GroupCatalogItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   productVariantId?: boolean
   salePrice?: boolean
   costPrice?: boolean
+  posCode?: boolean
   isPosActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -769,12 +813,13 @@ export type GroupCatalogItemSelectScalar = {
   productVariantId?: boolean
   salePrice?: boolean
   costPrice?: boolean
+  posCode?: boolean
   isPosActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type GroupCatalogItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "productVariantId" | "salePrice" | "costPrice" | "isPosActive" | "createdAt" | "updatedAt", ExtArgs["result"]["groupCatalogItem"]>
+export type GroupCatalogItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "productVariantId" | "salePrice" | "costPrice" | "posCode" | "isPosActive" | "createdAt" | "updatedAt", ExtArgs["result"]["groupCatalogItem"]>
 export type GroupCatalogItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   group?: boolean | Prisma.StoreGroupDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
@@ -800,6 +845,7 @@ export type $GroupCatalogItemPayload<ExtArgs extends runtime.Types.Extensions.In
     productVariantId: number
     salePrice: number | null
     costPrice: number
+    posCode: string | null
     isPosActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1233,6 +1279,7 @@ export interface GroupCatalogItemFieldRefs {
   readonly productVariantId: Prisma.FieldRef<"GroupCatalogItem", 'Int'>
   readonly salePrice: Prisma.FieldRef<"GroupCatalogItem", 'Float'>
   readonly costPrice: Prisma.FieldRef<"GroupCatalogItem", 'Float'>
+  readonly posCode: Prisma.FieldRef<"GroupCatalogItem", 'String'>
   readonly isPosActive: Prisma.FieldRef<"GroupCatalogItem", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"GroupCatalogItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"GroupCatalogItem", 'DateTime'>

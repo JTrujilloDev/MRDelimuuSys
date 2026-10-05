@@ -353,7 +353,7 @@ export function ProductFormModal({
     <Modal>
       <Modal.Backdrop isOpen={isOpen} isDismissable={false}>
         <Modal.Container>
-          <Modal.Dialog className="h-[calc(100dvh-2rem)] w-full max-w-6xl rounded-xl sm:h-[calc(100dvh-5rem)]">
+          <Modal.Dialog className="flex h-[calc(100dvh-2rem)] w-full max-w-6xl flex-col overflow-hidden rounded-xl sm:h-[calc(100dvh-3rem)]">
             <Modal.CloseTrigger
               aria-label="Cerrar formulario"
               onClick={onClose}
@@ -375,9 +375,8 @@ export function ProductFormModal({
               className="flex min-h-0 flex-1 flex-col"
               onSubmit={handleSubmit(submitForm)}
             >
-              <Modal.Body className="min-h-0 flex-1 overflow-y-auto py-5">
-                <div className="space-y-5">
-                  <section className="rounded-xl border border-border bg-muted/20 p-4">
+              <Modal.Body className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden py-4">
+                  <section className="shrink-0 rounded-xl border border-border bg-muted/20 p-4">
                     <div className="mb-4 flex items-center gap-2">
                       <Layers3 className="h-5 w-5 text-primary" />
                       <div>
@@ -509,7 +508,7 @@ export function ProductFormModal({
                     )}
                   </section>
 
-                  <section className="rounded-xl border border-border bg-muted/20 p-4">
+                  <section className="flex min-h-0 flex-1 flex-col rounded-xl border border-border bg-muted/20 p-4">
                     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
                         <PackagePlus className="h-5 w-5 text-primary" />
@@ -533,10 +532,10 @@ export function ProductFormModal({
                       </Button>
                     </div>
 
-                    <div className="grid min-w-0 gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
+                    <div className="grid min-h-0 min-w-0 flex-1 gap-4 lg:grid-cols-[15rem_minmax(0,1fr)]">
                       <nav
                         aria-label="Variantes del producto"
-                        className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0"
+                        className="flex min-h-0 gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0 lg:pr-1"
                       >
                         {variantFields.map((variant, index) => {
                           const variantName = watchedVariants[index]?.name?.trim();
@@ -600,7 +599,6 @@ export function ProductFormModal({
                       )}
                     </div>
                   </section>
-                </div>
               </Modal.Body>
 
               <Modal.Footer className="border-t border-border pt-4">
@@ -669,7 +667,7 @@ function VariantEditor({
   onRemove,
 }: VariantEditorProps) {
   return (
-    <div className="min-w-0 space-y-5 rounded-xl border border-border bg-background/30 p-4">
+    <div className="min-h-0 min-w-0 space-y-4 overflow-hidden rounded-xl border border-border bg-background/30 p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h4 className="font-semibold text-foreground">
@@ -893,7 +891,7 @@ function RecipeEditor({
           La receta todavía no tiene ingredientes.
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="max-h-36 space-y-2 overflow-y-auto pr-1">
           {fields.map((item, recipeIndex) => (
             <div
               key={item.formKey}

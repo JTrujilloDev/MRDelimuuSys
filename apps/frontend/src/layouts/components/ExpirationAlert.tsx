@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../../app/auth/AuthProvider";
 import { useGetInventoryProducts } from "../../modules/products/hooks/useGetInventoryProducts";
 import { productUnits } from "../../shared/constants/productUnits";
+import { getDaysUntilExpiration, needsExpirationWarning } from "../../shared/utils/expiration.rules";
 
 interface InventoryLot {
   id: number;
@@ -34,16 +35,6 @@ interface ExpirationItem {
   days: number;
 }
 
-const DAY_IN_MS = 86_400_000;
-
-const getDaysUntilExpiration = (value: string | null) => {
-  if (!value) return null;
-  const expiration = new Date(`${value.slice(0, 10)}T00:00:00.000Z`);
-  const now = new Date();
-  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  return Math.ceil((expiration.getTime() - today) / DAY_IN_MS);
-};
-
 const getExpirationLabel = (days: number) => {
   if (days < 0) return `Vencido hace ${Math.abs(days)} ${Math.abs(days) === 1 ? "día" : "días"}`;
   if (days === 0) return "Vence hoy";
@@ -70,7 +61,7 @@ const ExpirationAlert = () => {
         product.variants.flatMap((variant) =>
           (variant.lots ?? []).flatMap((lot) => {
             const days = getDaysUntilExpiration(lot.expiresAt);
-            if (lot.stock <= 0 || days === null || days > 7) return [];
+            if (lot.stock <= 0 || days === null || !needsExpirationWarning(days)) return [];
 
             return [{
               id: `${variant.id}-${lot.id}`,
@@ -154,7 +145,7 @@ const ExpirationAlert = () => {
                     Lote {item.lotCode} · {item.stock} {getUnitLabel(item.unit)}
                   </p>
                 </div>
-                <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${item.days <= 0 ? "bg-destructive/15 text-destructive" : item.days <= 3 ? "bg-orange-500/15 text-orange-600" : "bg-amber-500/15 text-amber-700"}`}>
+                <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-bold ${item.days <= 0 ? "bg-destructive/15 text-destructive" : "bg-orange-500/15 text-orange-600"}`}>
                   {getExpirationLabel(item.days)}
                 </span>
               </div>

@@ -71,10 +71,13 @@ type CashRegister = {
   totalSales: number;
   totalDiscounts: number;
   totalExpenses: number;
+  expectedCash: number | null;
   cashAmount: number;
   cardAmount: number;
   qrAmount: number;
   creditAmount: number;
+  creditCollections: number;
+  cashCreditCollections: number;
   user: { id: number; name: string };
   terminal: { id: number; name: string };
   accounts: Sale[];
@@ -82,7 +85,7 @@ type CashRegister = {
   soldVariantUnits: number;
   transactions: Array<{
     id: number;
-    type: "EXPENSE" | "ADJUSTMENT";
+    type: "EXPENSE" | "ADJUSTMENT" | "CASH_IN";
     amount: number;
     description: string | null;
     adjustmentJustification: string | null;
@@ -425,9 +428,12 @@ const RegisterCard = ({ register }: { register: CashRegister }) => (
           <Detail label="Tarjeta" value={money(register.cardAmount)} />
           <Detail label="QR" value={money(register.qrAmount)} />
           <Detail label="Crédito" value={money(register.creditAmount)} />
+          <Detail label="Abonos de créditos" value={money(register.creditCollections)} />
+          <Detail label="Abonos en efectivo" value={money(register.cashCreditCollections)} />
           <Detail label="Venta bruta" value={money(register.totalSales + register.totalDiscounts)} />
           <Detail label="Descuentos" value={money(register.totalDiscounts)} />
           <Detail label="Gastos" value={money(register.totalExpenses)} />
+          <Detail label="Efectivo esperado al cerrar" value={money(register.expectedCash)} />
           <Detail label="Diferencia de caja" value={money(register.difference)} />
         </div>
         <RegisterFinancialNotes register={register} />

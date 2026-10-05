@@ -26,15 +26,18 @@ export const closeCashRegister = async ({
   cashRegisterId,
   closingAmount,
   differenceJustification,
+  expectedCash,
 }: {
   cashRegisterId: number;
   closingAmount: number;
   differenceJustification?: string;
+  expectedCash: number;
 }) => {
   const { data } = await api.post("cash-register/close", {
     cashRegisterId,
     closingAmount,
     differenceJustification,
+    expectedCash,
   });
   return data;
 };

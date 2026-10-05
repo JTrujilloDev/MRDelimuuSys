@@ -54,7 +54,10 @@ const InventoryTransfersPage = () => {
   const queryClient = useQueryClient();
   const activeStoreId = state!.activeContext!.store.id;
   const productsQuery = useGetInventoryProducts();
-  const products = (productsQuery.data?.data ?? []) as InventoryProduct[];
+  const products = useMemo(
+    () => (productsQuery.data?.data ?? []) as InventoryProduct[],
+    [productsQuery.data?.data],
+  );
   const destinationsQuery = useQuery({
     queryKey: ["inventory-transfer-destinations", activeStoreId],
     queryFn: getInventoryTransferDestinations,
@@ -174,6 +177,7 @@ const InventoryTransfersPage = () => {
   ));
 
   return (
+    <div className="h-full overflow-y-auto">
     <div className="mx-auto max-w-7xl space-y-6 p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -685,6 +689,7 @@ const InventoryTransfersPage = () => {
           </Modal.Container>
         </Modal.Backdrop>
       </Modal>
+    </div>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import {
   Unit,
 } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+import { requirePosCode } from "./catalog.rules";
 import { isRecipeComponentType, requireRecipeQuantity } from "./productRecipe.rules";
 
 interface RecipeItem {
@@ -384,6 +385,7 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
     variants: product.variants.map(({ catalogItems, storeInventories, productCost: _productCost, ...variant }) => ({
       ...variant,
       retailPrice: catalogItems[0]!.salePrice,
+      posCode: catalogItems[0]!.posCode,
       stock: storeInventories[0]?.stock ?? 0,
       minStock: storeInventories[0]?.minStock ?? 0,
       isNew: !(storeInventories[0]?.isInitialized ?? false),
@@ -399,6 +401,71 @@ export const getProductsByCategoryService = async (categoryId: number, storeId: 
       })),
     })),
   }));
+};
+
+export const getProductByPosCodeService = async (code: unknown, storeId: number) => {
+  const posCode = requirePosCode(code);
+  if (!posCode) throw new Error("Ingresa un código de producto");
+
+  const store = await prisma.store.findUnique({
+    where: { id: storeId },
+    select: { groupId: true },
+  });
+  if (!store) throw new Error("Store not found");
+
+  const catalogItem = await prisma.groupCatalogItem.findUnique({
+    where: { groupId_posCode: { groupId: store.groupId, posCode } },
+    include: {
+      productVariant: {
+        include: {
+          product: { include: { category: true } },
+          storeInventories: { where: { storeId } },
+          recipeItems: {
+            include: {
+              ingredientVariant: {
+                include: {
+                  product: true,
+                  storeInventories: { where: { storeId } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (
+    !catalogItem?.isPosActive ||
+    catalogItem.salePrice === null ||
+    !catalogItem.productVariant.isActive
+  ) {
+    throw new Error(`El código ${posCode} no corresponde a un producto activo del POS`);
+  }
+
+  const { productVariant: variant } = catalogItem;
+  const { product, storeInventories, recipeItems, productCost: _productCost, ...variantData } = variant;
+  return {
+    ...product,
+    variants: [{
+      ...variantData,
+      retailPrice: catalogItem.salePrice,
+      posCode: catalogItem.posCode,
+      stock: storeInventories[0]?.stock ?? 0,
+      minStock: storeInventories[0]?.minStock ?? 0,
+      isNew: !(storeInventories[0]?.isInitialized ?? false),
+      recipeItems: recipeItems.map((recipeItem) => ({
+        ...recipeItem,
+        ingredientVariant: {
+          ...Object.fromEntries(
+            Object.entries(recipeItem.ingredientVariant).filter(([key]) => key !== "productCost"),
+          ),
+          stock: recipeItem.ingredientVariant.storeInventories[0]?.stock ?? 0,
+          storeInventories: undefined,
+        },
+      })),
+    }],
+  };
 };
 
 

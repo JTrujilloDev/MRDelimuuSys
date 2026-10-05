@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { Prisma } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
-import { enqueueShiftClosed, processNotificationQueue, scanLowStock } from "./notification.service";
+import { deliverNotification, enqueueShiftClosed, notificationConfiguration, processNotificationQueue, scanLowStock } from "./notification.service";
 
-const keys = ["NOTIFICATIONS_EMAIL_ENABLED", "NOTIFICATIONS_PUSH_ENABLED", "GMAIL_USER", "GMAIL_APP_PASSWORD", "NOTIFICATIONS_EMAIL_TO", "NTFY_TOPIC"];
+const keys = ["NOTIFICATIONS_EMAIL_ENABLED", "NOTIFICATIONS_PUSH_ENABLED", "GMAIL_USER", "GMAIL_APP_PASSWORD", "NOTIFICATIONS_EMAIL_TO", "NTFY_TOPIC", "NTFY_BASE_URL", "NTFY_TOKEN", "NTFY_ALLOW_PUBLIC_TOPIC"];
 
 test("cola y alertas sin conexiones externas", async (t) => {
   const original = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
@@ -102,5 +102,65 @@ test("cola y alertas sin conexiones externas", async (t) => {
     delete process.env.GMAIL_APP_PASSWORD;
     const outbox = { findMany: async () => { throw new Error("No debe consultar"); } } as unknown as typeof prisma.notificationOutbox;
     await processNotificationQueue(async () => { throw new Error("No debe enviar"); }, outbox);
+  });
+
+  await t.test("push gratuito requiere permiso explícito y no inventa un Bearer token", async (t) => {
+    process.env.NOTIFICATIONS_EMAIL_ENABLED = "false";
+    process.env.NOTIFICATIONS_PUSH_ENABLED = "true";
+    process.env.NTFY_BASE_URL = "https://ntfy.sh";
+    process.env.NTFY_TOPIC = "fake-test-topic";
+    delete process.env.NTFY_TOKEN;
+    delete process.env.NTFY_ALLOW_PUBLIC_TOPIC;
+    const message = { id: 7, channel: "PUSH", kind: "STOCK_LOW", recipient: "fake-test-topic", payload: { store: "Prueba", product: "Producto", stock: 2, minimum: 5, level: "LOW", observedAt: new Date().toISOString() } };
+    assert.equal(notificationConfiguration().pushReady, false);
+    await assert.rejects(deliverNotification(message), /explicit public mode/);
+    await processNotificationQueue(async () => { throw new Error("No debe enviar"); }, { findMany: async () => { throw new Error("No debe consultar"); } } as unknown as typeof prisma.notificationOutbox);
+    const originalFetch = globalThis.fetch;
+    t.after(() => { globalThis.fetch = originalFetch; });
+    const calls: RequestInit[] = [];
+    globalThis.fetch = (async (_url, init) => { calls.push(init!); return { ok: true } as Response; }) as typeof fetch;
+    process.env.NTFY_ALLOW_PUBLIC_TOPIC = "true";
+    assert.equal(notificationConfiguration().pushReady, true);
+    await deliverNotification(message);
+    assert.equal(new Headers(calls[0].headers).has("Authorization"), false);
+    assert.equal(JSON.parse(calls[0].body as string).topic, "fake-test-topic");
+    const stockAlert = JSON.parse(calls[0].body as string);
+    assert.equal(stockAlert.title, "Stock bajo");
+    assert.ok(stockAlert.message.includes("Prueba\nProducto\nDisponible: 2"));
+    assert.equal(stockAlert.priority, 3);
+    let sent = false;
+    const outbox = { findMany: async () => [{ ...message, attempts: 0 }], updateMany: async () => ({ count: 1 }) } as unknown as typeof prisma.notificationOutbox;
+    await processNotificationQueue(async () => { sent = true; }, outbox);
+    assert.equal(sent, true);
+    process.env.NTFY_TOKEN = "fake-token";
+    await deliverNotification(message);
+    assert.equal(new Headers(calls[1].headers).get("Authorization"), "Bearer fake-token");
+    assert.equal(notificationConfiguration().pushPublicMode, false);
+    delete process.env.NTFY_TOKEN;
+    await deliverNotification({ ...message, payload: { ...message.payload, stock: 0, level: "EMPTY" } });
+    const emptyAlert = JSON.parse(calls[2].body as string);
+    assert.equal(emptyAlert.title, "Producto agotado");
+    assert.ok(emptyAlert.message.includes("Disponible: 0"));
+    assert.equal(emptyAlert.priority, 4);
+    await deliverNotification({ ...message, kind: "SHIFT_CLOSED", payload: {
+      shiftId: 42, store: "Veleño 2", terminal: "Caja 1", user: "Prueba",
+      openedAt: "2026-10-02T12:00:00Z", closedAt: "2026-10-02T22:00:00Z",
+      saleCount: 1, grossSales: 12000, totalSales: 10000, totalDiscounts: 2000,
+      cashAmount: 10000, cardAmount: 0, qrAmount: 0, creditAmount: 0,
+      openingAmount: 5000, totalExpenses: 0, expectedCash: 15000,
+      closingAmount: 15000, difference: 0, justification: "", cancelledCount: 0, observations: [],
+    } });
+    const closingAlert = JSON.parse(calls[3].body as string);
+    assert.equal(closingAlert.title, "Cierre de turno #42 — Veleño 2");
+    assert.ok(closingAlert.message.includes("Veleño 2 · Caja 1"));
+    assert.match(closingAlert.message, /Ventas:.*10[.,]000/);
+    assert.match(closingAlert.message, /Descuentos:.*2[.,]000/);
+    assert.match(closingAlert.message, /Efectivo:.*15[.,]000/);
+    assert.ok(closingAlert.message.includes("Diferencia:"));
+    assert.deepEqual(closingAlert.tags, ["receipt"]);
+    assert.equal(new Headers(calls[3].headers).has("Authorization"), false);
+    process.env.NTFY_BASE_URL = "http://ntfy.sh";
+    assert.equal(notificationConfiguration().pushReady, false);
+    await assert.rejects(deliverNotification(message), /explicit public mode/);
   });
 });

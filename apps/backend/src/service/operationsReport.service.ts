@@ -84,6 +84,7 @@ export const getOperationsReportService = async ({
     prisma.financialTransaction.findMany({
       where: {
         type: "EXPENSE",
+        voidedAt: null,
         createdAt: { gte: from, lte: to },
         cashRegister: { terminal: { storeId: { in: storeIds } } },
       },

@@ -181,7 +181,7 @@ const InventoryMovements = ({ onCreate, canCreate }: InventoryMovementsProps) =>
       </div>
 
       <div className="rounded-xl border border-border bg-pos-surface-soft p-3">
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(15rem,2fr)_minmax(10rem,1fr)_minmax(10rem,1fr)_minmax(9rem,0.8fr)_minmax(9rem,0.8fr)_auto]">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(14rem,2fr)_minmax(9rem,1fr)_minmax(9rem,1fr)_minmax(9rem,0.8fr)_minmax(9rem,0.8fr)_auto]">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-foreground/55" />
             <Input

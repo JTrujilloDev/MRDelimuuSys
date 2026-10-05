@@ -14,6 +14,7 @@ x-backend-environment: &backend-environment
   NTFY_BASE_URL: ${NTFY_BASE_URL:-https://ntfy.sh}
   NTFY_TOPIC: ${NTFY_TOPIC:-}
   NTFY_TOKEN: ${NTFY_TOKEN:-}
+  NTFY_ALLOW_PUBLIC_TOPIC: ${NTFY_ALLOW_PUBLIC_TOPIC:-false}
 
 services:
   db:

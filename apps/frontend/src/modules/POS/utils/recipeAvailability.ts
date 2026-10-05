@@ -24,6 +24,7 @@ export interface Variant {
   retailPrice: number;
   stock: number;
   requirePreparation?: boolean;
+  posCode?: string | null;
   recipeItems?: RecipeItem[];
 }
 
@@ -31,7 +32,7 @@ export interface ProductWithVariants {
   id: number;
   name: string;
   price?: number | null;
-  category?: string;
+  category?: string | { id: number; name: string };
   image?: string;
   productType: string;
   variants?: Variant[];

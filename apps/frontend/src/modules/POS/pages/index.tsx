@@ -16,6 +16,7 @@ import CategoryTabs, { type POSCategory } from "../components/CategoryTabs";
 import ProductCard from "../components/ProductCards";
 import OrderPanel from "../components/OrderPanel";
 import VariantModal from "../components/VariantModal";
+import QuickCodeEntry from "../components/QuickCodeEntry";
 import { getRecipeAvailability } from "../utils/recipeAvailability";
 
 import { useBrand } from "../../../app/branding/useBrand";
@@ -37,6 +38,7 @@ import SalesHistory from "../components/SalesHistory";
 import { useSocket } from "../../../shared/socket/useSocket";
 import { createKitchenTicket, createKitchenTicketAdjustment, useKitchenTickets } from "../../../shared/kitchen/kitchenTickets.store";
 import { useAuth } from "../../../app/auth/AuthProvider";
+import { getProductByPosCode } from "../../products/services/products.service";
 
 interface RecentProductShortcut {
   productName: string;
@@ -66,6 +68,7 @@ const Index = () => {
   const { mutate: createAccount } = useCreateAccount();
   const {
     mutate: addAccountItem,
+    mutateAsync: addAccountItemAsync,
     isPending: isAddingAccountItem,
     variables: pendingAccountItem,
   } = useAddAccountItem();
@@ -155,6 +158,7 @@ const Index = () => {
           const searchableText = [
             product.name,
             ...(product.variants ?? []).map((variant) => variant.name),
+            ...(product.variants ?? []).map((variant) => variant.posCode ?? ""),
           ]
             .join(" ")
             .normalize("NFD")
@@ -293,12 +297,15 @@ const Index = () => {
         1200,
       );
 
-      if (activeCategory) {
+      const productCategory = typeof product.category === "object"
+        ? product.category
+        : activeCategory;
+      if (productCategory) {
         setRecentProducts((current) => [
           {
             productName: product.name,
-            categoryId: activeCategory.id,
-            categoryName: activeCategory.name,
+            categoryId: productCategory.id,
+            categoryName: productCategory.name,
           },
           ...current.filter(
             (recent) => recent.productName !== product.name,
@@ -457,6 +464,33 @@ const Index = () => {
     [activeTableId, addAccountItem, canAddVariant, recordSuccessfulAddition],
   );
 
+  const handleQuickCodeAdd = useCallback(async (code: string, quantity: number) => {
+    if (!activeTableId) throw new Error("Selecciona una cuenta antes de registrar productos.");
+    try {
+      const product = await getProductByPosCode(code) as ProductWithVariants;
+      const variant = product.variants?.[0];
+      if (!variant) throw new Error(`No encontramos un producto para el código ${code}.`);
+      if (!canAddVariant(product, variant, quantity)) {
+        throw new Error("El producto no tiene disponibilidad suficiente.");
+      }
+      await addAccountItemAsync({
+        accountId: activeTableId,
+        productVariantId: variant.id,
+        productName: `${product.name} - ${variant.name}`,
+        quantity,
+        price: variant.retailPrice,
+        subtotal: variant.retailPrice * quantity,
+      });
+      recordSuccessfulAddition(product, variant);
+      return { label: `${product.name} · ${variant.name}` };
+    } catch (error) {
+      if (axios.isAxiosError<{ message?: string }>(error)) {
+        throw new Error(error.response?.data?.message ?? "No fue posible consultar el código.");
+      }
+      throw error;
+    }
+  }, [activeTableId, addAccountItemAsync, canAddVariant, recordSuccessfulAddition]);
+
   const updateQuantity = useCallback(
     (id: number, delta: number) => {
       if (!activeTableId) return;
@@ -612,6 +646,7 @@ const Index = () => {
     discountObservation,
     order,
     printTicket,
+    creditCustomer,
   }: CloseAccountParams) => {
     if (closingAccountRef.current) return;
     closingAccountRef.current = true;
@@ -623,6 +658,7 @@ const Index = () => {
         cashRegisterId: cashRegisterId,
         discount,
         discountObservation,
+        creditCustomer,
       },
       {
         onSuccess: async () => {
@@ -828,6 +864,11 @@ const Index = () => {
             </div>
           </div>
         </div>
+
+        <QuickCodeEntry
+          disabled={isAddingAccountItem}
+          onAdd={handleQuickCodeAdd}
+        />
 
         {/* Categories */}
         <div className="mb-4 rounded-[22px] bg-pos-surface/80 p-2 shadow-sm">

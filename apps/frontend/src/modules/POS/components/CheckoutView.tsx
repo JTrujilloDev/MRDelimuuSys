@@ -36,6 +36,7 @@ export interface CloseAccountParams {
   discount: number;
   discountObservation: string;
   order: OrderInfo | PrinterCommand;
+  creditCustomer?: { name: string; phone: string };
   printTicket: boolean;
 }
 interface CheckoutViewProps {
@@ -62,6 +63,8 @@ const CheckoutView = ({
   const [discount, setDiscount] = useState("");
   const [discountReason, setDiscountReason] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("CASH");
+  const [creditName, setCreditName] = useState("");
+  const [creditPhone, setCreditPhone] = useState("");
   const [cashReceived, setCashReceived] = useState("");
   const [qrGenerated, setQrGenerated] = useState(false);
   const [printTicket, setPrintTicket] = useState(false);
@@ -101,7 +104,7 @@ const CheckoutView = ({
     items.length > 0 &&
     discountIsValid &&
     discountHasReason &&
-    (paymentMethod === "CARD" ||
+    ((paymentMethod === "CREDIT" && creditName.trim().length >= 2 && creditPhone.trim().length >= 5) || paymentMethod === "CARD" ||
       (paymentMethod === "CASH" && cashValue >= total) ||
       (paymentMethod === "QR" && qrGenerated));
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -224,11 +227,12 @@ const CheckoutView = ({
           </h2>
 
           {/* Payment method tabs */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-2 gap-3 mb-6">
             {[
               { key: "CASH" as const, icon: BsBank, label: "Efectivo" },
               { key: "CARD" as const, icon: BiCreditCard, label: "Tarjeta" },
               { key: "QR" as const, icon: BsQrCode, label: "QR" },
+              { key: "CREDIT" as const, icon: FiFileText, label: "Crédito" },
             ].map(({ key, icon: Icon, label }) => (
               <Button
                 key={key}
@@ -251,6 +255,12 @@ const CheckoutView = ({
           </div>
 
           {/* Cash options */}
+          {paymentMethod === "CREDIT" && <section className="mb-5 space-y-4 rounded-2xl border border-primary/25 bg-primary/5 p-4">
+            <div><p className="font-bold text-foreground">Venta a crédito</p><p className="mt-1 text-sm text-muted-foreground">Se registra la venta y queda un saldo pendiente. No ingresa efectivo en este momento.</p></div>
+            <div className="flex flex-col gap-2"><Label htmlFor="credit-customer-name">Nombre del cliente</Label><Input id="credit-customer-name" maxLength={120} autoComplete="off" placeholder="Nombre completo" value={creditName} onChange={event => setCreditName(event.target.value)} /></div>
+            <div className="flex flex-col gap-2"><Label htmlFor="credit-customer-phone">Teléfono de contacto</Label><Input id="credit-customer-phone" type="tel" maxLength={40} autoComplete="off" placeholder="Número de contacto" value={creditPhone} onChange={event => setCreditPhone(event.target.value)} /></div>
+            <p className="text-xs text-muted-foreground">Los abonos se registran después desde la sección Créditos.</p>
+          </section>}
           {paymentMethod === "CASH" && (
             <div className="space-y-5">
               <div className="space-y-2 flex flex-col">
@@ -382,13 +392,14 @@ const CheckoutView = ({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Método</span>
-                <span>{paymentMethod}</span>
+                <span>{{ CASH: "Efectivo", CARD: "Tarjeta", QR: "QR", CREDIT: "Crédito" }[paymentMethod]}</span>
               </div>
 
               <div className="flex justify-between font-bold">
                 <span>Total</span>
                 <span>{numeral(total).format("$ 0,0")}</span>
               </div>
+              {paymentMethod === "CREDIT" && <div className="rounded-xl bg-primary/10 p-3 text-foreground"><p className="font-bold">{creditName.trim()}</p><p>{creditPhone.trim()}</p><p className="mt-1 text-xs">Este valor quedará pendiente de pago.</p></div>}
 
               {paymentMethod === "CASH" && (
                 <>
@@ -426,12 +437,13 @@ const CheckoutView = ({
                     cashRegisterId: accountInfo.cashRegisterId,
                     discount: discountAmount,
                     discountObservation: discountReason.trim(),
+                    ...(paymentMethod === "CREDIT" && { creditCustomer: { name: creditName.trim(), phone: creditPhone.trim() } }),
                     order: {
-                      clientName: "",
+                      clientName: paymentMethod === "CREDIT" ? creditName.trim() : "",
                       idType: "",
                       idNumber: "",
                       email: "",
-                      phone: "",
+                      phone: paymentMethod === "CREDIT" ? creditPhone.trim() : "",
                       date: dayjs().format("DD/MM/YYYY HH:mm"),
                       items,
                       subtotal,

@@ -2,11 +2,19 @@ import nodemailer from "nodemailer";
 import { Prisma } from "../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
+import { summarizeCreditCollections } from "./credit.rules";
 import { renderShiftNotification, retryDelayMs, ShiftNotification, stockAlertLevel } from "./notification.rules";
 
 const enabled = (key: string) => process.env[key] === "true";
 const emailEnabled = () => enabled("NOTIFICATIONS_EMAIL_ENABLED");
 const pushEnabled = () => enabled("NOTIFICATIONS_PUSH_ENABLED");
+const publicTopicAllowed = () => enabled("NTFY_ALLOW_PUBLIC_TOPIC");
+const pushTransportReady = () => {
+  try {
+    return new URL(process.env.NTFY_BASE_URL || "").protocol === "https:"
+      && Boolean(process.env.NTFY_TOKEN?.trim() || publicTopicAllowed());
+  } catch { return false; }
+};
 const recipients = () => [...new Set((process.env.NOTIFICATIONS_EMAIL_TO || "").split(",").map((item) => item.trim()).filter(Boolean))];
 
 const enqueue = async (tx: Prisma.TransactionClient, key: string, channel: string, kind: string, recipient: string, payload: Prisma.InputJsonValue) => {
@@ -24,12 +32,13 @@ export const enqueueShiftClosed = async (
   if (!emailEnabled() && !pushEnabled()) return;
   const shift = await tx.cashRegister.findUniqueOrThrow({
     where: { id: shiftId },
-    include: { user: { select: { name: true } }, terminal: { include: { store: true } }, accounts: true, inventoryCounts: { include: { items: true } } },
+    include: { user: { select: { name: true } }, terminal: { include: { store: true } }, accounts: true, transactions: true, inventoryCounts: { include: { items: true } } },
   });
   const payload: ShiftNotification = {
     shiftId, store: shift.terminal.store.name, terminal: shift.terminal.name, user: shift.user.name,
     openedAt: shift.openedAt.toISOString(), closedAt: shift.closedAt!.toISOString(),
     ...buildShiftSalesSummary(shift.accounts), openingAmount: shift.openingAmount,
+    ...summarizeCreditCollections(shift.transactions ?? []),
     totalExpenses: closing.totalExpenses, expectedCash: closing.expectedCash,
     closingAmount: closing.closingAmount, difference: closing.difference,
     justification: closing.differenceJustification || "",
@@ -80,9 +89,9 @@ export const scanLowStock = async (database: Pick<typeof prisma, "$transaction">
 
 const channelReady = (channel: string, recipient: string) => channel === "EMAIL"
   ? emailEnabled() && Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD && (recipient || recipients().length))
-  : pushEnabled() && Boolean(process.env.NTFY_BASE_URL && process.env.NTFY_TOKEN && (recipient || process.env.NTFY_TOPIC));
+  : pushEnabled() && pushTransportReady() && /^[A-Za-z0-9_-]{1,64}$/.test(recipient || process.env.NTFY_TOPIC || "");
 
-const deliver = async (message: { id: number; channel: string; kind: string; recipient: string; payload: Prisma.JsonValue }) => {
+export const deliverNotification = async (message: { id: number; channel: string; kind: string; recipient: string; payload: Prisma.JsonValue }) => {
   if (message.channel === "EMAIL") {
     const rendered = renderShiftNotification(message.payload as unknown as ShiftNotification);
     const transport = nodemailer.createTransport({
@@ -100,6 +109,7 @@ const deliver = async (message: { id: number; channel: string; kind: string; rec
     } finally { transport.close(); }
     return;
   }
+  if (!pushTransportReady()) throw new Error("Push authentication or explicit public mode required");
   const topic = message.recipient || process.env.NTFY_TOPIC!;
   if (!/^[A-Za-z0-9_-]{1,64}$/.test(topic)) throw new Error("Invalid topic");
   const url = new URL(process.env.NTFY_BASE_URL!);
@@ -115,17 +125,17 @@ const deliver = async (message: { id: number; channel: string; kind: string; rec
     priority = data.level === "EMPTY" ? 4 : 3;
   }
   const response = await fetch(url, {
-    method: "POST", headers: { Authorization: `Bearer ${process.env.NTFY_TOKEN}`, "Content-Type": "application/json" },
+    method: "POST", headers: { "Content-Type": "application/json", ...(process.env.NTFY_TOKEN?.trim() ? { Authorization: `Bearer ${process.env.NTFY_TOKEN.trim()}` } : {}) },
     body: JSON.stringify({ topic, title, message: body, priority, tags: [message.kind === "SHIFT_CLOSED" ? "receipt" : "warning"] }),
     signal: AbortSignal.timeout(20_000),
   });
   if (!response.ok) throw new Error(`Push HTTP ${response.status}`);
 };
 
-export const processNotificationQueue = async (send: typeof deliver = deliver, outbox = prisma.notificationOutbox) => {
+export const processNotificationQueue = async (send: typeof deliverNotification = deliverNotification, outbox = prisma.notificationOutbox) => {
   const targets: Prisma.NotificationOutboxWhereInput[] = [];
   if (emailEnabled() && process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) targets.push({ channel: "EMAIL", ...(!recipients().length && { recipient: { not: "" } }) });
-  if (pushEnabled() && process.env.NTFY_BASE_URL && process.env.NTFY_TOKEN) targets.push({ channel: "PUSH", ...(!process.env.NTFY_TOPIC && { recipient: { not: "" } }) });
+  if (pushEnabled() && pushTransportReady()) targets.push({ channel: "PUSH", ...(!process.env.NTFY_TOPIC && { recipient: { not: "" } }) });
   if (!targets.length) return;
   const now = new Date();
   const messages = await outbox.findMany({
@@ -158,11 +168,13 @@ export const processNotificationQueue = async (send: typeof deliver = deliver, o
 export const notificationConfiguration = () => ({
   emailEnabled: emailEnabled(), pushEnabled: pushEnabled(),
   emailReady: channelReady("EMAIL", ""), pushReady: channelReady("PUSH", ""),
+  pushPublicMode: publicTopicAllowed() && !process.env.NTFY_TOKEN?.trim(),
 });
 
 export const startNotificationWorker = () => {
   if (!emailEnabled() && !pushEnabled()) return () => {};
   const config = notificationConfiguration();
+  if (config.pushEnabled && config.pushPublicMode) console.warn("ntfy: modo público habilitado; las alertas pueden ser leídas por terceros que conozcan el tema.");
   if ((config.emailEnabled && !config.emailReady) || (config.pushEnabled && !config.pushReady)) {
     console.warn("Notificaciones: falta configuración; los mensajes permanecerán pendientes.");
   }

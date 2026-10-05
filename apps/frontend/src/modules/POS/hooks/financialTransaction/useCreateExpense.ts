@@ -5,11 +5,11 @@ export const useCreateExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: registerExpense,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
     queryKey: ["openCashRegister"],
   });
-  queryClient.refetchQueries({
+  await queryClient.invalidateQueries({
     queryKey: ["expenses"],
   });
     },

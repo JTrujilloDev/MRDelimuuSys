@@ -4,8 +4,11 @@ import { prisma } from "../../lib/prisma";
 import {
   calculateExpectedCash,
   validateCashRegisterClosing,
+  summarizeShiftExpenses,
+  assertClosingSnapshot,
 } from "./cashRegister.rules";
 import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
+import { summarizeCreditCollections } from "./credit.rules";
 import { enqueueShiftClosed } from "./notification.service";
 import { requireShiftInventoryClosing } from "./shiftInventory.service";
 import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
@@ -22,15 +25,16 @@ export interface UpdateCashRegisterTotalsInput {
 }
 export const createCashRegisterService = async (data: CashRegister) => {
   return await prisma.$transaction(async (tx) => {
+    await lockInventoryVerificationTx(tx);
     // 1. Validar usuario
     if (!data.userId) {
       throw new Error("userId is required");
     }
 
     // 2. Validar monto inicial
-    const openingAmount = data.openingAmount || 0;
+    const openingAmount = data.openingAmount ?? 0;
 
-    if (openingAmount < 0) {
+    if (typeof openingAmount !== "number" || !Number.isFinite(openingAmount) || openingAmount < 0) {
       throw new Error("Opening amount cannot be negative");
     }
 
@@ -82,6 +86,7 @@ export const closeCashRegisterService = async (
   closingAmount: number, // dinero contado físicamente
   differenceJustification?: unknown,
   database: Pick<typeof prisma, "$transaction"> = prisma,
+  displayedExpectedCash?: unknown,
 ) => {
   return await database.$transaction(async (tx) => {
     // 1. Obtener caja
@@ -120,7 +125,7 @@ export const closeCashRegisterService = async (
 
     // 3. Calcular totales
     let totalSales = 0;
-    let totalExpenses = 0;
+    const totalExpenses = summarizeShiftExpenses(transactions);
 
     for (const t of transactions) {
       if (t.type === "SALE") {
@@ -132,14 +137,11 @@ export const closeCashRegisterService = async (
         totalSales += t.amount;
       }
 
-      if (t.type === "EXPENSE") {
-        totalExpenses += Math.abs(t.amount);
-
-      }
     }
 
     // 4. Efectivo esperado
     const expectedCash = calculateExpectedCash(transactions);
+    assertClosingSnapshot(displayedExpectedCash, expectedCash);
 
     // 5. Diferencia y justificación
     const closing = validateCashRegisterClosing(
@@ -155,6 +157,7 @@ export const closeCashRegisterService = async (
         closedAt: new Date(),
         closingAmount: closing.closingAmount,
         difference: closing.difference,
+        totalExpenses,
         status: "CLOSED",
       },
     });
@@ -207,8 +210,9 @@ export const getCashRegisterHistoryService = async (
   storeId: number,
   userId: number,
   canViewAllShifts: boolean,
+  database: Pick<typeof prisma, "cashRegister" | "accountItem"> = prisma,
 ) => {
-  const cashRegisters = await prisma.cashRegister.findMany({
+  const cashRegisters = await database.cashRegister.findMany({
     where: {
       terminal: { storeId },
       ...(!canViewAllShifts && { userId }),
@@ -223,12 +227,14 @@ export const getCashRegisterHistoryService = async (
       user: { select: { id: true, name: true } },
       terminal: { select: { id: true, name: true } },
       transactions: {
-        where: { type: { in: ["EXPENSE", "ADJUSTMENT"] } },
+        where: { type: { in: ["EXPENSE", "ADJUSTMENT", "CASH_IN"] }, voidedAt: null },
         orderBy: { createdAt: "desc" },
         select: {
           id: true,
           type: true,
           amount: true,
+          paymentMethod: true,
+          relatedAccountId: true,
           description: true,
           adjustmentJustification: true,
           createdAt: true,
@@ -257,7 +263,7 @@ export const getCashRegisterHistoryService = async (
 
   const cashRegisterIds = cashRegisters.map((cashRegister) => cashRegister.id);
   const periodSoldItems = cashRegisterIds.length
-    ? await prisma.accountItem.findMany({
+    ? await database.accountItem.findMany({
         where: {
           account: {
             status: "CLOSED",
@@ -344,6 +350,10 @@ export const getCashRegisterHistoryService = async (
     return {
       ...cashRegister,
       ...buildShiftSalesSummary(cashRegister.accounts),
+      totalExpenses: summarizeShiftExpenses(cashRegister.transactions),
+      ...summarizeCreditCollections(cashRegister.transactions),
+      expectedCash: cashRegister.closingAmount !== null && cashRegister.difference !== null
+        ? cashRegister.closingAmount - cashRegister.difference : null,
       soldVariants: Array.from(variants.values()).sort(
         (a, b) => b.quantity - a.quantity,
       ),
@@ -369,14 +379,15 @@ export const getCashRegisterHistoryService = async (
   };
 };
 
-export const getOpenCashRegisterService = async (terminalId: number) => {
-  const cashRegister = await prisma.cashRegister.findFirst({
+export const getOpenCashRegisterService = async (terminalId: number, database: Pick<typeof prisma, "cashRegister"> = prisma) => {
+  const cashRegister = await database.cashRegister.findFirst({
     where: {
       terminalId,
       status: "OPEN",
     },
     include:{
       user: { select: { id: true, name: true } },
+      transactions: { where: { voidedAt: null } },
       accounts: {
         include: {
           accountItems: true,
@@ -389,6 +400,9 @@ export const getOpenCashRegisterService = async (terminalId: number) => {
   return {
     ...cashRegister,
     ...buildShiftSalesSummary(cashRegister.accounts),
+    totalExpenses: summarizeShiftExpenses(cashRegister.transactions),
+    ...summarizeCreditCollections(cashRegister.transactions),
+    expectedCash: calculateExpectedCash(cashRegister.transactions),
   };
 };
 

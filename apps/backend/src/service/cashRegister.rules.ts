@@ -2,13 +2,15 @@ type CashMovement = {
   type: string;
   amount: number;
   paymentMethod: string | null;
+  voidedAt?: Date | null;
 };
 
 export const calculateExpectedCash = (transactions: CashMovement[]) =>
   transactions.reduce((cash, transaction) => {
+    if (transaction.voidedAt) return cash;
     if (transaction.type === "OPENING") return cash + transaction.amount;
     if (
-      (transaction.type === "SALE" || transaction.type === "REFUND") &&
+      (transaction.type === "SALE" || transaction.type === "REFUND" || transaction.type === "CASH_IN") &&
       transaction.paymentMethod === "CASH"
     ) {
       return cash + transaction.amount;
@@ -24,6 +26,17 @@ export const calculateExpectedCash = (transactions: CashMovement[]) =>
     return cash;
   }, 0);
 
+export const summarizeShiftExpenses = (transactions: CashMovement[]) =>
+  transactions.reduce((total, item) => total + (item.type === "EXPENSE" && !item.voidedAt ? Math.abs(item.amount) : 0), 0);
+
+export const assertClosingSnapshot = (displayedExpectedCash: unknown, expectedCash: number) => {
+  if (displayedExpectedCash === undefined) return; // Compatibility with older clients.
+  if (typeof displayedExpectedCash !== "number" || !Number.isFinite(displayedExpectedCash)
+    || Math.abs(displayedExpectedCash - expectedCash) >= 0.01) {
+    throw new Error("El saldo de caja cambió. Actualiza el resumen y revisa el descuadre antes de cerrar.");
+  }
+};
+
 export const validateCashRegisterClosing = (
   closingAmountValue: unknown,
   expectedCashValue: unknown,
@@ -37,7 +50,7 @@ export const validateCashRegisterClosing = (
       ? differenceJustificationValue.trim()
       : null;
 
-  if (!Number.isFinite(closingAmount) || closingAmount < 0) {
+  if (closingAmountValue === null || closingAmountValue === "" || typeof closingAmountValue === "boolean" || !Number.isFinite(closingAmount) || closingAmount < 0) {
     throw new Error("Closing amount must be a non-negative number");
   }
   if (!Number.isFinite(expectedCash)) {

@@ -3,6 +3,8 @@ import test from "node:test";
 import {
   calculateExpectedCash,
   validateCashRegisterClosing,
+  assertClosingSnapshot,
+  summarizeShiftExpenses,
 } from "./cashRegister.rules";
 
 test("matches the displayed cash after sales, refunds, and legacy expenses", () => {
@@ -45,4 +47,22 @@ test("requires and normalizes a justification for cash differences", () => {
 test("rejects invalid closing amounts", () => {
   assert.throws(() => validateCashRegisterClosing(-1, 0, "Error"), /non-negative/);
   assert.throws(() => validateCashRegisterClosing("no", 0, "Error"), /non-negative/);
+});
+
+test("voided expenses do not affect cash or totals; electronic/credit payments are not cash", () => {
+  const movements = [
+    { type: "OPENING", amount: 100000, paymentMethod: null },
+    { type: "SALE", amount: 200000, paymentMethod: "CASH" },
+    { type: "EXPENSE", amount: -131000, paymentMethod: "CASH" },
+    { type: "EXPENSE", amount: -131000, paymentMethod: "CASH", voidedAt: new Date() },
+    { type: "SALE", amount: 50000, paymentMethod: "CREDIT" },
+    { type: "SALE", amount: 50000, paymentMethod: "QR" },
+    { type: "SALE", amount: 50000, paymentMethod: "CARD" },
+  ];
+  assert.equal(calculateExpectedCash(movements), 169000);
+  assert.equal(summarizeShiftExpenses(movements), 131000);
+  assert.equal(validateCashRegisterClosing(168500, 169000, "Faltan 500").difference, -500);
+  assert.throws(() => assertClosingSnapshot(169000, 300000), /saldo de caja cambió/);
+  assert.doesNotThrow(() => assertClosingSnapshot(169000, 169000));
+  for (const value of [null, "", false, Infinity, NaN]) assert.throws(() => validateCashRegisterClosing(value, 0, ""));
 });

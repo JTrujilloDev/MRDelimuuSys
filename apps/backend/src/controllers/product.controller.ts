@@ -7,6 +7,7 @@ import {
   getAllProductsService,
   getProductByIdService,
   getProductsByCategoryService,
+  getProductByPosCodeService,
   updateProductService,
 } from "../service/product.service";
 
@@ -26,6 +27,23 @@ export const createProduct = async (req: Request, res: Response) => {
       success: false,
       message: errorMessage,
     });
+  }
+};
+
+export const getProductByPosCode = async (req: Request, res: Response) => {
+  try {
+    const product = await getProductByPosCodeService(
+      req.params.code,
+      req.auth!.activeStoreId!,
+    );
+    res.status(200).json({
+      success: true,
+      message: "Product fetched successfully",
+      data: product,
+    });
+  } catch (error) {
+    const message = (error as Error).message;
+    res.status(message.includes("no corresponde") ? 404 : 400).json({ success: false, message });
   }
 };
 

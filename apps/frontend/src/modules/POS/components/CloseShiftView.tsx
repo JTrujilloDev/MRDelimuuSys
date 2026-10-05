@@ -23,6 +23,7 @@ import numeral from "numeral";
 import { useCloseCashRegister } from "../hooks/cashRegister/useCloseCashRegister";
 import { useGetExpenses } from "../hooks/financialTransaction/useGetExpenses";
 import InventoryCountView, { InventoryCountStatus } from "./InventoryCountView";
+import { calculateCashCount } from "../utils/cashCount.rules";
 
 export interface CompletedSale {
   id: string;
@@ -75,8 +76,8 @@ const CloseShiftView = ({
 }: CloseShiftViewProps) => {
   const { mutate: closeCashRegister, isPending: isClosingShift } =
     useCloseCashRegister();
-  const { data: { data: { data: expenses = [] } = {} } = {} } =
-    useGetExpenses(cashRegisterId);
+  const expensesQuery = useGetExpenses(cashRegisterId);
+  const expenses = (expensesQuery.data?.data.data ?? []).filter(item => !item.voidedAt);
   const [billCounts, setBillCounts] = useState<Record<number, string>>({});
   const [differenceJustification, setDifferenceJustification] = useState("");
   const [closeError, setCloseError] = useState<string | null>(null);
@@ -93,20 +94,15 @@ const CloseShiftView = ({
   const discountedSales = (shift.accounts ?? []).filter(
     (account) => account.status === "CLOSED" && account.discount > 0,
   );
+  const visibleDiscounts = discountedSales.slice(0, 3);
+  const visibleExpenses = expenses.slice(0, 3);
 
   // Expected cash = initial + cash sales - expenses
-  const expectedCash = shift.openingAmount + cashSales - totalExpenses;
+  const expectedCash = shift.expectedCash;
 
   // Counted cash from bills/coins
-  const countedCash = useMemo(() => {
-    return [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS].reduce(
-      (sum, denom) => {
-        const count = parseInt(billCounts[denom] || "0") || 0;
-        return sum + denom * count;
-      },
-      0,
-    );
-  }, [billCounts]);
+  const counted = useMemo(() => calculateCashCount(billCounts, [...BILL_DENOMINATIONS, ...COIN_DENOMINATIONS]), [billCounts]);
+  const countedCash = counted.total;
 
   const difference = countedCash - expectedCash;
 
@@ -138,13 +134,13 @@ const CloseShiftView = ({
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left — Sales summary */}
-        <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-6 lg:p-7">
+        <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:p-5">
           {/* Summary cards */}
           <div>
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Resumen de ventas
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-4 gap-2">
               <SummaryCard
                 icon={Receipt}
                 label="Ventas brutas"
@@ -182,6 +178,7 @@ const CloseShiftView = ({
                 color="text-orange-500"
                 negative
               />
+              <SummaryCard icon={Receipt} label="Ventas a crédito" value={shift.creditAmount} color="text-primary" />
               <SummaryCard
                 icon={Minus}
                 label="Gastos"
@@ -192,136 +189,130 @@ const CloseShiftView = ({
             </div>
           </div>
 
-          <div>
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Descuentos justificados
-            </h2>
-            <div className="space-y-2">
+          <div className="grid min-h-0 flex-1 grid-cols-3 gap-3">
+          <section className="overflow-hidden rounded-xl border border-border bg-secondary/20 p-3">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Recaudo de créditos
+              </h2>
+              <p className="text-xl font-bold text-foreground">{numeral(shift.creditCollections || 0).format("$ 0,0")}</p>
+              <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
+                <p className="flex justify-between gap-2"><span>Efectivo</span><strong className="text-foreground">{numeral(shift.cashCreditCollections || 0).format("$ 0,0")}</strong></p>
+                <p className="flex justify-between gap-2"><span>Tarjeta</span><strong className="text-foreground">{numeral(shift.cardCreditCollections || 0).format("$ 0,0")}</strong></p>
+                <p className="flex justify-between gap-2"><span>QR</span><strong className="text-foreground">{numeral(shift.qrCreditCollections || 0).format("$ 0,0")}</strong></p>
+              </div>
+              <p className="mt-3 border-t border-border pt-2 text-[11px] leading-snug text-muted-foreground">Solo el efectivo se suma a la caja esperada.</p>
+            </section>
+
+            <section className="overflow-hidden rounded-xl border border-border bg-secondary/20 p-3">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Descuentos justificados
+              </h2>
+            <div className="space-y-1.5">
               {discountedSales.length === 0 && (
                 <p className="text-sm italic text-muted-foreground">
                   Sin descuentos registrados
                 </p>
               )}
-              {discountedSales.map((account) => (
+              {visibleDiscounts.map((account) => (
                 <div
                   key={account.id}
-                  className="flex items-start justify-between gap-4 rounded-lg bg-secondary/50 px-3 py-2"
+                  className="flex items-start justify-between gap-2 rounded-lg bg-background/50 px-2.5 py-2"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{account.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold text-foreground">{account.name}</p>
+                    <p className="truncate text-[11px] text-muted-foreground">
                       {account.discountObservation}
                     </p>
                   </div>
-                  <span className="text-sm font-medium text-orange-500">
+                  <span className="shrink-0 text-xs font-medium text-orange-500">
                     -{numeral(account.discount).format("$ 0,0")}
                   </span>
                 </div>
               ))}
+              {discountedSales.length > visibleDiscounts.length && <p className="pt-1 text-xs font-medium text-muted-foreground">+ {discountedSales.length - visibleDiscounts.length} descuentos adicionales</p>}
             </div>
-          </div>
+          </section>
 
           {/* Expenses section (read-only) */}
-          <div>
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          <section className="overflow-hidden rounded-xl border border-border bg-secondary/20 p-3">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Gastos del turno
             </h2>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {expenses.length === 0 && (
                 <p className="text-sm text-muted-foreground italic">
                   Sin gastos registrados
                 </p>
               )}
-              {expenses.map((exp) => (
+              {visibleExpenses.map((exp) => (
                 <div
                   key={exp.id}
-                  className="flex items-center justify-between rounded-lg bg-secondary/50 px-3 py-2"
+                  className="flex items-center justify-between gap-2 rounded-lg bg-background/50 px-2.5 py-2"
                 >
-                  <div>
-                    <span className="text-sm text-foreground">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold text-foreground">
                       {exp.description}
-                    </span>
+                    </p>
                     {exp.adjustmentJustification && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="truncate text-[11px] text-muted-foreground">
                         {exp.adjustmentJustification}
                       </p>
                     )}
                   </div>
-                  <span className="text-sm font-medium text-destructive">
+                  <span className="shrink-0 text-xs font-medium text-destructive">
                     {numeral(exp.amount).format("$ 0,0")}
                   </span>
                 </div>
               ))}
+              {expenses.length > visibleExpenses.length && <p className="pt-1 text-xs font-medium text-muted-foreground">+ {expenses.length - visibleExpenses.length} gastos adicionales</p>}
             </div>
-          </div>
-
-          {/* Discrepancy */}
-          <div
-            className={`rounded-xl border-2 p-5 ${
-              Math.abs(difference) < 0.01
-                ? "border-green-500/30 bg-green-500/5"
-                : "border-destructive/30 bg-destructive/5"
-            }`}
-          >
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Diferencia / Descuadre
-            </h2>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">
-                  Esperado en caja
-                </p>
-                <p className="text-xl font-bold text-foreground">
-                  {numeral(expectedCash).format("$ 0,0")}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">
-                  Contado en caja
-                </p>
-                <p className="text-xl font-bold text-foreground">
-                  {numeral(countedCash).format("$ 0,0")}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Diferencia</p>
-                <div className="flex items-center justify-center gap-1.5">
-                  {Math.abs(difference) < 0.01 ? (
-                    <TrendingUp className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <AlertTriangle className="h-4 w-4 text-destructive" />
-                  )}
-                  <p
-                    className={`text-xl font-bold ${
-                      Math.abs(difference) < 0.01
-                        ? "text-green-500"
-                        : difference > 0
-                          ? "text-green-500"
-                          : "text-destructive"
-                    }`}
-                  >
-                    {difference >= 0 ? "+" : ""}{" "}
-                    {numeral(difference).format("$ 0,0")}
-                  </p>
-                </div>
-              </div>
-            </div>
+          </section>
           </div>
         </div>
 
         {/* Right — Bill counting */}
-        <div className="flex w-95 shrink-0 flex-col overflow-y-auto border-l border-border/70 bg-pos-surface/35 p-6 lg:w-100 lg:p-7">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+        <div className="flex w-[34rem] shrink-0 flex-col overflow-hidden border-l border-border/70 bg-pos-surface/35 p-4 lg:p-5">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Conteo de caja
           </h2>
 
           <DenominationCounter
             billCounts={billCounts}
             setBillCounts={setBillCounts}
+            compact
           />
 
+          {/* Discrepancy */}
+          <div
+            className={`mt-4 rounded-xl border p-3 ${
+              Math.abs(difference) < 0.01
+                ? "border-green-500/30 bg-green-500/5"
+                : "border-destructive/30 bg-destructive/5"
+            }`}
+          >
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <p className="text-[11px] text-muted-foreground">Esperado</p>
+                <p className="text-base font-bold text-foreground">{numeral(expectedCash).format("$ 0,0")}</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">Contado</p>
+                <p className="text-base font-bold text-foreground">{numeral(countedCash).format("$ 0,0")}</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">Diferencia</p>
+                <div className="flex items-center justify-center gap-1">
+                  {Math.abs(difference) < 0.01 ? <TrendingUp className="h-3.5 w-3.5 text-green-500" /> : <AlertTriangle className="h-3.5 w-3.5 text-destructive" />}
+                  <p className={`text-base font-bold ${Math.abs(difference) < 0.01 || difference > 0 ? "text-green-500" : "text-destructive"}`}>
+                    {difference >= 0 ? "+" : ""} {numeral(difference).format("$ 0,0")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {Math.abs(difference) >= 0.01 && (
-            <div className="mt-5 flex flex-col gap-2">
+            <div className="mt-3 flex flex-col gap-1.5">
               <Label htmlFor="cash-difference-justification">
                 Justificación del descuadre
               </Label>
@@ -339,7 +330,7 @@ const CloseShiftView = ({
             </div>
           )}
 
-          <div className="mt-auto">
+          <div className="mt-4">
             {closeError && (
               <div
                 role="alert"
@@ -356,6 +347,7 @@ const CloseShiftView = ({
                   {
                     cashRegisterId: shift.id,
                     closingAmount: countedCash,
+                    expectedCash,
                     differenceJustification: differenceJustification.trim(),
                   },
                   {
@@ -363,6 +355,7 @@ const CloseShiftView = ({
                       onConfirmClose();
                     },
                     onError: (error) => {
+                      expensesQuery.refetch();
                       const message = getCloseShiftErrorMessage(error);
                       setCloseError(message);
                       toast("No se pudo cerrar el turno", {
@@ -377,6 +370,8 @@ const CloseShiftView = ({
               size="lg"
               isDisabled={
                 isClosingShift ||
+                !counted.valid ||
+                !Number.isFinite(expectedCash) || expensesQuery.isPending || expensesQuery.isError ||
                 (Math.abs(difference) >= 0.01 && !differenceJustification.trim())
               }
             >

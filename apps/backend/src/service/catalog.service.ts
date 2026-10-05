@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { requirePositiveId } from "./organization.validation";
-import { requireCatalogPrice } from "./catalog.rules";
+import { requireCatalogPrice, requirePosCode } from "./catalog.rules";
 import { calculateRecipeCost } from "./productRecipe.rules";
 
 export const getGroupCatalogService = async (
@@ -81,7 +81,7 @@ export const getGroupCatalogService = async (
 export const updateGroupCatalogItemService = async (
   groupIdValue: unknown,
   variantIdValue: unknown,
-  data: { salePrice?: unknown; costPrice?: unknown; isPosActive?: unknown },
+  data: { salePrice?: unknown; costPrice?: unknown; isPosActive?: unknown; posCode?: unknown },
 ) => {
   const groupId = requirePositiveId(groupIdValue, "groupId");
   const productVariantId = requirePositiveId(variantIdValue, "productVariantId");
@@ -122,6 +122,26 @@ export const updateGroupCatalogItemService = async (
   const current = await prisma.groupCatalogItem.findUnique({
     where: { groupId_productVariantId: { groupId, productVariantId } },
   });
+  const posCode = data.posCode === undefined
+    ? current?.posCode ?? null
+    : requirePosCode(data.posCode);
+  if (posCode) {
+    const duplicate = await prisma.groupCatalogItem.findFirst({
+      where: {
+        groupId,
+        posCode,
+        productVariantId: { not: productVariantId },
+      },
+      select: {
+        productVariant: { select: { name: true, product: { select: { name: true } } } },
+      },
+    });
+    if (duplicate) {
+      throw new Error(
+        `El código ${posCode} ya pertenece a ${duplicate.productVariant.product.name} · ${duplicate.productVariant.name}`,
+      );
+    }
+  }
   if (isSaleable && data.salePrice === undefined && !current) throw new Error("Sale price is required");
   if (data.costPrice === undefined && !current) throw new Error("Group cost is required");
   const salePrice = isSaleable
@@ -146,11 +166,13 @@ export const updateGroupCatalogItemService = async (
         productVariantId,
         salePrice,
         costPrice,
+        posCode,
         isPosActive: isSaleable ? isPosActive ?? true : false,
       },
       update: {
         salePrice,
         costPrice,
+        posCode,
         isPosActive: isSaleable ? isPosActive : false,
       },
       include: { productVariant: { include: { product: true } } },

@@ -13,6 +13,8 @@ import {
 import { randomUUID } from "crypto";
 import { applyInventoryMovementTx } from "./inventoryLot.service";
 import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
+import { prepareCreditCustomerTx } from "./credit.service";
+import { validateCreditCustomer } from "./credit.rules";
 
 interface CreateAccountItem {
   productVariantId: number;
@@ -535,17 +537,20 @@ export const closeAccountService = async ({
   cashRegisterId,
   discount,
   discountObservation,
+  creditCustomer,
 }: {
   accountId: number;
   paymentMethod: PaymentMethod;
   cashRegisterId: number;
   discount?: unknown;
   discountObservation?: unknown;
-}) => {
-  return await prisma.$transaction(async (tx) => {
+  creditCustomer?: { name?: unknown; phone?: unknown };
+}, database: Pick<typeof prisma, "$transaction"> = prisma) => {
+  return await database.$transaction(async (tx) => {
     if (!Object.values(PaymentMethod).includes(paymentMethod)) {
       throw new Error("Invalid payment method");
     }
+    if (paymentMethod === "CREDIT") validateCreditCustomer(creditCustomer);
 
     await lockInventoryVerificationTx(tx);
 
@@ -628,6 +633,7 @@ export const closeAccountService = async ({
       discountObservation ?? account.discountObservation,
     );
     const total = discountResult.netTotal;
+    const customer = paymentMethod === "CREDIT" ? await prepareCreditCustomerTx(tx, creditCustomer) : null;
 
     // 3.1 Validar stock de FINISHED_PRODUCT y THIRD_PARTY_PRODUCT
     const finishedProductIds = account.accountItems
@@ -843,6 +849,7 @@ export const closeAccountService = async ({
         discount: discountResult.discount,
         discountObservation: discountResult.discountObservation,
         financialTransactionId: financialTransaction.id,
+        ...(customer && { customerId: customer.id }),
         cashRegisterId,
       },
       include: {
@@ -864,10 +871,10 @@ export const cancelClosedAccountService = async ({
   reason: unknown;
   cancelledByUserId: number;
   activeTerminalId: number;
-}) => {
+}, database: Pick<typeof prisma, "$transaction"> = prisma) => {
   const reason = requireCancellationReason(reasonValue);
 
-  return prisma.$transaction(async (tx) => {
+  return database.$transaction(async (tx) => {
     await lockInventoryVerificationTx(tx);
     const account = await tx.account.findUnique({
       where: { id: accountId },
@@ -883,6 +890,10 @@ export const cancelClosedAccountService = async ({
     }
     if (account.terminalId !== activeTerminalId) {
       throw new Error("Sale belongs to another terminal");
+    }
+
+    if (account.paymentMethod === "CREDIT" && await tx.financialTransaction.count({ where: { relatedAccountId: account.id, type: "CASH_IN", voidedAt: null } })) {
+      throw new Error("No se puede anular una venta a crédito que ya tiene abonos");
     }
 
     const claimed = await tx.account.updateMany({

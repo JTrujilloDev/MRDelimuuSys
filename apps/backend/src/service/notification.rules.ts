@@ -26,6 +26,8 @@ export interface ShiftNotification {
   cardAmount: number;
   qrAmount: number;
   creditAmount: number;
+  creditCollections?: number;
+  cashCreditCollections?: number;
   openingAmount: number;
   totalExpenses: number;
   expectedCash: number;
@@ -45,6 +47,7 @@ export const renderShiftNotification = (data: ShiftNotification) => {
     ["Descuentos / cortesías", money(data.totalDiscounts)], ["Ventas netas", money(data.totalSales)],
     ["Ventas en efectivo", money(data.cashAmount)], ["Tarjeta", money(data.cardAmount)],
     ["QR", money(data.qrAmount)], ["Crédito", money(data.creditAmount)],
+    ["Abonos de créditos recibidos", money(data.creditCollections || 0)], ["Abonos en efectivo", money(data.cashCreditCollections || 0)],
     ["Base inicial", money(data.openingAmount)], ["Gastos", money(data.totalExpenses)],
     ["Efectivo esperado", money(data.expectedCash)], ["Efectivo contado", money(data.closingAmount)],
     ["Diferencia", money(data.difference)], ["Justificación", data.justification || "Sin diferencia"],
