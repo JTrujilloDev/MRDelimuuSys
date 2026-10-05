@@ -134,6 +134,7 @@ const Inventory = () => {
   };
 
   return (
+    <div className="h-full overflow-y-auto">
     <div className="mx-auto max-w-7xl space-y-6 p-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Inventario</h1>
@@ -478,6 +479,7 @@ const Inventory = () => {
           setDialogOpen={setDialogOpen}
         />
       )}
+    </div>
     </div>
   );
 };
