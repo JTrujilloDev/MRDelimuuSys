@@ -125,7 +125,7 @@ export default function GroupCatalogManager() {
   if (!groupId && !groupsQuery.isLoading) return <p>No hay grupos empresariales configurados.</p>;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-5">
+    <div className="flex min-h-full flex-col gap-5 pb-2">
       <div className="flex flex-wrap items-end gap-4 rounded-2xl border border-border bg-pos-surface p-4 shadow-sm">
         {canManage && (
           <label className="min-w-60 text-sm">
@@ -202,7 +202,7 @@ export default function GroupCatalogManager() {
       {notice && <p className="rounded-xl bg-success/10 p-3 text-sm font-semibold text-success">{notice}</p>}
       {error && <p className="rounded-xl bg-destructive/10 p-3 text-sm text-danger">{error}</p>}
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+      <div className="pr-1">
         {catalogQuery.isLoading ? <p>Cargando catálogo…</p> : (
           <div className="space-y-4 pb-2">
             {includedProducts.map((product) => (

@@ -61,7 +61,7 @@ const Catalog = () => {
       </Tabs.ListContainer>
       <Tabs.Panel id="products" className="min-h-0 flex-1 pt-5"><Products embedded readOnly={!isGlobalAdmin} /></Tabs.Panel>
       <Tabs.Panel id="categories" className="min-h-0 flex-1 overflow-y-auto pt-5"><ProductCategories embedded readOnly={!isGlobalAdmin} /></Tabs.Panel>
-      <Tabs.Panel id="business" className="min-h-0 flex-1 pt-5"><GroupCatalogManager /></Tabs.Panel>
+      <Tabs.Panel id="business" className="min-h-0 flex-1 overflow-y-auto pt-5 pr-1"><GroupCatalogManager /></Tabs.Panel>
       </Tabs>
     </div>
   );
