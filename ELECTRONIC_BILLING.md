@@ -7,6 +7,8 @@ Estado: primera base técnica implementada. Rama: `codex/facturacion-electronica
 - Contrato de proveedor independiente en `apps/backend/src/billing/domain`.
 - Adaptador simulado idempotente que nunca informa aceptación fiscal real.
 - Traductor inicial de factura estándar Factus (`document: 01`, `operation_type: 10`).
+- Cliente Factus para OAuth2, renovación de token, emisión, consulta por `reference_code` y descarga de PDF/XML.
+- Los conflictos o fallos de red quedan como resultado desconocido para conciliación; no se reenvían como si fueran rechazos seguros.
 - Impoconsumo representado mediante código Factus `04`, con tasa configurable por línea; las pruebas cubren el 8% acordado para Veleño.
 - Validación decimal sin aritmética de punto flotante, pagos a crédito con vencimiento y ajuste de efectivo limitado a ±500 COP.
 - Modelos y migración para emisores fiscales, configuraciones versionadas, rangos, documentos, intentos, cola y artefactos.

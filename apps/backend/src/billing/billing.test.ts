@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { BillingDocumentSnapshot } from "./domain/billing-provider";
 import { computeCashRoundingAmount, validateBillingSnapshot } from "./domain/billing.rules";
+import { FactusClient } from "./providers/factus/factus.client";
 import { buildFactusInvoicePayload } from "./providers/factus/factus.mapper";
+import { FactusBillingProvider } from "./providers/factus/factus.provider";
 import { MockBillingProvider } from "./providers/mock-billing.provider";
 
 const invoice = (overrides: Partial<BillingDocumentSnapshot> = {}): BillingDocumentSnapshot => ({
@@ -73,4 +75,47 @@ test("mock provider is idempotent and never claims fiscal acceptance", async () 
   assert.equal(first.outcome, "PROCESSING");
   assert.equal(first.providerStatus, "SIMULATED_NOT_FISCALLY_VALID");
   assert.equal(await provider.getArtifact("mock", "PDF"), null);
+});
+
+test("Factus client authenticates once and reuses its access token", async () => {
+  const calls: Array<{ url: string; authorization?: string }> = [];
+  const fakeFetch = async (input: string | URL | Request, init?: RequestInit) => {
+    const url = String(input);
+    const headers = new Headers(init?.headers);
+    calls.push({ url, authorization: headers.get("Authorization") ?? undefined });
+    if (url.endsWith("/oauth/token")) {
+      return Response.json({ access_token: "access-test", refresh_token: "refresh-test", expires_in: 600 });
+    }
+    return Response.json({ data: { number: "SETP1", cufe: "cufe-test", is_validated: true } }, { status: 201 });
+  };
+  const client = new FactusClient({
+    environment: "SANDBOX",
+    credentials: { clientId: "id", clientSecret: "secret", username: "user", password: "password" },
+  }, fakeFetch);
+  const provider = new FactusBillingProvider(client, { paymentMethodCodes: { CASH: "10" } });
+
+  const first = await provider.issue(invoice());
+  const second = await provider.issue({ ...invoice(), referenceCode: "VELE-ACCOUNT-43" });
+
+  assert.equal(first.outcome, "ACCEPTED");
+  assert.equal(first.documentNumber, "SETP1");
+  assert.equal(second.fiscalIdentifier, "cufe-test");
+  assert.equal(calls.filter((call) => call.url.endsWith("/oauth/token")).length, 1);
+  assert.deepEqual(calls.slice(1).map((call) => call.authorization), ["Bearer access-test", "Bearer access-test"]);
+});
+
+test("Factus provider treats conflict and network uncertainty as reconciliation, not rejection", async () => {
+  const conflictFetch = async (input: string | URL | Request) => String(input).endsWith("/oauth/token")
+    ? Response.json({ access_token: "access-test", expires_in: 600 })
+    : Response.json({ message: "Documento pendiente" }, { status: 409 });
+  const client = new FactusClient({
+    environment: "SANDBOX",
+    credentials: { clientId: "id", clientSecret: "secret", username: "user", password: "password" },
+  }, conflictFetch);
+  const provider = new FactusBillingProvider(client, { paymentMethodCodes: { CASH: "10" } });
+
+  const result = await provider.issue(invoice());
+  assert.equal(result.outcome, "UNKNOWN");
+  assert.equal(result.providerStatus, "REQUIRES_RECONCILIATION");
+  assert.equal(result.code, "HTTP_409");
 });
