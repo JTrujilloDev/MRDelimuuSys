@@ -326,7 +326,7 @@ function CatalogTableRow({ row, canManage, isPending, onSave, onDelete }: {
         <p className="font-black text-foreground">{productName}</p>
         <p className="text-sm text-foreground/80">{variant.name}</p>
         <p className="text-xs text-muted-foreground">{categoryName}</p>
-        {canManage && (
+        {canManage && suggestedCost > 0 && (
           <button
             type="button"
             className="mt-1 text-left text-xs font-bold text-primary hover:underline"
@@ -477,13 +477,15 @@ function CatalogCandidateRow({ productName, productType, variant, isPending, onS
       <div className="min-w-0">
         <p className="truncate text-xs text-muted-foreground">{productName}</p>
         <p className="truncate text-sm font-black">{variant.name}</p>
-        <button
-          type="button"
-          className="mt-1 text-xs font-bold text-primary hover:underline"
-          onClick={() => setCostPrice(String(suggestedCost))}
-        >
-          Usar costo sugerido ({numeral(suggestedCost).format("$0,0")})
-        </button>
+        {suggestedCost > 0 && (
+          <button
+            type="button"
+            className="mt-1 text-xs font-bold text-primary hover:underline"
+            onClick={() => setCostPrice(String(suggestedCost))}
+          >
+            Usar costo sugerido ({numeral(suggestedCost).format("$0,0")})
+          </button>
+        )}
         {(variant.missingRecipeComponents?.length ?? 0) > 0 && (
           <p className="mt-1 text-xs text-danger">Vincula primero: {variant.missingRecipeComponents?.join(", ")}</p>
         )}
