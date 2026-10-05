@@ -435,11 +435,13 @@ model GroupCatalogItem {
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
   salePrice        Float?
   costPrice        Float
+  posCode          String?
   isPosActive      Boolean        @default(false)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
   @@unique([groupId, productVariantId])
+  @@unique([groupId, posCode])
   @@index([groupId, isPosActive])
 }
 
