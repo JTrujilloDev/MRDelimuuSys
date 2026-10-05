@@ -11,6 +11,7 @@ import {
   updateGroupCatalogItem,
   type GroupCatalogVariant,
 } from "../catalog.service";
+import PosCodePanel from "./PosCodePanel";
 
 const inputClass =
   "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -55,6 +56,10 @@ export default function GroupCatalogManager() {
   });
   const deleteMutation = useMutation({
     mutationFn: (variantId: number) => deleteGroupCatalogItem(groupId!, variantId),
+  });
+  const codeMutation = useMutation({
+    mutationFn: ({ variantId, posCode }: { variantId: number; posCode: string | null }) =>
+      updateGroupCatalogItem(groupId!, variantId, { posCode }),
   });
 
   const products = useMemo(() => catalogQuery.data?.products ?? [], [catalogQuery.data?.products]);
@@ -103,6 +108,20 @@ export default function GroupCatalogManager() {
     }
   };
 
+  const saveCode = async (variant: GroupCatalogVariant, posCode: string | null) => {
+    setError("");
+    setNotice("");
+    try {
+      await codeMutation.mutateAsync({ variantId: variant.id, posCode });
+      await refresh();
+      setNotice(posCode
+        ? `Código ${posCode} asignado a ${variant.name}.`
+        : `Se retiró el código de ${variant.name}.`);
+    } catch (requestError) {
+      setError(errorMessage(requestError));
+    }
+  };
+
   if (!groupId && !groupsQuery.isLoading) return <p>No hay grupos empresariales configurados.</p>;
 
   return (
@@ -135,6 +154,14 @@ export default function GroupCatalogManager() {
           </p>
         </div>
       </div>
+
+      {canManage && includedProducts.length > 0 && (
+        <PosCodePanel
+          products={includedProducts}
+          pending={codeMutation.isPending}
+          onSave={saveCode}
+        />
+      )}
 
       {canManage && (
         <div className="rounded-2xl border border-border bg-secondary/40 p-4">
