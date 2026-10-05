@@ -368,6 +368,7 @@ export type AccountWhereInput = {
   cancelledByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   financialTransactions?: Prisma.FinancialTransactionListRelationFilter
+  electronicDocuments?: Prisma.ElectronicDocumentListRelationFilter
 }
 
 export type AccountOrderByWithRelationInput = {
@@ -398,6 +399,7 @@ export type AccountOrderByWithRelationInput = {
   cancelledByUser?: Prisma.UserOrderByWithRelationInput
   customer?: Prisma.CustomerOrderByWithRelationInput
   financialTransactions?: Prisma.FinancialTransactionOrderByRelationAggregateInput
+  electronicDocuments?: Prisma.ElectronicDocumentOrderByRelationAggregateInput
 }
 
 export type AccountWhereUniqueInput = Prisma.AtLeast<{
@@ -431,6 +433,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   cancelledByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   financialTransactions?: Prisma.FinancialTransactionListRelationFilter
+  electronicDocuments?: Prisma.ElectronicDocumentListRelationFilter
 }, "id">
 
 export type AccountOrderByWithAggregationInput = {
@@ -507,6 +510,7 @@ export type AccountCreateInput = {
   cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateInput = {
@@ -532,6 +536,7 @@ export type AccountUncheckedCreateInput = {
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUpdateInput = {
@@ -556,6 +561,7 @@ export type AccountUpdateInput = {
   cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateInput = {
@@ -581,6 +587,7 @@ export type AccountUncheckedUpdateInput = {
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountCreateManyInput = {
@@ -1040,6 +1047,22 @@ export type AccountUpdateOneRequiredWithoutKitchenTicketsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutKitchenTicketsInput, Prisma.AccountUpdateWithoutKitchenTicketsInput>, Prisma.AccountUncheckedUpdateWithoutKitchenTicketsInput>
 }
 
+export type AccountCreateNestedOneWithoutElectronicDocumentsInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutElectronicDocumentsInput, Prisma.AccountUncheckedCreateWithoutElectronicDocumentsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutElectronicDocumentsInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
+export type AccountUpdateOneWithoutElectronicDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutElectronicDocumentsInput, Prisma.AccountUncheckedCreateWithoutElectronicDocumentsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutElectronicDocumentsInput
+  upsert?: Prisma.AccountUpsertWithoutElectronicDocumentsInput
+  disconnect?: Prisma.AccountWhereInput | boolean
+  delete?: Prisma.AccountWhereInput | boolean
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutElectronicDocumentsInput, Prisma.AccountUpdateWithoutElectronicDocumentsInput>, Prisma.AccountUncheckedUpdateWithoutElectronicDocumentsInput>
+}
+
 export type AccountCreateWithoutUserInput = {
   name: string
   tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
@@ -1061,6 +1084,7 @@ export type AccountCreateWithoutUserInput = {
   cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutUserInput = {
@@ -1085,6 +1109,7 @@ export type AccountUncheckedCreateWithoutUserInput = {
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutUserInput = {
@@ -1118,6 +1143,7 @@ export type AccountCreateWithoutCancelledByUserInput = {
   kitchenTickets?: Prisma.KitchenTicketCreateNestedManyWithoutAccountInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutCancelledByUserInput = {
@@ -1142,6 +1168,7 @@ export type AccountUncheckedCreateWithoutCancelledByUserInput = {
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutCancelledByUserInput = {
@@ -1232,6 +1259,7 @@ export type AccountCreateWithoutAccountItemsInput = {
   cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutAccountItemsInput = {
@@ -1256,6 +1284,7 @@ export type AccountUncheckedCreateWithoutAccountItemsInput = {
   financialTransactionId?: number | null
   kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutAccountItemsInput = {
@@ -1295,6 +1324,7 @@ export type AccountUpdateWithoutAccountItemsInput = {
   cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutAccountItemsInput = {
@@ -1319,6 +1349,7 @@ export type AccountUncheckedUpdateWithoutAccountItemsInput = {
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountCreateWithoutFinancialTransactionsInput = {
@@ -1342,6 +1373,7 @@ export type AccountCreateWithoutFinancialTransactionsInput = {
   kitchenTickets?: Prisma.KitchenTicketCreateNestedManyWithoutAccountInput
   cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutFinancialTransactionsInput = {
@@ -1366,6 +1398,7 @@ export type AccountUncheckedCreateWithoutFinancialTransactionsInput = {
   financialTransactionId?: number | null
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutFinancialTransactionsInput = {
@@ -1405,6 +1438,7 @@ export type AccountUpdateWithoutFinancialTransactionsInput = {
   kitchenTickets?: Prisma.KitchenTicketUpdateManyWithoutAccountNestedInput
   cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutFinancialTransactionsInput = {
@@ -1429,6 +1463,7 @@ export type AccountUncheckedUpdateWithoutFinancialTransactionsInput = {
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountCreateWithoutCustomerInput = {
@@ -1452,6 +1487,7 @@ export type AccountCreateWithoutCustomerInput = {
   kitchenTickets?: Prisma.KitchenTicketCreateNestedManyWithoutAccountInput
   cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutCustomerInput = {
@@ -1476,6 +1512,7 @@ export type AccountUncheckedCreateWithoutCustomerInput = {
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutCustomerInput = {
@@ -1525,6 +1562,7 @@ export type AccountCreateWithoutCashRegisterInput = {
   cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutCashRegisterInput = {
@@ -1549,6 +1587,7 @@ export type AccountUncheckedCreateWithoutCashRegisterInput = {
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutCashRegisterInput = {
@@ -1598,6 +1637,7 @@ export type AccountCreateWithoutTerminalInput = {
   cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutTerminalInput = {
@@ -1622,6 +1662,7 @@ export type AccountUncheckedCreateWithoutTerminalInput = {
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutTerminalInput = {
@@ -1671,6 +1712,7 @@ export type AccountCreateWithoutKitchenTicketsInput = {
   cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
   financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentCreateNestedManyWithoutAccountInput
 }
 
 export type AccountUncheckedCreateWithoutKitchenTicketsInput = {
@@ -1695,6 +1737,7 @@ export type AccountUncheckedCreateWithoutKitchenTicketsInput = {
   financialTransactionId?: number | null
   accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type AccountCreateOrConnectWithoutKitchenTicketsInput = {
@@ -1734,6 +1777,7 @@ export type AccountUpdateWithoutKitchenTicketsInput = {
   cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutKitchenTicketsInput = {
@@ -1757,6 +1801,121 @@ export type AccountUncheckedUpdateWithoutKitchenTicketsInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
+  financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountCreateWithoutElectronicDocumentsInput = {
+  name: string
+  tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
+  status?: $Enums.AccountStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  total?: number
+  discount?: number
+  discountObservation?: string | null
+  closedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: string | null
+  paymentMethod?: $Enums.PaymentMethod | null
+  financialTransactionId?: number | null
+  user: Prisma.UserCreateNestedOneWithoutAccountsInput
+  terminal: Prisma.TerminalCreateNestedOneWithoutAccountsInput
+  cashRegister?: Prisma.CashRegisterCreateNestedOneWithoutAccountsInput
+  accountItems?: Prisma.AccountItemCreateNestedManyWithoutAccountInput
+  kitchenTickets?: Prisma.KitchenTicketCreateNestedManyWithoutAccountInput
+  cancelledByUser?: Prisma.UserCreateNestedOneWithoutCancelledAccountsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutAccountsInput
+  financialTransactions?: Prisma.FinancialTransactionCreateNestedManyWithoutAccountInput
+}
+
+export type AccountUncheckedCreateWithoutElectronicDocumentsInput = {
+  id?: number
+  userId: number
+  name: string
+  terminalId: number
+  tableNumber?: Prisma.AccountCreatetableNumberInput | number[]
+  status?: $Enums.AccountStatus
+  cashRegisterId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  total?: number
+  discount?: number
+  discountObservation?: string | null
+  closedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: string | null
+  cancelledByUserId?: number | null
+  paymentMethod?: $Enums.PaymentMethod | null
+  customerId?: number | null
+  financialTransactionId?: number | null
+  accountItems?: Prisma.AccountItemUncheckedCreateNestedManyWithoutAccountInput
+  kitchenTickets?: Prisma.KitchenTicketUncheckedCreateNestedManyWithoutAccountInput
+  financialTransactions?: Prisma.FinancialTransactionUncheckedCreateNestedManyWithoutAccountInput
+}
+
+export type AccountCreateOrConnectWithoutElectronicDocumentsInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutElectronicDocumentsInput, Prisma.AccountUncheckedCreateWithoutElectronicDocumentsInput>
+}
+
+export type AccountUpsertWithoutElectronicDocumentsInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutElectronicDocumentsInput, Prisma.AccountUncheckedUpdateWithoutElectronicDocumentsInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutElectronicDocumentsInput, Prisma.AccountUncheckedCreateWithoutElectronicDocumentsInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutElectronicDocumentsInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutElectronicDocumentsInput, Prisma.AccountUncheckedUpdateWithoutElectronicDocumentsInput>
+}
+
+export type AccountUpdateWithoutElectronicDocumentsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
+  status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  discountObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  user?: Prisma.UserUpdateOneRequiredWithoutAccountsNestedInput
+  terminal?: Prisma.TerminalUpdateOneRequiredWithoutAccountsNestedInput
+  cashRegister?: Prisma.CashRegisterUpdateOneWithoutAccountsNestedInput
+  accountItems?: Prisma.AccountItemUpdateManyWithoutAccountNestedInput
+  kitchenTickets?: Prisma.KitchenTicketUpdateManyWithoutAccountNestedInput
+  cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
+  financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutElectronicDocumentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  terminalId?: Prisma.IntFieldUpdateOperationsInput | number
+  tableNumber?: Prisma.AccountUpdatetableNumberInput | number[]
+  status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  cashRegisterId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  discount?: Prisma.FloatFieldUpdateOperationsInput | number
+  discountObservation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancelledByUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.NullableEnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod | null
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  financialTransactionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
+  kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
 }
 
@@ -1823,6 +1982,7 @@ export type AccountUpdateWithoutUserInput = {
   cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutUserInput = {
@@ -1847,6 +2007,7 @@ export type AccountUncheckedUpdateWithoutUserInput = {
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateManyWithoutUserInput = {
@@ -1891,6 +2052,7 @@ export type AccountUpdateWithoutCancelledByUserInput = {
   kitchenTickets?: Prisma.KitchenTicketUpdateManyWithoutAccountNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutCancelledByUserInput = {
@@ -1915,6 +2077,7 @@ export type AccountUncheckedUpdateWithoutCancelledByUserInput = {
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateManyWithoutCancelledByUserInput = {
@@ -1980,6 +2143,7 @@ export type AccountUpdateWithoutCustomerInput = {
   kitchenTickets?: Prisma.KitchenTicketUpdateManyWithoutAccountNestedInput
   cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutCustomerInput = {
@@ -2004,6 +2168,7 @@ export type AccountUncheckedUpdateWithoutCustomerInput = {
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateManyWithoutCustomerInput = {
@@ -2069,6 +2234,7 @@ export type AccountUpdateWithoutCashRegisterInput = {
   cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutCashRegisterInput = {
@@ -2093,6 +2259,7 @@ export type AccountUncheckedUpdateWithoutCashRegisterInput = {
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateManyWithoutCashRegisterInput = {
@@ -2158,6 +2325,7 @@ export type AccountUpdateWithoutTerminalInput = {
   cancelledByUser?: Prisma.UserUpdateOneWithoutCancelledAccountsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutAccountsNestedInput
   financialTransactions?: Prisma.FinancialTransactionUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutTerminalInput = {
@@ -2182,6 +2350,7 @@ export type AccountUncheckedUpdateWithoutTerminalInput = {
   accountItems?: Prisma.AccountItemUncheckedUpdateManyWithoutAccountNestedInput
   kitchenTickets?: Prisma.KitchenTicketUncheckedUpdateManyWithoutAccountNestedInput
   financialTransactions?: Prisma.FinancialTransactionUncheckedUpdateManyWithoutAccountNestedInput
+  electronicDocuments?: Prisma.ElectronicDocumentUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type AccountUncheckedUpdateManyWithoutTerminalInput = {
@@ -2214,12 +2383,14 @@ export type AccountCountOutputType = {
   accountItems: number
   kitchenTickets: number
   financialTransactions: number
+  electronicDocuments: number
 }
 
 export type AccountCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accountItems?: boolean | AccountCountOutputTypeCountAccountItemsArgs
   kitchenTickets?: boolean | AccountCountOutputTypeCountKitchenTicketsArgs
   financialTransactions?: boolean | AccountCountOutputTypeCountFinancialTransactionsArgs
+  electronicDocuments?: boolean | AccountCountOutputTypeCountElectronicDocumentsArgs
 }
 
 /**
@@ -2253,6 +2424,13 @@ export type AccountCountOutputTypeCountFinancialTransactionsArgs<ExtArgs extends
   where?: Prisma.FinancialTransactionWhereInput
 }
 
+/**
+ * AccountCountOutputType without action
+ */
+export type AccountCountOutputTypeCountElectronicDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ElectronicDocumentWhereInput
+}
+
 
 export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2282,6 +2460,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   cancelledByUser?: boolean | Prisma.Account$cancelledByUserArgs<ExtArgs>
   customer?: boolean | Prisma.Account$customerArgs<ExtArgs>
   financialTransactions?: boolean | Prisma.Account$financialTransactionsArgs<ExtArgs>
+  electronicDocuments?: boolean | Prisma.Account$electronicDocumentsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -2371,6 +2550,7 @@ export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   cancelledByUser?: boolean | Prisma.Account$cancelledByUserArgs<ExtArgs>
   customer?: boolean | Prisma.Account$customerArgs<ExtArgs>
   financialTransactions?: boolean | Prisma.Account$financialTransactionsArgs<ExtArgs>
+  electronicDocuments?: boolean | Prisma.Account$electronicDocumentsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2399,6 +2579,7 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     cancelledByUser: Prisma.$UserPayload<ExtArgs> | null
     customer: Prisma.$CustomerPayload<ExtArgs> | null
     financialTransactions: Prisma.$FinancialTransactionPayload<ExtArgs>[]
+    electronicDocuments: Prisma.$ElectronicDocumentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2822,6 +3003,7 @@ export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.
   cancelledByUser<T extends Prisma.Account$cancelledByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$cancelledByUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   customer<T extends Prisma.Account$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$customerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   financialTransactions<T extends Prisma.Account$financialTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$financialTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FinancialTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  electronicDocuments<T extends Prisma.Account$electronicDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$electronicDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ElectronicDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3397,6 +3579,30 @@ export type Account$financialTransactionsArgs<ExtArgs extends runtime.Types.Exte
   take?: number
   skip?: number
   distinct?: Prisma.FinancialTransactionScalarFieldEnum | Prisma.FinancialTransactionScalarFieldEnum[]
+}
+
+/**
+ * Account.electronicDocuments
+ */
+export type Account$electronicDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ElectronicDocument
+   */
+  select?: Prisma.ElectronicDocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ElectronicDocument
+   */
+  omit?: Prisma.ElectronicDocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ElectronicDocumentInclude<ExtArgs> | null
+  where?: Prisma.ElectronicDocumentWhereInput
+  orderBy?: Prisma.ElectronicDocumentOrderByWithRelationInput | Prisma.ElectronicDocumentOrderByWithRelationInput[]
+  cursor?: Prisma.ElectronicDocumentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ElectronicDocumentScalarFieldEnum | Prisma.ElectronicDocumentScalarFieldEnum[]
 }
 
 /**

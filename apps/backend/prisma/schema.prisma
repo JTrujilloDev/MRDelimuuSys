@@ -9,20 +9,20 @@ datasource db {
 
 // Durable delivery queue. Recipients and reports are snapshotted at event time.
 model NotificationOutbox {
-  id            Int      @id @default(autoincrement())
-  deduplicationKey String @unique
-  channel       String
-  kind          String
-  recipient     String
-  payload       Json
-  status        String   @default("PENDING")
-  attempts      Int      @default(0)
-  nextAttemptAt DateTime @default(now())
-  lockedUntil   DateTime?
-  sentAt        DateTime?
-  lastError     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id               Int       @id @default(autoincrement())
+  deduplicationKey String    @unique
+  channel          String
+  kind             String
+  recipient        String
+  payload          Json
+  status           String    @default("PENDING")
+  attempts         Int       @default(0)
+  nextAttemptAt    DateTime  @default(now())
+  lockedUntil      DateTime?
+  sentAt           DateTime?
+  lastError        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   @@index([status, nextAttemptAt])
 }
@@ -85,14 +85,14 @@ model ProductVariant {
   product            Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt          DateTime        @default(now())
 
-  accountItems          AccountItem[]
-  InventoryTransactions InventoryTransaction[]
-  catalogItems          GroupCatalogItem[]
-  storeInventories      StoreInventory[]
-  inventoryLots         InventoryLot[]
-  transferItems          InventoryTransferItem[]
-  recipeItems           RecipeItem[]           @relation("RecipeOwner")
-  ingredientInRecipes   RecipeItem[]           @relation("RecipeIngredient")
+  accountItems             AccountItem[]
+  InventoryTransactions    InventoryTransaction[]
+  catalogItems             GroupCatalogItem[]
+  storeInventories         StoreInventory[]
+  inventoryLots            InventoryLot[]
+  transferItems            InventoryTransferItem[]
+  recipeItems              RecipeItem[]              @relation("RecipeOwner")
+  ingredientInRecipes      RecipeItem[]              @relation("RecipeIngredient")
   shiftInventoryCountItems ShiftInventoryCountItem[]
 }
 
@@ -129,29 +129,29 @@ model RecipeItem {
 
 model User {
   financialTransactionsCreated FinancialTransaction[] @relation("FinancialCreatedBy")
-  id            Int       @id @default(autoincrement())
-  name          String
-  email         String    @unique
-  password      String
-  role          Role      @default(CASHIER)
-  isActive      Boolean   @default(true)
-  isGlobalAdmin Boolean   @default(false)
-  lastLoginAt   DateTime?
+  id                           Int                    @id @default(autoincrement())
+  name                         String
+  email                        String                 @unique
+  password                     String
+  role                         Role                   @default(CASHIER)
+  isActive                     Boolean                @default(true)
+  isGlobalAdmin                Boolean                @default(false)
+  lastLoginAt                  DateTime?
 
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime               @updatedAt
-  Accounts              Account[]              @relation("AccountCreatedBy")
-  cancelledAccounts     Account[]              @relation("AccountCancelledBy")
-  CashRegisters         CashRegister[]
-  storeAccesses         UserStoreAccess[]
-  sessions              UserSession[]
-  inventoryTransactions InventoryTransaction[] @relation("InventoryTransactionCreatedBy")
-  dispatchedTransfers   InventoryTransfer[]    @relation("TransferDispatchedBy")
-  receivedTransfers     InventoryTransfer[]    @relation("TransferReceivedBy")
-  cancelledTransfers    InventoryTransfer[]    @relation("TransferCancelledBy")
-  confirmedInventoryCounts ShiftInventoryCount[] @relation("InventoryCountConfirmedBy")
-  countedInventoryItems ShiftInventoryCountItem[] @relation("InventoryItemCountedBy")
-  resolvedInventoryItems ShiftInventoryCountItem[] @relation("InventoryItemResolvedBy")
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  Accounts                 Account[]                 @relation("AccountCreatedBy")
+  cancelledAccounts        Account[]                 @relation("AccountCancelledBy")
+  CashRegisters            CashRegister[]
+  storeAccesses            UserStoreAccess[]
+  sessions                 UserSession[]
+  inventoryTransactions    InventoryTransaction[]    @relation("InventoryTransactionCreatedBy")
+  dispatchedTransfers      InventoryTransfer[]       @relation("TransferDispatchedBy")
+  receivedTransfers        InventoryTransfer[]       @relation("TransferReceivedBy")
+  cancelledTransfers       InventoryTransfer[]       @relation("TransferCancelledBy")
+  confirmedInventoryCounts ShiftInventoryCount[]     @relation("InventoryCountConfirmedBy")
+  countedInventoryItems    ShiftInventoryCountItem[] @relation("InventoryItemCountedBy")
+  resolvedInventoryItems   ShiftInventoryCountItem[] @relation("InventoryItemResolvedBy")
 }
 
 enum Role {
@@ -192,6 +192,7 @@ model Account {
   customer            Customer?      @relation(fields: [customerId], references: [id])
 
   financialTransactions FinancialTransaction[] @relation("AccountFinancialTransactions")
+  electronicDocuments   ElectronicDocument[]
 
   financialTransactionId Int?
 
@@ -242,7 +243,7 @@ model InventoryTransaction {
   inventoryLotId   Int?
   relatedAccountId Int?
   productVariant   ProductVariant           @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
-  inventoryLot     InventoryLot?             @relation(fields: [inventoryLotId], references: [id], onDelete: Restrict)
+  inventoryLot     InventoryLot?            @relation(fields: [inventoryLotId], references: [id], onDelete: Restrict)
   quantity         Int
   unit             Unit                     @default(UNIT)
   type             InventoryTransactionType
@@ -301,9 +302,9 @@ model FinancialTransaction {
   voidedAt                DateTime?
   voidReason              String?
   voidedByUserId          Int?
-  requestKey              String? @unique
+  requestKey              String?                  @unique
   createdByUserId         Int?
-  createdByUser           User? @relation("FinancialCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdByUser           User?                    @relation("FinancialCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
 }
 
 enum FinancialTransactionType {
@@ -362,47 +363,47 @@ model CashRegister {
   transactions FinancialTransaction[]
   accounts     Account[]
 
-  user User @relation(fields: [userId], references: [id])
+  user            User                  @relation(fields: [userId], references: [id])
   inventoryCounts ShiftInventoryCount[]
 }
 
 model ShiftInventoryCount {
-  id Int @id @default(autoincrement())
-  cashRegisterId Int
-  cashRegister CashRegister @relation(fields: [cashRegisterId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  phase String
-  confirmedAt DateTime?
-  confirmedByUserId Int?
-  confirmedByUser User? @relation("InventoryCountConfirmedBy", fields: [confirmedByUserId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  createdAt DateTime @default(now())
-  archivedVerifications Json @default("[]")
-  items ShiftInventoryCountItem[]
+  id                    Int                       @id @default(autoincrement())
+  cashRegisterId        Int
+  cashRegister          CashRegister              @relation(fields: [cashRegisterId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  phase                 String
+  confirmedAt           DateTime?
+  confirmedByUserId     Int?
+  confirmedByUser       User?                     @relation("InventoryCountConfirmedBy", fields: [confirmedByUserId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  createdAt             DateTime                  @default(now())
+  archivedVerifications Json                      @default("[]")
+  items                 ShiftInventoryCountItem[]
 
   @@unique([cashRegisterId, phase])
 }
 
 model ShiftInventoryCountItem {
-  id Int @id @default(autoincrement())
-  countId Int
-  count ShiftInventoryCount @relation(fields: [countId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  productVariantId Int
-  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  productName String
-  unit String
-  expectedQuantity Int
-  countedQuantity Int
-  movementRevision Int
-  difference Int
-  justification String?
-  countedAt DateTime @default(now())
-  countedByUserId Int
-  countedByUser User @relation("InventoryItemCountedBy", fields: [countedByUserId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  resolution String?
-  resolutionReason String?
-  resolvedAt DateTime?
-  resolvedByUserId Int?
-  resolvedByUser User? @relation("InventoryItemResolvedBy", fields: [resolvedByUserId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  adjustmentOperationId String? @unique
+  id                    Int                 @id @default(autoincrement())
+  countId               Int
+  count                 ShiftInventoryCount @relation(fields: [countId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  productVariantId      Int
+  productVariant        ProductVariant      @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  productName           String
+  unit                  String
+  expectedQuantity      Int
+  countedQuantity       Int
+  movementRevision      Int
+  difference            Int
+  justification         String?
+  countedAt             DateTime            @default(now())
+  countedByUserId       Int
+  countedByUser         User                @relation("InventoryItemCountedBy", fields: [countedByUserId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  resolution            String?
+  resolutionReason      String?
+  resolvedAt            DateTime?
+  resolvedByUserId      Int?
+  resolvedByUser        User?               @relation("InventoryItemResolvedBy", fields: [resolvedByUserId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  adjustmentOperationId String?             @unique
 
   @@unique([countId, productVariantId])
   @@index([resolution, difference])
@@ -451,13 +452,15 @@ enum KitchenMode {
 }
 
 model Store {
-  id          Int         @id @default(autoincrement())
-  groupId     Int
-  group       StoreGroup  @relation(fields: [groupId], references: [id], onDelete: Restrict)
-  code        String      @unique
-  name        String
-  isActive    Boolean     @default(true)
-  kitchenMode KitchenMode @default(NONE)
+  id             Int           @id @default(autoincrement())
+  groupId        Int
+  group          StoreGroup    @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  code           String        @unique
+  name           String
+  isActive       Boolean       @default(true)
+  kitchenMode    KitchenMode   @default(NONE)
+  fiscalIssuerId Int?
+  fiscalIssuer   FiscalIssuer? @relation(fields: [fiscalIssuerId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -470,8 +473,10 @@ model Store {
   lotInventories        StoreLotInventory[]
   outgoingTransfers     InventoryTransfer[]    @relation("TransferOrigin")
   incomingTransfers     InventoryTransfer[]    @relation("TransferDestination")
+  electronicDocuments   ElectronicDocument[]
 
   @@index([groupId, isActive])
+  @@index([fiscalIssuerId])
 }
 
 model StoreInventory {
@@ -503,7 +508,7 @@ model InventoryLot {
 
   storeInventories      StoreLotInventory[]
   inventoryTransactions InventoryTransaction[]
-  transferItems          InventoryTransferItem[]
+  transferItems         InventoryTransferItem[]
 
   @@unique([productVariantId, code])
   @@index([expiresAt])
@@ -712,4 +717,202 @@ enum KitchenStatus {
   READY
   DELIVERED
   CANCELLED
+}
+
+enum BillingEnvironment {
+  SANDBOX
+  PRODUCTION
+}
+
+enum ElectronicDocumentStatus {
+  PENDING
+  SENDING
+  PROCESSING
+  ACCEPTED
+  REJECTED
+  REQUIRES_RECONCILIATION
+  CANCELLED
+}
+
+enum BillingJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REQUIRES_RECONCILIATION
+}
+
+enum BillingAttemptOutcome {
+  PROCESSING
+  ACCEPTED
+  REJECTED
+  TRANSIENT_ERROR
+  UNKNOWN
+}
+
+enum BillingArtifactType {
+  PDF
+  XML
+  ATTACHED_DOCUMENT_XML
+}
+
+// Legal entity that issues fiscal documents. It is intentionally independent
+// from StoreGroup because commercial catalog sharing is not a fiscal identity.
+model FiscalIssuer {
+  id                Int      @id @default(autoincrement())
+  code              String   @unique
+  legalName         String
+  tradeName         String?
+  nit               String   @unique
+  verificationDigit String?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  stores                 Store[]
+  providerConfigurations BillingProviderConfiguration[]
+  numberingRanges        FiscalNumberingRange[]
+  documents              ElectronicDocument[]
+
+  @@index([isActive])
+}
+
+// Secrets are never stored here. credentialReference names the server-side
+// secret/environment entry that the selected provider adapter must resolve.
+model BillingProviderConfiguration {
+  id                  Int                @id @default(autoincrement())
+  issuerId            Int
+  issuer              FiscalIssuer       @relation(fields: [issuerId], references: [id], onDelete: Restrict)
+  provider            String
+  environment         BillingEnvironment
+  credentialReference String
+  configuration       Json?
+  version             Int                @default(1)
+  isActive            Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  numberingRanges FiscalNumberingRange[]
+  documents       ElectronicDocument[]
+
+  @@unique([issuerId, provider, environment, version])
+  @@index([issuerId, environment, isActive])
+}
+
+model FiscalNumberingRange {
+  id                      Int                          @id @default(autoincrement())
+  issuerId                Int
+  issuer                  FiscalIssuer                 @relation(fields: [issuerId], references: [id], onDelete: Restrict)
+  providerConfigurationId Int
+  providerConfiguration   BillingProviderConfiguration @relation(fields: [providerConfigurationId], references: [id], onDelete: Restrict)
+  remoteId                String
+  documentType            String
+  prefix                  String?
+  resolutionNumber        String?
+  rangeFrom               Int?
+  rangeTo                 Int?
+  validFrom               DateTime?                    @db.Date
+  validUntil              DateTime?                    @db.Date
+  isActive                Boolean                      @default(true)
+  providerSnapshot        Json?
+  createdAt               DateTime                     @default(now())
+  updatedAt               DateTime                     @updatedAt
+
+  documents ElectronicDocument[]
+
+  @@unique([providerConfigurationId, remoteId])
+  @@index([issuerId, documentType, isActive])
+}
+
+model ElectronicDocument {
+  id                      String                       @id @default(uuid()) @db.Uuid
+  operationKey            String                       @unique
+  referenceCode           String
+  documentType            String
+  status                  ElectronicDocumentStatus     @default(PENDING)
+  issuerId                Int
+  issuer                  FiscalIssuer                 @relation(fields: [issuerId], references: [id], onDelete: Restrict)
+  storeId                 Int
+  store                   Store                        @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  accountId               Int?
+  account                 Account?                     @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  providerConfigurationId Int
+  providerConfiguration   BillingProviderConfiguration @relation(fields: [providerConfigurationId], references: [id], onDelete: Restrict)
+  numberingRangeId        Int?
+  numberingRange          FiscalNumberingRange?        @relation(fields: [numberingRangeId], references: [id], onDelete: Restrict)
+  originalDocumentId      String?                      @db.Uuid
+  originalDocument        ElectronicDocument?          @relation("DocumentCorrections", fields: [originalDocumentId], references: [id], onDelete: Restrict)
+  corrections             ElectronicDocument[]         @relation("DocumentCorrections")
+  currency                String                       @default("COP")
+  subtotal                Decimal                      @db.Decimal(18, 2)
+  discountTotal           Decimal                      @default(0) @db.Decimal(18, 2)
+  taxTotal                Decimal                      @default(0) @db.Decimal(18, 2)
+  total                   Decimal                      @db.Decimal(18, 2)
+  snapshot                Json
+  providerDocumentId      String?
+  providerNumber          String?
+  fiscalIdentifier        String?
+  providerStatus          String?
+  lastErrorCode           String?
+  lastErrorMessage        String?
+  acceptedAt              DateTime?
+  createdAt               DateTime                     @default(now())
+  updatedAt               DateTime                     @updatedAt
+
+  attempts  BillingAttempt[]
+  job       BillingJob?
+  artifacts BillingArtifact[]
+
+  @@unique([issuerId, referenceCode])
+  @@index([storeId, createdAt])
+  @@index([accountId])
+  @@index([status, createdAt])
+  @@index([originalDocumentId])
+}
+
+model BillingAttempt {
+  id                 Int                   @id @default(autoincrement())
+  documentId         String                @db.Uuid
+  document           ElectronicDocument    @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  attemptNumber      Int
+  action             String
+  outcome            BillingAttemptOutcome
+  requestFingerprint String?
+  httpStatus         Int?
+  providerCode       String?
+  providerMessage    String?
+  diagnostics        Json?
+  startedAt          DateTime              @default(now())
+  finishedAt         DateTime?
+
+  @@unique([documentId, attemptNumber])
+  @@index([documentId, startedAt])
+}
+
+model BillingJob {
+  id            Int                @id @default(autoincrement())
+  documentId    String             @unique @db.Uuid
+  document      ElectronicDocument @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  status        BillingJobStatus   @default(PENDING)
+  attempts      Int                @default(0)
+  nextAttemptAt DateTime           @default(now())
+  lockedUntil   DateTime?
+  lastError     String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@index([status, nextAttemptAt])
+}
+
+model BillingArtifact {
+  id          Int                 @id @default(autoincrement())
+  documentId  String              @db.Uuid
+  document    ElectronicDocument  @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  type        BillingArtifactType
+  providerKey String?
+  contentHash String?
+  availableAt DateTime            @default(now())
+  createdAt   DateTime            @default(now())
+
+  @@unique([documentId, type])
 }

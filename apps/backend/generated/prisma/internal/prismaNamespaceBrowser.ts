@@ -79,7 +79,14 @@ export const ModelName = {
   UserSession: 'UserSession',
   KitchenTicket: 'KitchenTicket',
   KitchenTicketItem: 'KitchenTicketItem',
-  KitchenTicketAdjustment: 'KitchenTicketAdjustment'
+  KitchenTicketAdjustment: 'KitchenTicketAdjustment',
+  FiscalIssuer: 'FiscalIssuer',
+  BillingProviderConfiguration: 'BillingProviderConfiguration',
+  FiscalNumberingRange: 'FiscalNumberingRange',
+  ElectronicDocument: 'ElectronicDocument',
+  BillingAttempt: 'BillingAttempt',
+  BillingJob: 'BillingJob',
+  BillingArtifact: 'BillingArtifact'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -380,6 +387,7 @@ export const StoreScalarFieldEnum = {
   name: 'name',
   isActive: 'isActive',
   kitchenMode: 'kitchenMode',
+  fiscalIssuerId: 'fiscalIssuerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -545,6 +553,136 @@ export const KitchenTicketAdjustmentScalarFieldEnum = {
 export type KitchenTicketAdjustmentScalarFieldEnum = (typeof KitchenTicketAdjustmentScalarFieldEnum)[keyof typeof KitchenTicketAdjustmentScalarFieldEnum]
 
 
+export const FiscalIssuerScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  legalName: 'legalName',
+  tradeName: 'tradeName',
+  nit: 'nit',
+  verificationDigit: 'verificationDigit',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FiscalIssuerScalarFieldEnum = (typeof FiscalIssuerScalarFieldEnum)[keyof typeof FiscalIssuerScalarFieldEnum]
+
+
+export const BillingProviderConfigurationScalarFieldEnum = {
+  id: 'id',
+  issuerId: 'issuerId',
+  provider: 'provider',
+  environment: 'environment',
+  credentialReference: 'credentialReference',
+  configuration: 'configuration',
+  version: 'version',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BillingProviderConfigurationScalarFieldEnum = (typeof BillingProviderConfigurationScalarFieldEnum)[keyof typeof BillingProviderConfigurationScalarFieldEnum]
+
+
+export const FiscalNumberingRangeScalarFieldEnum = {
+  id: 'id',
+  issuerId: 'issuerId',
+  providerConfigurationId: 'providerConfigurationId',
+  remoteId: 'remoteId',
+  documentType: 'documentType',
+  prefix: 'prefix',
+  resolutionNumber: 'resolutionNumber',
+  rangeFrom: 'rangeFrom',
+  rangeTo: 'rangeTo',
+  validFrom: 'validFrom',
+  validUntil: 'validUntil',
+  isActive: 'isActive',
+  providerSnapshot: 'providerSnapshot',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FiscalNumberingRangeScalarFieldEnum = (typeof FiscalNumberingRangeScalarFieldEnum)[keyof typeof FiscalNumberingRangeScalarFieldEnum]
+
+
+export const ElectronicDocumentScalarFieldEnum = {
+  id: 'id',
+  operationKey: 'operationKey',
+  referenceCode: 'referenceCode',
+  documentType: 'documentType',
+  status: 'status',
+  issuerId: 'issuerId',
+  storeId: 'storeId',
+  accountId: 'accountId',
+  providerConfigurationId: 'providerConfigurationId',
+  numberingRangeId: 'numberingRangeId',
+  originalDocumentId: 'originalDocumentId',
+  currency: 'currency',
+  subtotal: 'subtotal',
+  discountTotal: 'discountTotal',
+  taxTotal: 'taxTotal',
+  total: 'total',
+  snapshot: 'snapshot',
+  providerDocumentId: 'providerDocumentId',
+  providerNumber: 'providerNumber',
+  fiscalIdentifier: 'fiscalIdentifier',
+  providerStatus: 'providerStatus',
+  lastErrorCode: 'lastErrorCode',
+  lastErrorMessage: 'lastErrorMessage',
+  acceptedAt: 'acceptedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ElectronicDocumentScalarFieldEnum = (typeof ElectronicDocumentScalarFieldEnum)[keyof typeof ElectronicDocumentScalarFieldEnum]
+
+
+export const BillingAttemptScalarFieldEnum = {
+  id: 'id',
+  documentId: 'documentId',
+  attemptNumber: 'attemptNumber',
+  action: 'action',
+  outcome: 'outcome',
+  requestFingerprint: 'requestFingerprint',
+  httpStatus: 'httpStatus',
+  providerCode: 'providerCode',
+  providerMessage: 'providerMessage',
+  diagnostics: 'diagnostics',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt'
+} as const
+
+export type BillingAttemptScalarFieldEnum = (typeof BillingAttemptScalarFieldEnum)[keyof typeof BillingAttemptScalarFieldEnum]
+
+
+export const BillingJobScalarFieldEnum = {
+  id: 'id',
+  documentId: 'documentId',
+  status: 'status',
+  attempts: 'attempts',
+  nextAttemptAt: 'nextAttemptAt',
+  lockedUntil: 'lockedUntil',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BillingJobScalarFieldEnum = (typeof BillingJobScalarFieldEnum)[keyof typeof BillingJobScalarFieldEnum]
+
+
+export const BillingArtifactScalarFieldEnum = {
+  id: 'id',
+  documentId: 'documentId',
+  type: 'type',
+  providerKey: 'providerKey',
+  contentHash: 'contentHash',
+  availableAt: 'availableAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BillingArtifactScalarFieldEnum = (typeof BillingArtifactScalarFieldEnum)[keyof typeof BillingArtifactScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -558,6 +696,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {

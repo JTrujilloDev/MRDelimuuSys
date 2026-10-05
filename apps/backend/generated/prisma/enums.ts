@@ -180,3 +180,55 @@ export const KitchenStatus = {
 } as const
 
 export type KitchenStatus = (typeof KitchenStatus)[keyof typeof KitchenStatus]
+
+
+export const BillingEnvironment = {
+  SANDBOX: 'SANDBOX',
+  PRODUCTION: 'PRODUCTION'
+} as const
+
+export type BillingEnvironment = (typeof BillingEnvironment)[keyof typeof BillingEnvironment]
+
+
+export const ElectronicDocumentStatus = {
+  PENDING: 'PENDING',
+  SENDING: 'SENDING',
+  PROCESSING: 'PROCESSING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  REQUIRES_RECONCILIATION: 'REQUIRES_RECONCILIATION',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ElectronicDocumentStatus = (typeof ElectronicDocumentStatus)[keyof typeof ElectronicDocumentStatus]
+
+
+export const BillingJobStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  REQUIRES_RECONCILIATION: 'REQUIRES_RECONCILIATION'
+} as const
+
+export type BillingJobStatus = (typeof BillingJobStatus)[keyof typeof BillingJobStatus]
+
+
+export const BillingAttemptOutcome = {
+  PROCESSING: 'PROCESSING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  TRANSIENT_ERROR: 'TRANSIENT_ERROR',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type BillingAttemptOutcome = (typeof BillingAttemptOutcome)[keyof typeof BillingAttemptOutcome]
+
+
+export const BillingArtifactType = {
+  PDF: 'PDF',
+  XML: 'XML',
+  ATTACHED_DOCUMENT_XML: 'ATTACHED_DOCUMENT_XML'
+} as const
+
+export type BillingArtifactType = (typeof BillingArtifactType)[keyof typeof BillingArtifactType]

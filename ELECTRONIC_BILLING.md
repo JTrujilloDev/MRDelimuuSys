@@ -1,6 +1,18 @@
 # Facturación electrónica: arquitectura propuesta
 
-Estado: diseño inicial, pendiente de implementar. Rama: `codex/facturacion-electronica`, creada desde `2.0` en `30c6a63`.
+Estado: primera base técnica implementada. Rama: `codex/facturacion-electronica`, actualizada con `2.0`.
+
+## Avance implementado
+
+- Contrato de proveedor independiente en `apps/backend/src/billing/domain`.
+- Adaptador simulado idempotente que nunca informa aceptación fiscal real.
+- Traductor inicial de factura estándar Factus (`document: 01`, `operation_type: 10`).
+- Impoconsumo representado mediante código Factus `04`, con tasa configurable por línea; las pruebas cubren el 8% acordado para Veleño.
+- Validación decimal sin aritmética de punto flotante, pagos a crédito con vencimiento y ajuste de efectivo limitado a ±500 COP.
+- Modelos y migración para emisores fiscales, configuraciones versionadas, rangos, documentos, intentos, cola y artefactos.
+- Credenciales referenciadas por nombre; no se almacenan tokens, contraseñas o secretos en la base de datos.
+
+Esta base todavía no crea documentos al cerrar ventas ni realiza llamadas externas. La activación espera credenciales sandbox, datos fiscales, rango de numeración y códigos de medios de pago confirmados.
 
 ## Alcance acordado y decisiones pendientes
 
