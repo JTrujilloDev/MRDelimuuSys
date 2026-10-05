@@ -7,6 +7,7 @@ import {
   ChartNoAxesCombined,
   Camera,
   ChefHat,
+  ContactRound,
   History,
   MapPin,
   MonitorSmartphone,
@@ -76,6 +77,7 @@ const Sidebar = () => {
     { title: "Punto de Venta", url: "pos", icon: ShoppingCart },
     { title: "Historial de cajas", url: "cash-register-history", icon: History },
     ...(state?.user.isGlobalAdmin || ["ADMIN", "CASHIER"].includes(activeContext.role) ? [{ title: "Créditos", url: "credits", icon: Wallet }] : []),
+    ...(state?.user.isGlobalAdmin || ["ADMIN", "CASHIER"].includes(activeContext.role) ? [{ title: "Clientes", url: "customers", icon: ContactRound }] : []),
     ...(state?.user.isGlobalAdmin || activeContext.role === "ADMIN"
       ? [
           { title: "Reportes", url: "reports", icon: ChartNoAxesCombined },

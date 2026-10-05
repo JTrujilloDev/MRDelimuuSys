@@ -16,12 +16,21 @@ import ReportsPage from "../../modules/reports/pages";
 import InventoryTransfersPage from "../../modules/inventoryTransfers/pages";
 import CreditsPage from "../../modules/credits/pages";
 import BillingPage from "../../modules/billing/pages";
+import CustomersPage from "../../modules/customers/pages";
 import { useAuth } from "../auth/AuthProvider";
 
 const GlobalAdminOnly = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAuth();
 
   return state?.user.isGlobalAdmin ? children : <Navigate to="/app/pos" replace />;
+};
+
+const CustomerAccessOnly = ({ children }: { children: React.ReactNode }) => {
+  const { state } = useAuth();
+  const canManageCustomers = state?.user.isGlobalAdmin
+    || ["ADMIN", "CASHIER"].includes(state?.activeContext?.role ?? "");
+
+  return canManageCustomers ? children : <Navigate to="/app/pos" replace />;
 };
 
 export const router = createBrowserRouter([
@@ -46,6 +55,14 @@ export const router = createBrowserRouter([
       { path: "inventory", element: <Inventory /> },
       { path: "inventory-transfers", element: <InventoryTransfersPage /> },
       { path: "credits", element: <CreditsPage /> },
+      {
+        path: "customers",
+        element: (
+          <CustomerAccessOnly>
+            <CustomersPage />
+          </CustomerAccessOnly>
+        ),
+      },
       {
         path: "billing",
         element: (

@@ -29,7 +29,7 @@ export const findCustomerByIdentification = async (req: Request, res: Response) 
 };
 
 export const listCustomers = async (req: Request, res: Response) => {
-  try { res.json({ success: true, data: await getAllCustomersService(req.query.search) }); }
+  try { res.json({ success: true, data: await getAllCustomersService(req.query.search, req.query.page) }); }
   catch (error) { failure(res, error); }
 };
 

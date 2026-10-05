@@ -56,23 +56,40 @@ export const findCustomerByIdentificationService = (
   },
 });
 
-export const getAllCustomersService = (searchValue: unknown) => {
+export const getAllCustomersService = async (searchValue: unknown, pageValue: unknown) => {
   const search = typeof searchValue === "string" ? searchValue.trim().slice(0, 80) : "";
-  return prisma.customer.findMany({
-    where: {
-      isActive: true,
-      ...(search ? {
-        OR: [
-          { identification: { contains: search.replace(/[^0-9A-Za-z]/g, ""), mode: "insensitive" as const } },
-          { name: { contains: search, mode: "insensitive" as const } },
-          { phone: { contains: search } },
-          { email: { contains: search, mode: "insensitive" as const } },
-        ],
-      } : {}),
-    },
-    orderBy: { updatedAt: "desc" },
-    take: 30,
-  });
+  const parsedPage = Number(pageValue);
+  const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const pageSize = 30;
+  const identificationSearch = search.replace(/[^0-9A-Za-z]/g, "");
+  const searchFilters: Prisma.CustomerWhereInput[] = search ? [
+    ...(identificationSearch ? [{ identification: { contains: identificationSearch, mode: "insensitive" as const } }] : []),
+    { name: { contains: search, mode: "insensitive" as const } },
+    { tradeName: { contains: search, mode: "insensitive" as const } },
+    { phone: { contains: search } },
+    { email: { contains: search, mode: "insensitive" as const } },
+  ] : [];
+  const where: Prisma.CustomerWhereInput = {
+    isActive: true,
+    ...(searchFilters.length ? { OR: searchFilters } : {}),
+  };
+  const [customers, total] = await prisma.$transaction([
+    prisma.customer.findMany({
+      where,
+      orderBy: [{ name: "asc" }, { id: "asc" }],
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.customer.count({ where }),
+  ]);
+
+  return {
+    customers,
+    total,
+    page,
+    pageSize,
+    pageCount: Math.max(1, Math.ceil(total / pageSize)),
+  };
 };
 
 export const updateCustomerService = async (customerId: number, input: CustomerFiscalInput) => {
