@@ -4,6 +4,7 @@ import { Prisma } from "../../generated/prisma/client";
 import { countPhase, validateCount, assertSnapshot } from "./shiftInventory.rules";
 import { applyInventoryMovementTx } from "./inventoryLot.service";
 import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
+import { inventoryCountPolicyForGroup } from "../config/operationScope";
 
 type CountDatabase = Pick<typeof prisma, "$transaction">;
 
@@ -26,7 +27,10 @@ const revision = async (tx: Prisma.TransactionClient, storeId: number, productVa
 
 const lockRegister = async (tx: Prisma.TransactionClient, id: number, storeId: number) => {
   await tx.$queryRaw`SELECT "id" FROM "CashRegister" WHERE "id" = ${id} FOR UPDATE`;
-  const register = await tx.cashRegister.findFirst({ where: { id, terminal: { storeId } } });
+  const register = await tx.cashRegister.findFirst({
+    where: { id, terminal: { storeId } },
+    include: { terminal: { include: { store: { include: { group: true } } } } },
+  });
   if (!register) throw new Error("El turno no pertenece al punto activo.");
   return register;
 };
@@ -38,16 +42,35 @@ const lockInventory = async (tx: Prisma.TransactionClient, storeId: number, prod
 export const getShiftInventory = async (id: number, storeId: number, database: CountDatabase = prisma) => database.$transaction(async tx => {
   const register = await tx.cashRegister.findFirst({ where: { id, terminal: { storeId } } });
   if (!register) throw new Error("Turno no disponible en este punto.");
+  const store = await tx.store.findUniqueOrThrow({
+    where: { id: storeId },
+    include: { group: { select: { code: true } } },
+  });
   const inventories = await eligibleInventories(tx, storeId);
   const movements = await tx.inventoryTransaction.groupBy({ by: ["productVariantId"], where: { storeId }, _max: { id: true } });
   const revisions = new Map(movements.map(item => [item.productVariantId, item._max.id ?? 0]));
   const counts = await tx.shiftInventoryCount.findMany({ where: { cashRegisterId: id }, include: { confirmedByUser: { select: { name: true } }, items: { orderBy: { productVariantId: "asc" }, include: { countedByUser: { select: { name: true } }, resolvedByUser: { select: { name: true } } } } } });
-  return { register, counts, products: inventories.map(inventory => ({
-    productVariantId: inventory.productVariantId,
-    productName: `${inventory.productVariant.product.name} / ${inventory.productVariant.name}`,
-    unit: inventory.productVariant.unit, expectedQuantity: inventory.stock,
-    movementRevision: revisions.get(inventory.productVariantId) ?? 0,
-  })) };
+  const lastCompleteCount = await tx.shiftInventoryCount.findFirst({
+    where: {
+      confirmedAt: { not: null },
+      cashRegister: { terminal: { storeId } },
+      cashRegisterId: { not: id },
+    },
+    orderBy: { confirmedAt: "desc" },
+    select: { confirmedAt: true, phase: true, cashRegisterId: true },
+  });
+  return {
+    register,
+    counts,
+    policy: inventoryCountPolicyForGroup(store.group.code),
+    lastCompleteCount,
+    products: inventories.map(inventory => ({
+      productVariantId: inventory.productVariantId,
+      productName: `${inventory.productVariant.product.name} / ${inventory.productVariant.name}`,
+      unit: inventory.productVariant.unit, expectedQuantity: inventory.stock,
+      movementRevision: revisions.get(inventory.productVariantId) ?? 0,
+    })),
+  };
 }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
 
 export const saveShiftInventoryItem = async (id: number, storeId: number, userId: number, data: {
@@ -62,7 +85,8 @@ export const saveShiftInventoryItem = async (id: number, storeId: number, userId
   const key = { cashRegisterId: id, phase };
   const count = await tx.shiftInventoryCount.upsert({ where: { cashRegisterId_phase: key }, create: key, update: {} });
   if (count.confirmedAt) throw new Error("Este conteo ya está confirmado; su evidencia no se puede editar.");
-  if (phase === "CLOSING") {
+  const policy = inventoryCountPolicyForGroup(register.terminal.store.group.code);
+  if (phase === "CLOSING" && policy === "STRICT") {
     const opening = await tx.shiftInventoryCount.findUnique({ where: { cashRegisterId_phase: { cashRegisterId: id, phase: "OPENING" } } });
     if (!opening?.confirmedAt) throw new Error("Completa y confirma el conteo inicial primero.");
   }
@@ -103,7 +127,8 @@ export const confirmShiftInventory = async (id: number, storeId: number, userId:
   const phase = countPhase(value);
   const register = await lockRegister(tx, id, storeId);
   if (register.status !== "OPEN") throw new Error("El turno ya está cerrado.");
-  if (phase === "CLOSING") {
+  const policy = inventoryCountPolicyForGroup(register.terminal.store.group.code);
+  if (phase === "CLOSING" && policy === "STRICT") {
     const opening = await tx.shiftInventoryCount.findUnique({ where: { cashRegisterId_phase: { cashRegisterId: id, phase: "OPENING" } } });
     if (!opening?.confirmedAt) throw new Error("Confirma el conteo inicial primero.");
   }

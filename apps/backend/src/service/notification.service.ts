@@ -35,6 +35,16 @@ export const enqueueShiftClosed = async (
     where: { id: shiftId },
     include: { user: { select: { name: true } }, terminal: { include: { store: true } }, accounts: true, transactions: true, inventoryCounts: { include: { items: true } } },
   });
+  const confirmedInventoryPhases = new Set(
+    (shift.inventoryCounts ?? [])
+      .filter((count) => count.confirmedAt)
+      .map((count) => count.phase),
+  );
+  const inventoryObservation = confirmedInventoryPhases.size === 0
+    ? ["Inventario: turno cerrado sin conteo completo."]
+    : confirmedInventoryPhases.size < 2
+      ? [`Inventario: conteo parcial (${confirmedInventoryPhases.has("OPENING") ? "inicial" : "final"} confirmado).`]
+      : [];
   const payload: ShiftNotification = {
     shiftId, store: shift.terminal.store.name, terminal: shift.terminal.name, user: shift.user.name,
     openedAt: shift.openedAt.toISOString(), closedAt: shift.closedAt!.toISOString(),
@@ -44,7 +54,7 @@ export const enqueueShiftClosed = async (
     closingAmount: closing.closingAmount, difference: closing.difference,
     justification: closing.differenceJustification || "",
     cancelledCount: shift.accounts.filter((account) => account.status === "CANCELLED").length,
-    observations: [...(shift.inventoryCounts ?? []).flatMap(count => [
+    observations: [...inventoryObservation, ...(shift.inventoryCounts ?? []).flatMap(count => [
       `Conteo ${count.phase === "OPENING" ? "inicial" : "final"}: ${count.items.length} productos verificados; ${count.items.filter(item => item.difference !== 0).length} diferencias pendientes de revisión.`,
       ...count.items.map(item => `${count.phase === "OPENING" ? "Apertura" : "Cierre"} — ${item.productName}: esperado ${item.expectedQuantity}, contado ${item.countedQuantity}, diferencia ${item.difference}. ${item.justification || "Sin diferencia"}`),
     ]), ...shift.accounts.flatMap((account) => {

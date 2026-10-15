@@ -12,6 +12,7 @@ import { summarizeCreditCollections } from "./credit.rules";
 import { enqueueShiftClosed } from "./notification.service";
 import { requireShiftInventoryClosing } from "./shiftInventory.service";
 import { lockInventoryVerificationTx } from "./inventoryVerificationLock";
+import { inventoryCountPolicyForGroup } from "../config/operationScope";
 
 export interface UpdateCashRegisterTotalsInput {
   cashRegisterId: number;
@@ -113,8 +114,13 @@ export const closeCashRegisterService = async (
       );
     }
 
-    const terminal = await tx.terminal.findUniqueOrThrow({ where: { id: cashRegister.terminalId } });
-    await requireShiftInventoryClosing(tx, cashRegisterId, terminal.storeId);
+    const terminal = await tx.terminal.findUniqueOrThrow({
+      where: { id: cashRegister.terminalId },
+      include: { store: { include: { group: { select: { code: true } } } } },
+    });
+    if (inventoryCountPolicyForGroup(terminal.store.group.code) === "STRICT") {
+      await requireShiftInventoryClosing(tx, cashRegisterId, terminal.storeId);
+    }
 
     // 2. Obtener movimientos financieros de la caja
     const transactions = await tx.financialTransaction.findMany({

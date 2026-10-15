@@ -8,3 +8,11 @@ export const operationFeatures = Object.freeze({
   inventoryTransfers: false,
 });
 
+export type InventoryCountPolicy = "STRICT" | "FLEXIBLE";
+
+export const inventoryCountPolicyForGroup = (
+  code: string | null | undefined,
+): InventoryCountPolicy => code?.trim().toUpperCase() === "DELIMUU"
+  ? "FLEXIBLE"
+  : "STRICT";
+

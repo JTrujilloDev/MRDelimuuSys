@@ -12,7 +12,13 @@ type Phase = "OPENING" | "CLOSING";
 type Product = { productVariantId: number; productName: string; unit: string; expectedQuantity: number; movementRevision: number };
 type CountItem = Product & { id: number; countedQuantity: number; difference: number; justification: string | null; countedAt: string; countedByUserId: number; countedByUser?: { name: string }; resolvedByUser?: { name: string }; resolution: string | null; resolutionReason: string | null; adjustmentOperationId: string | null };
 type Count = { phase: Phase; confirmedAt: string | null; confirmedByUser?: { name: string }; items: CountItem[]; archivedVerifications: Array<{ confirmedAt: string; items: CountItem[] }> };
-type CountData = { register: { status: string }; products: Product[]; counts: Count[] };
+type CountData = {
+  register: { status: string };
+  products: Product[];
+  counts: Count[];
+  policy: "STRICT" | "FLEXIBLE";
+  lastCompleteCount: { confirmedAt: string; phase: Phase; cashRegisterId: number } | null;
+};
 const units: Record<string, string> = { UNIT: "unidades", PIECE: "piezas", GRAM: "gramos", KILOGRAM: "kg", LITER: "litros", MILLILITER: "ml", BOX: "cajas", PACK: "paquetes" };
 const inputClass = "w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30";
 const message = (error: unknown) => axios.isAxiosError(error) ? error.response?.data?.message ?? "No fue posible guardar el conteo." : error instanceof Error ? error.message : "No fue posible guardar el conteo.";
@@ -26,12 +32,21 @@ export const InventoryCountStatus = ({ cashRegisterId, onOpen }: { cashRegisterI
     const item = final.items.find(item => item.productVariantId === product.productVariantId);
     return !item || item.expectedQuantity !== product.expectedQuantity || item.movementRevision !== product.movementRevision;
   });
-  const status = !data ? "Verificación de inventario" : !opening
-    ? "Conteo inicial pendiente · Puedes continuar vendiendo"
-    : finalStale ? "Conteo final requiere nueva verificación"
-    : final?.confirmedAt ? "Conteos inicial y final confirmados" : "Conteo inicial confirmado · Final pendiente";
+  const flexibleItems = Math.max(
+    data?.counts.find(count => count.phase === "OPENING")?.items.length ?? 0,
+    final?.items.length ?? 0,
+  );
+  const status = !data ? "Verificación de inventario"
+    : data.policy === "FLEXIBLE"
+      ? finalStale ? "El conteo final quedó desactualizado"
+        : final?.confirmedAt ? "Conteo final completo confirmado"
+        : flexibleItems > 0 ? `${flexibleItems} de ${data.products.length} productos verificados`
+        : "Conteo opcional · Puedes hacerlo cuando sea útil"
+      : !opening ? "Conteo inicial pendiente · Puedes continuar vendiendo"
+        : finalStale ? "Conteo final requiere nueva verificación"
+        : final?.confirmedAt ? "Conteos inicial y final confirmados" : "Conteo inicial confirmado · Final pendiente";
   return <button onClick={onOpen} className="mx-6 mt-3 flex items-center justify-between gap-3 rounded-2xl border border-primary/30 bg-pos-surface px-4 py-3 text-left text-sm text-foreground hover:bg-secondary">
-    <span className="flex items-center gap-2"><ClipboardCheck className="h-4 w-4 text-primary" />{status}</span>
+    <span className="flex items-center gap-2"><ClipboardCheck className="h-4 w-4 shrink-0 text-primary" /><span><span className="block">{status}</span>{data?.policy === "FLEXIBLE" && <span className="mt-0.5 block text-xs text-muted-foreground">No bloquea la apertura ni el cierre del turno</span>}</span></span>
     <span className="font-semibold text-primary">Ver conteos</span>
   </button>;
 };
@@ -47,11 +62,17 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
   const [search, setSearch] = useState("");
   const [draftsBlocked, setDraftsBlocked] = useState(false);
   const [leaveWarning, setLeaveWarning] = useState(false);
+  const [referenceTime] = useState(() => Date.now());
   const { data, isLoading, error: loadError, refetch } = useQuery({ queryKey: ["shiftInventory", cashRegisterId], queryFn: () => readCount(cashRegisterId) });
   const count = data?.counts.find(count => count.phase === phase);
   const openingComplete = Boolean(data?.counts.find(count => count.phase === "OPENING")?.confirmedAt);
+  const flexible = data?.policy === "FLEXIBLE";
+  const daysSinceCompleteCount = data?.lastCompleteCount?.confirmedAt
+    ? Math.floor((referenceTime - new Date(data.lastCompleteCount.confirmedAt).getTime()) / 86_400_000)
+    : null;
   const closed = data?.register.status === "CLOSED";
-  const editable = !readOnly && !closed && !count?.confirmedAt && (phase === "OPENING" || openingComplete);
+  const closedWithoutCompleteCount = closed && !data?.counts.some(value => value.confirmedAt);
+  const editable = !readOnly && !closed && !count?.confirmedAt && (flexible || phase === "OPENING" || openingComplete);
   const products = closed || readOnly ? (count?.items ?? []) : (data?.products ?? []);
   const reviewProducts = editable ? products : orderInventoryCountReview(products, count?.items ?? []);
   const visible = reviewProducts.filter(product => product.productName.toLocaleLowerCase("es").includes(search.toLocaleLowerCase("es")));
@@ -76,10 +97,20 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
         </button>)}
       </div>
       <section className="rounded-2xl border border-border bg-pos-surface p-5">
-        <p className="text-sm text-foreground">{phase === "OPENING" ? "Puedes volver al POS para atender clientes y continuar después. Cada producto se compara con el inventario vigente al verificarlo." : "Completa el conteo inicial antes del final. Si hay movimientos posteriores, vuelve a verificar los productos afectados antes de cerrar."}</p>
+        <p className="text-sm text-foreground">{flexible
+          ? phase === "OPENING"
+            ? "Conteo opcional para registrar cómo inicia el inventario. Puedes verificar solo los productos sensibles y continuar después."
+            : "Conteo opcional al finalizar. No necesitas haber completado el inicial y puedes cerrar el turno aunque queden productos pendientes."
+          : phase === "OPENING"
+            ? "Puedes volver al POS para atender clientes y continuar después. Cada producto se compara con el inventario vigente al verificarlo."
+            : "Completa el conteo inicial antes del final. Si hay movimientos posteriores, vuelve a verificar los productos afectados antes de cerrar."}</p>
         <p className="mt-2 text-xs text-muted-foreground">Se cuentan productos terminados y de terceros con inventario inicializado, incluidos los desactivados con existencias. Ingredientes, bases y empaques no forman parte de esta verificación.</p>
+        {closedWithoutCompleteCount && <p className="mt-3 rounded-xl border border-warning/40 bg-warning/10 p-3 text-sm font-semibold text-foreground">Este turno se cerró sin confirmar un conteo completo. Las verificaciones parciales guardadas se conservan como evidencia.</p>}
+        {flexible && data?.lastCompleteCount?.confirmedAt && <p className="mt-3 text-xs text-muted-foreground">Último conteo completo: {new Date(data.lastCompleteCount.confirmedAt).toLocaleString("es-CO")} · Turno #{data.lastCompleteCount.cashRegisterId}</p>}
+        {flexible && daysSinceCompleteCount !== null && daysSinceCompleteCount >= 7 && <p className="mt-2 text-sm font-semibold text-warning-foreground">Han pasado {daysSinceCompleteCount} días desde el último conteo completo. Es un buen momento para actualizarlo.</p>}
+        {flexible && !data?.lastCompleteCount && <p className="mt-3 text-xs text-muted-foreground">Todavía no hay un conteo completo anterior. Es recomendable realizar uno durante esta semana.</p>}
         {count?.confirmedAt && <p className="mt-3 text-sm font-semibold text-primary">Confirmado el {new Date(count.confirmedAt).toLocaleString("es-CO")} · {count.confirmedByUser?.name}</p>}
-        {phase === "CLOSING" && !openingComplete && !readOnly && !closed && <p className="mt-3 text-sm text-danger">Primero completa y confirma el conteo inicial.</p>}
+        {!flexible && phase === "CLOSING" && !openingComplete && !readOnly && !closed && <p className="mt-3 text-sm text-danger">Primero completa y confirma el conteo inicial.</p>}
       </section>
       {editable && <p className="text-sm text-muted-foreground">Escribe la cantidad y pulsa Enter o Tab para guardar y avanzar. Si hay diferencia, completa su justificación. Vacío significa pendiente, no cero.</p>}
       {!editable && !!count?.items.length && <p className="text-sm text-muted-foreground">Primero se muestran las diferencias pendientes de revisión, luego las resueltas y al final los productos sin diferencias.</p>}
@@ -92,7 +123,7 @@ export default function InventoryCountView({ cashRegisterId, onBack, initialPhas
       </div>
       {!readOnly && !closed && <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-pos-surface p-5">
         <p className="text-sm text-muted-foreground">{products.filter(product => count?.items.some(item => item.productVariantId === product.productVariantId)).length} de {products.length} productos verificados</p>
-        {count?.confirmedAt ? phase === "CLOSING" && <Button variant="secondary" isDisabled={busy} onPress={() => void act("reopen")}>Reabrir verificación final</Button> : <Button id="confirm-inventory-count" isDisabled={busy || draftsBlocked || !data || (phase === "CLOSING" && !openingComplete)} onPress={() => void act("confirm")}>{busy ? "Guardando…" : "Confirmar conteo completo"}</Button>}
+        {count?.confirmedAt ? phase === "CLOSING" && <Button variant="secondary" isDisabled={busy} onPress={() => void act("reopen")}>Reabrir verificación final</Button> : <Button id="confirm-inventory-count" isDisabled={busy || draftsBlocked || !data || (!flexible && phase === "CLOSING" && !openingComplete)} onPress={() => void act("confirm")}>{busy ? "Guardando…" : "Confirmar conteo completo"}</Button>}
       </div>}
       {!!count?.archivedVerifications?.length && <details className="rounded-2xl border border-border bg-pos-surface p-5"><summary className="cursor-pointer font-semibold text-foreground">Verificaciones finales anteriores ({count.archivedVerifications.length})</summary>{count.archivedVerifications.map((archive, index) => <div key={index} className="mt-4 border-t border-border pt-3"><p className="text-sm font-semibold text-foreground">{new Date(archive.confirmedAt).toLocaleString("es-CO")}</p>{archive.items.map(item => <p key={item.id} className="mt-1 text-sm text-muted-foreground">{item.productName}: esperado {item.expectedQuantity}, contado {item.countedQuantity}, diferencia {item.difference}. {item.justification}</p>)}</div>)}</details>}
     </div>

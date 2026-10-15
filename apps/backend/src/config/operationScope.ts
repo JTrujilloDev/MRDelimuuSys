@@ -12,6 +12,12 @@ export const operationFeatures = Object.freeze({
   inventoryTransfers: false,
 });
 
+export type InventoryCountPolicy = "STRICT" | "FLEXIBLE";
+
+export const inventoryCountPolicyForGroup = (
+  code: string | null | undefined,
+): InventoryCountPolicy => isActiveStoreGroup(code) ? "FLEXIBLE" : "STRICT";
+
 export const isActiveStoreGroup = (code: string | null | undefined) =>
   code?.trim().toUpperCase() === ACTIVE_STORE_GROUP_CODE;
 
