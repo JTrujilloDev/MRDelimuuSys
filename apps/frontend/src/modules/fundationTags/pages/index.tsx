@@ -6,7 +6,12 @@ import "dayjs/locale/es";
 import { BookOpen, Check, ClipboardList, Minus, Plus, Printer, RotateCcw, Tag, Trash2 } from "lucide-react";
 import { printLabelService } from "../../../shared/services/qz.service";
 import { foundationMenu } from "../../../shared/constants/fundationMenu";
-import { foundationProducts } from "../../../shared/constants/fundationProducts";
+import {
+  distributeFoundationUnits,
+  foundationDistributionSummary,
+  foundationLabelContent,
+  foundationProducts,
+} from "../../../shared/constants/fundationProducts";
 import { foundationMenuWeekFor } from "../../../shared/constants/fundationSchedule";
 
 dayjs.extend(isoWeek);
@@ -89,10 +94,10 @@ const FoundationTags = () => {
     const target = deliveryTargets.find((item) => activeTargetIds.has(item.id)) ?? deliveryTargets[0];
     setDraft((current) => [...current, { id: `custom-${Date.now()}`, productKey, amount: foundationProducts[productKey].labelAmount, enabled: true, targetId: target.id, targetLabel: target.label, mealLabel: "Adicional" }]);
   };
-  const createLabel = (product: Product, amount: number) => [
+  const createLabel = (product: Product, units: number, amount: number) => [
     "SIZE 50 mm,30 mm", "GAP 2 mm,0", "HOME", "CLS",
     `TEXT 2,20,"2",0,2,1,"${product.name}"`,
-    `TEXT 2,55,"2",0,1,1,"${product.content}"`,
+    `TEXT 2,55,"2",0,1,1,"${foundationLabelContent(product, units)}"`,
     `TEXT 25,90,"2",0,1,1,"Elab. ${preparationDay}"`,
     `TEXT 25,115,"2",0,1,1,"Venc. ${expirationDay}"`,
     `TEXT 25,145,"2",0,1,1,"Lote: ${lotBase}${product.lotRef}01"`,
@@ -100,11 +105,20 @@ const FoundationTags = () => {
     "TEXT 5,195,\"2\",0,1,1,\"NIT 79.062.341-1\"",
     `PRINT ${amount}`,
   ].join("\r\n");
+  const createProductLabels = (product: Product, amount: number) => {
+    const groupedLabels = new Map<number, number>();
+    for (const units of distributeFoundationUnits(product.totalUnits, amount)) {
+      groupedLabels.set(units, (groupedLabels.get(units) ?? 0) + 1);
+    }
+    return [...groupedLabels.entries()]
+      .map(([units, labelCount]) => createLabel(product, units, labelCount))
+      .join("\r\n");
+  };
   const handlePrint = async () => {
     if (!selectedLabels.length) return;
     setIsPrinting(true);
     try {
-      await printLabelService("TSCE210", selectedLabels.map((item) => createLabel(foundationProducts[item.productKey], item.amount)).join("\r\n"));
+      await printLabelService("TSCE210", selectedLabels.map((item) => createProductLabels(foundationProducts[item.productKey], item.amount)).join("\r\n"));
       toast("Etiquetas enviadas a impresión", { variant: "success", description: `${totalLabels} etiquetas de ${selectedLabels.length} productos.` });
     } catch (error) {
       toast("No se pudieron imprimir las etiquetas", { variant: "danger", description: error instanceof Error ? error.message : "Verifica la conexión con la impresora." });
@@ -151,8 +165,8 @@ const FoundationTags = () => {
               const product = foundationProducts[item.productKey];
               return <article key={item.id} className={`grid gap-4 rounded-2xl border p-4 md:grid-cols-[auto_minmax(220px,1fr)_minmax(180px,0.8fr)_auto] md:items-center ${item.enabled ? "border-border bg-background" : "border-border/60 bg-secondary/30 opacity-65"}`}>
                 <button type="button" aria-label={item.enabled ? `Excluir ${product.name}` : `Incluir ${product.name}`} onClick={() => updateDraft(item.id, { enabled: !item.enabled })} className={`flex h-10 w-10 items-center justify-center rounded-xl border ${item.enabled ? "border-success bg-success text-success-foreground" : "border-border bg-secondary text-muted-foreground"}`}>{item.enabled && <Check className="h-5 w-5" />}</button>
-                <div className="min-w-0"><select value={item.productKey} onChange={(event) => { const productKey = event.target.value as ProductKey; updateDraft(item.id, { productKey, amount: foundationProducts[productKey].labelAmount }); }} className="h-10 w-full rounded-xl border border-border bg-pos-surface px-3 font-bold text-foreground outline-none focus:border-primary">{productEntries.map(([key, option]) => <option key={key} value={key}>{option.name} · {option.portionWeight} g</option>)}</select><p className="mt-1 truncate text-xs text-muted-foreground">{product.content}</p><p className="mt-1 text-xs font-bold capitalize text-primary">Entrega: {item.targetLabel} · {item.mealLabel}</p></div>
-                <div><p className="mb-1.5 text-xs font-semibold text-muted-foreground">Cantidad de etiquetas</p><div className="flex h-10 items-center rounded-xl border border-border bg-pos-surface"><button type="button" aria-label="Restar etiqueta" onClick={() => updateDraft(item.id, { amount: Math.max(1, item.amount - 1) })} className="flex h-full w-10 items-center justify-center text-muted-foreground hover:text-primary"><Minus className="h-4 w-4" /></button><input type="number" min="1" max="999" value={item.amount} onChange={(event) => updateDraft(item.id, { amount: Math.max(1, Math.min(999, Number(event.target.value) || 1)) })} className="h-full min-w-0 flex-1 bg-transparent text-center text-lg font-black text-foreground outline-none" /><button type="button" aria-label="Sumar etiqueta" onClick={() => updateDraft(item.id, { amount: Math.min(999, item.amount + 1) })} className="flex h-full w-10 items-center justify-center text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></button></div></div>
+                <div className="min-w-0"><select value={item.productKey} onChange={(event) => { const productKey = event.target.value as ProductKey; updateDraft(item.id, { productKey, amount: foundationProducts[productKey].labelAmount }); }} className="h-10 w-full rounded-xl border border-border bg-pos-surface px-3 font-bold text-foreground outline-none focus:border-primary">{productEntries.map(([key, option]) => <option key={key} value={key}>{option.name} · {option.portionWeight} g</option>)}</select><p className="mt-1 truncate text-xs text-muted-foreground">{foundationDistributionSummary(product, item.amount)}</p><p className="mt-1 text-xs font-bold capitalize text-primary">Entrega: {item.targetLabel} · {item.mealLabel}</p></div>
+                <div><p className="mb-1.5 text-xs font-semibold text-muted-foreground">Cantidad de etiquetas</p><div className="flex h-10 items-center rounded-xl border border-border bg-pos-surface"><button type="button" aria-label="Restar etiqueta" onClick={() => updateDraft(item.id, { amount: Math.max(1, item.amount - 1) })} className="flex h-full w-10 items-center justify-center text-muted-foreground hover:text-primary"><Minus className="h-4 w-4" /></button><input type="number" min="1" max={product.totalUnits} value={item.amount} onChange={(event) => updateDraft(item.id, { amount: Math.max(1, Math.min(product.totalUnits, Number(event.target.value) || 1)) })} className="h-full min-w-0 flex-1 bg-transparent text-center text-lg font-black text-foreground outline-none" /><button type="button" aria-label="Sumar etiqueta" onClick={() => updateDraft(item.id, { amount: Math.min(product.totalUnits, item.amount + 1) })} className="flex h-full w-10 items-center justify-center text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></button></div></div>
                 <button type="button" aria-label={`Quitar ${product.name}`} onClick={() => setDraft((current) => current.filter((draftItem) => draftItem.id !== item.id))} className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="h-5 w-5" /></button>
               </article>;
             })}{!draft.length && <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">No hay productos en el lote. Agrega uno para comenzar.</div>}</div>

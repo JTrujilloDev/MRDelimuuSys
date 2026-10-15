@@ -1,23 +1,39 @@
 export type FoundationProduct = {
   name: string;
-  content: string;
-  unitCount: 110 | 220;
+  totalUnits: 110 | 220;
   portionWeight: 20 | 30 | 50;
   lotRef: string;
   labelAmount: number;
 };
 
-type ProductDefinition = Omit<FoundationProduct, "content" | "unitCount"> & {
-  unitCount?: FoundationProduct["unitCount"];
+type ProductDefinition = Omit<FoundationProduct, "totalUnits"> & {
+  totalUnits?: FoundationProduct["totalUnits"];
 };
 
 const formatGrams = (value: number) => String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-const defineProduct = ({ unitCount = 110, ...product }: ProductDefinition): FoundationProduct => ({
+const defineProduct = ({ totalUnits = 110, ...product }: ProductDefinition): FoundationProduct => ({
   ...product,
-  unitCount,
-  content: `${formatGrams(unitCount * product.portionWeight)} g (${unitCount} und. X ${product.portionWeight} g)`,
+  totalUnits,
 });
+
+export const distributeFoundationUnits = (totalUnits: number, labelAmount: number) => {
+  const safeLabelAmount = Math.max(1, Math.min(Math.trunc(labelAmount), totalUnits));
+  const unitsPerLabel = Math.floor(totalUnits / safeLabelAmount);
+  const remainder = totalUnits % safeLabelAmount;
+  return Array.from(
+    { length: safeLabelAmount },
+    (_, index) => unitsPerLabel + (index < remainder ? 1 : 0),
+  );
+};
+
+export const foundationLabelContent = (product: FoundationProduct, units: number) =>
+  `${formatGrams(units * product.portionWeight)} g (${units} und. X ${product.portionWeight} g)`;
+
+export const foundationDistributionSummary = (product: FoundationProduct, labelAmount: number) => {
+  const distribution = distributeFoundationUnits(product.totalUnits, labelAmount);
+  return `${product.totalUnits} unidades en ${distribution.length} bolsas: ${distribution.join(" + ")}`;
+};
 
 export const foundationProducts = {
   pan_blando_50: defineProduct({
@@ -112,14 +128,14 @@ export const foundationProducts = {
   }),
   galleta_avena: defineProduct({
     name: "Galleta de avena",
-    unitCount: 220,
+    totalUnits: 220,
     portionWeight: 20,
     lotRef: "GA",
     labelAmount: 3,
   }),
   galleta: defineProduct({
     name: "Galleta",
-    unitCount: 220,
+    totalUnits: 220,
     portionWeight: 20,
     lotRef: "GL",
     labelAmount: 3,
