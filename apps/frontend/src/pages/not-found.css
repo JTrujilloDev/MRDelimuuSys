@@ -1,0 +1,212 @@
+.lost-dessert-page {
+  --scene-rotate-x: -4deg;
+  --scene-rotate-y: 7deg;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: 100%;
+  width: 100%;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(1.5rem, 4vw, 4rem);
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--accent) 18%, transparent) 0 2px, transparent 3px),
+    radial-gradient(circle at 78% 32%, color-mix(in oklab, var(--foreground) 12%, transparent) 0 1px, transparent 2px),
+    radial-gradient(circle at 65% 75%, color-mix(in oklab, var(--accent) 14%, transparent) 0 2px, transparent 3px),
+    linear-gradient(145deg, var(--background), color-mix(in oklab, var(--background) 90%, var(--accent) 10%));
+  background-size: 83px 83px, 127px 127px, 151px 151px, auto;
+}
+
+.lost-dessert-page::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--surface) 32%, transparent), transparent);
+  content: "";
+  transform: skewX(-18deg) translateX(-130%);
+  animation: lost-dessert-shimmer 9s ease-in-out infinite;
+}
+
+.lost-dessert-glow {
+  position: absolute;
+  z-index: -1;
+  width: min(42vw, 35rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.lost-dessert-glow-one { top: -18%; right: -8%; background: var(--accent); }
+.lost-dessert-glow-two { bottom: -30%; left: -12%; background: var(--danger); opacity: 0.12; }
+
+.lost-dessert-content {
+  display: grid;
+  width: min(100%, 68rem);
+  grid-template-columns: minmax(0, 0.9fr) minmax(21rem, 1.1fr);
+  align-items: center;
+  gap: clamp(2rem, 7vw, 6rem);
+}
+
+.lost-dessert-copy { position: relative; z-index: 2; }
+
+.lost-dessert-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.lost-dessert-kicker svg { width: 1rem; height: 1rem; }
+
+.lost-dessert-copy h1 {
+  max-width: 11ch;
+  margin: 0;
+  color: var(--foreground);
+  font-size: clamp(2.75rem, 6.2vw, 5.4rem);
+  font-weight: 950;
+  letter-spacing: -0.065em;
+  line-height: 0.92;
+}
+
+.lost-dessert-description {
+  max-width: 34rem;
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  line-height: 1.7;
+}
+
+.lost-dessert-path {
+  display: block;
+  max-width: 31rem;
+  margin-top: 1.25rem;
+  overflow: hidden;
+  color: color-mix(in oklab, var(--muted) 80%, transparent);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lost-dessert-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+.lost-dessert-actions button {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 1rem;
+  padding: 0.75rem 1.15rem;
+  font-weight: 800;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+.lost-dessert-actions button:hover { transform: translateY(-2px); }
+.lost-dessert-actions button:focus-visible,
+.lost-dessert-scene:focus-visible { outline: 3px solid color-mix(in oklab, var(--accent) 55%, white); outline-offset: 4px; }
+.lost-dessert-actions svg { width: 1.05rem; height: 1.05rem; }
+.lost-dessert-primary {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-foreground);
+  box-shadow: 0 16px 35px -20px color-mix(in oklab, var(--accent) 80%, black);
+}
+.lost-dessert-secondary { border: 1px solid var(--border); background: color-mix(in oklab, var(--surface) 78%, transparent); color: var(--foreground); }
+
+.lost-dessert-visual { display: grid; min-width: 0; justify-items: center; }
+.lost-dessert-scene {
+  position: relative;
+  width: 100%;
+  max-width: min(31rem, 42vw);
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in oklab, var(--surface) 76%, transparent), transparent 68%);
+  cursor: pointer;
+  perspective: 900px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lost-dessert-number {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  color: color-mix(in oklab, var(--foreground) 10%, transparent);
+  font-size: clamp(7rem, 16vw, 13rem);
+  font-weight: 950;
+  letter-spacing: -0.12em;
+  line-height: 1;
+  transform: translate(-51%, -55%);
+  text-shadow: 1px 1px var(--border), 2px 2px var(--border), 3px 3px var(--border);
+  user-select: none;
+}
+
+.lost-dessert-cake {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 13rem;
+  height: 10rem;
+  transform: translate(-50%, -45%) rotateX(var(--scene-rotate-x)) rotateY(var(--scene-rotate-y));
+  transform-style: preserve-3d;
+  transition: transform 180ms ease-out;
+  animation: lost-dessert-float 4.8s ease-in-out infinite;
+}
+
+.cake-shadow { position: absolute; left: 15%; bottom: -12%; width: 78%; height: 20%; border-radius: 50%; background: color-mix(in oklab, black 25%, transparent); filter: blur(12px); transform: translateZ(-45px) rotateX(70deg); }
+.cake-plate { position: absolute; left: 4%; bottom: 0; width: 92%; height: 23%; border-radius: 50%; background: linear-gradient(180deg, white, color-mix(in oklab, var(--border) 80%, white)); box-shadow: 0 13px 22px -12px rgba(0,0,0,.35); transform: translateZ(-3px); }
+.cake-body { position: absolute; left: 15%; width: 70%; height: 43%; border-radius: 14% 14% 22% 22% / 12% 12% 30% 30%; }
+.cake-body-back { bottom: 25%; background: linear-gradient(110deg, #9f4937, #63271e 80%); transform: translateZ(-18px); }
+.cake-body-front { bottom: 22%; background: linear-gradient(110deg, #c96b4f, #7e3125 76%); box-shadow: inset 0 -12px 18px rgba(67,20,15,.24), 0 20px 30px -20px rgba(54,20,13,.75); transform: translateZ(18px); }
+.cake-filling { position: absolute; left: 16%; bottom: 42%; width: 68%; height: 9%; border-radius: 999px; background: linear-gradient(90deg, #fff1d7, #f6d49c); transform: translateZ(22px); }
+.cake-top { position: absolute; left: 15%; bottom: 53%; width: 70%; height: 25%; border-radius: 50%; background: radial-gradient(circle at 40% 24%, #ffe5ba, #e9a86e 65%, #bd684d); box-shadow: inset 0 4px 7px rgba(255,255,255,.5); transform: translateZ(12px) rotateX(5deg); }
+.cake-cream { position: absolute; bottom: 62%; width: 26%; height: 19%; border-radius: 50% 50% 46% 46%; background: linear-gradient(145deg, #fffdf5, #f3d8b2); box-shadow: inset -5px -5px 8px rgba(170,105,68,.15); transform: translateZ(29px); }
+.cream-one { left: 30%; rotate: -8deg; }
+.cream-two { right: 29%; rotate: 9deg; }
+.cake-cherry { position: absolute; left: 45%; bottom: 79%; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: radial-gradient(circle at 32% 25%, #ff9b8e, #c52932 46%, #76151b); box-shadow: 0 7px 10px rgba(76,13,15,.3); transform: translateZ(38px); }
+.cake-cherry::after { position: absolute; left: 54%; bottom: 80%; width: .18rem; height: 1.25rem; border-radius: 999px; background: #4e6f36; content: ""; rotate: 22deg; transform-origin: bottom; }
+
+.lost-dessert-orbit { position: absolute; inset: 17%; border: 1px solid color-mix(in oklab, var(--accent) 28%, transparent); border-radius: 50%; animation: lost-dessert-orbit 11s linear infinite; }
+.lost-dessert-orbit i { position: absolute; top: 7%; left: 20%; width: .75rem; height: .75rem; border-radius: 35% 65% 60% 40%; background: var(--accent); box-shadow: 0 0 18px color-mix(in oklab, var(--accent) 55%, transparent); }
+.orbit-two { inset: 25% 10%; rotate: 58deg; animation-duration: 15s; animation-direction: reverse; }
+.orbit-two i { width: .55rem; height: .55rem; background: var(--danger); }
+.orbit-three { inset: 9% 29%; rotate: -34deg; animation-duration: 9s; }
+.orbit-three i { top: 75%; left: 87%; width: .42rem; height: .42rem; }
+
+.lost-dessert-scene.is-discovered .cake-cherry { animation: lost-dessert-cherry-pop 700ms cubic-bezier(.2,.9,.25,1.4); }
+.lost-dessert-scene.is-discovered .lost-dessert-number { color: color-mix(in oklab, var(--accent) 13%, transparent); }
+.lost-dessert-secret { min-height: 1.5rem; margin: -1.25rem 0 0; color: var(--muted); font-size: .8rem; text-align: center; transition: color 180ms ease, transform 180ms ease; }
+.lost-dessert-secret.is-visible { color: var(--foreground); transform: translateY(-2px); }
+
+@keyframes lost-dessert-float {
+  0%, 100% { translate: 0 -4px; }
+  50% { translate: 0 12px; }
+}
+@keyframes lost-dessert-orbit { to { transform: rotate(360deg); } }
+@keyframes lost-dessert-shimmer { 0%, 72%, 100% { transform: skewX(-18deg) translateX(-130%); } 86% { transform: skewX(-18deg) translateX(130%); } }
+@keyframes lost-dessert-cherry-pop { 0% { scale: 1; } 45% { scale: 1.6; translate: 0 -18px; } 100% { scale: 1; } }
+
+@media (max-width: 820px) {
+  .lost-dessert-page { overflow-y: auto; }
+  .lost-dessert-content { grid-template-columns: 1fr; gap: .75rem; text-align: center; }
+  .lost-dessert-copy { display: grid; justify-items: center; }
+  .lost-dessert-actions { justify-content: center; }
+  .lost-dessert-visual { order: -1; }
+  .lost-dessert-scene { width: min(82vw, 23rem); }
+  .lost-dessert-scene { max-width: none; }
+  .lost-dessert-cake { scale: .82; }
+  .lost-dessert-secret { margin-top: -2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lost-dessert-page::before,
+  .lost-dessert-cake,
+  .lost-dessert-orbit,
+  .lost-dessert-scene.is-discovered .cake-cherry { animation: none; }
+  .lost-dessert-cake { transition: none; }
+}
+

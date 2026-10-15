@@ -19,6 +19,7 @@ import BillingPage from "../../modules/billing/pages";
 import CustomersPage from "../../modules/customers/pages";
 import { useAuth } from "../auth/AuthProvider";
 import { operationFeatures } from "../config/operationScope";
+import NotFound from "../../pages/NotFound";
 
 const GlobalAdminOnly = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAuth();
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="login" replace /> },
       { path: "login", element: <Login /> },
       { path: "select-context", element: <ContextSelector /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
   {
@@ -97,6 +99,7 @@ export const router = createBrowserRouter([
       },
       { path: "admin", element: <AdminPage /> },
       { path: "reports", element: <ReportsPage /> },
+      { path: "*", element: <NotFound /> },
 
     ],
   },
