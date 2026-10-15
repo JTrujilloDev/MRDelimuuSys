@@ -38,3 +38,23 @@ test("bread portions follow breakfast and snack weights", () => {
     }
   }
 });
+
+test("all products total 110 units and cookies total 220", () => {
+  for (const product of Object.values(foundationProducts)) {
+    const isCookie = /galleta/i.test(product.name);
+    assert.equal(product.unitCount, isCookie ? 220 : 110, product.name);
+    assert.equal(
+      product.content,
+      `${(product.unitCount * product.portionWeight).toLocaleString("es-CO")} g (${product.unitCount} und. X ${product.portionWeight} g)`,
+      product.name,
+    );
+  }
+});
+
+test("bread labels follow the portion weight", () => {
+  for (const product of Object.values(foundationProducts)) {
+    const isBread = /pan|mogolla|croissant/i.test(product.name);
+    if (!isBread) continue;
+    assert.equal(product.labelAmount, product.portionWeight === 50 ? 4 : 3, product.name);
+  }
+});

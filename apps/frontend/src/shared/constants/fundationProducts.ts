@@ -1,129 +1,127 @@
 export type FoundationProduct = {
   name: string;
   content: string;
+  unitCount: 110 | 220;
   portionWeight: 20 | 30 | 50;
   lotRef: string;
   labelAmount: number;
 };
 
+type ProductDefinition = Omit<FoundationProduct, "content" | "unitCount"> & {
+  unitCount?: FoundationProduct["unitCount"];
+};
+
+const formatGrams = (value: number) => String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+const defineProduct = ({ unitCount = 110, ...product }: ProductDefinition): FoundationProduct => ({
+  ...product,
+  unitCount,
+  content: `${formatGrams(unitCount * product.portionWeight)} g (${unitCount} und. X ${product.portionWeight} g)`,
+});
+
 export const foundationProducts = {
-  pan_blando_50: {
+  pan_blando_50: defineProduct({
     name: "Pan blando",
-    content: "2.650 g (53 und. X 50 g)",
     portionWeight: 50,
     lotRef: "PB50",
-    labelAmount: 3,
-  },
-  mogolla_50: {
+    labelAmount: 4,
+  }),
+  mogolla_50: defineProduct({
     name: "Mogolla",
-    content: "2.650 g (53 und. X 50 g)",
     portionWeight: 50,
     lotRef: "MO50",
-    labelAmount: 3,
-  },
-  mogolla_30: {
+    labelAmount: 4,
+  }),
+  mogolla_30: defineProduct({
     name: "Mogolla",
-    content: "1.500 g (50 und. X 30 g)",
     portionWeight: 30,
     lotRef: "MO30",
     labelAmount: 3,
-  },
-  mogolla_integral_50: {
+  }),
+  mogolla_integral_50: defineProduct({
     name: "Mogolla integral",
-    content: "2.650 g (53 und. X 50 g)",
     portionWeight: 50,
     lotRef: "MI50",
-    labelAmount: 3,
-  },
-  pan_rollo_50: {
+    labelAmount: 4,
+  }),
+  pan_rollo_50: defineProduct({
     name: "Pan rollo",
-    content: "2.650 g (53 und. X 50 g)",
     portionWeight: 50,
     lotRef: "PR50",
-    labelAmount: 3,
-  },
-  pan_rollo_30: {
+    labelAmount: 4,
+  }),
+  pan_rollo_30: defineProduct({
     name: "Pan rollo",
-    content: "1.650 g (55 und. X 30 g)",
     portionWeight: 30,
     lotRef: "PR30",
     labelAmount: 3,
-  },
-  pan_maiz_50: {
+  }),
+  pan_maiz_50: defineProduct({
     name: "Pan de maiz",
-    content: "2.650 g (53 und. X 50 g)",
     portionWeight: 50,
     lotRef: "PM50",
-    labelAmount: 3,
-  },
-  pan_maiz_30: {
+    labelAmount: 4,
+  }),
+  pan_maiz_30: defineProduct({
     name: "Pan de maiz",
-    content: "1.650 g (55 und. X 30 g)",
     portionWeight: 30,
     lotRef: "PM30",
     labelAmount: 3,
-  },
-  pan_hojaldrado_50: {
+  }),
+  pan_hojaldrado_50: defineProduct({
     name: "Pan hojaldrado",
-    content: "2.650 g (53 und. X 50 g)",
     portionWeight: 50,
     lotRef: "PH50",
-    labelAmount: 2,
-  },
-  pan_hojaldrado_30: {
+    labelAmount: 4,
+  }),
+  pan_hojaldrado_30: defineProduct({
     name: "Pan hojaldrado",
-    content: "1.650 g (55 und. X 30 g)",
     portionWeight: 30,
     lotRef: "PH30",
-    labelAmount: 2,
-  },
-  croissant_30: {
+    labelAmount: 3,
+  }),
+  croissant_30: defineProduct({
     name: "Croissant",
-    content: "1.650 g (55 und. X 30 g)",
     portionWeight: 30,
     lotRef: "CR30",
     labelAmount: 3,
-  },
-  mantecada: {
+  }),
+  mantecada: defineProduct({
     name: "Mantecada",
-    content: "750 g (25 und. X 30 g)",
     portionWeight: 30,
     lotRef: "MA",
     labelAmount: 6,
-  },
-  torta_queso: {
+  }),
+  torta_queso: defineProduct({
     name: "Torta queso",
-    content: "1.250 g (25 und. X 50 g)",
     portionWeight: 50,
     lotRef: "TQ",
     labelAmount: 6,
-  },
-  torta_quinua: {
+  }),
+  torta_quinua: defineProduct({
     name: "Torta quinua",
-    content: "1.250 g (25 und. X 50 g)",
     portionWeight: 50,
     lotRef: "TQ",
     labelAmount: 6,
-  },
-  torta_negra: {
+  }),
+  torta_negra: defineProduct({
     name: "Torta negra",
-    content: "1.250 g (25 und. X 50 g)",
     portionWeight: 50,
     lotRef: "TN",
     labelAmount: 6,
-  },
-  galleta_avena: {
+  }),
+  galleta_avena: defineProduct({
     name: "Galleta de avena",
-    content: "2.000 g (100 und. X 20 g)",
+    unitCount: 220,
     portionWeight: 20,
     lotRef: "GA",
     labelAmount: 3,
-  },
-  galleta: {
+  }),
+  galleta: defineProduct({
     name: "Galleta",
-    content: "2.000 g (100 und. X 20 g)",
+    unitCount: 220,
     portionWeight: 20,
     lotRef: "GL",
     labelAmount: 3,
-  },
-} as const satisfies Record<string, FoundationProduct>;
+  }),
+} satisfies Record<string, FoundationProduct>;
