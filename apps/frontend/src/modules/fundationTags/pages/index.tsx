@@ -7,6 +7,7 @@ import { BookOpen, Check, ClipboardList, Minus, Plus, Printer, RotateCcw, Tag, T
 import { printLabelService } from "../../../shared/services/qz.service";
 import { foundationMenu } from "../../../shared/constants/fundationMenu";
 import { foundationProducts } from "../../../shared/constants/fundationProducts";
+import { foundationMenuWeekFor } from "../../../shared/constants/fundationSchedule";
 
 dayjs.extend(isoWeek);
 dayjs.locale("es");
@@ -14,17 +15,18 @@ dayjs.locale("es");
 type ProductKey = keyof typeof foundationProducts;
 type Product = (typeof foundationProducts)[ProductKey];
 type DayKey = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
-type DraftLabel = { id: string; productKey: ProductKey; amount: number; enabled: boolean; targetId: string; targetLabel: string };
+type DraftLabel = { id: string; productKey: ProductKey; amount: number; enabled: boolean; targetId: string; targetLabel: string; mealLabel: string };
 type DeliveryTarget = { id: string; date: dayjs.Dayjs; week: number; day: DayKey; label: string };
 
-const REFERENCE_WEEK_START = dayjs("2026-08-24").startOf("isoWeek");
 const dayKeys: DayKey[] = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 const productEntries = Object.entries(foundationProducts) as [ProductKey, Product][];
+const mealEntries = [
+  ["breakfast", "Desayuno"],
+  ["morningSnack", "Nueves"],
+  ["afternoonSnack", "Onces"],
+] as const;
 
-const menuWeekFor = (date: dayjs.Dayjs) => {
-  const weeksFromReference = date.startOf("isoWeek").diff(REFERENCE_WEEK_START, "week");
-  return (((2 + weeksFromReference) % 3) + 3) % 3 + 1;
-};
+const menuWeekFor = (date: dayjs.Dayjs) => foundationMenuWeekFor(date.format("YYYY-MM-DD"));
 
 const deliveryTargets = [1, 2].map((offset): DeliveryTarget => {
   const date = dayjs().add(offset, "day");
@@ -42,16 +44,18 @@ const productKeyOf = (product: Product): ProductKey =>
 
 const suggestionFor = (target: DeliveryTarget): DraftLabel[] => {
   const day = foundationMenu.find((week) => week.week === target.week)!.days[target.day];
-  return Object.values(day.meals)
-    .filter((product): product is Product => Boolean(product))
-    .map((product, index) => ({
-      id: `${target.id}-${index}-${productKeyOf(product)}`,
+  return mealEntries.flatMap(([mealKey, mealLabel]) => {
+    const product = day.meals[mealKey] as Product | null;
+    return product ? [{
+      id: `${target.id}-${mealKey}-${productKeyOf(product)}`,
       productKey: productKeyOf(product),
       amount: product.labelAmount,
       enabled: true,
       targetId: target.id,
       targetLabel: target.label,
-    }));
+      mealLabel,
+    }] : [];
+  });
 };
 
 const FoundationTags = () => {
@@ -83,7 +87,7 @@ const FoundationTags = () => {
   const addProduct = () => {
     const productKey = productEntries.find(([key]) => !selectedKeys.has(key))?.[0] ?? productEntries[0][0];
     const target = deliveryTargets.find((item) => activeTargetIds.has(item.id)) ?? deliveryTargets[0];
-    setDraft((current) => [...current, { id: `custom-${Date.now()}`, productKey, amount: foundationProducts[productKey].labelAmount, enabled: true, targetId: target.id, targetLabel: target.label }]);
+    setDraft((current) => [...current, { id: `custom-${Date.now()}`, productKey, amount: foundationProducts[productKey].labelAmount, enabled: true, targetId: target.id, targetLabel: target.label, mealLabel: "Adicional" }]);
   };
   const createLabel = (product: Product, amount: number) => [
     "SIZE 50 mm,30 mm", "GAP 2 mm,0", "HOME", "CLS",
@@ -123,7 +127,7 @@ const FoundationTags = () => {
 
         <section className="rounded-[24px] border border-border bg-pos-surface p-4 shadow-sm">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="font-bold text-foreground">Días de entrega incluidos</h2><p className="text-xs text-muted-foreground">Puedes preparar la minuta de mañana, pasado mañana o ambas.</p></div>
+            <div><h2 className="font-bold text-foreground">Días de entrega incluidos</h2><p className="text-xs text-muted-foreground">Puedes preparar la minuta de mañana, pasado mañana o ambas. Los panes de desayuno son de 50 g; los demás, de 30 g.</p></div>
             <Button variant="outline" size="sm" onClick={() => setIsMenuOpen(true)}><BookOpen className="h-4 w-4" /> Ver minuta completa</Button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">{deliveryTargets.map((target) => {
@@ -147,7 +151,7 @@ const FoundationTags = () => {
               const product = foundationProducts[item.productKey];
               return <article key={item.id} className={`grid gap-4 rounded-2xl border p-4 md:grid-cols-[auto_minmax(220px,1fr)_minmax(180px,0.8fr)_auto] md:items-center ${item.enabled ? "border-border bg-background" : "border-border/60 bg-secondary/30 opacity-65"}`}>
                 <button type="button" aria-label={item.enabled ? `Excluir ${product.name}` : `Incluir ${product.name}`} onClick={() => updateDraft(item.id, { enabled: !item.enabled })} className={`flex h-10 w-10 items-center justify-center rounded-xl border ${item.enabled ? "border-success bg-success text-success-foreground" : "border-border bg-secondary text-muted-foreground"}`}>{item.enabled && <Check className="h-5 w-5" />}</button>
-                <div className="min-w-0"><select value={item.productKey} onChange={(event) => { const productKey = event.target.value as ProductKey; updateDraft(item.id, { productKey, amount: foundationProducts[productKey].labelAmount }); }} className="h-10 w-full rounded-xl border border-border bg-pos-surface px-3 font-bold text-foreground outline-none focus:border-primary">{productEntries.map(([key, option]) => <option key={key} value={key}>{option.name}</option>)}</select><p className="mt-1 truncate text-xs text-muted-foreground">{product.content}</p><p className="mt-1 text-xs font-bold capitalize text-primary">Entrega: {item.targetLabel}</p></div>
+                <div className="min-w-0"><select value={item.productKey} onChange={(event) => { const productKey = event.target.value as ProductKey; updateDraft(item.id, { productKey, amount: foundationProducts[productKey].labelAmount }); }} className="h-10 w-full rounded-xl border border-border bg-pos-surface px-3 font-bold text-foreground outline-none focus:border-primary">{productEntries.map(([key, option]) => <option key={key} value={key}>{option.name} · {option.portionWeight} g</option>)}</select><p className="mt-1 truncate text-xs text-muted-foreground">{product.content}</p><p className="mt-1 text-xs font-bold capitalize text-primary">Entrega: {item.targetLabel} · {item.mealLabel}</p></div>
                 <div><p className="mb-1.5 text-xs font-semibold text-muted-foreground">Cantidad de etiquetas</p><div className="flex h-10 items-center rounded-xl border border-border bg-pos-surface"><button type="button" aria-label="Restar etiqueta" onClick={() => updateDraft(item.id, { amount: Math.max(1, item.amount - 1) })} className="flex h-full w-10 items-center justify-center text-muted-foreground hover:text-primary"><Minus className="h-4 w-4" /></button><input type="number" min="1" max="999" value={item.amount} onChange={(event) => updateDraft(item.id, { amount: Math.max(1, Math.min(999, Number(event.target.value) || 1)) })} className="h-full min-w-0 flex-1 bg-transparent text-center text-lg font-black text-foreground outline-none" /><button type="button" aria-label="Sumar etiqueta" onClick={() => updateDraft(item.id, { amount: Math.min(999, item.amount + 1) })} className="flex h-full w-10 items-center justify-center text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></button></div></div>
                 <button type="button" aria-label={`Quitar ${product.name}`} onClick={() => setDraft((current) => current.filter((draftItem) => draftItem.id !== item.id))} className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="h-5 w-5" /></button>
               </article>;
@@ -156,7 +160,7 @@ const FoundationTags = () => {
 
           <aside className="sticky top-5 overflow-hidden rounded-[24px] border border-border bg-pos-order-bg text-pos-order-fg shadow-lg">
             <div className="border-b border-white/10 p-5"><p className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-pos-order-fg/60"><ClipboardList className="h-4 w-4" /> Resumen de impresión</p><p className="mt-2 text-3xl font-black">{totalLabels}</p><p className="text-sm text-pos-order-fg/60">etiquetas · {selectedLabels.length} productos</p></div>
-            <div className="max-h-72 space-y-2 overflow-y-auto p-5">{selectedLabels.map((item) => <div key={item.id} className="flex items-center justify-between gap-3 text-sm"><span className="min-w-0"><span className="block truncate text-pos-order-fg/75">{foundationProducts[item.productKey].name}</span><span className="block truncate text-xs capitalize text-pos-order-fg/45">{item.targetLabel}</span></span><span className="rounded-lg bg-white/10 px-2 py-1 font-black">× {item.amount}</span></div>)}{!selectedLabels.length && <p className="py-4 text-center text-sm text-pos-order-fg/50">Selecciona al menos un producto.</p>}</div>
+            <div className="max-h-72 space-y-2 overflow-y-auto p-5">{selectedLabels.map((item) => <div key={item.id} className="flex items-center justify-between gap-3 text-sm"><span className="min-w-0"><span className="block truncate text-pos-order-fg/75">{foundationProducts[item.productKey].name} · {foundationProducts[item.productKey].portionWeight} g</span><span className="block truncate text-xs capitalize text-pos-order-fg/45">{item.targetLabel} · {item.mealLabel}</span></span><span className="rounded-lg bg-white/10 px-2 py-1 font-black">× {item.amount}</span></div>)}{!selectedLabels.length && <p className="py-4 text-center text-sm text-pos-order-fg/50">Selecciona al menos un producto.</p>}</div>
             <div className="border-t border-white/10 p-5"><button type="button" disabled={!selectedLabels.length || isPrinting} onClick={() => void handlePrint()} className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-lg font-black text-primary-foreground hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"><Printer className="h-6 w-6" /> {isPrinting ? "Imprimiendo…" : "Imprimir lote"}</button></div>
           </aside>
         </div>
@@ -187,14 +191,17 @@ const FoundationTags = () => {
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
                       {dayKeys.map((dayKey) => {
                         const day = week.days[dayKey];
-                        const products = Object.values(day.meals).filter((product): product is Product => Boolean(product));
+                        const products = mealEntries
+                          .map(([mealKey, mealLabel]) => ({ mealLabel, product: day.meals[mealKey] }))
+                          .filter((meal): meal is { mealLabel: string; product: Product } => Boolean(meal.product));
                         return (
                           <article key={dayKey} className="rounded-2xl border border-border bg-background p-3">
                             <h4 className="border-b border-border pb-2 font-black text-foreground">{day.name}</h4>
                             <div className="mt-3 space-y-2">
-                              {products.map((product, index) => (
-                                <div key={`${product.name}-${index}`} className="rounded-xl bg-secondary px-3 py-2">
-                                  <p className="text-sm font-bold text-foreground">{product.name}</p>
+                              {products.map(({ mealLabel, product }) => (
+                                <div key={mealLabel} className="rounded-xl bg-secondary px-3 py-2">
+                                  <p className="text-[10px] font-black uppercase tracking-wide text-primary">{mealLabel}</p>
+                                  <p className="mt-0.5 text-sm font-bold text-foreground">{product.name} · {product.portionWeight} g</p>
                                   <p className="mt-0.5 text-xs text-muted-foreground">{product.labelAmount} etiquetas</p>
                                 </div>
                               ))}

@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:branding": "node --experimental-strip-types --test tests/branding.test.mjs"
+    "test:branding": "node --experimental-strip-types --test tests/branding.test.mjs",
+    "test:foundation": "node --experimental-strip-types --test tests/foundationMenu.test.mjs"
   },
   "dependencies": {
     "@heroui/react": "^3.0.1",
