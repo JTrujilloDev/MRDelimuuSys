@@ -1,6 +1,6 @@
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 const WEEK_IN_MS = 7 * DAY_IN_MS;
-const CYCLE_REFERENCE_UTC = Date.UTC(2026, 9, 14);
+const CYCLE_REFERENCE_UTC = Date.UTC(2026, 9, 12);
 
 const positiveModulo = (value: number, divisor: number) => ((value % divisor) + divisor) % divisor;
 

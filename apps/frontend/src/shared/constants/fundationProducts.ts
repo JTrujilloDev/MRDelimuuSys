@@ -131,13 +131,13 @@ export const foundationProducts = {
     totalUnits: 220,
     portionWeight: 20,
     lotRef: "GA",
-    labelAmount: 3,
+    labelAmount: 2,
   }),
   galleta: defineProduct({
     name: "Galleta",
     totalUnits: 220,
     portionWeight: 20,
     lotRef: "GL",
-    labelAmount: 3,
+    labelAmount: 2,
   }),
 } satisfies Record<string, FoundationProduct>;
