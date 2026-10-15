@@ -2,6 +2,7 @@ import { prisma } from "../../lib/prisma";
 import { requirePositiveId } from "./organization.validation";
 import { requireCatalogPrice, requirePosCode } from "./catalog.rules";
 import { calculateRecipeCost } from "./productRecipe.rules";
+import { isActiveStoreGroup } from "../config/operationScope";
 
 export const getGroupCatalogService = async (
   groupIdValue: unknown,
@@ -10,6 +11,7 @@ export const getGroupCatalogService = async (
   const groupId = requirePositiveId(groupIdValue, "groupId");
   const group = await prisma.storeGroup.findUnique({ where: { id: groupId } });
   if (!group) throw new Error("Store group not found");
+  if (!isActiveStoreGroup(group.code)) throw new Error("Este catálogo está suspendido temporalmente");
   if (!access.isGlobalAdmin) {
     if (access.storeRole !== "ADMIN" || !access.activeStoreId) {
       throw new Error("Catalog manager access required");
@@ -101,6 +103,7 @@ export const updateGroupCatalogItemService = async (
     }),
   ]);
   if (!group) throw new Error("Store group not found");
+  if (!isActiveStoreGroup(group.code)) throw new Error("Este catálogo está suspendido temporalmente");
   if (!variant) throw new Error("Product variant not found");
   if (!group.isActive) throw new Error("Store group is inactive");
   if (!variant.isActive) throw new Error("Product variant is inactive");
@@ -188,8 +191,12 @@ export const deleteGroupCatalogItemService = async (
   const productVariantId = requirePositiveId(variantIdValue, "productVariantId");
   const current = await prisma.groupCatalogItem.findUnique({
     where: { groupId_productVariantId: { groupId, productVariantId } },
+    include: { group: { select: { code: true } } },
   });
   if (!current) throw new Error("Product is not part of this catalog");
+  if (!isActiveStoreGroup(current.group.code)) {
+    throw new Error("Este catálogo está suspendido temporalmente");
+  }
 
   const inventoryWithStock = await prisma.storeInventory.findFirst({
     where: { productVariantId, store: { groupId }, stock: { not: 0 } },

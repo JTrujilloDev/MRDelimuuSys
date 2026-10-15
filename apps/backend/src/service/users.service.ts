@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { KitchenMode, Role } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { requireName, requirePositiveId } from "./organization.validation";
+import { ACTIVE_STORE_GROUP_CODE } from "../config/operationScope";
 
 const manageableRoles = new Set<Role>([Role.ADMIN, Role.CASHIER, Role.KITCHEN]);
 
@@ -61,13 +62,15 @@ const normalizeAccesses = async (accessesValue: unknown, isGlobalAdmin: boolean)
 
   const stores = await prisma.store.findMany({
     where: { id: { in: accesses.map(({ storeId }) => storeId) } },
-    select: { id: true, isActive: true, kitchenMode: true, group: { select: { isActive: true } } },
+    select: { id: true, isActive: true, kitchenMode: true, group: { select: { isActive: true, code: true } } },
   });
   if (stores.length !== accesses.length) throw new Error("One or more stores were not found");
 
   for (const access of accesses) {
     const store = stores.find(({ id }) => id === access.storeId)!;
-    if (!store.isActive || !store.group.isActive) throw new Error("Users can only be assigned to active stores");
+    if (!store.isActive || !store.group.isActive || store.group.code !== ACTIVE_STORE_GROUP_CODE) {
+      throw new Error("Los usuarios solo pueden asignarse a puntos activos de Delimuu");
+    }
     if (access.role === Role.KITCHEN && store.kitchenMode !== KitchenMode.TICKETS) {
       throw new Error("Kitchen role can only be assigned to a store with kitchen tickets enabled");
     }
@@ -87,6 +90,7 @@ const userResult = {
   createdAt: true,
   updatedAt: true,
   storeAccesses: {
+    where: { store: { group: { code: ACTIVE_STORE_GROUP_CODE } } },
     include: { store: { include: { group: true } } },
     orderBy: { store: { name: "asc" as const } },
   },

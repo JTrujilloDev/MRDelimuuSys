@@ -5,6 +5,7 @@ import { prisma } from "../../lib/prisma";
 import { AuthStoreOption } from "../auth/auth.types";
 import { getSessionTtlHours, hashSessionToken } from "../auth/auth.cookie";
 import { requirePositiveId } from "./organization.validation";
+import { ACTIVE_STORE_GROUP_CODE, isActiveStoreGroup } from "../config/operationScope";
 
 const normalizeEmail = (value: unknown) => {
   if (typeof value !== "string" || !value.trim()) throw new Error("Email is required");
@@ -31,7 +32,7 @@ const getAvailableStores = async (
 ): Promise<AuthStoreOption[]> => {
   if (isGlobalAdmin) {
     const stores = await prisma.store.findMany({
-      where: { isActive: true, group: { isActive: true } },
+      where: { isActive: true, group: { isActive: true, code: ACTIVE_STORE_GROUP_CODE } },
       include: { group: { select: { id: true, code: true, name: true } }, terminals: { where: { isActive: true }, orderBy: { name: "asc" } } },
       orderBy: [{ group: { name: "asc" } }, { name: "asc" }],
     });
@@ -42,7 +43,7 @@ const getAvailableStores = async (
     where: {
       userId,
       isActive: true,
-      store: { isActive: true, group: { isActive: true } },
+      store: { isActive: true, group: { isActive: true, code: ACTIVE_STORE_GROUP_CODE } },
     },
     include: {
       store: {
@@ -112,6 +113,7 @@ export const resolveSessionService = async (rawToken: string) => {
     session.activeTerminalId &&
     session.activeStore?.isActive &&
     session.activeStore.group.isActive &&
+    isActiveStoreGroup(session.activeStore.group.code) &&
     session.activeTerminal.isActive &&
     session.activeTerminal.storeId === session.activeStoreId,
   );
@@ -201,7 +203,13 @@ export const selectSessionContextService = async (
     where: { id: storeId },
     include: { group: true, terminals: { where: { id: terminalId, isActive: true } } },
   });
-  if (!store || !store.isActive || !store.group.isActive || store.terminals.length !== 1) {
+  if (
+    !store ||
+    !store.isActive ||
+    !store.group.isActive ||
+    !isActiveStoreGroup(store.group.code) ||
+    store.terminals.length !== 1
+  ) {
     throw new Error("Active store and terminal combination not found");
   }
 

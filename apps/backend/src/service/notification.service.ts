@@ -4,6 +4,7 @@ import { prisma } from "../../lib/prisma";
 import { buildShiftSalesSummary } from "./shiftSalesSummary.rules";
 import { summarizeCreditCollections } from "./credit.rules";
 import { renderShiftNotification, retryDelayMs, ShiftNotification, stockAlertLevel } from "./notification.rules";
+import { ACTIVE_STORE_GROUP_CODE } from "../config/operationScope";
 
 const enabled = (key: string) => process.env[key] === "true";
 const emailEnabled = () => enabled("NOTIFICATIONS_EMAIL_ENABLED");
@@ -66,7 +67,7 @@ export const scanLowStock = async (database: Pick<typeof prisma, "$transaction">
     const [lock] = await tx.$queryRaw<{ acquired: boolean }[]>`SELECT pg_try_advisory_xact_lock(72831902) AS acquired`;
     if (!lock.acquired) return;
     const inventories = await tx.storeInventory.findMany({
-      where: { isInitialized: true, store: { isActive: true, group: { isActive: true } }, productVariant: { isActive: true, product: { productType: { not: "RECIPE_PRODUCT" } } } },
+      where: { isInitialized: true, store: { isActive: true, group: { isActive: true, code: ACTIVE_STORE_GROUP_CODE } }, productVariant: { isActive: true, product: { productType: { not: "RECIPE_PRODUCT" } } } },
       include: { store: true, productVariant: { include: { product: true, catalogItems: { select: { groupId: true } } } } },
     });
     for (const inventory of inventories) {

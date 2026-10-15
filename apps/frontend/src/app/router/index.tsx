@@ -18,6 +18,7 @@ import CreditsPage from "../../modules/credits/pages";
 import BillingPage from "../../modules/billing/pages";
 import CustomersPage from "../../modules/customers/pages";
 import { useAuth } from "../auth/AuthProvider";
+import { operationFeatures } from "../config/operationScope";
 
 const GlobalAdminOnly = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAuth();
@@ -53,23 +54,28 @@ export const router = createBrowserRouter([
       { path: "product-categories", element: <Navigate to="../catalog?tab=categories" replace /> },
       { path: "products", element: <Navigate to="../catalog?tab=products" replace /> },
       { path: "inventory", element: <Inventory /> },
-      { path: "inventory-transfers", element: <InventoryTransfersPage /> },
+      {
+        path: "inventory-transfers",
+        element: operationFeatures.inventoryTransfers
+          ? <InventoryTransfersPage />
+          : <Navigate to="/app/inventory" replace />,
+      },
       { path: "credits", element: <CreditsPage /> },
       {
         path: "customers",
-        element: (
+        element: operationFeatures.customers ? (
           <CustomerAccessOnly>
             <CustomersPage />
           </CustomerAccessOnly>
-        ),
+        ) : <Navigate to="/app/pos" replace />,
       },
       {
         path: "billing",
-        element: (
+        element: operationFeatures.electronicBilling ? (
           <GlobalAdminOnly>
             <BillingPage />
           </GlobalAdminOnly>
-        ),
+        ) : <Navigate to="/app/pos" replace />,
       },
       {
         path: "fundation-tags",

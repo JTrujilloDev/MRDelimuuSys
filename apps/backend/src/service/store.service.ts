@@ -6,6 +6,7 @@ import {
   requireName,
   requirePositiveId,
 } from "./organization.validation";
+import { ACTIVE_STORE_GROUP_CODE, isActiveStoreGroup } from "../config/operationScope";
 
 type CreateStoreInput = {
   groupId: unknown;
@@ -28,7 +29,7 @@ export const getStoresService = (groupIdValue?: unknown) => {
       : requirePositiveId(groupIdValue, "groupId");
 
   return prisma.store.findMany({
-    where: { groupId },
+    where: { groupId, group: { code: ACTIVE_STORE_GROUP_CODE } },
     include: {
       group: true,
       terminals: { orderBy: { name: "asc" } },
@@ -51,7 +52,9 @@ export const createStoreService = async (storeData: CreateStoreInput) => {
     prisma.store.findUnique({ where: { code } }),
   ]);
 
-  if (!group || !group.isActive) throw new Error("Active store group not found");
+  if (!group || !group.isActive || !isActiveStoreGroup(group.code)) {
+    throw new Error("Solo se pueden administrar puntos de Delimuu");
+  }
   if (existing) throw new Error(`Store code "${code}" already exists`);
 
   return prisma.store.create({
@@ -70,8 +73,11 @@ export const updateStoreService = async (
   storeData: UpdateStoreInput,
 ) => {
   const id = requirePositiveId(idValue, "storeId");
-  const current = await prisma.store.findUnique({ where: { id } });
+  const current = await prisma.store.findUnique({ where: { id }, include: { group: true } });
   if (!current) throw new Error("Store not found");
+  if (!isActiveStoreGroup(current.group.code)) {
+    throw new Error("Este punto está suspendido temporalmente");
+  }
 
   if (storeData.isActive !== undefined && typeof storeData.isActive !== "boolean") {
     throw new Error("isActive must be a boolean");
@@ -83,7 +89,9 @@ export const updateStoreService = async (
       : requirePositiveId(storeData.groupId, "groupId");
   if (groupId !== undefined) {
     const group = await prisma.storeGroup.findUnique({ where: { id: groupId } });
-    if (!group || !group.isActive) throw new Error("Active store group not found");
+    if (!group || !group.isActive || !isActiveStoreGroup(group.code)) {
+      throw new Error("Solo se pueden administrar puntos de Delimuu");
+    }
   }
 
   if (storeData.isActive === false) {

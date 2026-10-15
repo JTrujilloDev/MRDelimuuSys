@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { requireCode, requireName, requirePositiveId } from "./organization.validation";
+import { ACTIVE_STORE_GROUP_CODE, isActiveStoreGroup } from "../config/operationScope";
 
 type CreateTerminalInput = {
   storeId: unknown;
@@ -19,7 +20,7 @@ export const getTerminalsService = (storeIdValue?: unknown) => {
       : requirePositiveId(storeIdValue, "storeId");
 
   return prisma.terminal.findMany({
-    where: { storeId },
+    where: { storeId, store: { group: { code: ACTIVE_STORE_GROUP_CODE } } },
     include: { store: { include: { group: true } } },
     orderBy: [{ store: { name: "asc" } }, { name: "asc" }],
   });
@@ -34,7 +35,7 @@ export const createTerminalService = async (terminalData: CreateTerminalInput) =
     include: { group: true },
   });
 
-  if (!store || !store.isActive || !store.group.isActive) {
+  if (!store || !store.isActive || !store.group.isActive || !isActiveStoreGroup(store.group.code)) {
     throw new Error("Active store not found");
   }
 
@@ -58,8 +59,14 @@ export const updateTerminalService = async (
   terminalData: UpdateTerminalInput,
 ) => {
   const id = requirePositiveId(idValue, "terminalId");
-  const current = await prisma.terminal.findUnique({ where: { id } });
+  const current = await prisma.terminal.findUnique({
+    where: { id },
+    include: { store: { include: { group: true } } },
+  });
   if (!current) throw new Error("Terminal not found");
+  if (!isActiveStoreGroup(current.store.group.code)) {
+    throw new Error("Esta terminal está suspendida temporalmente");
+  }
 
   if (terminalData.isActive !== undefined && typeof terminalData.isActive !== "boolean") {
     throw new Error("isActive must be a boolean");
@@ -78,7 +85,7 @@ export const updateTerminalService = async (
       where: { id: current.storeId },
       include: { group: true },
     });
-    if (!store?.isActive || !store.group.isActive) {
+    if (!store?.isActive || !store.group.isActive || !isActiveStoreGroup(store.group.code)) {
       throw new Error("The store and its group must be active before activating the terminal");
     }
   }

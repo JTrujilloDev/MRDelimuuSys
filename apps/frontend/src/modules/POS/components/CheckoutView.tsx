@@ -9,6 +9,7 @@ import { CheckCircle2, LoaderCircle, Printer, UserRound } from "lucide-react";
 import dayjs from "dayjs";
 import { useSocket } from "../../../shared/socket/useSocket";
 import { findCustomerByIdentification, type FiscalCustomer } from "../services/customer.service";
+import { operationFeatures } from "../../../app/config/operationScope";
 
 export interface OrderInfo {
   clientName: string;
@@ -280,7 +281,7 @@ const CheckoutView = ({
             </div>
           </div>
 
-          <section className="mt-5 overflow-hidden rounded-2xl border border-border/80 bg-background/75">
+          {operationFeatures.customers && <section className="mt-5 overflow-hidden rounded-2xl border border-border/80 bg-background/75">
             <button
               type="button"
               className="flex w-full items-center justify-between gap-4 p-4 text-left transition-colors hover:bg-secondary/40"
@@ -373,7 +374,7 @@ const CheckoutView = ({
                 </div>
               </>}
             </div>}
-          </section>
+          </section>}
         </div>
 
         {/* Right — Payment method */}

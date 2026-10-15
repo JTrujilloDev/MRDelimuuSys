@@ -27,6 +27,7 @@ import { LuLogOut } from "react-icons/lu";
 import { useTheme } from "../../app/providers";
 import { useAuth } from "../../app/auth/AuthProvider";
 import type { UserRole } from "../../app/auth/auth.service";
+import { operationFeatures } from "../../app/config/operationScope";
 
 const roleLabels: Record<UserRole, string> = {
   ADMIN: "Administrador del punto",
@@ -77,7 +78,7 @@ const Sidebar = () => {
     { title: "Punto de Venta", url: "pos", icon: ShoppingCart },
     { title: "Historial de cajas", url: "cash-register-history", icon: History },
     ...(state?.user.isGlobalAdmin || ["ADMIN", "CASHIER"].includes(activeContext.role) ? [{ title: "Créditos", url: "credits", icon: Wallet }] : []),
-    ...(state?.user.isGlobalAdmin || ["ADMIN", "CASHIER"].includes(activeContext.role) ? [{ title: "Clientes", url: "customers", icon: ContactRound }] : []),
+    ...(operationFeatures.customers && (state?.user.isGlobalAdmin || ["ADMIN", "CASHIER"].includes(activeContext.role)) ? [{ title: "Clientes", url: "customers", icon: ContactRound }] : []),
     ...(state?.user.isGlobalAdmin || activeContext.role === "ADMIN"
       ? [
           { title: "Reportes", url: "reports", icon: ChartNoAxesCombined },
@@ -85,14 +86,14 @@ const Sidebar = () => {
         ]
       : []),
     {title: "Inventario" , url: "inventory", icon: Package},
-    {title: "Traslados" , url: "inventory-transfers", icon: Repeat2},
+    ...(operationFeatures.inventoryTransfers ? [{ title: "Traslados", url: "inventory-transfers", icon: Repeat2 }] : []),
     ...(activeContext.store.kitchenMode === "TICKETS"
       ? [{ title: "Cocina", url: "kitchen", icon: ChefHat }]
       : []),
     ...(state?.user.isGlobalAdmin
       ? [
           { title: "Administración", url: "admin", icon: UserCog },
-          { title: "Facturación", url: "billing", icon: ReceiptText },
+          ...(operationFeatures.electronicBilling ? [{ title: "Facturación", url: "billing", icon: ReceiptText }] : []),
           { title: "Cámaras", url: "security-cameras", icon: Camera },
           { title: "Etiquetas", url: "fundation-tags", icon: Tag },
         ]

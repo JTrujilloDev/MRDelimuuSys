@@ -5,6 +5,7 @@ import {
   type ReportGranularity,
   summarizeReportSales,
 } from "./operationsReport.rules";
+import { ACTIVE_STORE_GROUP_CODE } from "../config/operationScope";
 
 interface OperationsReportInput {
   from: Date;
@@ -31,6 +32,7 @@ export const getOperationsReportService = async ({
   granularity,
 }: OperationsReportInput) => {
   const groups = await prisma.storeGroup.findMany({
+    where: { code: ACTIVE_STORE_GROUP_CODE },
     orderBy: { name: "asc" },
     select: {
       id: true,

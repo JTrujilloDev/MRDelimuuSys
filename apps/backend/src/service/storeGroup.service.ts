@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { requireCode, requireName, requirePositiveId } from "./organization.validation";
+import { ACTIVE_STORE_GROUP_CODE, isActiveStoreGroup } from "../config/operationScope";
 
 type CreateStoreGroupInput = {
   code: unknown;
@@ -13,6 +14,7 @@ type UpdateStoreGroupInput = {
 
 export const getStoreGroupsService = () =>
   prisma.storeGroup.findMany({
+    where: { code: ACTIVE_STORE_GROUP_CODE },
     include: {
       stores: {
         orderBy: { name: "asc" },
@@ -25,6 +27,10 @@ export const getStoreGroupsService = () =>
 export const createStoreGroupService = async (data: CreateStoreGroupInput) => {
   const code = requireCode(data.code);
   const name = requireName(data.name);
+
+  if (!isActiveStoreGroup(code)) {
+    throw new Error("Solo el grupo empresarial Delimuu está habilitado temporalmente");
+  }
 
   const existing = await prisma.storeGroup.findUnique({ where: { code } });
   if (existing) throw new Error(`Store group code "${code}" already exists`);
@@ -39,6 +45,9 @@ export const updateStoreGroupService = async (
   const id = requirePositiveId(idValue, "groupId");
   const current = await prisma.storeGroup.findUnique({ where: { id } });
   if (!current) throw new Error("Store group not found");
+  if (!isActiveStoreGroup(current.code)) {
+    throw new Error("Este grupo empresarial está suspendido temporalmente");
+  }
 
   if (data.isActive !== undefined && typeof data.isActive !== "boolean") {
     throw new Error("isActive must be a boolean");
